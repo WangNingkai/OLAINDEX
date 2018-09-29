@@ -39,7 +39,7 @@ class ResetPassword extends Command
     public function handle()
     {
         $password = str_random(8);
-        DB::table('parameters')->where('name','password')->update(['value' => $password]);
+        DB::table('parameters')->where('name','password')->update(['value' => md5($password)]);
         Artisan::call('cache:clear');
         $this->info('重置密码成功，新密码：'.$password);
     }

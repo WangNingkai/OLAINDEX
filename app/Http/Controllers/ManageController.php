@@ -7,6 +7,7 @@ use App\Models\Parameter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Session;
 
 class ManageController extends Controller
@@ -22,7 +23,7 @@ class ManageController extends Controller
             return view('admin.login');
         }
         $password = $request->get('password');
-        if ($password == Tool::config('password'))
+        if (md5($password) == Tool::config('password'))
         {
             $logInfo = [
                 'LastLoginTime' => time(),
@@ -101,7 +102,7 @@ class ManageController extends Controller
             Tool::showMessage('两次密码不一致',false);
             return redirect()->back();
         }
-        $data = ['password' => $password];
+        $data = ['password' => md5($password)];
         $this->update($data);
         return redirect()->back();
     }
