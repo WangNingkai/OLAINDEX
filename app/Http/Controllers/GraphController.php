@@ -11,12 +11,27 @@ use Microsoft\Graph\Graph;
 
 class GraphController extends Controller
 {
+    /**
+     * @var Graph
+     */
     public $graph;
 
+    /**
+     * 缓存超时时间
+     * @var int|mixed|string
+     */
     public $expires = 10;
 
+    /**
+     * 根目录
+     * @var mixed|string
+     */
     public $root = '/';
 
+    /**
+     * 展示文件数组
+     * @var array
+     */
     public $show = [];
 
     /**
@@ -41,25 +56,25 @@ class GraphController extends Controller
     }
 
     /**
+     * 发送请求
      * @param $path
      * @param $query
      * @param bool $toArray
-     * @return array|mixed
+     * @return array
      * @throws \Microsoft\Graph\Exception\GraphException
      */
     public function requestGraph($path, $query, $toArray = true)
     {
-        $result = [];
         try {
             $response = $this->graph->createRequest("GET", '/me/drive/root' . $path . $query)
                 ->addHeaders(["Content-Type" => "application/json"])
                 ->setReturnType(Stream::class)
                 ->execute();
-            $result = $toArray ? $this->toArray($response->getContents()) : $response->getContents();
+            return $toArray ? $this->toArray($response->getContents()) : $response->getContents();
         } catch (ClientException $e) {
-            abort($e->getCode());
+            Tool::showMessage($e->getCode().':'.$e->getMessage(), false);
+            return [];
         }
-        return $result;
     }
 
     /**
@@ -114,6 +129,14 @@ class GraphController extends Controller
         return $newPath;
     }
 
+    /**
+     * 获取列表
+     * @param Request $request
+     * @param string $path
+     * @param bool $toArray
+     * @return array
+     * @throws \Microsoft\Graph\Exception\GraphException
+     */
     public function testFetchList(Request $request, $path = '' ,$toArray = true)
     {
         $query = $request->get('query', 'children');
@@ -121,16 +144,35 @@ class GraphController extends Controller
         return $this->requestGraph($path, $query, $toArray);
     }
 
+    /**
+     * 获取文件列表
+     * @param $itemId
+     * @param bool $toArray
+     * @return mixed
+     * @throws \Microsoft\Graph\Exception\GraphException
+     */
     public function testFetchFile($itemId, $toArray = true)
     {
         $itemId = Tool::encrypt($itemId, 'D', Tool::config('password'));
-        $response = $this->graph->createRequest("GET", "/me/drive/items/{$itemId}")
-            ->addHeaders(["Content-Type" => "application/json"])
-            ->setReturnType(Stream::class)
-            ->execute();
-        return $toArray ? json_decode($response->getContents(), true) : $response->getContents();
+        try {
+            $response = $this->graph->createRequest("GET", "/me/drive/items/{$itemId}")
+                ->addHeaders(["Content-Type" => "application/json"])
+                ->setReturnType(Stream::class)
+                ->execute();
+            return $toArray ? json_decode($response->getContents(), true) : $response->getContents();
+        } catch (ClientException $e) {
+                Tool::showMessage($e->getMessage(), false);
+                return '';
+        }
     }
 
+    /**
+     * 获取文件内容
+     * @param $itemId
+     * @return string
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Microsoft\Graph\Exception\GraphException
+     */
     public function testFetchContent($itemId)
     {
         $file = $this->testFetchFile($itemId);
