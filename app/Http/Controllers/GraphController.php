@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Stream;
 use Illuminate\Http\Request;
@@ -27,15 +28,15 @@ class GraphController extends Controller
         $this->graph->setBaseUrl("https://graph.microsoft.com/")
             ->setApiVersion("v1.0")
             ->setAccessToken(Tool::config('access_token'));
-        $this->expires = Tool::config('expires',10);
-        $this->root = Tool::config('root','/');
+        $this->expires = Tool::config('expires', 10);
+        $this->root = Tool::config('root', '/');
         $this->show = [
-            'stream'=> explode(' ',Tool::config('stream')),
-            'image' => explode(' ',Tool::config('image')),
-            'video' => explode(' ',Tool::config('video')),
-            'audio' => explode(' ',Tool::config('audio')),
-            'code' => explode(' ',Tool::config('code')), // php文件由于web服务器原因无法预览
-            'doc' => explode(' ',Tool::config('doc')),
+            'stream' => explode(' ', Tool::config('stream')),
+            'image' => explode(' ', Tool::config('image')),
+            'video' => explode(' ', Tool::config('video')),
+            'audio' => explode(' ', Tool::config('audio')),
+            'code' => explode(' ', Tool::config('code')), // php文件由于web服务器原因无法预览
+            'doc' => explode(' ', Tool::config('doc')),
         ];
     }
 
@@ -46,11 +47,11 @@ class GraphController extends Controller
      * @return array|mixed
      * @throws \Microsoft\Graph\Exception\GraphException
      */
-    public function requestGraph($path,$query,$toArray = true)
+    public function requestGraph($path, $query, $toArray = true)
     {
         $result = [];
         try {
-            $response = $this->graph->createRequest("GET", '/me/drive/root'.$path.$query)
+            $response = $this->graph->createRequest("GET", '/me/drive/root' . $path . $query)
                 ->addHeaders(["Content-Type" => "application/json"])
                 ->setReturnType(Stream::class)
                 ->execute();
@@ -68,12 +69,12 @@ class GraphController extends Controller
      */
     public function toArray($response)
     {
-        $items = json_decode($response,true);
-        if (array_key_exists('value',$items) && empty($items['value'])){
+        $items = json_decode($response, true);
+        if (array_key_exists('value', $items) && empty($items['value'])) {
             return [];
         }
         $files = [];
-        foreach($items['value'] as $item) {
+        foreach ($items['value'] as $item) {
             $files[$item['name']] = $item;
         }
         return $files;
@@ -91,41 +92,57 @@ class GraphController extends Controller
                 if ($this->root == '' || $this->root == '/')
                     $newPath = '/';
                 else
-                    $newPath =':/'.$this->root.':/';
+                    $newPath = ':/' . $this->root . ':/';
             } else {
-                $pathArr = explode('-',$path);
-                $url= '';
+                $pathArr = explode('-', $path);
+                $url = '';
                 foreach ($pathArr as $param) {
-                    $url .= '/'.$param;
+                    $url .= '/' . $param;
                 }
-                $dirPath = trim($url,'/');
+                $dirPath = trim($url, '/');
                 if ($this->root == '/')
-                    $newPath = ':/'. $dirPath .':/';
+                    $newPath = ':/' . $dirPath . ':/';
                 else
-                    $newPath = ':/'.$this->root.'/'. $dirPath .':/';
+                    $newPath = ':/' . $this->root . '/' . $dirPath . ':/';
             }
         } else {
             if ($this->root == '' || $this->root == '/')
                 $newPath = '/';
             else
-                $newPath =':/'.$this->root.':/';
+                $newPath = ':/' . $this->root . ':/';
         }
         return $newPath;
     }
 
-    public function testFetchItems(Request $request,$path = '')
+    public function testFetchList(Request $request, $path = '' ,$toArray = true)
     {
-        $query = $request->get('query','children');
+        $query = $request->get('query', 'children');
         $path = $this->convertPath($path);
-        dd($this->requestGraph($path,$query,true));
-//        dd(json_decode($this->requestGraph($path,$query,false),true));
+        return $this->requestGraph($path, $query, $toArray);
     }
 
-    public function testFetchFile($itemId)
+    public function testFetchFile($itemId, $toArray = true)
     {
-        $response = $this->graph->createRequest("GET", "/me/drive/items/{$itemId}/content")
+        $itemId = Tool::encrypt($itemId, 'D', Tool::config('password'));
+        $response = $this->graph->createRequest("GET", "/me/drive/items/{$itemId}")
+            ->addHeaders(["Content-Type" => "application/json"])
             ->setReturnType(Stream::class)
             ->execute();
-        dd($response->getContents()) ;
+        return $toArray ? json_decode($response->getContents(), true) : $response->getContents();
+    }
+
+    public function testFetchContent($itemId)
+    {
+        $file = $this->testFetchFile($itemId);
+        $url = $file['@microsoft.graph.downloadUrl'];
+        try {
+            $client = new Client();
+            $response = $client->request('get', $url);
+            $content = $response->getBody()->getContents();
+            return $content;
+        } catch (ClientException $e) {
+            Tool::showMessage($e->getMessage(), false);
+            return '';
+        }
     }
 }

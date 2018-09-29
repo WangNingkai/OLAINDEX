@@ -20,8 +20,9 @@ Route::group(['middleware' => 'checkToken'], function() {
     Route::get('/home/{path?}', 'FetchController@fetchMenu')->name('dir');
     Route::get('/home/{path?}/{fileName?}', 'FetchController@downloadItem')->name('file');
     Route::get('/home/show/{path?}/{fileName?}', 'FetchController@fetchItem')->name('show');
-    Route::get('/dev/{path?}', 'GraphController@testFetchItems')->name('items');
-    Route::get('/dev/file/{id?}', 'GraphController@testFetchFile')->name('item');
+    Route::get('/dev/{path?}', 'GraphController@testFetchList')->name('list');
+    Route::get('/dev/item/{fileId?}', 'GraphController@testFetchFile')->name('item');
+    Route::get('/dev/item/{fileId?}/content', 'GraphController@testFetchContent')->name('content');
 });
 Route::any('/login', 'ManageController@login')->name('login');
 Route::group(['middleware' => 'checkAuth'], function() {
