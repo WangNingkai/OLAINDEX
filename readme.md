@@ -3,6 +3,8 @@ OLAINDEX - Another OneDrive Directory Index
 
 > 本项目受 Oneindex 启发，功能借鉴其思想，在这里感谢。 项目持续开发，会加入更多功能，欢迎大家提issue.
 
+![OLAINDEX](https://i.loli.net/2018/09/29/5baf23aa9d5ec.png)
+
 ### 简介
 
 - 1.OneDrive 目录索引；
