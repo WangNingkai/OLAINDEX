@@ -24,7 +24,7 @@ OLAINDEX - Another OneDrive Directory Index
 #### 基础安装
 
 ```bash
-git clone -b release https://gitee.com/wangningkai/Laravel-dev.git tmp 
+git clone -b master https://github.com/WangNingkai/OLAINDEX.git tmp 
 mv tmp/.git . 
 rm -rf tmp 
 git reset --hard 
