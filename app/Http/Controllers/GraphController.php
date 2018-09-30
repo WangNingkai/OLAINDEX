@@ -12,11 +12,6 @@ use Microsoft\Graph\Graph;
 class GraphController extends Controller
 {
     /**
-     * @var Graph
-     */
-    public $graph;
-
-    /**
      * 缓存超时时间
      * @var int|mixed|string
      */
@@ -39,10 +34,6 @@ class GraphController extends Controller
      */
     public function __construct()
     {
-        $this->graph = new Graph();
-        $this->graph->setBaseUrl("https://graph.microsoft.com/")
-            ->setApiVersion("v1.0")
-            ->setAccessToken(Tool::config('access_token'));
         $this->expires = Tool::config('expires', 10);
         $this->root = Tool::config('root', '/');
         $this->show = [
@@ -56,21 +47,24 @@ class GraphController extends Controller
     }
 
     /**
-     * 发送请求
-     * @param $path
-     * @param $query
+     * 发送graph请求
+     * @param $endpoint
      * @param bool $toArray
      * @return array
      * @throws \Microsoft\Graph\Exception\GraphException
      */
-    public function requestGraph($path, $query, $toArray = true)
+    public function requestGraph($endpoint, $toArray = true)
     {
         try {
-            $response = $this->graph->createRequest("GET", '/me/drive/root' . $path . $query)
+            $graph = new Graph();
+            $graph->setBaseUrl("https://graph.microsoft.com/")
+                ->setApiVersion("v1.0")
+                ->setAccessToken(Tool::config('access_token'));
+            $response = $graph->createRequest("GET", $endpoint)
                 ->addHeaders(["Content-Type" => "application/json"])
                 ->setReturnType(Stream::class)
                 ->execute();
-            return $toArray ? $this->toArray($response->getContents()) : $response->getContents();
+            return $toArray ? json_decode($response->getContents(), true) : $response->getContents();
         } catch (ClientException $e) {
             Tool::showMessage($e->getCode().':'.$e->getMessage(), false);
             return [];
@@ -78,13 +72,33 @@ class GraphController extends Controller
     }
 
     /**
-     * 转换数组
+     * 发送请求
+     * @param $method
+     * @param $url
+     * @return string
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function requestHttp($method, $url)
+    {
+        try {
+            $client = new Client();
+            $response = $client->request($method, $url);
+            $content = $response->getBody()->getContents();
+            return $content;
+        } catch (ClientException $e) {
+            Tool::showMessage($e->getMessage(), false);
+            return '';
+        }
+    }
+
+    /**
+     * 数组格式转换
      * @param $response
      * @return array
      */
-    public function toArray($response)
+    public function formatArray($response)
     {
-        $items = json_decode($response, true);
+        $items = is_array($response) ? $response : json_decode($response, true);
         if (array_key_exists('value', $items) && empty($items['value'])) {
             return [];
         }
@@ -133,36 +147,28 @@ class GraphController extends Controller
      * 获取文件列表
      * @param Request $request
      * @param string $path
-     * @param bool $toArray
      * @return array
      * @throws \Microsoft\Graph\Exception\GraphException
      */
-    public function testFetchList(Request $request, $path = '' ,$toArray = true)
+    public function testFetchList(Request $request, $path = '')
     {
-        $query = $request->get('query', 'children');
         $path = $this->convertPath($path);
-        return $this->requestGraph($path, $query, $toArray);
+        $query = $request->get('query', 'children');
+        $endpoint = '/me/drive/root' . $path . $query;
+        $response =  $this->requestGraph($endpoint, true);
+        return $this->formatArray($response);
     }
 
     /**
      * 获取文件
      * @param $itemId
-     * @param bool $toArray
      * @return mixed
      * @throws \Microsoft\Graph\Exception\GraphException
      */
-    public function testFetchFile($itemId, $toArray = true)
+    public function testFetchFile($itemId)
     {
-        try {
-            $response = $this->graph->createRequest("GET", "/me/drive/items/{$itemId}")
-                ->addHeaders(["Content-Type" => "application/json"])
-                ->setReturnType(Stream::class)
-                ->execute();
-            return $toArray ? json_decode($response->getContents(), true) : $response->getContents();
-        } catch (ClientException $e) {
-            Tool::showMessage($e->getMessage(), false);
-            return '';
-        }
+        $endpoint = '/me/drive/items/' . $itemId;
+        return $this->requestGraph($endpoint, true);
     }
 
     /**
@@ -176,36 +182,19 @@ class GraphController extends Controller
     {
         $file = $this->testFetchFile($itemId);
         $url = $file['@microsoft.graph.downloadUrl'];
-        try {
-            $client = new Client();
-            $response = $client->request('get', $url);
-            $content = $response->getBody()->getContents();
-            return $content;
-        } catch (ClientException $e) {
-            Tool::showMessage($e->getMessage(), false);
-            return '';
-        }
+        return $this->requestHttp('get',$url);
     }
 
     /**
      * 获取缩略图
      * @param $itemId
      * @param string $size
-     * @param bool $toArray
-     * @return mixed|string
+     * @return array
      * @throws \Microsoft\Graph\Exception\GraphException
      */
-    public function testFetchThumb($itemId, $size = 'large', $toArray = true)
+    public function testFetchThumb($itemId, $size = 'large')
     {
-        try {
-            $response = $this->graph->createRequest("GET", "/me/drive/items/{$itemId}/thumbnails/0?select={$size}")
-                ->addHeaders(["Content-Type" => "application/json"])
-                ->setReturnType(Stream::class)
-                ->execute();
-            return $toArray ? json_decode($response->getContents(), true) : $response->getContents();
-        } catch (ClientException $e) {
-            Tool::showMessage($e->getMessage(), false);
-            return '';
-        }
+        $endpoint = "/me/drive/items/{$itemId}/thumbnails/0?select={$size}";
+        return $this->requestGraph($endpoint, true);
     }
 }
