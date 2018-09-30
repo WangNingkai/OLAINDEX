@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "17449bb10d81dcff2f1d3e1c899aca49",
+    "content-hash": "c5119a64ebe0cea9ada50b98e019907d",
     "packages": [
         {
             "name": "caouecs/laravel-lang",
@@ -3107,63 +3107,6 @@
                 "environment"
             ],
             "time": "2018-07-29T20:33:41+00:00"
-        },
-        {
-            "name": "wangningkai/laravel-mde",
-            "version": "v1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/WangNingkai/laravel-mde.git",
-                "reference": "c1b6e43d48e8981ab91af78cf9a42e2b78f08d5d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/WangNingkai/laravel-mde/zipball/c1b6e43d48e8981ab91af78cf9a42e2b78f08d5d",
-                "reference": "c1b6e43d48e8981ab91af78cf9a42e2b78f08d5d",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
-            },
-            "require": {
-                "php": ">=5.5.9"
-            },
-            "type": "extension",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "WangNingkai\\LaravelMde\\EditorServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "WangNingkai\\LaravelMde\\": "src/"
-                },
-                "files": [
-                    "src/helpers.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "WangNingkai",
-                    "email": "ningkai.wang@live.com"
-                }
-            ],
-            "description": "现代、简洁、易用的Markdown文本编辑器",
-            "keywords": [
-                "editor",
-                "laravel",
-                "markdown"
-            ],
-            "time": "2018-09-19T07:45:25+00:00"
         }
     ],
     "packages-dev": [

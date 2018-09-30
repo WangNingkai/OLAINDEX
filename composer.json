@@ -14,8 +14,7 @@
         "league/oauth2-client": "dev-master",
         "microsoft/microsoft-graph": "^1.4",
         "overtrue/laravel-lang": "^3.0",
-        "predis/predis": "^1.1",
-        "wangningkai/laravel-mde": "^1.0"
+        "predis/predis": "^1.1"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",
