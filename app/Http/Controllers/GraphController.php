@@ -130,7 +130,7 @@ class GraphController extends Controller
     }
 
     /**
-     * 获取列表
+     * 获取文件列表
      * @param Request $request
      * @param string $path
      * @param bool $toArray
@@ -145,7 +145,7 @@ class GraphController extends Controller
     }
 
     /**
-     * 获取文件列表
+     * 获取文件
      * @param $itemId
      * @param bool $toArray
      * @return mixed
