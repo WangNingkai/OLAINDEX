@@ -149,7 +149,7 @@ class Tool
     {
         $patterns = [
             'stream'=>['fa-file-text-o',['txt','log']],
-            'image' => ['fa-file-image-o',['bmp','jpg','jpeg','png','gif']],
+            'image' => ['fa-file-image-o',['bmp','jpg','jpeg','png','gif','ico']],
             'video' => ['fa-file-video-o',['mkv','mp4']],
             'audio' => ['fa-file-audio-o',['mp3']],
             'code' => ['fa-file-code-o',['html','htm', 'css', 'go','java','js','json','txt','sh','md','php']],
