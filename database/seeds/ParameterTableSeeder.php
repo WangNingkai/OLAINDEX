@@ -80,7 +80,7 @@ class ParameterTableSeeder extends Seeder
             ,
             [
                 'name' => 'password',
-                'value' => '12345678',
+                'value' => md5('12345678'),
             ]
         ]);
     }

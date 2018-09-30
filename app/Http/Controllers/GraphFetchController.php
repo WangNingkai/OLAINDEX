@@ -218,9 +218,8 @@ class GraphFetchController extends Controller
             unset($pathArr[0]);
         } else {
             $path = mb_strstr($path,$this->root,false,'utf8');
-            $cut = trim($this->root,'/');
-            $end = mb_strlen($cut,'utf8');
-            $rest = mb_substr($path,$end,null,'utf8');
+            $start = mb_strlen($this->root,'utf8');
+            $rest = mb_substr($path,$start,null,'utf8');
             $pathArr = explode('/', $rest);
         }
         array_push($pathArr,$item['name']);
