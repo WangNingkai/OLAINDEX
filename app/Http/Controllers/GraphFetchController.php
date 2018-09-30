@@ -50,31 +50,48 @@ class GraphFetchController extends Controller
     }
 
     /**
-     * 发送graph请求
+     * 构造请求
      * @param $endpoint
      * @param bool $toArray
      * @param string $method
-     * @return mixed
+     * @return mixed|null
+     * @throws \Microsoft\Graph\Exception\GraphException
+     */
+    public function requestMake($endpoint, $toArray = true, $method = 'get')
+    {
+        try {
+            $graph = new Graph();
+            $graph->setBaseUrl("https://graph.microsoft.com/")
+                ->setApiVersion("v1.0")
+                ->setAccessToken(Tool::config('access_token'));
+            $response = $graph->createRequest($method, $endpoint)
+                ->addHeaders(["Content-Type" => "application/json"])
+                ->setReturnType(Stream::class)
+                ->execute();
+            return $toArray ? json_decode($response->getContents(), true) : $response->getContents();
+        } catch (ClientException $e) {
+            Tool::showMessage($e->getCode().': 请检查地址是否正确', false);
+            return null;
+        }
+    }
+
+    /**
+     * 构造graph请求
+     * @param $endpoint
+     * @param bool $toArray
+     * @param string $method
+     * @return mixed|null
+     * @throws \Microsoft\Graph\Exception\GraphException
      */
     public function requestGraph($endpoint, $toArray = true, $method = 'get')
     {
-        return Cache::remember('one:endpoint:'.$endpoint,$this->expires,function() use ($method, $endpoint,$toArray) {
-            try {
-                $graph = new Graph();
-                $graph->setBaseUrl("https://graph.microsoft.com/")
-                    ->setApiVersion("v1.0")
-                    ->setAccessToken(Tool::config('access_token'));
-                $response = $graph->createRequest($method, $endpoint)
-                    ->addHeaders(["Content-Type" => "application/json"])
-                    ->setReturnType(Stream::class)
-                    ->execute();
-                return $toArray ? json_decode($response->getContents(), true) : $response->getContents();
-            } catch (ClientException $e) {
-                Tool::showMessage($e->getCode().': 请检查地址是否正确', false);
-                return null;
-            }
-        });
-
+        if (strtolower($method) == 'get') {
+            return Cache::remember('one:endpoint:'.$endpoint,$this->expires,function() use ($method, $endpoint,$toArray) {
+                return $this->requestMake( $endpoint,$toArray ,'get');
+            });
+        } else {
+            return $this->requestMake( $endpoint,$toArray ,$method);
+        }
     }
 
     /**
