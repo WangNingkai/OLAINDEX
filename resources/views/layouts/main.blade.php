@@ -17,7 +17,7 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
-        <a class="navbar-brand" href="{{ route('dir') }}">{{ \App\Helpers\Tool::config('name','OLAINDEX') }}</a>
+        <a class="navbar-brand" href="{{ route('list') }}">{{ \App\Helpers\Tool::config('name','OLAINDEX') }}</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -45,13 +45,13 @@
     @endif
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('dir') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('list') }}">Home</a></li>
             @if(!blank($pathArr))
                 @foreach ($pathArr as $key => $value)
                     @if(end($pathArr) == $value)
                         <li class="breadcrumb-item active">{{ $value }}</li>
                     @else
-                        <li class="breadcrumb-item "><a href="{{ route('dir',\App\Helpers\Tool::getUrl($key + 1,$pathArr)) }}">{{ $value }}</a></li>
+                        <li class="breadcrumb-item "><a href="{{ route('list',\App\Helpers\Tool::getUrl($key + 1,$pathArr)) }}">{{ $value }}</a></li>
                     @endif
                 @endforeach
             @endif

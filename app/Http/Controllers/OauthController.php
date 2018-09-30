@@ -41,7 +41,7 @@ class OauthController extends Controller
     {
         // 已授权则跳转
         if (Tool::config('access_token') != '' && Tool::config('refresh_token') != '' && Tool::config('access_token_expires') != '' ) {
-            return redirect()->route('dir');
+            return redirect()->route('list');
         }
         // 第一次授权
         if ($request->isMethod('GET') && !$request->has('code')) {
@@ -72,7 +72,7 @@ class OauthController extends Controller
                 ];
                 $this->updateCache($data);
                 // 跳转首页
-                return redirect()->route('dir');
+                return redirect()->route('list');
             } catch (IdentityProviderException $e) {
                 exit($e->getMessage());
             }
@@ -86,7 +86,7 @@ class OauthController extends Controller
      */
     public function refreshToken()
     {
-        $redirect = session('refresh_redirect') ?? '/disk';
+        $redirect = session('refresh_redirect') ?? '/list';
         $existingRefreshToken = Tool::config('refresh_token');
         try {
             $newAccessToken = $this->provider->getAccessToken('refresh_token', [

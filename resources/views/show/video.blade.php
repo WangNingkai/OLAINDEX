@@ -13,7 +13,7 @@
             <hr>
             <div class="text-center">
                 <video  width="100%" height="100%" preload controls poster="{{ $file['thumb']['large']['url'] }}">
-                    <source src="{{ $file['downloadUrl'] }}" type="video/mp4">
+                    <source src="{{ $file['@microsoft.graph.downloadUrl'] }}" type="video/mp4">
                 </video>
             </div>
             <hr>

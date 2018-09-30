@@ -12,7 +12,7 @@
             <div class="text-center"><a href="{{ $file['path'] }}" class="btn btn-success"><i class="fa fa-download"></i> 下载</a></div>
             <hr>
             <div class="text-center">
-                <audio src="{{ $file['downloadUrl'] }}" controls autoplay style="width: 100%;"></audio>
+                <audio src="{{ $file['@microsoft.graph.downloadUrl'] }}" controls autoplay style="width: 100%;"></audio>
             </div>
             <hr>
             <div class="form-group">

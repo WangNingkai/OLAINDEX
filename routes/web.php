@@ -20,10 +20,11 @@ Route::group(['middleware' => 'checkToken'], function() {
     Route::get('/home/{path?}', 'FetchController@fetchMenu')->name('dir');
     Route::get('/home/{path?}/{fileName?}', 'FetchController@downloadItem')->name('file');
     Route::get('/home/show/{path?}/{fileName?}', 'FetchController@fetchItem')->name('show');
-    Route::get('/dev/{path?}', 'GraphController@testFetchItemList')->name('list');
-    Route::get('/dev/item/{itemId?}', 'GraphController@testFetchItem')->name('item');
-    Route::get('/dev/item/{itemId?}/thumb', 'GraphController@testFetchThumb')->name('thumb');
-    Route::get('/dev/item/{itemId?}/content', 'GraphController@testFetchContent')->name('content');
+    Route::get('/list/{path?}', 'GraphController@testFetchItemList')->name('list');
+    Route::get('/item/{itemId}', 'GraphController@testShowItem')->name('item');
+    Route::get('/item/{itemId}/download', 'GraphController@testFetchDownload')->name('download');
+    Route::get('/item/{itemId}/thumb', 'GraphController@testFetchThumb')->name('thumb');
+    Route::get('/item/{itemId}/content', 'GraphController@testFetchContent')->name('content');
 });
 Route::any('/login', 'ManageController@login')->name('login');
 Route::group(['middleware' => 'checkAuth'], function() {

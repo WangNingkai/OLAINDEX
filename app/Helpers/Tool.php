@@ -41,6 +41,11 @@ class Tool
      */
     public static function getUrl($key,$pathArr)
     {
+        array_pop($pathArr);
+        // 兼容目录下就是文件的情况
+        if (count($pathArr) == 1) {
+            $key = $key - 1;
+        }
         $pathArr = array_slice($pathArr,0,$key);
         $url= '';
         foreach ($pathArr as $param) {
