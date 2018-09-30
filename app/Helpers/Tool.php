@@ -152,7 +152,7 @@ class Tool
             'image' => ['fa-file-image-o',['bmp','jpg','jpeg','png','gif']],
             'video' => ['fa-file-video-o',['mkv','mp4']],
             'audio' => ['fa-file-audio-o',['mp3']],
-            'code' => ['fa-file-code-o',['html','htm', 'css', 'go','java','js','json','txt','sh','md']],
+            'code' => ['fa-file-code-o',['html','htm', 'css', 'go','java','js','json','txt','sh','md','php']],
             'doc' => ['fa-file-word-o',['csv','doc','docx','odp','ods','odt','pot','potm','potx','pps','ppsx','ppsxm','ppt','pptm','pptx','rtf','xls','xlsx']],
             'pdf' => ['fa-file-pdf-o',['pdf']],
             'zip' => ['fa-file-archive-o',['zip','7z','rar','bz','gz']],
