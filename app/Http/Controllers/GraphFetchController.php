@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use Microsoft\Graph\Graph;
 
-class GraphController extends Controller
+class GraphFetchController extends Controller
 {
     /**
      * 缓存超时时间

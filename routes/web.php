@@ -14,13 +14,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/oauth', 'OauthController@oauth')->name('oauth');
 Route::get('/refresh', 'OauthController@refreshToken')->name('refresh');
 
-Route::get('/', 'GraphController@oneFetchItemList');
-Route::get('/menu/{path?}', 'GraphController@oneFetchItemList')->name('list');
-Route::get('/item/{itemId}', 'GraphController@oneShowItem')->name('item');
-Route::get('/item/{itemId}/download', 'GraphController@oneFetchDownload')->name('download');
-Route::get('/item/{itemId}/thumb', 'GraphController@oneFetchThumb')->name('thumb');
-Route::get('/item/{itemId}/content', 'GraphController@oneFetchContent')->name('content');
-Route::get('/item/{itemId}/view', 'GraphController@oneFetchView')->name('view');
+Route::get('/', 'GraphFetchController@oneFetchItemList');
+Route::get('/menu/{path?}', 'GraphFetchController@oneFetchItemList')->name('list');
+Route::get('/item/{itemId}', 'GraphFetchController@oneShowItem')->name('item');
+Route::get('/item/{itemId}/download', 'GraphFetchController@oneFetchDownload')->name('download');
+Route::get('/item/{itemId}/thumb', 'GraphFetchController@oneFetchThumb')->name('thumb');
+Route::get('/item/{itemId}/content', 'GraphFetchController@oneFetchContent')->name('content');
+Route::get('/item/{itemId}/view', 'GraphFetchController@oneFetchView')->name('view');
 
 Route::any('/login', 'ManageController@login')->name('login');
 Route::any('/admin', 'ManageController@basic')->name('admin.basic');
