@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\GraphTool;
 use App\Helpers\Tool;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -99,14 +100,18 @@ class GraphController extends Controller
     public function formatArray($response)
     {
         $items = is_array($response) ? $response : json_decode($response, true);
-        if (array_key_exists('value', $items) && empty($items['value'])) {
+        if (array_key_exists('value', $items)) {
+            if (empty($items['value'])) {
+                return [];
+            }
+            $files = [];
+            foreach ($items['value'] as $item) {
+                $files[$item['name']] = $item;
+            }
+            return $files;
+        } else {
             return [];
         }
-        $files = [];
-        foreach ($items['value'] as $item) {
-            $files[$item['name']] = $item;
-        }
-        return $files;
     }
 
     /**
