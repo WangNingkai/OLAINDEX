@@ -25,6 +25,7 @@ Route::group(['middleware' => 'checkToken'], function() {
     Route::get('/item/{itemId}/download', 'GraphController@testFetchDownload')->name('download');
     Route::get('/item/{itemId}/thumb', 'GraphController@testFetchThumb')->name('thumb');
     Route::get('/item/{itemId}/content', 'GraphController@testFetchContent')->name('content');
+    Route::get('/item/{itemId}/view', 'GraphController@testFetchView')->name('view');
 });
 Route::any('/login', 'ManageController@login')->name('login');
 Route::group(['middleware' => 'checkAuth'], function() {

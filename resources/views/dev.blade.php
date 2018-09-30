@@ -55,11 +55,6 @@
                                 @if(isset($item['folder']))
                                     <a href="javascript:void(0)" data-clipboard-text="{{ route('list',$path ? $path.'-'.$item['name'] : $item['name']) }}" class="clipboard" title="已复制" data-toggle="tooltip"
                                        data-placement="right" ><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;
-                                @elseif(in_array($item['ext'],['bmp','jpg','jpeg','png','gif']))
-                                    <a href="{{ route('download',$item['id']) }}" class="fancybox" title="{{ $item['name'] }}"><i class="fa fa-eye"></i></a>&nbsp;&nbsp;
-                                    <a href="{{ route('download',$item['id']) }}" title="下载"><i class="fa fa-download"></i></a>&nbsp;&nbsp;
-                                    <a href="javascript:void(0)" data-clipboard-text="{{ route('file',$path ? $path.'/'.$item['name'] : 'root/'.$item['name']) }}" class="clipboard" title="已复制" data-toggle="tooltip"
-                                       data-placement="right" ><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;
                                 @else
                                     <a href="{{ route('download',$item['id']) }}"><i class="fa fa-download" title="下载"></i></a>&nbsp;&nbsp;
                                     <a href="javascript:void(0)" data-clipboard-text="{{ route('file',$path ? $path.'/'.$item['name'] : 'root/'.$item['name']) }}" class="clipboard" title="已复制" data-toggle="tooltip"

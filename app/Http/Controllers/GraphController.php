@@ -237,11 +237,25 @@ class GraphController extends Controller
     }
 
     /**
+     * 返回原图
+     * @param $itemId
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function testFetchView($itemId)
+    {
+        $file = $this->testFetchItem($itemId);
+        $url = $file['@microsoft.graph.downloadUrl'];
+        $content =  $this->requestHttp('get',$url);
+        return response($content,200, [
+            'Content-Type' => 'image/png',
+        ]);
+    }
+
+    /**
      * 获取文件下载信息
      * @param $itemId
      * @return \Illuminate\Http\RedirectResponse
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Microsoft\Graph\Exception\GraphException
      */
     public function testFetchDownload($itemId)
     {
@@ -255,7 +269,6 @@ class GraphController extends Controller
      * @param $itemId
      * @return string
      * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Microsoft\Graph\Exception\GraphException
      */
     public function testFetchContent($itemId)
     {

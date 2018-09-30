@@ -6,9 +6,12 @@
             {{ $file['name'] }}
         </div>
         <div class="card-body">
-            <div class="text-center"><a href="{{ $file['path'] }}" class="fancybox"><img src="{{ $file['thumb']['large']['url'] }}" alt="{{ $file['name'] }}" class="img-fluid"></a></div>
+            <div class="text-center"><img src="{{ $file['thumb']['large']['url'] }}" alt="{{ $file['name'] }}" class="img-fluid"></div>
             <br>
-            <div class="text-center"><a href="{{ $file['path'] }}" class="btn btn-success"><i class="fa fa-download"></i> 下载</a></div>
+            <div class="text-center">
+                <a href="{{ $file['path'] }}" class="btn btn-success"><i class="fa fa-download"></i> 下载</a> &nbsp;&nbsp;
+                <a href="{{ route('view',$file['id']) }}" class="btn btn-info" target="_blank"><i class="fa fa-eye"></i> 查看原图</a>
+            </div>
             <hr>
             <div class="form-group">
                 <label class="control-label">引用链接</label>
