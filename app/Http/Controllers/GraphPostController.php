@@ -28,13 +28,13 @@ class GraphPostController extends Controller
         } catch(GraphException $e) {
             throw new GraphException(GraphConstants::INVALID_FILE);
         }*/
-        $file = $request->file('img');
+        $file = $request->file('img'); // 图片stream流
         $remoteFilePath = ''; // 远程图片保存地址
         $graph = new Graph();
         $graph->setBaseUrl("https://graph.microsoft.com/")
                 ->setApiVersion("v1.0")
                 ->setAccessToken(Tool::config('access_token'));
-        $response = $graph->createRequest("PUT", "/me/drive/root/children/{$remoteFilePath}/content")
+        $response = $graph->createRequest("PUT", "/me/drive/root:/{$remoteFilePath}:/content")
             ->attachBody($file)
             ->addHeaders(["Content-Type" => "application/json"])
             ->setReturnType(Stream::class)
