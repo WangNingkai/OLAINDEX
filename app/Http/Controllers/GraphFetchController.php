@@ -242,10 +242,10 @@ class GraphFetchController extends Controller
     public function oneFetchThumb(Request $request, $itemId)
     {
         $size = $request->get('size','large');
-        $endpoint = "/me/drive/items/{$itemId}/thumbnails/0?select={$size}";
+        $endpoint = "/me/drive/items/{$itemId}/thumbnails/0/{$size}";
         $response = $this->requestGraph($endpoint, true);
         if (!$response) abort(404);
-        $url = $response[$size]['url'];
+        $url = $response['url'];
         $content =  $this->requestHttp('get',$url);
         return response($content,200, [
             'Content-Type' => 'image/png',
