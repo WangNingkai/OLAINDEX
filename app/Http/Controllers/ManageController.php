@@ -17,7 +17,7 @@ class ManageController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('checkAuth');
+        $this->middleware('checkAuth')->except('login');;
     }
 
     /**
@@ -54,7 +54,7 @@ class ManageController extends Controller
     {
         Session::forget('LogInfo');
         Tool::showMessage('已退出');
-        return redirect()->route('dir');
+        return redirect()->route('list');
     }
 
     /**
