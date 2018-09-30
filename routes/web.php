@@ -15,17 +15,17 @@ Route::get('/oauth', 'OauthController@oauth')->name('oauth');
 Route::get('/refresh', 'OauthController@refreshToken')->name('refresh');
 Route::group(['middleware' => 'checkToken'], function() {
     Route::get('/', function(){
-        return redirect()->route('dir');
+        return redirect()->route('list');
     });
     Route::get('/home/{path?}', 'FetchController@fetchMenu')->name('dir');
     Route::get('/home/{path?}/{fileName?}', 'FetchController@downloadItem')->name('file');
     Route::get('/home/show/{path?}/{fileName?}', 'FetchController@fetchItem')->name('show');
-    Route::get('/list/{path?}', 'GraphController@testFetchItemList')->name('list');
-    Route::get('/item/{itemId}', 'GraphController@testShowItem')->name('item');
-    Route::get('/item/{itemId}/download', 'GraphController@testFetchDownload')->name('download');
-    Route::get('/item/{itemId}/thumb', 'GraphController@testFetchThumb')->name('thumb');
-    Route::get('/item/{itemId}/content', 'GraphController@testFetchContent')->name('content');
-    Route::get('/item/{itemId}/view', 'GraphController@testFetchView')->name('view');
+    Route::get('/list/{path?}', 'GraphController@oneFetchItemList')->name('list');
+    Route::get('/item/{itemId}', 'GraphController@oneShowItem')->name('item');
+    Route::get('/item/{itemId}/download', 'GraphController@oneFetchDownload')->name('download');
+    Route::get('/item/{itemId}/thumb', 'GraphController@oneFetchThumb')->name('thumb');
+    Route::get('/item/{itemId}/content', 'GraphController@oneFetchContent')->name('content');
+    Route::get('/item/{itemId}/view', 'GraphController@oneFetchView')->name('view');
 });
 Route::any('/login', 'ManageController@login')->name('login');
 Route::group(['middleware' => 'checkAuth'], function() {

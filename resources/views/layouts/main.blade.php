@@ -51,7 +51,9 @@
                     @if(end($pathArr) == $value)
                         <li class="breadcrumb-item active">{{ $value }}</li>
                     @else
-                        <li class="breadcrumb-item "><a href="{{ route('list',\App\Helpers\Tool::getUrl($key + 1,$pathArr)) }}">{{ $value }}</a></li>
+                        @if (!blank($value))
+                            <li class="breadcrumb-item "><a href="{{ route('list',\App\Helpers\Tool::getUrl($key + 1,$pathArr)) }}">{{ $value }}</a></li>
+                        @endif
                     @endif
                 @endforeach
             @endif

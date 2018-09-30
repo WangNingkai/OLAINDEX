@@ -141,12 +141,12 @@ class GraphController extends Controller
             if ($this->root == '/')
                 $newPath = ':/' . $dirPath . ':/';
             else
-                $newPath = ':/' . $this->root . '/' . $dirPath . ':/';
+                $newPath = ':/' . trim($this->root,'/') . '/' . $dirPath . ':/';
         } else {
             if ($this->root == '' || $this->root == '/')
                 $newPath = '/';
             else
-                $newPath = ':/' . $this->root . ':/';
+                $newPath = ':/' . trim($this->root,'/') . ':/';
         }
         return $newPath;
     }
@@ -159,22 +159,28 @@ class GraphController extends Controller
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Microsoft\Graph\Exception\GraphException
      */
-    public function testFetchItemList(Request $request, $path = '')
+    public function oneFetchItemList(Request $request, $path = '')
     {
         $graphPath = $this->convertPath($path);
         $query = $request->get('query', 'children');
         $endpoint = '/me/drive/root' . $graphPath . $query;
         $response =  $this->requestGraph($endpoint, true);
         $items =  $this->formatArray($response);
-        $this->testFilterFolder($items);
-        $head = Tool::markdown2Html($this->testFetchFilterContent('HEAD.md',$items));
-        $readme = Tool::markdown2Html($this->testFetchFilterContent('README.md',$items));
+        $this->oneFilterFolder($items);
+        $head = Tool::markdown2Html($this->oneFetchFilterContent('HEAD.md',$items));
+        $readme = Tool::markdown2Html($this->oneFetchFilterContent('README.md',$items));
         $pathArr =  $path ? explode('-',$path):[];
-        $items = $this->testFilterItem($items,['README.md','HEAD.md','.password','.deny']);
+        $items = $this->oneFilterItem($items,['README.md','HEAD.md','.password','.deny']);
         return view('dev',compact('items','path','pathArr','head','readme'));
     }
 
-    public function testFetchItem($itemId)
+    /**
+     * 获取文件
+     * @param $itemId
+     * @return array
+     * @throws \Microsoft\Graph\Exception\GraphException
+     */
+    public function oneFetchItem($itemId)
     {
         $endpoint = '/me/drive/items/' . $itemId;
         $response =  $this->requestGraph($endpoint, true);
@@ -188,7 +194,7 @@ class GraphController extends Controller
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Microsoft\Graph\Exception\GraphException
      */
-    public function testShowItem($itemId)
+    public function oneShowItem($itemId)
     {
         $endpoint = '/me/drive/items/' . $itemId;
         $response =  $this->requestGraph($endpoint, true);
@@ -198,13 +204,16 @@ class GraphController extends Controller
             $key = mb_strpos($path,':');
             $path = mb_substr($path,$key + 1);
             $pathArr = explode('/', $path);
+            unset($pathArr[0]);
         } else {
-            $path = mb_strstr($path,$this->root,'','utf8');
-            $pathArr = explode('/', $path);
+            $path = mb_strstr($path,$this->root,false,'utf8');
+            $cut = trim($this->root,'/');
+            $end = mb_strlen($cut,'utf8');
+            $rest = mb_substr($path,$end,null,'utf8');
+            $pathArr = explode('/', $rest);
         }
-        unset($pathArr[0]);
         array_push($pathArr,$item['name']);
-        $item['thumb'] = $this->testFetchThumb($item['id']);
+        $item['thumb'] = route('thumb',$item['id']);
         $item['path'] = route('download',$item['id']);
         $patterns = $this->show;
         foreach ($patterns as $key => $suffix) {
@@ -220,20 +229,28 @@ class GraphController extends Controller
                 return view($view,compact('file','pathArr'));
             }
         }
-        return $this->testFetchDownload($item['id']);
+        return $this->oneFetchDownload($item['id']);
     }
 
     /**
      * 获取缩略图
+     * @param Request $request
      * @param $itemId
-     * @param string $size
-     * @return array
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Microsoft\Graph\Exception\GraphException
      */
-    public function testFetchThumb($itemId, $size = 'large')
+    public function oneFetchThumb(Request $request, $itemId)
     {
+        $size = $request->get('size','large');
         $endpoint = "/me/drive/items/{$itemId}/thumbnails/0?select={$size}";
-        return $this->requestGraph($endpoint, true);
+        $response = $this->requestGraph($endpoint, true);
+        if (!$response) abort(404);
+        $url = $response[$size]['url'];
+        $content =  $this->requestHttp('get',$url);
+        return response($content,200, [
+            'Content-Type' => 'image/png',
+        ]);
     }
 
     /**
@@ -241,10 +258,11 @@ class GraphController extends Controller
      * @param $itemId
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Microsoft\Graph\Exception\GraphException
      */
-    public function testFetchView($itemId)
+    public function oneFetchView($itemId)
     {
-        $file = $this->testFetchItem($itemId);
+        $file = $this->oneFetchItem($itemId);
         $url = $file['@microsoft.graph.downloadUrl'];
         $content =  $this->requestHttp('get',$url);
         return response($content,200, [
@@ -256,10 +274,11 @@ class GraphController extends Controller
      * 获取文件下载信息
      * @param $itemId
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \Microsoft\Graph\Exception\GraphException
      */
-    public function testFetchDownload($itemId)
+    public function oneFetchDownload($itemId)
     {
-        $file = $this->testFetchItem($itemId);
+        $file = $this->oneFetchItem($itemId);
         $url = $file['@microsoft.graph.downloadUrl'];
         return redirect()->away($url);
     }
@@ -269,10 +288,11 @@ class GraphController extends Controller
      * @param $itemId
      * @return string
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Microsoft\Graph\Exception\GraphException
      */
-    public function testFetchContent($itemId)
+    public function oneFetchContent($itemId)
     {
-        $file = $this->testFetchItem($itemId);
+        $file = $this->oneFetchItem($itemId);
         $url = $file['@microsoft.graph.downloadUrl'];
         return $this->requestHttp('get',$url);
     }
@@ -284,7 +304,7 @@ class GraphController extends Controller
      * @return string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function testFetchFilterContent($itemName,$items)
+    public function oneFetchFilterContent($itemName,$items)
     {
         if (empty($items[$itemName])) {
             return '';
@@ -297,7 +317,7 @@ class GraphController extends Controller
      * 过滤目录
      * @param $items
      */
-    public function testFilterFolder($items)
+    public function oneFilterFolder($items)
     {
         // .deny目录无法访问 兼容 .password
         if (!empty($items['.deny']) || !empty($items['.password'])) {
@@ -314,7 +334,7 @@ class GraphController extends Controller
      * @param $itemName
      * @return mixed
      */
-    public function testFilterItem($items,$itemName)
+    public function oneFilterItem($items,$itemName)
     {
         if (is_array($itemName)) {
             foreach ($itemName as $item) {
