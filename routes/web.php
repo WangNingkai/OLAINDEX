@@ -17,9 +17,6 @@ Route::group(['middleware' => 'checkToken'], function() {
     Route::get('/', function(){
         return redirect()->route('list');
     });
-    Route::get('/home/{path?}', 'FetchController@fetchMenu')->name('dir');
-    Route::get('/home/{path?}/{fileName?}', 'FetchController@downloadItem')->name('file');
-    Route::get('/home/show/{path?}/{fileName?}', 'FetchController@fetchItem')->name('show');
     Route::get('/list/{path?}', 'GraphController@oneFetchItemList')->name('list');
     Route::get('/item/{itemId}', 'GraphController@oneShowItem')->name('item');
     Route::get('/item/{itemId}/download', 'GraphController@oneFetchDownload')->name('download');

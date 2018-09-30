@@ -7,6 +7,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Stream;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use Microsoft\Graph\Graph;
 
@@ -51,46 +52,50 @@ class GraphController extends Controller
      * 发送graph请求
      * @param $endpoint
      * @param bool $toArray
-     * @param $method
-     * @return array|mixed
-     * @throws \Microsoft\Graph\Exception\GraphException
+     * @param string $method
+     * @return mixed
      */
     public function requestGraph($endpoint, $toArray = true, $method = 'get')
     {
-        try {
-            $graph = new Graph();
-            $graph->setBaseUrl("https://graph.microsoft.com/")
-                ->setApiVersion("v1.0")
-                ->setAccessToken(Tool::config('access_token'));
-            $response = $graph->createRequest($method, $endpoint)
-                ->addHeaders(["Content-Type" => "application/json"])
-                ->setReturnType(Stream::class)
-                ->execute();
-            return $toArray ? json_decode($response->getContents(), true) : $response->getContents();
-        } catch (ClientException $e) {
-            Tool::showMessage($e->getCode().': 请检查地址是否正确', false);
-            return null;
-        }
+        return Cache::remember('one:endpoint:'.$endpoint,$this->expires,function() use ($method, $endpoint,$toArray) {
+            try {
+                $graph = new Graph();
+                $graph->setBaseUrl("https://graph.microsoft.com/")
+                    ->setApiVersion("v1.0")
+                    ->setAccessToken(Tool::config('access_token'));
+                $response = $graph->createRequest($method, $endpoint)
+                    ->addHeaders(["Content-Type" => "application/json"])
+                    ->setReturnType(Stream::class)
+                    ->execute();
+                return $toArray ? json_decode($response->getContents(), true) : $response->getContents();
+            } catch (ClientException $e) {
+                Tool::showMessage($e->getCode().': 请检查地址是否正确', false);
+                return null;
+            }
+        });
+
     }
 
     /**
      * 发送请求
      * @param $method
      * @param $url
-     * @return string
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
      */
     public function requestHttp($method, $url)
     {
-        try {
-            $client = new Client();
-            $response = $client->request($method, $url);
-            $content = $response->getBody()->getContents();
-            return $content;
-        } catch (ClientException $e) {
-            Tool::showMessage($e->getCode().': 请检查链接是否正确', false);
-            return null;
-        }
+        return Cache::remember('one:url:'.$url,$this->expires,function() use ($method, $url) {
+            try {
+                $client = new Client();
+                $response = $client->request($method, $url);
+                $content = $response->getBody()->getContents();
+                return $content;
+            } catch (ClientException $e) {
+                Tool::showMessage($e->getCode().': 请检查链接是否正确', false);
+                return null;
+            }
+        });
+
     }
 
     /**
@@ -156,8 +161,6 @@ class GraphController extends Controller
      * @param Request $request
      * @param string $path
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Microsoft\Graph\Exception\GraphException
      */
     public function oneFetchItemList(Request $request, $path = '')
     {
@@ -171,14 +174,13 @@ class GraphController extends Controller
         $readme = Tool::markdown2Html($this->oneFetchFilterContent('README.md',$items));
         $pathArr =  $path ? explode('-',$path):[];
         $items = $this->oneFilterItem($items,['README.md','HEAD.md','.password','.deny']);
-        return view('dev',compact('items','path','pathArr','head','readme'));
+        return view('one',compact('items','path','pathArr','head','readme'));
     }
 
     /**
      * 获取文件
      * @param $itemId
      * @return array
-     * @throws \Microsoft\Graph\Exception\GraphException
      */
     public function oneFetchItem($itemId)
     {
@@ -191,8 +193,6 @@ class GraphController extends Controller
      * 展示文件信息
      * @param $itemId
      * @return \Illuminate\Http\RedirectResponse|mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Microsoft\Graph\Exception\GraphException
      */
     public function oneShowItem($itemId)
     {
@@ -237,8 +237,6 @@ class GraphController extends Controller
      * @param Request $request
      * @param $itemId
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Microsoft\Graph\Exception\GraphException
      */
     public function oneFetchThumb(Request $request, $itemId)
     {
@@ -257,8 +255,6 @@ class GraphController extends Controller
      * 返回原图
      * @param $itemId
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Microsoft\Graph\Exception\GraphException
      */
     public function oneFetchView($itemId)
     {
@@ -274,7 +270,6 @@ class GraphController extends Controller
      * 获取文件下载信息
      * @param $itemId
      * @return \Illuminate\Http\RedirectResponse
-     * @throws \Microsoft\Graph\Exception\GraphException
      */
     public function oneFetchDownload($itemId)
     {
@@ -287,8 +282,6 @@ class GraphController extends Controller
      * 获取文件内容
      * @param $itemId
      * @return string
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Microsoft\Graph\Exception\GraphException
      */
     public function oneFetchContent($itemId)
     {
@@ -302,7 +295,6 @@ class GraphController extends Controller
      * @param $itemName
      * @param $items
      * @return string
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function oneFetchFilterContent($itemName,$items)
     {
