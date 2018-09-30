@@ -20,8 +20,8 @@ Route::group(['middleware' => 'checkToken'], function() {
     Route::get('/home/{path?}', 'FetchController@fetchMenu')->name('dir');
     Route::get('/home/{path?}/{fileName?}', 'FetchController@downloadItem')->name('file');
     Route::get('/home/show/{path?}/{fileName?}', 'FetchController@fetchItem')->name('show');
-    Route::get('/dev/{path?}', 'GraphController@testFetchList')->name('list');
-    Route::get('/dev/item/{itemId?}', 'GraphController@testFetchFile')->name('item');
+    Route::get('/dev/{path?}', 'GraphController@testFetchItemList')->name('list');
+    Route::get('/dev/item/{itemId?}', 'GraphController@testFetchItem')->name('item');
     Route::get('/dev/item/{itemId?}/thumb', 'GraphController@testFetchThumb')->name('thumb');
     Route::get('/dev/item/{itemId?}/content', 'GraphController@testFetchContent')->name('content');
 });

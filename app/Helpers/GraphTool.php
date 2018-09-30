@@ -1,16 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Helpers;
 
-use App\Helpers\Tool;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Stream;
-use Illuminate\Http\Request;
 use Microsoft\Graph\Graph;
 
-class GraphController extends Controller
-{
+class GraphTool {
     /**
      * 缓存超时时间
      * @var int|mixed|string
@@ -145,15 +142,14 @@ class GraphController extends Controller
 
     /**
      * 获取文件列表
-     * @param Request $request
      * @param string $path
+     * @param string $query
      * @return array
      * @throws \Microsoft\Graph\Exception\GraphException
      */
-    public function testFetchItemList(Request $request, $path = '')
+    public function fetchItemList($path = '' ,$query = 'children')
     {
         $path = $this->convertPath($path);
-        $query = $request->get('query', 'children');
         $endpoint = '/me/drive/root' . $path . $query;
         $response =  $this->requestGraph($endpoint, true);
         return $this->formatArray($response);
@@ -165,7 +161,7 @@ class GraphController extends Controller
      * @return mixed
      * @throws \Microsoft\Graph\Exception\GraphException
      */
-    public function testFetchItem($itemId)
+    public function fetchItem($itemId)
     {
         $endpoint = '/me/drive/items/' . $itemId;
         return $this->requestGraph($endpoint, true);
@@ -178,9 +174,9 @@ class GraphController extends Controller
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Microsoft\Graph\Exception\GraphException
      */
-    public function testFetchContent($itemId)
+    public function fetchContent($itemId)
     {
-        $file = $this->testFetchItem($itemId);
+        $file = $this->fetchItem($itemId);
         $url = $file['@microsoft.graph.downloadUrl'];
         return $this->requestHttp('get',$url);
     }
@@ -192,7 +188,7 @@ class GraphController extends Controller
      * @return array
      * @throws \Microsoft\Graph\Exception\GraphException
      */
-    public function testFetchThumb($itemId, $size = 'large')
+    public function fetchThumb($itemId, $size = 'large')
     {
         $endpoint = "/me/drive/items/{$itemId}/thumbnails/0?select={$size}";
         return $this->requestGraph($endpoint, true);
