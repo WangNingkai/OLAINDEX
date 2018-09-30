@@ -153,7 +153,6 @@ class GraphController extends Controller
      */
     public function testFetchFile($itemId, $toArray = true)
     {
-        $itemId = Tool::encrypt($itemId, 'D', Tool::config('password'));
         try {
             $response = $this->graph->createRequest("GET", "/me/drive/items/{$itemId}")
                 ->addHeaders(["Content-Type" => "application/json"])
@@ -161,8 +160,8 @@ class GraphController extends Controller
                 ->execute();
             return $toArray ? json_decode($response->getContents(), true) : $response->getContents();
         } catch (ClientException $e) {
-                Tool::showMessage($e->getMessage(), false);
-                return '';
+            Tool::showMessage($e->getMessage(), false);
+            return '';
         }
     }
 
@@ -182,6 +181,28 @@ class GraphController extends Controller
             $response = $client->request('get', $url);
             $content = $response->getBody()->getContents();
             return $content;
+        } catch (ClientException $e) {
+            Tool::showMessage($e->getMessage(), false);
+            return '';
+        }
+    }
+
+    /**
+     * 获取缩略图
+     * @param $itemId
+     * @param string $size
+     * @param bool $toArray
+     * @return mixed|string
+     * @throws \Microsoft\Graph\Exception\GraphException
+     */
+    public function testFetchThumb($itemId, $size = 'large', $toArray = true)
+    {
+        try {
+            $response = $this->graph->createRequest("GET", "/me/drive/items/{$itemId}/thumbnails/0?select={$size}")
+                ->addHeaders(["Content-Type" => "application/json"])
+                ->setReturnType(Stream::class)
+                ->execute();
+            return $toArray ? json_decode($response->getContents(), true) : $response->getContents();
         } catch (ClientException $e) {
             Tool::showMessage($e->getMessage(), false);
             return '';
