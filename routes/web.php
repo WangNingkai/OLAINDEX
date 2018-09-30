@@ -18,9 +18,9 @@ Route::get('/', 'GraphFetchController@oneFetchItemList');
 Route::get('/menu/{path?}', 'GraphFetchController@oneFetchItemList')->name('list');
 Route::get('/item/{itemId}', 'GraphFetchController@oneShowItem')->name('item');
 Route::get('/item/{itemId}/download', 'GraphFetchController@oneFetchDownload')->name('download');
-Route::get('/item/{itemId}/thumb', 'GraphFetchController@oneFetchThumb')->name('thumb');
 Route::get('/item/{itemId}/content', 'GraphFetchController@oneFetchContent')->name('content');
-Route::get('/item/{itemId}/view', 'GraphFetchController@oneFetchView')->name('view');
+Route::get('/item/{itemId}/thumb', 'GraphFetchController@oneFetchThumb')->name('thumb')->middleware('throttle:10,10');
+Route::get('/item/{itemId}/view', 'GraphFetchController@oneFetchView')->name('view')->middleware('throttle:10,10');
 
 Route::any('/login', 'ManageController@login')->name('login');
 Route::any('/admin', 'ManageController@basic')->name('admin.basic');
