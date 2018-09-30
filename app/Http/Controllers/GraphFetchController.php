@@ -9,6 +9,7 @@ use GuzzleHttp\Psr7\Stream;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
+use Microsoft\Graph\Exception\GraphException;
 use Microsoft\Graph\Graph;
 
 class GraphFetchController extends Controller
@@ -54,7 +55,6 @@ class GraphFetchController extends Controller
      * @param $endpoint
      * @param bool $toArray
      * @return mixed|null
-     * @throws \Microsoft\Graph\Exception\GraphException
      */
     public function requestMake($endpoint, $toArray = true)
     {
@@ -68,7 +68,7 @@ class GraphFetchController extends Controller
                 ->setReturnType(Stream::class)
                 ->execute();
             return $toArray ? json_decode($response->getContents(), true) : $response->getContents();
-        } catch (ClientException $e) {
+        } catch (GraphException $e) {
             Tool::showMessage($e->getCode().': 请检查地址是否正确', false);
             return null;
         }
