@@ -13,6 +13,14 @@ use Illuminate\Support\Facades\Session;
 class ManageController extends Controller
 {
     /**
+     * ManageController constructor.
+     */
+    public function __construct()
+    {
+        $this->middleware('checkAuth');
+    }
+
+    /**
      * 登录
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
