@@ -53,18 +53,17 @@ class GraphFetchController extends Controller
      * 构造请求
      * @param $endpoint
      * @param bool $toArray
-     * @param string $method
      * @return mixed|null
      * @throws \Microsoft\Graph\Exception\GraphException
      */
-    public function requestMake($endpoint, $toArray = true, $method = 'get')
+    public function requestMake($endpoint, $toArray = true)
     {
         try {
             $graph = new Graph();
             $graph->setBaseUrl("https://graph.microsoft.com/")
                 ->setApiVersion("v1.0")
                 ->setAccessToken(Tool::config('access_token'));
-            $response = $graph->createRequest($method, $endpoint)
+            $response = $graph->createRequest('get', $endpoint)
                 ->addHeaders(["Content-Type" => "application/json"])
                 ->setReturnType(Stream::class)
                 ->execute();
@@ -79,19 +78,13 @@ class GraphFetchController extends Controller
      * 构造graph请求
      * @param $endpoint
      * @param bool $toArray
-     * @param string $method
-     * @return mixed|null
-     * @throws \Microsoft\Graph\Exception\GraphException
+     * @return mixed
      */
-    public function requestGraph($endpoint, $toArray = true, $method = 'get')
+    public function requestGraph($endpoint, $toArray = true)
     {
-        if (strtolower($method) == 'get') {
-            return Cache::remember('one:endpoint:'.$endpoint,$this->expires,function() use ($method, $endpoint,$toArray) {
-                return $this->requestMake( $endpoint,$toArray ,'get');
-            });
-        } else {
-            return $this->requestMake( $endpoint,$toArray ,$method);
-        }
+        return Cache::remember('one:endpoint:'.$endpoint,$this->expires,function() use ($endpoint,$toArray) {
+            return $this->requestMake( $endpoint,$toArray);
+        });
     }
 
     /**
