@@ -834,6 +834,10 @@
             updateTotalProgress();
         };
 
+        uploader.onUploadSuccess = function( file, response){
+            // 显示上传成功
+        };
+
         uploader.onFileQueued = function( file ) {
             fileCount++;
             fileSize += file.size;
