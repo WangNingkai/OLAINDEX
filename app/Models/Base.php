@@ -242,10 +242,8 @@ class Base extends Model
         $sql = rtrim($sql, ", ")." WHERE ".$referenceColumn." IN (".  rtrim($whereIn, ', ').")";
         // 更新
         $result = DB::update(DB::raw($sql));
-        if ($result) {
-            Tool::showMessage('操作成功');
-        } else {
-            Tool::showMessage('操作失败',false);
+        if (!$result) {
+            abort('400');
         }
         return $result;
     }

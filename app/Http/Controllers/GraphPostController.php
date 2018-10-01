@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use GuzzleHttp\Psr7\Stream;
 use Microsoft\Graph\Core\GraphConstants;
