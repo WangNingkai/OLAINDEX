@@ -56,7 +56,7 @@ class GraphFetchController extends Controller
      * @param bool $toArray
      * @return mixed|null
      */
-    public function requestMake($endpoint, $toArray = true)
+    public function makeRequest($endpoint, $toArray = true)
     {
         try {
             $graph = new Graph();
@@ -83,7 +83,7 @@ class GraphFetchController extends Controller
     public function requestGraph($endpoint, $toArray = true)
     {
         return Cache::remember('one:endpoint:'.$endpoint,$this->expires,function() use ($endpoint,$toArray) {
-            return $this->requestMake( $endpoint,$toArray);
+            return $this->makeRequest( $endpoint,$toArray);
         });
     }
 

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Helpers\Tool;
 use Illuminate\Http\Request;
 use GuzzleHttp\Psr7\Stream;
-use Microsoft\Graph\Core\GraphConstants;
 use Microsoft\Graph\Exception\GraphException;
 use Microsoft\Graph\Graph;
 
@@ -16,10 +15,30 @@ class GraphPostController extends Controller
         $this->middleware('checkToken');
     }
 
-    public function upload(Request $request)
+    public function makeRequest($method,$param, $toArray = true)
+    {
+        list($endpoint,$requestBody) = $param;
+        try {
+            $graph = new Graph();
+            $graph->setBaseUrl("https://graph.microsoft.com/")
+                ->setApiVersion("v1.0")
+                ->setAccessToken(Tool::config('access_token'));
+            $response = $graph->createRequest($method, $endpoint)
+                ->addHeaders(["Content-Type" => "application/json"])
+                ->attachBody($requestBody)
+                ->setReturnType(Stream::class)
+                ->execute();
+            return $toArray ? json_decode($response->getContents(), true) : $response->getContents();
+        } catch (GraphException $e) {
+            Tool::showMessage($e->getCode().': 请检查地址是否正确', false);
+            return null;
+        }
+    }
+
+    public function uploadImage(Request $request)
     {
         if (!$request->isMethod('post'))
-            return view('dev');
+            return view('image');
         $field = 'olaindex_img';
         if (!$request->hasFile($field)) {
             $data =  ['status_code' => 500, 'message' => '上传文件为空'];
@@ -37,28 +56,18 @@ class GraphPostController extends Controller
             return response()->json($data);
         }
         $path = $file->getRealPath();
-        try {
-            if (file_exists($path) && is_readable($path)) {
-                $content = fopen($path,'r');
-                $stream = \GuzzleHttp\Psr7\stream_for($content);
-                $storeFilePath = 'share/Images/Cache/' . date('Y'). '/' . date('m'). '/'.$file->getClientOriginalName(); // 远程图片保存地址
-                $remoteFilePath = trim($storeFilePath,'/');
-                $graph = new Graph();
-                $graph->setBaseUrl("https://graph.microsoft.com/")
-                    ->setApiVersion("v1.0")
-                    ->setAccessToken(Tool::config('access_token'));
-                $response = $graph->createRequest("PUT", "/me/drive/root:/{$remoteFilePath}:/content")
-                    ->attachBody($stream)
-                    ->addHeaders(["Content-Type" => "application/json"])
-                    ->setReturnType(Stream::class)
-                    ->execute();
-                $data = json_decode($response->getContents(),true);
-                return response()->json($data);
-            } else {
-                throw new GraphException(GraphConstants::INVALID_FILE);
-            }
-        } catch (GraphException $e) {
-            throw new $e(GraphConstants::INVALID_FILE);
+        if (file_exists($path) && is_readable($path)) {
+            $content = fopen($path,'r');
+            $stream = \GuzzleHttp\Psr7\stream_for($content);
+            $storeFilePath = 'share/Images/Cache/' . date('Y'). '/' . date('m'). '/'.$file->getClientOriginalName(); // 远程图片保存地址
+            $remoteFilePath = trim($storeFilePath,'/');
+            $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
+            $requestBody = $stream;
+            $data = $this->makeRequest('put',[$endpoint,$requestBody]);
+            return response()->json($data);
+        } else {
+            $data =  ['status_code' => 500, 'message' => '无法获取文件内容'];
+            return response()->json($data);
         }
     }
 }

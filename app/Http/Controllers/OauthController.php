@@ -25,39 +25,37 @@ class OauthController extends Controller
             'clientId'                => config('graph.clientId'),
             'clientSecret'            => config('graph.clientSecret'),
             'redirectUri'             => config('graph.redirectUri'),
-            'urlAuthorize'            => config('graph.urlAuthorize'),
-            'urlAccessToken'          => config('graph.urlAccessToken'),
+            'urlAuthorize'            => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+            'urlAccessToken'          => 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
             'urlResourceOwnerDetails' => 'https://outlook.office.com/api/v1.0/me',
-            'scopes'                  => config('graph.scopes')
+            'scopes'                  => 'openid profile user.read files.readwrite.all offline_access'
         ]);
     }
 
     /**
-     * 授权获取token
+     * 获取授权
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function oauth(Request $request)
     {
-        // 已授权则跳转
         if (Tool::config('access_token') != '' && Tool::config('refresh_token') != '' && Tool::config('access_token_expires') != '' ) {
-            return redirect()->route('list');
+            return redirect()->route('list'); // 检测授权状态
         }
-        // 第一次授权
         if ($request->isMethod('GET') && !$request->has('code')) {
-            // 生成 state 缓存下来 跳转登录
+            // 生成 state 缓存 跳转登录
             $authorizationUrl = $this->provider->getAuthorizationUrl();
             $state = $this->provider->getState();
             Cache::put('state',$state,10);
             return redirect()->away($authorizationUrl); // 跳转授权登录
         } elseif ( $request->isMethod('GET') && $request->has('code') ) {
-            // 验证state
+            // 验证 state
             if (empty($request->get('state')) || ($request->get('state') !== Cache::get('state'))) {
                 if (Cache::has('state'))
                     Cache::forget('state');
                 exit('Invalid state');
             }
-            // 获取accessToken 和 refreshToken
+            // 获取 accessToken & refreshToken
             try {
                 $accessToken = $this->provider->getAccessToken('authorization_code', [
                     'code'     => $_GET['code']
@@ -71,7 +69,7 @@ class OauthController extends Controller
                     'access_token_expires' => $expires
                 ];
                 $this->updateCache($data);
-                // 跳转首页
+                // 保存授权跳转
                 return redirect()->route('list');
             } catch (IdentityProviderException $e) {
                 exit($e->getMessage());
@@ -81,7 +79,7 @@ class OauthController extends Controller
 
 
     /**
-     * 刷新Token
+     * 刷新授权
      * @return \Illuminate\Http\RedirectResponse
      */
     public function refreshToken()
@@ -114,9 +112,8 @@ class OauthController extends Controller
      */
     public function updateCache($data)
     {
-        // 清理缓存
+        // 清理缓存 & 更新数据库
         Cache::forget('config');
-        // 更新数据库
         $editData = [];
         foreach ($data as $k => $v) {
             $editData[] = [
