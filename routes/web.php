@@ -21,8 +21,11 @@ Route::get('/item/{itemId}/download', 'GraphFetchController@oneFetchDownload')->
 Route::get('/item/{itemId}/content', 'GraphFetchController@oneFetchContent')->name('content');
 Route::get('/item/{itemId}/thumb', 'GraphFetchController@oneFetchThumb')->name('thumb')->middleware('throttle:10,10');
 Route::get('/item/{itemId}/view', 'GraphFetchController@oneFetchView')->name('view')->middleware('throttle:10,10');
+
 Route::get('/image', 'GraphPostController@uploadImage')->name('image');
 Route::post('/image/upload', 'GraphPostController@uploadImage')->name('image.upload')->middleware('throttle:10,5');
+
+Route::post('/item/delete', 'GraphPostController@deleteItem')->name('delete');
 
 Route::any('/login', 'ManageController@login')->name('login');
 Route::any('/admin', 'ManageController@basic')->name('admin.basic');

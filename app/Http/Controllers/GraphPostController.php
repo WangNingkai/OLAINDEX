@@ -37,22 +37,23 @@ class GraphPostController extends Controller
 
     public function uploadImage(Request $request)
     {
+
         if (!$request->isMethod('post'))
             return view('image');
         $field = 'olaindex_img';
         if (!$request->hasFile($field)) {
-            $data =  ['status_code' => 500, 'message' => '上传文件为空'];
+            $data =  ['code' => 500, 'message' => '上传文件为空'];
             return response()->json($data);
         }
         $file = $request->file($field);
         $rule = [$field => 'required|max:5096|image'];
         $validator = \Illuminate\Support\Facades\Validator::make(request()->all(), $rule);
         if ($validator->fails()) {
-            $data = ['status_code' => 500, 'message' => $validator->errors()->first()];
+            $data = ['code' => 500, 'message' => $validator->errors()->first()];
             return response()->json($data);
         }
         if (!$file->isValid()) {
-            $data =  ['status_code' => 500, 'message' => '文件上传出错'];
+            $data =  ['code' => 500, 'message' => '文件上传出错'];
             return response()->json($data);
         }
         $path = $file->getRealPath();
@@ -63,11 +64,27 @@ class GraphPostController extends Controller
             $remoteFilePath = trim($storeFilePath,'/');
             $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
             $requestBody = $stream;
-            $data = $this->makeRequest('put',[$endpoint,$requestBody]);
+            $response = $this->makeRequest('put',[$endpoint,$requestBody]);
+            $data = [
+                'code' => 200,
+                'data' => [
+                    'id' => $response['id'],
+                    'filename'=> $response['name'],
+                    'size' => $response['size'],
+                    'time' => $response['lastModifiedDateTime'],
+                    'url'=> route('view',$response['id']),
+                    'delete' => route('delete',$response['id'])
+                ]
+            ];
             return response()->json($data);
         } else {
-            $data =  ['status_code' => 500, 'message' => '无法获取文件内容'];
+            $data =  ['code' => 500, 'message' => '无法获取文件内容'];
             return response()->json($data);
         }
+    }
+
+    public function deleteItem($itemId)
+    {
+
     }
 }
