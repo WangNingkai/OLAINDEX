@@ -12,7 +12,7 @@
             <div class="text-center"><a href="{{ $file['path'] }}" class="btn btn-success"><i class="fa fa-download"></i> 下载</a></div>
             <hr>
             <div class="text-center">
-                <video  width="100%" height="100%" preload controls poster="{{ $file['thumb']['large']['url'] }}">
+                <video  width="100%" height="100%" preload controls poster="{{ $file['thumb'] }}">
                     <source src="{{ $file['@microsoft.graph.downloadUrl'] }}" type="video/mp4">
                 </video>
             </div>
