@@ -236,6 +236,7 @@ class GraphFetchController extends Controller
                     return redirect()->away($url);
                 }
                 $file = $item;
+                dd($file);
                 return view($view,compact('file','pathArr'));
             }
         }

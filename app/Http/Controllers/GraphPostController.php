@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use GuzzleHttp\Psr7\Stream;
 use Microsoft\Graph\Exception\GraphException;
 use Microsoft\Graph\Graph;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 class GraphPostController extends Controller
 {
@@ -17,14 +18,17 @@ class GraphPostController extends Controller
 
     public function makeRequest($method,$param, $toArray = true)
     {
-        list($endpoint,$requestBody) = $param;
+        list($endpoint, $requestBody, $requestHeaders) = $param;
+        $requestHeaders = $requestHeaders ?? [];
+        $requestBody = $requestBody ?? '';
+        $headers = array_merge($requestHeaders,["Content-Type" => "application/json"]);
         try {
             $graph = new Graph();
             $graph->setBaseUrl("https://graph.microsoft.com/")
                 ->setApiVersion("v1.0")
                 ->setAccessToken(Tool::config('access_token'));
             $response = $graph->createRequest($method, $endpoint)
-                ->addHeaders(["Content-Type" => "application/json"])
+                ->addHeaders($headers)
                 ->attachBody($requestBody)
                 ->setReturnType(Stream::class)
                 ->execute();
@@ -37,7 +41,6 @@ class GraphPostController extends Controller
 
     public function uploadImage(Request $request)
     {
-
         if (!$request->isMethod('post'))
             return view('image');
         $field = 'olaindex_img';
@@ -60,11 +63,14 @@ class GraphPostController extends Controller
         if (file_exists($path) && is_readable($path)) {
             $content = fopen($path,'r');
             $stream = \GuzzleHttp\Psr7\stream_for($content);
-            $storeFilePath = 'share/Images/Cache/' . date('Y'). '/' . date('m'). '/'.$file->getClientOriginalName(); // 远程图片保存地址
+            $root = trim(Tool::config('root'),'/');
+            $storeFilePath = $root.'/Images/Cache/' . date('Y'). '/' . date('m'). '/'.$file->getClientOriginalName(); // 远程图片保存地址
             $remoteFilePath = trim($storeFilePath,'/');
             $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
             $requestBody = $stream;
-            $response = $this->makeRequest('put',[$endpoint,$requestBody]);
+            $response = $this->makeRequest('put',[$endpoint,$requestBody,[]]);
+            $sign = $response['id'] . '.' . encrypt($response['eTag']);
+            $fileIdentifier = encrypt($sign);
             $data = [
                 'code' => 200,
                 'data' => [
@@ -73,7 +79,7 @@ class GraphPostController extends Controller
                     'size' => $response['size'],
                     'time' => $response['lastModifiedDateTime'],
                     'url'=> route('view',$response['id']),
-                    'delete' => route('delete',$response['id'])
+                    'delete' => route('delete',$fileIdentifier)
                 ]
             ];
             return response()->json($data);
@@ -83,8 +89,25 @@ class GraphPostController extends Controller
         }
     }
 
-    public function deleteItem($itemId)
+    public function deleteItem($sign)
     {
-
+        try {
+            $deCode = decrypt($sign);
+        } catch (DecryptException $e) {
+            Tool::showMessage($e->getMessage(),false);
+            return view('message');
+        }
+        $reCode = explode('.' ,$deCode);
+        $id = $reCode[0];
+        try {
+            $eTag = decrypt($reCode[1]);
+        } catch (DecryptException $e) {
+            Tool::showMessage($e->getMessage(),false);
+            return view('message');
+        }
+        $endpoint = '/me/drive/items/' . $id;
+        $this->makeRequest('delete',[$endpoint,'',['if-match' => $eTag]]);
+        Tool::showMessage('文件已删除');
+        return view('message');
     }
 }

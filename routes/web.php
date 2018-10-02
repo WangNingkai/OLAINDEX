@@ -25,7 +25,7 @@ Route::get('/item/{itemId}/view', 'GraphFetchController@oneFetchView')->name('vi
 Route::get('/image', 'GraphPostController@uploadImage')->name('image');
 Route::post('/image/upload', 'GraphPostController@uploadImage')->name('image.upload')->middleware('throttle:10,5');
 
-Route::post('/item/delete', 'GraphPostController@deleteItem')->name('delete');
+Route::get('/item/delete/{itemId}', 'GraphPostController@deleteItem')->name('delete');
 
 Route::any('/login', 'ManageController@login')->name('login');
 Route::any('/admin', 'ManageController@basic')->name('admin.basic');

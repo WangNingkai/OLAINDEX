@@ -1,6 +1,7 @@
 @extends('layouts.main')
 @section('title','Root/'.implode('/',$pathArr))
 @section('content')
+    @include('breadcrumb')
     @if (!blank($head))
         <div class="card border-light mb-3">
             <div class="card-header">HEAD</div>

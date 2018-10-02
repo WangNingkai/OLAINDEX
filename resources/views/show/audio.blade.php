@@ -1,9 +1,7 @@
 @extends('layouts.main')
 @section('title',$file['name'])
-@section('css')
-
-@stop
 @section('content')
+    @include('breadcrumb')
     <div class="card border-light mb-3">
         <div class="card-header">
             {{ $file['name'] }}
@@ -29,6 +27,4 @@
             </div>
         </div>
     </div>
-@stop
-@section('js')
 @stop

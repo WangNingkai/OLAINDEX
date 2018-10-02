@@ -139,7 +139,7 @@
             overflow: hidden;
             width: 0;
             height: 100%;
-            background: #1483d8 url(https://cdn.jsdelivr.net/npm/webuploader@0.1.8/_draft/music/icons.png) repeat-x;
+            background: #1483d8 url(https://cdn.jsdelivr.net/npm/webuploader@0.1.8/_draft/music/progress.png) repeat-x;
 
             -webit-transition: width 200ms linear;
             -moz-transition: width 200ms linear;
@@ -415,7 +415,7 @@
             </div>
         </div>
     </div>
-    <div id="showTab" style="display: none;">
+    <div id="showUrl" style="display: none;">
         <ul id="navTab" class="nav nav-tabs">
             <li class="nav-item active show">
                 <a class="nav-link" data-toggle="tab" href="#urlPanel">URL</a>
@@ -813,7 +813,8 @@
                 case 'finish':
                     stats = uploader.getStats();
                     if ( stats.successNum ) {
-                        alert( '上传成功' );
+                        // alert( '上传成功' );
+                       console.log(stats);
                     } else {
                         // 没有成功的图片，重设
                         state = 'done';
@@ -835,7 +836,14 @@
         };
 
         uploader.onUploadSuccess = function( file, response){
-            // 显示上传成功
+            // 上传成功操作
+            $("#showUrl").show();
+            $("#urlCode").append(response.data.url + "\n");
+            $("#htmlCode").append("&lt;img src=\"" + response.data.url + "\" alt=\"" + response.data.filename + "\" title=\"" + response.data.filename + "\" /&gt;" + "\n");
+            $("#bbCode").append("[img]" + response.data.url + "[/img]" + "\n");
+            $("#markdown").append("![" + response.data.filename + "](" + response.data.url + ")" + "\n");
+            $("#markdownLinks").append("[![" + response.data.filename + "](" + response.data.url + ")]" + "(" + response.data.url + ")" + "\n");
+            $("#deleteCode").append(response.data.delete + "\n")
         };
 
         uploader.onFileQueued = function( file ) {

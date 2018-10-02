@@ -1,6 +1,7 @@
 @extends('layouts.main')
 @section('title',$file['name'])
 @section('content')
+    @include('breadcrumb')
     <div class="card border-light mb-3">
         <div class="card-header">
             {{ $file['name'] }}
