@@ -54,7 +54,7 @@ jQuery(function() {
         paste: document.body,
         accept: {
             title: 'Images',
-            extensions: 'gif,jpg,jpeg,bmp,png',
+            extensions: 'gif,jpg,jpeg,bmp,png,ico',
             mimeTypes: 'image/*'
         },
         // swf文件路径
@@ -64,11 +64,10 @@ jQuery(function() {
         formData: {
             '_token' : Config._token
         },
-        // server: 'http://webuploader.duapp.com/server/fileupload.php',
         server: Config.routes.upload_image,
         fileNumLimit: 10,
         fileSizeLimit: 5 * 1024 * 1024,    // 5 M
-        fileSingleSizeLimit: 1 * 1024 * 1024    // 1 M
+        fileSingleSizeLimit: 5 * 1024 * 1024    // 1 M
 });
     // 添加“添加文件”的按钮，
     uploader.addButton({
