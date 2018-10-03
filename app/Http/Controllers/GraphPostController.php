@@ -83,6 +83,7 @@ class GraphPostController extends Controller
                     'delete' => route('delete',$fileIdentifier)
                 ]
             ];
+            @unlink($path);
             return response()->json($data);
         } else {
             $data =  ['code' => 500, 'message' => '无法获取文件内容'];
