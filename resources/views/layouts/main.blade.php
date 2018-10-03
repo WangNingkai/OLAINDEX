@@ -35,14 +35,14 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('list') }}"> Home</a>
                 </li>
-                @if (session()->has('LogInfo'))
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.basic') }}"> Admin</a>
-                    </li>
-                @endif
                 @if (\App\Helpers\Tool::config('image_hosting',false))
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('image') }}"> Image</a>
+                    </li>
+                @endif
+                @if (session()->has('LogInfo'))
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.basic') }}"> Admin</a>
                     </li>
                 @endif
             </ul>
