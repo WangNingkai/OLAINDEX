@@ -12,6 +12,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fancybox@3/dist/css/jquery.fancybox.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/combine/npm/prismjs@1/themes/prism-okaidia.min.css,npm/prismjs@1/plugins/toolbar/prism-toolbar.min.css,npm/prismjs@1/plugins/previewers/prism-previewers.min.css,npm/prismjs@1/plugins/command-line/prism-command-line.min.css">
     @yield('css')
+    <script>
+        Config = {
+            'routes': {
+                'upload_image' : '{{ route('image.upload') }}'
+            },
+            '_token': '{{ csrf_token() }}',
+        };
+    </script>
 </head>
 
 <body>
