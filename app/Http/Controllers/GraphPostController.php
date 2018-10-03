@@ -79,7 +79,7 @@ class GraphPostController extends Controller
                     'filename'=> $response['name'],
                     'size' => $response['size'],
                     'time' => $response['lastModifiedDateTime'],
-                    'url'=> route('view',$response['id']),
+                    'url'=> route('origin.view',$response['id']),
                     'delete' => route('delete',$fileIdentifier)
                 ]
             ];
