@@ -49,6 +49,16 @@ class ParameterTableSeeder extends Seeder
             ]
             ,
             [
+                'name' => 'image_hosting',
+                'value' => '0',
+            ]
+            ,
+            [
+                'name' => 'image_hosting_path',
+                'value' => '',
+            ]
+            ,
+            [
                 'name' => 'image',
                 'value' => 'bmp jpg jpeg png gif',
             ]

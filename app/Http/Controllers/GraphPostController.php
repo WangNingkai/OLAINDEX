@@ -64,7 +64,8 @@ class GraphPostController extends Controller
             $content = fopen($path,'r');
             $stream = \GuzzleHttp\Psr7\stream_for($content);
             $root = trim(Tool::config('root'),'/');
-            $storeFilePath = $root.'/Images/Cache/' . date('Y'). '/' . date('m'). '/'.$file->getClientOriginalName(); // 远程图片保存地址
+            $image_hosting_path = trim(Tool::config('image_hosting_path'),'/');
+            $storeFilePath = $root. '/' . $image_hosting_path . '/' . date('Y'). '/' . date('m'). '/'.$file->getClientOriginalName(); // 远程图片保存地址
             $remoteFilePath = trim($storeFilePath,'/');
             $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
             $requestBody = $stream;

@@ -22,10 +22,9 @@ Route::get('/item/{itemId}/content', 'GraphFetchController@oneFetchContent')->na
 Route::get('/item/{itemId}/thumb', 'GraphFetchController@oneFetchThumb')->name('thumb')->middleware('throttle:10,10');
 Route::get('/item/{itemId}/view', 'GraphFetchController@oneFetchView')->name('view')->middleware('throttle:10,10');
 
-Route::get('/image', 'GraphPostController@uploadImage')->name('image');
-Route::post('/image/upload', 'GraphPostController@uploadImage')->name('image.upload')->middleware('throttle:10,5');
-
-Route::get('/item/delete/{itemId}', 'GraphPostController@deleteItem')->name('delete');
+Route::get('/image', 'GraphPostController@uploadImage')->name('image')->middleware('checkImage');
+Route::post('/image/upload', 'GraphPostController@uploadImage')->name('image.upload')->middleware('throttle:10,5','checkImage');
+Route::get('/item/delete/{itemId}', 'GraphPostController@deleteItem')->name('delete')->middleware('checkImage');
 
 Route::any('/login', 'ManageController@login')->name('login');
 Route::any('/admin', 'ManageController@basic')->name('admin.basic');

@@ -137,7 +137,8 @@ class Tool
         $config = Cache::remember('config', 1440, function () {
             return Parameter::query()->pluck('value', 'name')->toArray();
         });
-        return $key ? ($config[$key] ?: $default) : $config;
+        ;
+        return $key ? (array_key_exists($key,$config) ? $config[$key] : $default) : $config;
     }
 
     /**
