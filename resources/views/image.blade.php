@@ -9,12 +9,12 @@
         <div class="card-body">
             <div class="page-container">
                 <h3>图床</h3>
-                <p>您可以尝试文件拖拽，使用QQ截屏工具，然后激活窗口后粘贴，或者点击添加图片按钮.</p>
+                <p>您可以尝试文件拖拽，使用截图工具，然后激活窗口后粘贴，或者点击添加图片按钮.</p>
                 <div id="uploader" class="wu-example">
                     <div class="queueList">
                         <div id="dndArea" class="placeholder">
                             <div id="filePicker"></div>
-                            <p>或将照片拖到这里，单次最多可选10张</p>
+                            <p>或将照片拖到这里，单次最多可选10张，最大当张图片支持5M</p>
                         </div>
                     </div>
                     <div class="statusBar" style="display:none;">
