@@ -17,6 +17,7 @@ OLAINDEX - Another OneDrive Directory Index
 - 文件一键复制、下载；
 - 后台基本管理，支持主题，预览设置等等（清理缓存后及时生效）。
 - 加密文件夹访问
+- 图床功能
 
 ### 链接
 - 演示地址：[https://dev.ningkai.wang](https://dev.ningkai.wang)
