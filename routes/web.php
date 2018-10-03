@@ -19,11 +19,11 @@ Route::get('/menu/{path?}', 'GraphFetchController@oneFetchItemList')->name('list
 Route::get('/item/{itemId}', 'GraphFetchController@oneShowItem')->name('item');
 Route::get('/item/{itemId}/download', 'GraphFetchController@oneFetchDownload')->name('download');
 Route::get('/item/{itemId}/content', 'GraphFetchController@oneFetchContent')->name('content');
-Route::get('/item/{itemId}/thumb', 'GraphFetchController@oneFetchThumb')->name('thumb')->middleware('throttle:10,10');
-Route::get('/item/{itemId}/view', 'GraphFetchController@oneFetchView')->name('view')->middleware('throttle:10,10');
+Route::get('/item/{itemId}/thumb', 'GraphFetchController@oneFetchThumb')->name('thumb')->middleware('throttle:10,2');
+Route::get('/item/{itemId}/view', 'GraphFetchController@oneFetchView')->name('view')->middleware('throttle:10,2');
 
 Route::get('/image', 'GraphPostController@uploadImage')->name('image')->middleware('checkImage');
-Route::post('/image/upload', 'GraphPostController@uploadImage')->name('image.upload')->middleware('throttle:10,5','checkImage');
+Route::post('/image/upload', 'GraphPostController@uploadImage')->name('image.upload')->middleware('throttle:10,2','checkImage');
 Route::get('/item/delete/{itemId}', 'GraphPostController@deleteItem')->name('delete')->middleware('checkImage');
 
 Route::any('/login', 'ManageController@login')->name('login');
