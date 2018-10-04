@@ -33,7 +33,7 @@
     </div>
     <div id="showUrl" style="display: none;">
         <ul id="navTab" class="nav nav-tabs">
-            <li class="nav-item active show">
+            <li class="nav-item active">
                 <a class="nav-link" data-toggle="tab" href="#urlPanel">URL</a>
             </li>
             <li class="nav-item">
