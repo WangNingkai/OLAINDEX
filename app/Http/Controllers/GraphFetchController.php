@@ -269,6 +269,11 @@ class GraphFetchController extends Controller
     public function oneFetchView($itemId)
     {
         $file = $this->oneFetchItem($itemId);
+        $isBigFile = $file['size'] > 5*1024*1024 ?: false;
+        if ($isBigFile) {
+            Tool::showMessage('文件过大，请下载查看',false);
+            return redirect()->route('list');
+        }
         $url = $file['@microsoft.graph.downloadUrl'];
         $content =  $this->requestHttp('get',$url);
         return response($content,200, [
