@@ -10,10 +10,17 @@
         <div class="form-group">
             <label class="form-control-label" for="theme">站点主题</label>
             <select class="custom-select" name="theme" id="theme">
+                <option value="simplex"  @if(\App\Helpers\Tool::config('theme') == 'simplex') selected @endif>Simplex</option>
                 <option value="materia"  @if(\App\Helpers\Tool::config('theme') == 'materia') selected @endif>Materia</option>
                 <option value="minty"  @if(\App\Helpers\Tool::config('theme') == 'minty') selected @endif>Minty</option>
                 <option value="flatly"  @if(\App\Helpers\Tool::config('theme') == 'flatly') selected @endif>Flatly</option>
                 <option value="cosmo"  @if(\App\Helpers\Tool::config('theme') == 'cosmo') selected @endif>Cosmo</option>
+                <option value="lumen"  @if(\App\Helpers\Tool::config('theme') == 'lumen') selected @endif>Lumen</option>
+                <option value="lux"  @if(\App\Helpers\Tool::config('theme') == 'lux') selected @endif>Lux</option>
+                <option value="darkly"  @if(\App\Helpers\Tool::config('theme') == 'darkly') selected @endif>Darkly</option>
+                <option value="solar"  @if(\App\Helpers\Tool::config('theme') == 'solar') selected @endif>Solar</option>
+                <option value="slate"  @if(\App\Helpers\Tool::config('theme') == 'slate') selected @endif>Slate</option>
+                <option value="superhero"  @if(\App\Helpers\Tool::config('theme') == 'superhero') selected @endif>Superhero</option>
             </select>
         </div>
         <div class="form-group">
