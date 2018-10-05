@@ -11,6 +11,9 @@ use Illuminate\Contracts\Encryption\DecryptException;
 
 class GraphPostController extends Controller
 {
+    /**
+     * GraphPostController constructor.
+     */
     public function __construct()
     {
         $this->middleware('checkToken');
