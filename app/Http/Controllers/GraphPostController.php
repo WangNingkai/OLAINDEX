@@ -16,6 +16,12 @@ class GraphPostController extends Controller
         $this->middleware('checkToken');
     }
 
+    /**
+     * @param $method
+     * @param $param
+     * @param bool $toArray
+     * @return mixed|null
+     */
     public function makeRequest($method,$param, $toArray = true)
     {
         list($endpoint, $requestBody, $requestHeaders) = $param;
@@ -39,6 +45,10 @@ class GraphPostController extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     */
     public function uploadImage(Request $request)
     {
         if (!$request->isMethod('post'))
@@ -91,6 +101,10 @@ class GraphPostController extends Controller
         }
     }
 
+    /**
+     * @param $sign
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function deleteItem($sign)
     {
         try {
