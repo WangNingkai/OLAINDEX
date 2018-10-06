@@ -1,9 +1,12 @@
 OLAINDEX - Another OneDrive Directory Index
-============================
+==========
 
 > 本项目受 Oneindex 启发，功能借鉴其思想，在这里感谢。 项目持续开发，会加入更多功能，欢迎大家提issue.
 
-![OLAINDEX](https://i.loli.net/2018/09/29/5baf23aa9d5ec.png)
+
+![OLAINDEX](https://dev.ningkai.wang/item/origin/view/01FGBPEHT2TSRM4K4ZEVCJ3A2AVBOVKTOE)
+
+![OLAINDEX](https://dev.ningkai.wang/item/origin/view/01FGBPEHV3KII7GWXKMFHKGVTV5M6URPBW)
 
 ### 简介
 
@@ -12,12 +15,13 @@ OLAINDEX - Another OneDrive Directory Index
 - 3.基于 bootswatch 响应式页面布局，适配PC、平板、手机；
 
 ### 功能
-- 前台 OneDrive 目录索引(如果有上传或者删除文件，请后台手动清除缓存)；
+- 前台 OneDrive 目录索引；
 - 代码、图片、文件预览；
 - 文件一键复制、下载；
 - 后台基本管理，支持主题，预览设置等等（清理缓存后及时生效）。
 - 加密文件夹访问
-- 图床功能(支持即时预览)
+- 图床功能
+- 后台文件上传
 
 ### 链接
 - 演示地址：[https://dev.ningkai.wang](https://dev.ningkai.wang)
