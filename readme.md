@@ -4,9 +4,9 @@ OLAINDEX - Another OneDrive Directory Index
 > 本项目受 Oneindex 启发，功能借鉴其思想，在这里感谢。 项目持续开发，会加入更多功能，欢迎大家提issue.
 
 
-![OLAINDEX](https://dev.ningkai.wang/item/origin/view/01FGBPEHT2TSRM4K4ZEVCJ3A2AVBOVKTOE)
+![menu](https://dev.ningkai.wang/item/origin/view/01FGBPEHT2TSRM4K4ZEVCJ3A2AVBOVKTOE)
 
-![OLAINDEX](https://dev.ningkai.wang/item/origin/view/01FGBPEHV3KII7GWXKMFHKGVTV5M6URPBW)
+![image](https://dev.ningkai.wang/item/origin/view/01FGBPEHV3KII7GWXKMFHKGVTV5M6URPBW)
 
 ### 简介
 
