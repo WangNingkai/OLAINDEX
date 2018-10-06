@@ -13,7 +13,7 @@
         Config = {
             'routes': {
                 'upload_image' : '{{ route('image.upload') }}',
-                {{--'upload_file' : '{{ route('file.upload') }}'--}}
+                'upload_file' : '{{ route('admin.file.upload') }}'
             },
             '_token': '{{ csrf_token() }}',
         };
@@ -31,16 +31,19 @@
         <div class="collapse navbar-collapse" id="navbarColor01">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.basic') }}">基础设置 <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="{{ route('admin.basic') }}">基础设置 </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.show') }}">显示设置 <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="{{ route('admin.show') }}">显示设置 </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.profile') }}">其他设置 <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="{{ route('admin.profile') }}">其他设置 </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.clear') }}">缓存清理 <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="{{ route('admin.file') }}">文件上传 </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.clear') }}">缓存清理 </a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto">

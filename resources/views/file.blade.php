@@ -7,7 +7,6 @@
     <div class="form-group">
         <label class="form-control-label" for="target_directory">上传目录</label>
         <input type="text" class="form-control" id="target_directory" name="target_directory">
-        <input type="hidden" name="root" id="root">
     </div>
     <div id="uploader">
         <div id="fileList" class="uploader-list"></div>
@@ -30,10 +29,6 @@
                 state = 'pending',
 
                 uploader;
-            $('#target_directory').on('keypress',function () {
-                $('#root').val(this.value);
-                console.log($('#root').val());
-            });
 
             uploader = WebUploader.create({
 
@@ -59,7 +54,6 @@
 
                 fileSingleSizeLimit: 5*1024*1024
             });
-
             // 当有文件添加进来的时候
             uploader.on( 'fileQueued', function( file ) {
                 $list.append( '<div id="' + file.id + '" class="item">' +
@@ -118,6 +112,8 @@
                 if ( state === 'uploading' ) {
                     uploader.stop();
                 } else {
+                    // 指定上传目录
+                    uploader.options.formData.root = $('#target_directory').val();
                     uploader.upload();
                 }
             });

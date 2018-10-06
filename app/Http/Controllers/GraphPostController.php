@@ -20,6 +20,7 @@ class GraphPostController extends Controller
     }
 
     /**
+     * 构造请求
      * @param $method
      * @param $param
      * @param bool $toArray
@@ -49,6 +50,7 @@ class GraphPostController extends Controller
     }
 
     /**
+     * 图片上传
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
      */
@@ -104,19 +106,23 @@ class GraphPostController extends Controller
         }
     }
 
-/*    public function uploadFile(Request $request)
+    /**
+     * 文件上传
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     */
+    public function uploadFile(Request $request)
     {
         if (!$request->isMethod('post'))
             return view('file');
         $field = 'olaindex_file';
         $target_directory = $request->get('root','/');
-        dd($request->all());
         if (!$request->hasFile($field)) {
             $data =  ['code' => 500, 'message' => '上传文件或目录为空'];
             return response()->json($data);
         }
         $file = $request->file($field);
-        $rule = [$field => 'required|max:50960']; // 上传文件规则
+        $rule = [$field => 'required|max:50960']; // 上传文件规则，单文件指定大小50M
         $validator = \Illuminate\Support\Facades\Validator::make(request()->all(), $rule);
         if ($validator->fails()) {
             $data = ['code' => 500, 'message' => $validator->errors()->first()];
@@ -152,9 +158,10 @@ class GraphPostController extends Controller
             return response()->json($data);
         }
 
-    }*/
+    }
 
     /**
+     * 删除元素
      * @param $sign
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
