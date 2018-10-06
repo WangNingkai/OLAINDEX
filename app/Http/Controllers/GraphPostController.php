@@ -136,7 +136,7 @@ class GraphPostController extends Controller
         if (file_exists($path) && is_readable($path)) {
             $content = fopen($path,'r');
             $stream = \GuzzleHttp\Psr7\stream_for($content);
-            $storeFilePath = trim($target_directory,'/'). '/' .$file->getClientOriginalName(); // 远程图片保存地址
+            $storeFilePath = trim($target_directory,'/'). '/' .$file->getClientOriginalName(); // 远程保存地址
             $remoteFilePath = trim($storeFilePath,'/');
             $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
             $requestBody = $stream;
