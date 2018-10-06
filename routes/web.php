@@ -27,6 +27,9 @@ Route::get('/image', 'GraphPostController@uploadImage')->name('image')->middlewa
 Route::post('/image/upload', 'GraphPostController@uploadImage')->name('image.upload')->middleware('throttle:10,2','checkImage');
 Route::get('/item/delete/{itemId}', 'GraphPostController@deleteItem')->name('delete')->middleware('checkImage');
 
+Route::get('/file', 'GraphPostController@uploadFile')->name('file');
+Route::post('/file/upload', 'GraphPostController@uploadFile')->name('file.upload')->middleware('throttle:10,2');
+
 Route::any('/login', 'ManageController@login')->name('login');
 Route::any('/admin', 'ManageController@basic')->name('admin.basic');
 Route::any('/admin/show', 'ManageController@show')->name('admin.show');

@@ -9,6 +9,15 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4/dist/{{ \App\Helpers\Tool::config('theme','materia') }}/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
     @yield('css')
+    <script>
+        Config = {
+            'routes': {
+                'upload_image' : '{{ route('image.upload') }}',
+                'upload_file' : '{{ route('file.upload') }}'
+            },
+            '_token': '{{ csrf_token() }}',
+        };
+    </script>
 </head>
 
 <body>

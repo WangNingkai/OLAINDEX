@@ -78,7 +78,7 @@ class GraphPostController extends Controller
             $stream = \GuzzleHttp\Psr7\stream_for($content);
             $root = trim(Tool::config('root'),'/');
             $image_hosting_path = trim(Tool::config('image_hosting_path'),'/');
-            $storeFilePath = $root. '/' . $image_hosting_path . '/' . date('Y'). '/' . date('m'). '/'.$file->getClientOriginalName(); // 远程图片保存地址
+            $storeFilePath = $root. '/' . $image_hosting_path . '/' . date('Y'). '/' . date('m'). '/'.str_random(8).'/'.$file->getClientOriginalExtension(); // 远程图片保存地址
             $remoteFilePath = trim($storeFilePath,'/');
             $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
             $requestBody = $stream;
@@ -102,6 +102,56 @@ class GraphPostController extends Controller
             $data =  ['code' => 500, 'message' => '无法获取文件内容'];
             return response()->json($data);
         }
+    }
+
+    public function uploadFile(Request $request)
+    {
+        if (!$request->isMethod('post'))
+            return view('file');
+        $field = 'olaindex_file';
+        $target_directory = $request->get('root','/');
+        dd($request->all());
+        if (!$request->hasFile($field)) {
+            $data =  ['code' => 500, 'message' => '上传文件或目录为空'];
+            return response()->json($data);
+        }
+        $file = $request->file($field);
+        $rule = [$field => 'required|max:50960']; // 上传文件规则
+        $validator = \Illuminate\Support\Facades\Validator::make(request()->all(), $rule);
+        if ($validator->fails()) {
+            $data = ['code' => 500, 'message' => $validator->errors()->first()];
+            return response()->json($data);
+        }
+        if (!$file->isValid()) {
+            $data =  ['code' => 500, 'message' => '文件上传出错'];
+            return response()->json($data);
+        }
+        $path = $file->getRealPath();
+        if (file_exists($path) && is_readable($path)) {
+            $content = fopen($path,'r');
+            $stream = \GuzzleHttp\Psr7\stream_for($content);
+            $storeFilePath = trim($target_directory,'/').$file->getClientOriginalName(); // 远程图片保存地址
+            $remoteFilePath = trim($storeFilePath,'/');
+            $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
+            $requestBody = $stream;
+            $response = $this->makeRequest('put',[$endpoint,$requestBody,[]]);
+            $data = [
+                'code' => 200,
+                'data' => [
+                    'id' => $response['id'],
+                    'filename'=> $response['name'],
+                    'size' => $response['size'],
+                    'time' => $response['lastModifiedDateTime'],
+                    'url'=> route('origin.view',$response['id']),
+                ]
+            ];
+            @unlink($path);
+            return response()->json($data);
+        } else {
+            $data =  ['code' => 500, 'message' => '无法获取文件内容'];
+            return response()->json($data);
+        }
+
     }
 
     /**
