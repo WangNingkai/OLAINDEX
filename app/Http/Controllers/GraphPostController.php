@@ -104,7 +104,7 @@ class GraphPostController extends Controller
         }
     }
 
-    public function uploadFile(Request $request)
+/*    public function uploadFile(Request $request)
     {
         if (!$request->isMethod('post'))
             return view('file');
@@ -152,7 +152,7 @@ class GraphPostController extends Controller
             return response()->json($data);
         }
 
-    }
+    }*/
 
     /**
      * @param $sign
