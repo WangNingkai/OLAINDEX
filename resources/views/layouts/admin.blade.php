@@ -13,7 +13,7 @@
         Config = {
             'routes': {
                 'upload_image' : '{{ route('image.upload') }}',
-                'upload_file' : '{{ route('file.upload') }}'
+                {{--'upload_file' : '{{ route('file.upload') }}'--}}
             },
             '_token': '{{ csrf_token() }}',
         };
