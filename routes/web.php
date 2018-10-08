@@ -15,7 +15,7 @@ Route::get('/oauth', 'OauthController@oauth')->name('oauth');
 Route::get('/refresh', 'OauthController@refreshToken')->name('refresh');
 
 Route::get('/', 'GraphFetchController@oneFetchItemList');
-Route::get('/menu/{path?}', 'GraphFetchController@oneFetchItemList')->name('list');
+Route::get('/list/{path?}', 'GraphFetchController@oneFetchItemList')->name('list');
 Route::get('/item/{itemId}', 'GraphFetchController@oneShowItem')->name('item');
 Route::get('/item/download/{itemId}', 'GraphFetchController@oneFetchDownload')->name('download');
 Route::get('/item/content/{itemId}', 'GraphFetchController@oneFetchContent')->name('content');
