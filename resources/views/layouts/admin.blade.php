@@ -45,6 +45,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('admin.clear') }}">缓存清理 </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://onedrive.live.com/about/signin" target="_blank">OneDrive管理 </a>
+                </li>
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
