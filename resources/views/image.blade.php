@@ -14,7 +14,7 @@
                     <div class="queueList">
                         <div id="dndArea" class="placeholder">
                             <div id="filePicker"></div>
-                            <p>或将照片拖到这里，单次最多可选10张，最大单张图片支持5M</p>
+                            <p>或将照片拖到这里，单次最多可选10张，最大单张图片支持4M</p>
                         </div>
                     </div>
                     <div class="statusBar" style="display:none;">
