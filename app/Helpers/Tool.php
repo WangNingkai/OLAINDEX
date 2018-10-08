@@ -179,7 +179,7 @@ class Tool
      * @param string $key
      * @return bool|mixed|string
      */
-    public static function  encrypt($string,$operation,$key=''){
+    public static function encrypt($string,$operation,$key=''){
         $key = md5($key);
         $key_length = strlen($key);
         $string=$operation == 'D' ? base64_decode($string) : substr(md5($string.$key),0,8).$string;
