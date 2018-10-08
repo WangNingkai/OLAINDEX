@@ -64,7 +64,7 @@ class GraphPostController extends Controller
             return response()->json($data);
         }
         $file = $request->file($field);
-        $rule = [$field => 'required|max:5096|image'];
+        $rule = [$field => 'required|max:4096|image'];
         $validator = \Illuminate\Support\Facades\Validator::make(request()->all(), $rule);
         if ($validator->fails()) {
             $data = ['code' => 500, 'message' => $validator->errors()->first()];
@@ -122,7 +122,7 @@ class GraphPostController extends Controller
             return response()->json($data);
         }
         $file = $request->file($field);
-        $rule = [$field => 'required|max:50960']; // 上传文件规则，单文件指定大小50M
+        $rule = [$field => 'required|max:4096']; // 上传文件规则，单文件指定大小4M
         $validator = \Illuminate\Support\Facades\Validator::make(request()->all(), $rule);
         if ($validator->fails()) {
             $data = ['code' => 500, 'message' => $validator->errors()->first()];

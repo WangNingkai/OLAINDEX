@@ -50,9 +50,9 @@
 
                 fileNumLimit: 10,
 
-                fileSizeLimit: 50*1024*1024,
+                fileSizeLimit: 40*1024*1024,
 
-                fileSingleSizeLimit: 5*1024*1024
+                fileSingleSizeLimit: 4*1024*1024
             });
             // 当有文件添加进来的时候
             uploader.on( 'fileQueued', function( file ) {
