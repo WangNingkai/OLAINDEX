@@ -359,6 +359,10 @@ class GraphFetchController extends Controller
         $endpoint = "/me/drive/root/search(q='{$keyword}')";
         $response =  $this->requestGraph($endpoint, false);
         $items =  $this->formatArray($response);
-        dd($items);
+        $this->oneFilterFolder($items);
+        $items = $this->oneFilterItem($items,['README.md','HEAD.md','.password','.deny']);
+//                dd($items);
+        return view('search',compact('items'));
+
     }
 }
