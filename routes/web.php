@@ -30,6 +30,8 @@ Route::get('/item/delete/{itemId}', 'GraphPostController@deleteItem')->name('del
 Route::get('/admin/file', 'GraphPostController@uploadFile')->name('admin.file')->middleware('checkAuth');
 Route::post('/admin/file/upload', 'GraphPostController@uploadFile')->name('admin.file.upload')->middleware('checkAuth','throttle:10,2');
 
+Route::get('/search', 'GraphFetchController@oneSearchItem')->name('search')->middleware('throttle:10,1');
+
 Route::any('/login', 'ManageController@login')->name('login');
 Route::any('/admin', 'ManageController@basic')->name('admin.basic');
 Route::any('/admin/show', 'ManageController@show')->name('admin.show');

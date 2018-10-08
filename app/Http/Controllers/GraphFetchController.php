@@ -352,4 +352,12 @@ class GraphFetchController extends Controller
         }
         return $items;
     }
+
+    public function oneSearchItem(Request $request)
+    {
+        $keyword = $request->get('q');
+        $endpoint = "/me/drive/root/search(q='{$keyword}')";
+        $response = $this->makeRequest($endpoint,true);
+        dd($response);
+    }
 }
