@@ -356,7 +356,7 @@ class GraphFetchController extends Controller
     public function oneSearchItem(Request $request)
     {
         $keyword = $request->get('q');
-        $endpoint = "/me/drive/root/search(q='{$keyword}')?orderby=name";
+        $endpoint = "/me/drive/root/search(q='{$keyword}')";
         $response =  $this->requestGraph($endpoint, false);
         $items =  $this->formatArray($response);
         dd($items);
