@@ -151,8 +151,8 @@ class Tool
         $patterns = Constants::ICON;
         $icon = '';
         foreach ($patterns as $key => $suffix) {
-            if(in_array($ext,$suffix[1])){
-                $icon = $patterns[$key][0];
+            if(in_array($ext,$suffix[1])) {
+                $icon = $suffix[0];
                 break;
             } else {
                 $icon = 'fa-file-text-o';
