@@ -88,3 +88,8 @@ DB_CONNECTION=sqlite
 - 后台大文件上传，断点续传等
 - 后台目录创建与删除
 - 文件夹加密，密码访问
+
+
+> 小弟的服务器性能有限，所以图片的上传和预览添加了路由请求次数限制，大家可以根据需求更改
+
+![image.png](https://image.ningkai.wang/item/origin/view/01HS36VADQV35WPMQ3AFHZ25AUTVCJIEVN)
