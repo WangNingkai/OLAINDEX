@@ -3,6 +3,8 @@ OLAINDEX - Another OneDrive Directory Index
 
 > 本项目受 Oneindex 启发，功能借鉴其思想，在这里感谢。 项目持续开发，会加入更多功能，欢迎大家提issue.
 
+> 由于本项目基于Laravel 开发，新手建议查看 laravel 的环境搭建再进行部署。
+
 
 ![menu](https://share.imwnk.cn/item/origin/view/01FGBPEHT2TSRM4K4ZEVCJ3A2AVBOVKTOE)
 
@@ -74,15 +76,16 @@ mysql 参考 laravel 文档配置
 
 sqlite ：在 database 目录新建 database.sqlite 文件
 
-`.env` 文件中，删除其他数据库配置，只需填写如下:
-
 不熟悉laravel请注意，sqlite的话请在目录下的database里创建
 
-直接执行
+或者在根目录直接执行
 
 ```bash
 touch database/database.sqlite
 ```
+
+
+`.env` 文件中，删除其他数据库配置，只需填写如下:
 
 ```markup
 DB_CONNECTION=sqlite
