@@ -23,7 +23,7 @@ OLAINDEX - Another OneDrive Directory Index
 - 图床功能
 - 后台文件上传
 
-### 链接
+### 演示链接
 - 演示地址：[https://dev.ningkai.wang](https://dev.ningkai.wang)
 
 ### 安装使用
@@ -38,8 +38,8 @@ git reset --hard
 composer install -vvv 
 cp .env.example .env
 php artisan key:generate
-php artisan migrate
-php artisan db:seed
+php artisan migrate #这两句导入数据请先配置好下文数据库再执行否则报错执行不下去
+php artisan db:seed #这两句导入数据请先配置好下文数据库再执行否则报错执行不下去
 chmod -R 755 storage/
 chown -R www:www *
 ```
@@ -50,6 +50,8 @@ __首次安装需要填写相关配置文件，申请 `client_id` 和 `client_se
 申请地址：https://apps.dev.microsoft.com/ 
 
 申请完毕还有一个回调地址 `redirect_uri` 注意不要填错！
+
+`redirect_uri` 请写 `https://you.domain/oauth` ，api配置和项目env配置请保持一致。
 
 ![添加应用](https://i.loli.net/2018/09/29/5baf1b04c30d7.png)
 ![注册名称](https://i.loli.net/2018/09/29/5baf1b05b58e3.png)
@@ -74,6 +76,14 @@ sqlite ：在 database 目录新建 database.sqlite 文件
 
 `.env` 文件中，删除其他数据库配置，只需填写如下:
 
+不熟悉laravel请注意，sqlite的话请在目录下的database里创建
+
+直接执行
+
+```bash
+touch database/database.sqlite
+```
+
 ```markup
 DB_CONNECTION=sqlite
 ```  
@@ -85,9 +95,11 @@ DB_CONNECTION=sqlite
 
 ### TODO
 
+- 优化 client_id、client_secret的申请
 - 后台大文件上传，断点续传等
 - 后台目录创建与删除
 - 文件夹加密，密码访问
+- 更多视频以及字幕支持
 
 
 > 小弟的服务器性能有限，所以图片的上传和预览添加了路由请求次数限制，大家可以根据需求更改
