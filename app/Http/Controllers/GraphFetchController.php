@@ -15,7 +15,7 @@ use Microsoft\Graph\Graph;
 class GraphFetchController extends Controller
 {
     /**
-     * 缓存超时时间
+     * 缓存超时时间 建议10分钟以下，否则会导致资源失效
      * @var int|mixed|string
      */
     public $expires = 10;
