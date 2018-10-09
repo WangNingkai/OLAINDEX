@@ -45,7 +45,7 @@ class GraphFetchController extends Controller
             'image' => explode(' ', Tool::config('image')),
             'video' => explode(' ', Tool::config('video')),
             'audio' => explode(' ', Tool::config('audio')),
-            'code' => explode(' ', Tool::config('code')), // php文件由于web服务器原因无法预览
+            'code' => explode(' ', Tool::config('code')),
             'doc' => explode(' ', Tool::config('doc')),
         ];
     }
