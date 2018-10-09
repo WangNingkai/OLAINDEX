@@ -199,7 +199,7 @@ class Constants {
 
     const ICON = [
         'stream'=>['fa-file-text-o',['txt','log']],
-        'image' => ['fa-file-image-o',['bmp','jpg','jpeg','png','gif','ico']],
+        'image' => ['fa-file-image-o',['bmp','jpg','jpeg','png','gif','ico','jpe']],
         'video' => ['fa-file-video-o',['mkv','mp4']],
         'audio' => ['fa-file-audio-o',['mp3','wma']],
         'code' => ['fa-file-code-o',['html','htm', 'css', 'go','java','js','json','txt','sh','md','php']],
