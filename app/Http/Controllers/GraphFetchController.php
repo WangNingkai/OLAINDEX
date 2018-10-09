@@ -357,19 +357,4 @@ class GraphFetchController extends Controller
         }
         return $items;
     }
-
-    public function oneSearchItem(Request $request)
-    {
-        $keyword = $request->get('q');
-        $root = trim($this->root,'/'); // 过滤搜索范围
-        $endpoint = "/me/drive/root:/{$root}:/search(q='{$keyword}')?orderby=lastModifiedDateTime+desc";
-        $response =  $this->requestGraph($endpoint, true);
-        $items =  $this->formatArray($response);
-//        $this->oneFilterFolder($items);
-//        $items = $this->oneFilterItem($items,['README.md','HEAD.md','.password','.deny']);
-//        return $response;
-        dd($items);
-//        return view('search',compact('items'));
-
-    }
 }
