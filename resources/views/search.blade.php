@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title','搜索'.request()->get('q')))
+@section('title','搜索'.request()->get('q'))
 @section('content')
     <div class="card border-light mb-3">
         <div class="card-header">
