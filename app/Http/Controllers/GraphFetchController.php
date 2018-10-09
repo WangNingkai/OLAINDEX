@@ -126,7 +126,12 @@ class GraphFetchController extends Controller
                 }
                 $files = [];
                 foreach ($items['value'] as $item) {
-                    $item['ext'] = !isset($item['folder']) ? strtolower(pathinfo($item['name'], PATHINFO_EXTENSION)) : false;
+                    if (isset($item['file'])) {
+                        if ($item['file']['mimeType'] == 'application/x-zip-compressed')
+                            $item['ext'] = 'zip';
+                        else
+                            $item['ext'] = Tool::getExt($item['file']['mimeType']);
+                    }
                     $files[$item['name']] = $item;
                 }
                 return $files;
@@ -356,13 +361,15 @@ class GraphFetchController extends Controller
     public function oneSearchItem(Request $request)
     {
         $keyword = $request->get('q');
-        $endpoint = "/me/drive/root/search(q='{$keyword}')";
-        $response =  $this->requestGraph($endpoint, false);
+        $root = trim($this->root,'/'); // 过滤搜索范围
+        $endpoint = "/me/drive/root:/{$root}:/search(q='{$keyword}')?orderby=lastModifiedDateTime+desc";
+        $response =  $this->requestGraph($endpoint, true);
         $items =  $this->formatArray($response);
-        $this->oneFilterFolder($items);
-        $items = $this->oneFilterItem($items,['README.md','HEAD.md','.password','.deny']);
-//                dd($items);
-        return view('search',compact('items'));
+//        $this->oneFilterFolder($items);
+//        $items = $this->oneFilterItem($items,['README.md','HEAD.md','.password','.deny']);
+//        return $response;
+        dd($items);
+//        return view('search',compact('items'));
 
     }
 }

@@ -38,8 +38,3 @@ Route::any('/admin/show', 'ManageController@show')->name('admin.show');
 Route::any('/admin/profile', 'ManageController@profile')->name('admin.profile');
 Route::any('/admin/clear', 'ManageController@clear')->name('admin.clear');
 Route::post('/logout', 'ManageController@logout')->name('logout');
-
-
-
-
-

@@ -148,18 +148,7 @@ class Tool
      */
     public static function getExtIcon($ext)
     {
-        $patterns = [
-            'stream'=>['fa-file-text-o',['txt','log']],
-            'image' => ['fa-file-image-o',['bmp','jpg','jpeg','png','gif','ico']],
-            'video' => ['fa-file-video-o',['mkv','mp4']],
-            'audio' => ['fa-file-audio-o',['mp3']],
-            'code' => ['fa-file-code-o',['html','htm', 'css', 'go','java','js','json','txt','sh','md','php']],
-            'doc' => ['fa-file-word-o',['csv','doc','docx','odp','ods','odt','pot','potm','potx','pps','ppsx','ppsxm','ppt','pptm','pptx','rtf','xls','xlsx']],
-            'pdf' => ['fa-file-pdf-o',['pdf']],
-            'zip' => ['fa-file-archive-o',['zip','7z','rar','bz','gz']],
-            'android' => ['fa-android',['apk']],
-            'exe' => ['fa-windows',['exe','msi']],
-        ];
+        $patterns = Constants::ICON;
         $icon = '';
         foreach ($patterns as $key => $suffix) {
             if(in_array($ext,$suffix[1])){
@@ -170,6 +159,26 @@ class Tool
             }
         }
         return $icon;
+    }
+
+    /**
+     * 获取文件后缀
+     * @param $mimeType
+     * @return int|string
+     */
+    public static function getExt($mimeType)
+    {
+        $patterns = Constants::EXT;
+        $suffix = '';
+        foreach ($patterns as $ext => $mime) {
+            if($mimeType == $mime){
+                $suffix = $ext;
+                break;
+            } else {
+                $suffix = 'unknown';
+            }
+        }
+        return $suffix;
     }
 
     /**

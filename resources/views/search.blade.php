@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title','搜索'.request()->get('q'))
+@section('title','搜索：'.request()->get('q'))
 @section('content')
     <div class="card border-light mb-3">
         <div class="card-header">
@@ -24,7 +24,7 @@
                                 <a href="#" title="{{ $item['name'] }}">
                                     <i class="fa fa-folder"></i> {{ \App\Helpers\Tool::subStr($item['name'],0,20) }}
                                 </a>
-                            @else
+                            @elseif(isset($item['file']))
                                 <a href="{{ route('item',$item['id']) }}" title="{{ $item['name'] }}">
                                     <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i>  {{ \App\Helpers\Tool::subStr($item['name'],0,20) }}
                                 </a>
@@ -37,7 +37,7 @@
                             <span class="pull-right">{{ \App\Helpers\Tool::convertSize($item['size']) }}</span>
                         </div>
                     </div>
-                </li>
+                </li>   
             @endforeach
         </div>
     </div>
