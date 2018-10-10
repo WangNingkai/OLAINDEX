@@ -3,7 +3,7 @@ OLAINDEX - Another OneDrive Directory Index
 
 ![OLAINDEX](https://image.ningkai.wang/item/origin/view/01HS36VAGUMSWK624D6FDYB57VMIYU4NLE)
 
-此图来自 https://51.ruyo.net/，感谢推广
+此图来自 [如有乐享](https://51.ruyo.net/)，感谢推广
 
 > 本项目受 Oneindex 启发，功能借鉴其思想，在这里感谢。 项目持续开发，会加入更多功能，欢迎大家提issue.
 > 由于本项目基于Laravel 开发，新手建议查看 laravel 的环境搭建再进行部署。
