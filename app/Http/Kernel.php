@@ -63,5 +63,6 @@ class Kernel extends HttpKernel
         'checkToken' => \App\Http\Middleware\VerifyAccessToken::class,
         'checkAuth' => \App\Http\Middleware\VerifyAuth::class,
         'checkImage' => \App\Http\Middleware\CheckImage::class,
+        'checkInstall' => \App\Http\Middleware\CheckInstall::class,
     ];
 }

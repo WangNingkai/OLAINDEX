@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 // 安装
-Route::any('/1st-install', 'InitController@_1stInstall')->name('_1stInstall');
-Route::any('/app-apply', 'InitController@apply')->name('apply');
+Route::any('/install', 'InitController@_1stInstall')->name('_1stInstall');
+Route::any('/install/apply', 'InitController@apply')->name('apply');
 
 // 授权、刷新Token
 Route::get('/oauth', 'OauthController@oauth')->name('oauth');

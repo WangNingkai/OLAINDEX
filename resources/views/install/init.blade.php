@@ -8,7 +8,7 @@
                 <div class="form-group">
                     <label class="form-control-label" for="redirect_uri">redirect_uri </label>
                     <input type="text" class="form-control" id="redirect_uri" name="redirect_uri" value="http://localhost:8000/oauth">
-                    <small class="form-text text-danger">演示为本地地址，正确回调地址格式: https://you.domain/oauth</small>
+                    <span class="form-text text-danger">如已申请，请直接在下面配置填写</span>
                 </div>
                 <button type="submit" class="btn btn-info">申请</button>
             </form>
@@ -22,7 +22,7 @@
                 <div class="form-group">
                     <label class="form-control-label" for="redirect_uri">redirect_uri </label>
                     <input type="text" class="form-control" id="redirect_uri" name="redirect_uri" value="http://localhost:8000/oauth">
-                    <small class="form-text text-danger">演示为本地地址，正确回调地址格式: https://you.domain/oauth</small>
+                    <span class="form-text text-danger">演示为本地地址，正确回调地址格式: https://you.domain/oauth 必须为 https</span>
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" for="client_id">client_id</label>

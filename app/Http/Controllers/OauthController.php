@@ -21,17 +21,11 @@ class OauthController extends Controller
      */
     public function __construct()
     {
-        // 检测是否配置client_id等信息
-        $client_id = Tool::config('client_id');
-        $client_secret = Tool::config('client_secret');
-        $redirect_uri = Tool::config('redirect_uri');
-        if ($client_id == '' || $client_secret == '' || $redirect_uri == '' ) {
-            return redirect()->route('_1stInstall');
-        }
+        $this->middleware('checkInstall');
         $this->provider = new GenericProvider([
-            'clientId'                => $client_id,
-            'clientSecret'            => $client_secret,
-            'redirectUri'             => $redirect_uri,
+            'clientId'                => Tool::config('client_id'),
+            'clientSecret'            => Tool::config('client_secret'),
+            'redirectUri'             => Tool::config('redirect_uri'),
             'urlAuthorize'            => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
             'urlAccessToken'          => 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
             'urlResourceOwnerDetails' => 'https://outlook.office.com/api/v1.0/me',
