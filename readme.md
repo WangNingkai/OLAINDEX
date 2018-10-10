@@ -2,11 +2,10 @@ OLAINDEX - Another OneDrive Directory Index
 ==========
 
 > 本项目受 Oneindex 启发，功能借鉴其思想，在这里感谢。 项目持续开发，会加入更多功能，欢迎大家提issue.
-
 > 由于本项目基于Laravel 开发，新手建议查看 laravel 的环境搭建再进行部署。
 
 
-![menu](https://share.imwnk.cn/item/origin/view/01FGBPEHT2TSRM4K4ZEVCJ3A2AVBOVKTOE)
+![list](https://share.imwnk.cn/item/origin/view/01FGBPEHT2TSRM4K4ZEVCJ3A2AVBOVKTOE)
 
 ![image](https://share.imwnk.cn/item/origin/view/01FGBPEHV3KII7GWXKMFHKGVTV5M6URPBW)
 
@@ -20,15 +19,27 @@ OLAINDEX - Another OneDrive Directory Index
 - 前台 OneDrive 目录索引；
 - 代码、图片、文件预览；
 - 文件一键复制、下载；
-- 后台基本管理，支持主题，预览设置等等（清理缓存后及时生效）。
-- 加密文件夹访问
-- 图床功能
-- 后台文件上传
+- 后台基本管理，支持主题，预览设置等等（清理缓存后及时生效）；
+- 加密文件夹访问；
+- 图床功能；
+- 后台文件上传。
 
 ### 演示链接
 - 演示地址：[https://dev.ningkai.wang](https://dev.ningkai.wang)
 
 ### 安装使用
+
+#### 服务器要求
+
+- PHP >= 7.1.3
+- OpenSSL PHP
+- PHP PDO 扩展
+- PHP Mbstring 扩展
+- PHP Tokenizer 扩展
+- PHP XML 扩展
+- PHP Ctype 扩展
+- PHP JSON 扩展
+
 
 #### 基础安装
 
@@ -45,28 +56,6 @@ php artisan migrate # 必须先创建数据库执行以下操作
 php artisan db:seed
 chmod -R 755 storage/
 chown -R www:www *
-```
-
-#### 申请 client_id、client_secret
-__首次安装需要填写相关配置文件，申请 `client_id` 和 `client_secret`__
-
-申请地址：https://apps.dev.microsoft.com/ 
-
-申请完毕还有一个回调地址 `redirect_uri` 注意不要填错！
-
-`redirect_uri` 请写 `https://you.domain/oauth` ，api配置和项目env配置请保持一致。
-
-![添加应用](https://i.loli.net/2018/09/29/5baf1b04c30d7.png)
-![注册名称](https://i.loli.net/2018/09/29/5baf1b05b58e3.png)
-![获取client_id、 client_secret并填写回调地址](https://i.loli.net/2018/09/29/5baf1b06e42d6.png)
-![勾选权限](https://i.loli.net/2018/09/29/5baf1b07db8f3.png)
-
-获取完成后请到 `.env` 文件中填写。
-
-```markup
-GRAPH_CLIENT_ID=xxx
-GRAPH_CLIENT_SECRET="xxx"
-GRAPH_REDIRECT_URI=https://xxx
 ```
 
 #### 数据库配置
@@ -92,17 +81,60 @@ touch database/database.sqlite
 DB_CONNECTION=sqlite
 ```  
 
-### 操作
+#### Web服务器配置
 
-后台密码 ： `12345678`;
-也可通过命令行工具 `php artisan reset:password` 生成一个8位数的密码
+**Apache**
+
+```
+Options +FollowSymLinks
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [L]
+```
+
+**Nginx**
+
+```
+location / {
+    try_files $uri $uri/ /index.php?$query_string;
+}
+```
+
+#### 关于申请 client_id、client_secret
+__首次安装需要填写相关配置文件，申请 `client_id` 和 `client_secret`__
+
+申请地址：https://apps.dev.microsoft.com/ 
+
+申请完毕，还有一个回调地址 `redirect_uri` 注意不要填错！
+
+`redirect_uri` 请写 `https://you.domain/oauth` ，api配置和项目env配置请保持一致。
+
+![添加应用](https://i.loli.net/2018/09/29/5baf1b04c30d7.png)
+![注册名称](https://i.loli.net/2018/09/29/5baf1b05b58e3.png)
+![获取client_id、 client_secret并填写回调地址](https://i.loli.net/2018/09/29/5baf1b06e42d6.png)
+![勾选权限](https://i.loli.net/2018/09/29/5baf1b07db8f3.png)
+
+获取完成后请到 `.env` 文件中填写。
+
+```markup
+GRAPH_CLIENT_ID=xxx
+GRAPH_CLIENT_SECRET="xxx"
+GRAPH_REDIRECT_URI=https://xxx
+```
+
+### 后台操作
+
+初始后台密码 ： `12345678`;
+也可通过命令行工具 `php artisan reset:password` 生成一个新的8位数的密码
 
 ### TODO
 
 - 优化安装流程（包括client_id、client_secret的申请，这里感谢 @donwa 的指导）
-- 后台大文件上传，断点续传等
 - 后台目录创建与删除
 - 文件夹加密，密码访问
+- 后台大文件上传，断点续传等
 - 更多视频以及字幕支持
 
 
