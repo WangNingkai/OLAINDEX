@@ -1,12 +1,13 @@
-OLAINDEX - Another OneDrive Directory Index
-==========
+OLAINDEX
+===
+
+## Another OneDrive Directory Index
 
 ![OLAINDEX](https://image.ningkai.wang/item/origin/view/01HS36VAGUMSWK624D6FDYB57VMIYU4NLE)
 
 此图来自 [如有乐享](https://51.ruyo.net/)，感谢推广
 
 > 本项目受 Oneindex 启发，功能借鉴其思想，在这里感谢。 项目持续开发，会加入更多功能，欢迎大家提issue.
-> 由于本项目基于Laravel 开发，新手建议查看 laravel 的环境搭建再进行部署。
 
 
 ![list](https://share.imwnk.cn/item/origin/view/01FGBPEHT2TSRM4K4ZEVCJ3A2AVBOVKTOE)
@@ -20,12 +21,12 @@ OLAINDEX - Another OneDrive Directory Index
 - 3.基于 bootswatch 响应式页面布局，适配PC、平板、手机；
 
 ### 功能
-- 前台 OneDrive 目录索引；
-- 代码、图片、文件预览；
+- OneDrive 目录索引；
+- 代码、图片、文件及时预览；
 - 文件一键复制、下载；
 - 后台基本管理，支持主题，预览设置等等（清理缓存后及时生效）；
-- 加密文件夹访问；
-- 图床功能；
+- 加密文件夹访问（需登录管理）；
+- 图床功能（国内不太稳低）；
 - 后台文件上传。
 
 ### 演示链接
@@ -34,7 +35,9 @@ OLAINDEX - Another OneDrive Directory Index
 
 ### 安装使用
 
-帮助文档 ：[Wiki](https://github.com/WangNingkai/OLAINDEX/wiki)
+> 由于本项目基于Laravel 开发，新手建议查看 laravel 的环境搭建再进行部署。
+
+**帮助文档 ：**[Wiki](https://github.com/WangNingkai/OLAINDEX/wiki)
 
 ### 更新升级
 
@@ -56,7 +59,7 @@ php artisan update:install
 
 ### TODO
 
-- 优化安装流程（包括client_id、client_secret的申请，这里感谢 @donwa 的指导）
+- 优化安装流程（包括client_id、client_secret的申请，这里感谢 @donwa 的指导）（已加入）
 - 后台目录创建与删除
 - 文件夹加密，密码访问
 - 后台大文件上传，断点续传等
