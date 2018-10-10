@@ -35,6 +35,18 @@ OLAINDEX - Another OneDrive Directory Index
 
 帮助文档 ：[Wiki](https://github.com/WangNingkai/OLAINDEX/wiki)
 
+### 升级
+
+- **2018.10.10**
+由于安装流程优化，从原先版本升级请自行执行以下代码：
+
+```
+git pull
+composer install -vvv
+php artisna update:install
+```
+
+
 #### 版本
 
 - release: 测试相对稳定代码
