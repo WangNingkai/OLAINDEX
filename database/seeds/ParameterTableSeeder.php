@@ -14,6 +14,22 @@ class ParameterTableSeeder extends Seeder
         \Illuminate\Support\Facades\DB::table('parameters')->delete();
         \Illuminate\Support\Facades\DB::table('parameters')->insert([
             [
+                'name' => 'app_version',
+                'value' => 'v1.0',
+            ],
+            [
+                'name' => 'client_id',
+                'value' => '',
+            ],
+            [
+                'name' => 'client_secret',
+                'value' => '',
+            ],
+            [
+                'name' => 'redirect_uri',
+                'value' => '',
+            ],
+            [
                 'name' => 'access_token',
                 'value' => '',
             ]

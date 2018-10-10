@@ -114,7 +114,7 @@ class GraphPostController extends Controller
     public function uploadFile(Request $request)
     {
         if (!$request->isMethod('post'))
-            return view('file');
+            return view('admin.file');
         $field = 'olaindex_file';
         $target_directory = $request->get('root','/');
         if (!$request->hasFile($field)) {

@@ -3,6 +3,8 @@ namespace App\Helpers;
 
 class Constants {
 
+    const LATEST_VERSION = 'v1.0';
+
     const EXT = [
         'acx' => 'application/internet-property-stream',
         'ai' => 'application/postscript',

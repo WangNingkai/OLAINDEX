@@ -21,10 +21,17 @@ class OauthController extends Controller
      */
     public function __construct()
     {
+        // 检测是否配置client_id等信息
+        $client_id = Tool::config('client_id');
+        $client_secret = Tool::config('client_secret');
+        $redirect_uri = Tool::config('redirect_uri');
+        if ($client_id == '' || $client_secret == '' || $redirect_uri == '' ) {
+            return redirect()->route('_1stInstall');
+        }
         $this->provider = new GenericProvider([
-            'clientId'                => config('graph.clientId'),
-            'clientSecret'            => config('graph.clientSecret'),
-            'redirectUri'             => config('graph.redirectUri'),
+            'clientId'                => $client_id,
+            'clientSecret'            => $client_secret,
+            'redirectUri'             => $redirect_uri,
             'urlAuthorize'            => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
             'urlAccessToken'          => 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
             'urlResourceOwnerDetails' => 'https://outlook.office.com/api/v1.0/me',
@@ -39,11 +46,12 @@ class OauthController extends Controller
      */
     public function oauth(Request $request)
     {
+        // 检测是否已授权
         if (Tool::config('access_token') != '' && Tool::config('refresh_token') != '' && Tool::config('access_token_expires') != '' ) {
             return redirect()->route('list'); // 检测授权状态
         }
         if ($request->isMethod('GET') && !$request->has('code')) {
-            // 生成 state 缓存 跳转登录
+            // 生成state缓存，跳转授权登录
             $authorizationUrl = $this->provider->getAuthorizationUrl();
             $state = $this->provider->getState();
             Cache::put('state',$state,10);

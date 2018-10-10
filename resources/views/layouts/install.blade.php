@@ -6,20 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title')</title>
-    <meta name="keywords" content="OLAINDEX,OneDrive,Index,Microsoft OneDrive,Directory Index" />
-    <meta name="description" content="OLAINDEX,Another OneDrive Directory Index" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4/dist/{{ \App\Helpers\Tool::config('theme','materia') }}/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@2/github-markdown.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fancybox@3/dist/css/jquery.fancybox.min.css">
-
     @yield('css')
     <script>
         Config = {
-            'routes': {
-                'upload_image' : '{{ route('image.upload') }}'
-            },
             '_token': '{{ csrf_token() }}',
         };
     </script>
@@ -38,16 +32,6 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('list') }}"> Home</a>
                 </li>
-                @if (\App\Helpers\Tool::config('image_hosting',false))
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('image') }}"> Image</a>
-                    </li>
-                @endif
-                @if (session()->has('LogInfo'))
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.basic') }}"> Admin</a>
-                    </li>
-                @endif
             </ul>
         </div>
     </div>
@@ -71,30 +55,8 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/fancybox@3/dist/js/jquery.fancybox.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/return-top@1/dist/x-return-top.min.js" left="85%" bottom="10%" text="返回顶部"></script>
 @yield('js')
-<script>
-    $(function(){
-        let clipboard = new ClipboardJS('.clipboard');
-        clipboard.on('success', function(e) {
-            console.info('Action:', e.action);
-            console.info('Text:', e.text);
-            console.info('Trigger:', e.trigger);
-            e.clearSelection();
-        });
-        clipboard.on('error', function(e) {
-            console.error('Action:', e.action);
-            console.error('Trigger:', e.trigger);
-        });
-        $("a.fancybox").fancybox();
-        $('[data-toggle="tooltip"]').tooltip({
-            title:'已复制',
-            trigger:'click'
-        });
-    });
-</script>
 </body>
 
 </html>
