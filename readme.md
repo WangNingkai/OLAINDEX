@@ -29,7 +29,9 @@ OLAINDEX - Another OneDrive Directory Index
 
 ### 安装使用
 
-#### 服务器要求
+#### 服务器环境要求
+
+首先确保服务器满足以下要求
 
 - PHP >= 7.1.3
 - OpenSSL PHP
@@ -40,6 +42,21 @@ OLAINDEX - Another OneDrive Directory Index
 - PHP Ctype 扩展
 - PHP JSON 扩展
 
+注意：
+laravel程序安装需要开启禁用的两个方法，步骤如下：
+
+```
+1、进入php.ini文件，找到disable_function=，删除proc_open函数，即可。
+2、进入php.ini文件，找到disable_function=，删除proc_get_status函数，即可。
+3、sudo service php-fpm restart # 重启 php 进程
+```
+
+另外使用composer包管理 需要下载 composer 并且全局处理，步骤如下：
+```
+1、curl -sS https://getcomposer.org/installer | php  
+2、mv /tmp/composer.phar /usr/local/bin/composer 
+3、 composer config -g repo.packagist composer https://packagist.laravel-china.org # 更换源为国内源，国外服务器可忽略此步骤
+```
 
 #### 基础安装
 
@@ -74,7 +91,6 @@ sqlite ：在 database 目录新建 database.sqlite 文件
 touch database/database.sqlite
 ```
 
-
 `.env` 文件中，删除其他数据库配置，只需填写如下:
 
 ```markup
@@ -102,7 +118,7 @@ location / {
 }
 ```
 
-#### 关于申请 client_id、client_secret
+#### 关于申请 client_id、client_secret（后续会简化集成进来）
 __首次安装需要填写相关配置文件，申请 `client_id` 和 `client_secret`__
 
 申请地址：https://apps.dev.microsoft.com/ 
@@ -124,9 +140,11 @@ GRAPH_CLIENT_SECRET="xxx"
 GRAPH_REDIRECT_URI=https://xxx
 ```
 
-### 后台操作
+### 后台登录
 
-初始后台密码 ： `12345678`;
+后台地址：`https://you.domain/admin`
+
+初始后台密码： `12345678`;
 也可通过命令行工具 `php artisan reset:password` 生成一个新的8位数的密码
 
 ### TODO
