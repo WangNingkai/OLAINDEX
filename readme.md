@@ -40,8 +40,9 @@ git reset --hard
 composer install -vvv 
 cp .env.example .env
 php artisan key:generate
-php artisan migrate #这两句导入数据请先配置好下文数据库再执行否则报错执行不下去
-php artisan db:seed #这两句导入数据请先配置好下文数据库再执行否则报错执行不下去
+touch database/database.sqlite # 这里演示的是sqlite数据库（强烈推荐，便于数据迁移）
+php artisan migrate # 必须先创建数据库执行以下操作
+php artisan db:seed
 chmod -R 755 storage/
 chown -R www:www *
 ```
@@ -98,7 +99,7 @@ DB_CONNECTION=sqlite
 
 ### TODO
 
-- 优化 client_id、client_secret的申请
+- 优化安装流程（包括client_id、client_secret的申请，这里感谢 @donwa 的指导）
 - 后台大文件上传，断点续传等
 - 后台目录创建与删除
 - 文件夹加密，密码访问
