@@ -29,21 +29,22 @@ OLAINDEX - Another OneDrive Directory Index
 - 后台文件上传。
 
 ### 演示链接
+
 - 演示地址：[https://dev.ningkai.wang](https://dev.ningkai.wang)
 
 ### 安装使用
 
 帮助文档 ：[Wiki](https://github.com/WangNingkai/OLAINDEX/wiki)
 
-### 升级
+### 更新升级
 
-- **2018.10.10**
+- **2018.10.10 / v1.0**
 由于安装流程优化，从原先版本升级请自行执行以下代码：
 
 ```
 git pull
 composer install -vvv
-php artisna update:install
+php artisan update:install
 ```
 
 
