@@ -57,6 +57,9 @@
                                     <a href="javascript:void(0)" data-clipboard-text="{{ route('list',$path ? $path.'-'.$item['name'] : $item['name']) }}" class="clipboard" title="已复制" data-toggle="tooltip"
                                        data-placement="right" ><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;
                                 @else
+                                    @if(isset($item['image']))
+                                        <a href="{{ route('origin.view',$item['id']) }}" data-fancybox="image-list"><i class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
+                                    @endif
                                     <a href="{{ route('download',$item['id']) }}"><i class="fa fa-download" title="下载"></i></a>&nbsp;&nbsp;
                                     <a href="javascript:void(0)" data-clipboard-text="{{ route('download',$item['id']) }}" class="clipboard" title="已复制" data-toggle="tooltip"
                                        data-placement="right" ><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;

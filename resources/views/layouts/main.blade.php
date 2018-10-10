@@ -77,6 +77,10 @@
 @yield('js')
 <script>
     $(function(){
+        $('[data-fancybox="image-list"]').fancybox({
+            "type": "image",
+            protect: true
+        });
         let clipboard = new ClipboardJS('.clipboard');
         clipboard.on('success', function(e) {
             console.info('Action:', e.action);
@@ -88,7 +92,6 @@
             console.error('Action:', e.action);
             console.error('Trigger:', e.trigger);
         });
-        $("a.fancybox").fancybox();
         $('[data-toggle="tooltip"]').tooltip({
             title:'已复制',
             trigger:'click'

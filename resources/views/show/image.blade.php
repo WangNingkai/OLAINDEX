@@ -7,7 +7,7 @@
             {{ $file['name'] }}
         </div>
         <div class="card-body">
-            <div class="text-center"><img src="{{ $file['thumb'] }}" alt="{{ $file['name'] }}" class="img-fluid"></div>
+            <div class="text-center"><a href="{{ route('origin.view',$file['id']) }}" data-fancybox="image-list"><img src="{{ $file['thumb'] }}" alt="{{ $file['name'] }}" class="img-fluid"></a></div>
             <br>
             <div class="text-center">
                 <a href="{{ $file['path'] }}" class="btn btn-success"><i class="fa fa-download"></i> 下载</a> &nbsp;&nbsp;
