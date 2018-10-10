@@ -209,4 +209,29 @@ class Constants {
         'android' => ['fa-android',['apk']],
         'exe' => ['fa-windows',['exe','msi']],
     ];
+
+    const THEME = [
+        'Cerulean' => 'cerulean',
+        'Cosmo' => 'cosmo',
+        'Cyborg' => 'cyborg',
+        'Darkly' => 'darkly',
+        'Flatly' => 'flatly',
+        'Journal' => 'journal',
+        'Litera' => 'litera',
+        'Lumen' => 'lumen',
+        'Materia' => 'materia',
+        'Lux' => 'lux',
+        'Minty' => 'minty',
+        'Pulse' => 'pulse',
+        'Sandstone' => 'sandstone',
+        'Simplex' => 'simplex',
+        'Sketchy' => 'sketchy',
+        'Slate' => 'slate',
+        'Solar' => 'solar',
+        'Spacelab' => 'spacelab',
+        'Superhero' => 'superhero',
+        'United' => 'united',
+        'Yeti' => 'yeti',
+    ];
+
 }
