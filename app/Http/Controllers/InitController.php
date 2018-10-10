@@ -17,12 +17,12 @@ class InitController extends Controller
     public function _1stInstall(Request $request)
     {
         // 检测是否已经配置client_id等信息
-        /*$client_id = Tool::config('client_id');
+        $client_id = Tool::config('client_id');
         $client_secret = Tool::config('client_secret');
         $redirect_uri = Tool::config('redirect_uri');
         if ($client_id != '' && $client_secret != '' && $redirect_uri != '' ) {
             return redirect()->route('list');
-        }*/
+        }
         //  显示基础信息的填写、申请或提交应用信息、返回
         if ($request->isMethod('get')) {
             return view('install.init');
