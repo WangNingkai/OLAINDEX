@@ -31,7 +31,7 @@ OLAINDEX - Another OneDrive Directory Index
 
 #### 服务器环境要求
 
-首先确保服务器满足以下要求
+**首先确保服务器满足以下要求**
 
 - PHP >= 7.1.3
 - OpenSSL PHP
@@ -42,7 +42,7 @@ OLAINDEX - Another OneDrive Directory Index
 - PHP Ctype 扩展
 - PHP JSON 扩展
 
-注意：
+**注意：**
 laravel程序安装需要开启禁用的两个方法，步骤如下：
 
 ```
@@ -52,6 +52,7 @@ laravel程序安装需要开启禁用的两个方法，步骤如下：
 ```
 
 另外使用composer包管理 需要下载 composer 并且全局处理，步骤如下：
+
 ```
 1、curl -sS https://getcomposer.org/installer | php  
 2、mv /tmp/composer.phar /usr/local/bin/composer 
@@ -65,7 +66,7 @@ git clone -b release https://github.com/WangNingkai/OLAINDEX.git tmp
 mv tmp/.git . 
 rm -rf tmp 
 git reset --hard 
-composer install -vvv 
+composer install -vvv # 这里确保已经安装composer成功
 cp .env.example .env
 php artisan key:generate
 touch database/database.sqlite # 这里演示的是sqlite数据库（强烈推荐，便于数据迁移）
@@ -97,7 +98,11 @@ touch database/database.sqlite
 DB_CONNECTION=sqlite
 ```  
 
-#### Web服务器配置
+#### Web服务器rewrite配置
+
+应用的目录指向的是 项目目录下的public目录，如 OLAINDEX/public
+
+![public](https://image.ningkai.wang/item/origin/view/01HS36VAADQZMQKB5UPFHZRG7F4AQGVX43)
 
 **Apache**
 
@@ -115,6 +120,44 @@ RewriteRule ^ index.php [L]
 ```
 location / {
     try_files $uri $uri/ /index.php?$query_string;
+}
+```
+
+**详细的nginx配置可以参考**
+
+```
+server {
+    listen 80;
+    server_name example.com;
+    root /example.com/public; # 这里填写你的程序目录，注意不要少了public
+
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-XSS-Protection "1; mode=block";
+    add_header X-Content-Type-Options "nosniff";
+
+    index index.html index.htm index.php;
+
+    charset utf-8;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    error_page 404 /index.php;
+
+    location ~ \.php$ {
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass unix:/var/run/php/php7.1-fpm.sock;
+        fastcgi_index index.php;
+        include fastcgi_params;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
 }
 ```
 
