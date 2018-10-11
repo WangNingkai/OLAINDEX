@@ -50,9 +50,9 @@ class Tool
         $pathArr = array_slice($pathArr,0,$key);
         $url= '';
         foreach ($pathArr as $param) {
-            $url .= '-'.$param;
+            $url .= '|'.$param;
         }
-        return trim($url,'-');
+        return trim($url,'|');
     }
 
     /**
@@ -69,9 +69,9 @@ class Tool
         }
         $url= '';
         foreach ($pathArr as $param) {
-            $url .= '-'.$param;
+            $url .= '|'.$param;
         }
-        return trim($url,'-');
+        return trim($url,'|');
     }
 
     /**

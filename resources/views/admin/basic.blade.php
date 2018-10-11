@@ -18,7 +18,7 @@
         <div class="form-group">
             <label class="form-control-label" for="root">OneDrive根目录</label>
             <input type="text" class="form-control" id="root" name="root" value="{{ \App\Helpers\Tool::config('root') }}">
-            <span class="form-text text-danger">目录索引起始文件夹地址</span>
+            <span class="form-text text-danger">目录索引起始文件夹地址，有效文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ |。</span>
         </div>
 
         <div class="form-group">
@@ -40,6 +40,7 @@
         <div class="form-group">
             <label class="form-control-label" for="image_hosting_path">图床地址</label>
             <input type="text" class="form-control" id="image_hosting_path" name="image_hosting_path" value="{{ \App\Helpers\Tool::config('image_hosting_path') }}">
+            <span class="form-text text-danger">有效文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ |。</span>
         </div>
         <button type="submit" class="btn btn-primary">提交</button>
     </form>

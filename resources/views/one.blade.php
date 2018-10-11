@@ -36,7 +36,7 @@
                     <div class="row">
                         <div class="col">
                             @if(isset($item['folder']))
-                                <a href="{{ route('list',$path ? $path.'-'.$item['name'] : $item['name']) }}" title="{{ $item['name'] }}">
+                                <a href="{{ route('list',$path ? $path.'|'.$item['name'] : $item['name']) }}" title="{{ $item['name'] }}">
                                     <i class="fa fa-folder"></i> {{ \App\Helpers\Tool::subStr($item['name'],0,20) }}
                                 </a>
                             @else
@@ -54,7 +54,7 @@
                         <div class="col">
                             <span class="pull-right">
                                 @if(isset($item['folder']))
-                                    <a href="javascript:void(0)" data-clipboard-text="{{ route('list',$path ? $path.'-'.$item['name'] : $item['name']) }}" class="clipboard" title="已复制" data-toggle="tooltip"
+                                    <a href="javascript:void(0)" data-clipboard-text="{{ route('list',$path ? $path.'|'.$item['name'] : $item['name']) }}" class="clipboard" title="已复制" data-toggle="tooltip"
                                        data-placement="right" ><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;
                                 @else
                                     @if(isset($item['image']))

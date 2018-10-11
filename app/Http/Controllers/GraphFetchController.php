@@ -153,7 +153,7 @@ class GraphFetchController extends Controller
     public function convertPath($path)
     {
         if ($path) {
-            $pathArr = explode('-', $path);
+            $pathArr = explode('|', $path);
             $url = '';
             foreach ($pathArr as $param) {
                 $url .= '/' . $param;
@@ -188,7 +188,7 @@ class GraphFetchController extends Controller
         $this->oneFilterFolder($items);
         $head = Tool::markdown2Html($this->oneFetchFilterContent('HEAD.md',$items));
         $readme = Tool::markdown2Html($this->oneFetchFilterContent('README.md',$items));
-        $pathArr =  $path ? explode('-',$path):[];
+        $pathArr =  $path ? explode('|',$path):[];
         $items = $this->oneFilterItem($items,['README.md','HEAD.md','.password','.deny']);
         return view('one',compact('items','path','pathArr','head','readme'));
     }

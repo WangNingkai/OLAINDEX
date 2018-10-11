@@ -14,7 +14,7 @@
             </div>
             <hr>
             <div class="form-group">
-                <label class="control-label">下载链接</label
+                <label class="control-label">下载链接</label>
                 <div class="form-group">
                     <div class="input-group mb-3">
                         <input type="text" id="link1" class="form-control" aria-label="Amount (to the nearest dollar)" value="{{ $file['path'] }}">
