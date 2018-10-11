@@ -12,9 +12,8 @@ OLAINDEX
 > 本项目受 Oneindex 启发，功能借鉴其思想，在这里感谢。 项目持续开发，会加入更多功能，欢迎大家提issue.
 
 
-![list](https://share.imwnk.cn/item/origin/view/01FGBPEHT2TSRM4K4ZEVCJ3A2AVBOVKTOE)
-
-![image](https://share.imwnk.cn/item/origin/view/01FGBPEHV3KII7GWXKMFHKGVTV5M6URPBW)
+![1.jpg](https://image.ningkai.wang/item/origin/view/01HS36VAGA2Q2RP3ZSKVGYAZW2IMBBTB3N)
+![2.jpg](https://image.ningkai.wang/item/origin/view/01HS36VADJ5MEMI6RGVVCJ3SJBBKRWOSRS)
 
 ### 简介
 
@@ -75,6 +74,8 @@ php artisan update:install
 > 小弟的服务器性能有限，所以图片的上传和预览添加了路由请求次数限制，大家可以根据需求更改
 
 ![route](https://image.ningkai.wang/item/origin/view/01HS36VADQV35WPMQ3AFHZ25AUTVCJIEVN)
+
+![routes/web.php](https://image.ningkai.wang/item/origin/view/01HS36VAARRNW3WPF6LJDYNYCE5CSPRDCP)
 
 
 **附：** 本软件仅供日常学习使用，不得用于任何商业用途；学习使用请遵守您所在国家的法律，任何非法行为由使用者本身承担。
