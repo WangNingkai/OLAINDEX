@@ -3,7 +3,9 @@ OLAINDEX
 
 ## Another OneDrive Directory Index
 
-![OLAINDEX](https://image.ningkai.wang/item/origin/view/01HS36VAGUMSWK624D6FDYB57VMIYU4NLE)
+![OLAINDEX](//g-search2.alicdn.com/img/bao/uploaded/i4/TB10L1zhmzqK1RjSZFLXXcn2XXa_640x640)
+
+
 
 此图来自 [如有乐享](https://51.ruyo.net/)，感谢推广
 
@@ -60,12 +62,13 @@ php artisan update:install
 ### TODO
 
 - 优化安装流程（包括client_id、client_secret的申请，这里感谢 @donwa 的指导）（已加入）
-- 后台目录创建与删除
-- 文件夹加密，密码访问
+- 文件夹加密，密码访问(已加入)
 - 后台大文件上传，断点续传等
 - 更多视频以及字幕支持
+- 后台目录创建与删除
 - 更加友好的目录显示
 - 后台文本文件的编辑
+- 共享目录支持
 
 ### 其他 
 
