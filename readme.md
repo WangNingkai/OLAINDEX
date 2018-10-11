@@ -3,7 +3,7 @@ OLAINDEX
 
 ## Another OneDrive Directory Index
 
-![OLAINDEX](https://g-search2.alicdn.com/img/bao/uploaded/i4/TB10L1zhmzqK1RjSZFLXXcn2XXa_640x640)
+![OLAINDEX](https://i.loli.net/2018/10/11/5bbf40831f294.jpg)
 
 
 
@@ -74,7 +74,7 @@ php artisan update:install
 
 > 小弟的服务器性能有限，所以图片的上传和预览添加了路由请求次数限制，大家可以根据需求更改
 
-![image.png](https://image.ningkai.wang/item/origin/view/01HS36VADQV35WPMQ3AFHZ25AUTVCJIEVN)
+![route](https://image.ningkai.wang/item/origin/view/01HS36VADQV35WPMQ3AFHZ25AUTVCJIEVN)
 
 
 **附：** 本软件仅供日常学习使用，不得用于任何商业用途；学习使用请遵守您所在国家的法律，任何非法行为由使用者本身承担。
