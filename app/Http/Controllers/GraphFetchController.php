@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Stream;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Session;
 use Microsoft\Graph\Exception\GraphException;
 use Microsoft\Graph\Graph;
@@ -188,8 +189,10 @@ class GraphFetchController extends Controller
         if (!empty($items['.password'])) {
             $pass_id = $items['.password']['id'];
             if (Session::has('password:'.$path)) {
+                $data = Session::get('password:'.$path);
+                $expires = $data['expires'];
                 $password = $this->oneFetchContent($pass_id);
-                if (md5($password) != Session::get('password:'.$path)) {
+                if ($password != decrypt($data['password']) || time() > $expires) {
                     Session::forget('password:'.$path);
                     Tool::showMessage('密码已过期',false);
                     return view('password',compact('path','pass_id'));
@@ -380,7 +383,11 @@ class GraphFetchController extends Controller
         $password = request()->get('password');
         $path = decrypt(request()->get('path'));
         $pass_id = decrypt(request()->get('pass_id'));
-        Session::put('password:'.$path,md5($password));
+        $data = [
+            'password' => encrypt($password),
+            'expires' => time() + $this->expires * 60, // 目录密码过期时间
+        ];
+        Session::put('password:'.$path,$data);
         $directory_password = $this->oneFetchContent($pass_id);
         if ($password == $directory_password)
             return redirect()->route('list',$path);
