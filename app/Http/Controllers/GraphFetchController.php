@@ -185,6 +185,18 @@ class GraphFetchController extends Controller
         $endpoint = '/me/drive/root' . $graphPath . $query;
         $response =  $this->requestGraph($endpoint, true);
         $items =  $this->formatArray($response);
+        if (!empty($items['.password'])) {
+            $pass_id = $items['.password']['id'];
+            if (!Session::has('password:'.$path)) {
+                return view('password',compact('path','pass_id'));
+            } else {
+                $password = $this->oneFetchContent($pass_id);
+                if (md5($password) == Session::get('password:'.$path)) {
+                    Session::forget('password:'.$path);
+                    return view('password',compact('path','pass_id'));
+                }
+            }
+        }
         $this->oneFilterFolder($items);
         $head = Tool::markdown2Html($this->oneFetchFilterContent('HEAD.md',$items));
         $readme = Tool::markdown2Html($this->oneFetchFilterContent('README.md',$items));
@@ -326,21 +338,6 @@ class GraphFetchController extends Controller
     }
 
     /**
-     * 过滤目录
-     * @param $items
-     */
-    public function oneFilterFolder($items)
-    {
-        // .deny目录无法访问 兼容 .password
-        if (!empty($items['.deny']) || !empty($items['.password'])) {
-            if (!Session::has('LogInfo')) {
-                Tool::showMessage('目录访问受限，仅管理员可以访问！',false);
-                abort(403);
-            }
-        }
-    }
-
-    /**
      * 过滤文件
      * @param $items
      * @param $itemName
@@ -356,5 +353,39 @@ class GraphFetchController extends Controller
             unset($items[$itemName]);
         }
         return $items;
+    }
+
+    /**
+     * 过滤目录
+     * @param $items
+     */
+    public function oneFilterFolder($items)
+    {
+        // .deny目录无法访问
+        if (!empty($items['.deny'])) {
+            if (!Session::has('LogInfo')) {
+                Tool::showMessage('目录访问受限，仅管理员可以访问！',false);
+                abort(403);
+            }
+        }
+    }
+
+    /**
+     * 校验目录密码
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
+     */
+    public function oneHandlePassword()
+    {
+        $password = request()->get('password');
+        $path = decrypt(request()->get('path'));
+        $pass_id = decrypt(request()->get('pass_id'));
+        Session::put('password:'.$path,md5($password));
+        $directory_password = $this->oneFetchContent($pass_id);
+        if ($password == $directory_password)
+            return redirect()->route('list',$path);
+        else {
+            Tool::showMessage('密码错误',false);
+            return view('password',compact('path','pass_id'));
+        }
     }
 }

@@ -28,6 +28,7 @@ Route::get('/item/content/{itemId}', 'GraphFetchController@oneFetchContent')->na
 Route::get('/item/thumb/{itemId}', 'GraphFetchController@oneFetchThumb')->name('thumb')->middleware('throttle:10,2');
 Route::get('/item/view/{itemId}', 'GraphFetchController@oneFetchView')->name('view')->middleware('throttle:10,2');
 Route::get('/item/origin/view/{itemId}', 'GraphFetchController@oneFetchDownload')->name('origin.view');
+Route::post('/password', 'GraphFetchController@oneHandlePassword')->name('password');
 
 // 图床
 Route::get('/image', 'GraphPostController@uploadImage')->name('image')->middleware('checkImage');
