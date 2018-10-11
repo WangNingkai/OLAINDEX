@@ -3,7 +3,7 @@ OLAINDEX
 
 ## Another OneDrive Directory Index
 
-![OLAINDEX](//g-search2.alicdn.com/img/bao/uploaded/i4/TB10L1zhmzqK1RjSZFLXXcn2XXa_640x640)
+![OLAINDEX](https://g-search2.alicdn.com/img/bao/uploaded/i4/TB10L1zhmzqK1RjSZFLXXcn2XXa_640x640)
 
 
 
