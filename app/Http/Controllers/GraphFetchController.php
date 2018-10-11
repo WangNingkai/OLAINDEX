@@ -187,14 +187,15 @@ class GraphFetchController extends Controller
         $items =  $this->formatArray($response);
         if (!empty($items['.password'])) {
             $pass_id = $items['.password']['id'];
-            if (!Session::has('password:'.$path)) {
-                return view('password',compact('path','pass_id'));
-            } else {
+            if (Session::has('password:'.$path)) {
                 $password = $this->oneFetchContent($pass_id);
-                if (md5($password) == Session::get('password:'.$path)) {
+                if (md5($password) != Session::get('password:'.$path)) {
                     Session::forget('password:'.$path);
+                    Tool::showMessage('密码已过期',false);
                     return view('password',compact('path','pass_id'));
                 }
+            } else {
+                return view('password',compact('path','pass_id'));
             }
         }
         $this->oneFilterFolder($items);
