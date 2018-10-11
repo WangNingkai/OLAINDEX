@@ -131,13 +131,13 @@ class Tool
      * @param string $default
      * @return mixed|string
      */
-    public static function config($key = '',$default = '')
+    public static function config($key = '', $default = '')
     {
         // 读取配置缓存
         $config = Cache::remember('config', 1440, function () {
             return Parameter::query()->pluck('value', 'name')->toArray();
         });
-        return $key ? (array_key_exists($key,$config) ? $config[$key] : $default) : $config;
+        return $key ? (array_key_exists($key, $config) ? ($config[$key] ?: $default) : $default) : $config;
     }
 
     /**
