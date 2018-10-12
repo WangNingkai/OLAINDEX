@@ -52,7 +52,7 @@ class InitInstall extends Command
         ];
         $env = str_replace($search_db, $replace_db, $envExample);
         if (file_exists(base_path('.env'))) {
-            if ($this->confirm('目录存在 .env 文件，即将覆盖，继续吗？ y/n (默认 n)')) {
+            if ($this->confirm('目录存在 .env 文件，即将覆盖，继续吗？')) {
                 @unlink(base_path('.env'));
                 file_put_contents(base_path('.env'), $env);
             } else
