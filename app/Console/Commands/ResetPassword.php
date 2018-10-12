@@ -20,7 +20,7 @@ class ResetPassword extends Command
      *
      * @var string
      */
-    protected $description = 'Reset Password';
+    protected $description = '重置密码';
 
     /**
      * Create a new command instance.
@@ -38,6 +38,7 @@ class ResetPassword extends Command
      */
     public function handle()
     {
+        $this->warn('========== 开始重置密码 ==========');
         $password = str_random(8);
         DB::table('parameters')->where('name','password')->update(['value' => md5($password)]);
         Artisan::call('cache:clear');

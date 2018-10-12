@@ -21,7 +21,7 @@ class UpdateInstall extends Command
      *
      * @var string
      */
-    protected $description = 'Update Install';
+    protected $description = '更新安装';
 
     /**
      * Create a new command instance.
@@ -41,6 +41,7 @@ class UpdateInstall extends Command
     public function handle()
     {
         // 获取当前版本,默认开发版
+        $this->warn('========== 开始更新 ==========');
         $version = Tool::config('app_version','dev');
         if ($version == Constants::LATEST_VERSION) {
             $this->info('已是最新版本，无需更新');
