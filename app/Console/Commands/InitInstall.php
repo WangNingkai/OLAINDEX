@@ -45,9 +45,11 @@ class InitInstall extends Command
         $app_url = $this->ask('请输入应用域名');
         $envExample = file_get_contents(base_path('.env.example'));
         $search_db = [
+            'APP_KEY=',
             'APP_URL=http://localhost',
         ];
         $replace_db = [
+            'APP_KEY='.str_random(32),
             'APP_URL='.$app_url,
         ];
         $env = str_replace($search_db, $replace_db, $envExample);
@@ -60,12 +62,13 @@ class InitInstall extends Command
         }
         file_put_contents(base_path('.env'), $env);
         $this->alert(' 应用回调地址请填写：'.trim($app_url,'/') .'/oauth ');
-        $this->call('key:generate');
+//        $this->call('key:generate');
         $this->warn('========== 正在执行数据库操作 ==========');
         $this->call('migrate');
         $this->call('db:seed');
         $this->alert('手动执行以下命令确保目录读写权限');
         $this->warn('chmod -R 755 storage/* && chown -R www:www *');
         $this->warn('========== 预安装完成，请继续下面的操作 ==========');
+        $this->alert(' 后台登录原始密码：12345678');
     }
 }
