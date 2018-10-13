@@ -4,9 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
 use Illuminate\Http\Request;
-use GuzzleHttp\Psr7\Stream;
-use Microsoft\Graph\Exception\GraphException;
-use Microsoft\Graph\Graph;
 use Illuminate\Contracts\Encryption\DecryptException;
 
 class GraphPostController extends Controller
@@ -26,27 +23,10 @@ class GraphPostController extends Controller
      * @param bool $toArray
      * @return mixed|null
      */
-    public function makeRequest($method,$param, $toArray = true)
+    public function makeRequest($method, $param, $toArray = true)
     {
-        list($endpoint, $requestBody, $requestHeaders) = $param;
-        $requestHeaders = $requestHeaders ?? [];
-        $requestBody = $requestBody ?? '';
-        $headers = array_merge($requestHeaders,["Content-Type" => "application/json"]);
-        try {
-            $graph = new Graph();
-            $graph->setBaseUrl("https://graph.microsoft.com/")
-                ->setApiVersion("v1.0")
-                ->setAccessToken(Tool::config('access_token'));
-            $response = $graph->createRequest($method, $endpoint)
-                ->addHeaders($headers)
-                ->attachBody($requestBody)
-                ->setReturnType(Stream::class)
-                ->execute();
-            return $toArray ? json_decode($response->getContents(), true) : $response->getContents();
-        } catch (GraphException $e) {
-            Tool::showMessage($e->getCode().': 请检查地址是否正确', false);
-            return null;
-        }
+        $fetch = new RequestController();
+        return $fetch->requestGraph($method, $param, $toArray);
     }
 
     /**

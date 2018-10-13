@@ -3,15 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Psr7\Stream;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Session;
-use Microsoft\Graph\Exception\GraphException;
-use Microsoft\Graph\Graph;
 
 class GraphFetchController extends Controller
 {
@@ -52,30 +46,6 @@ class GraphFetchController extends Controller
     }
 
     /**
-     * 构造请求
-     * @param $endpoint
-     * @param bool $toArray
-     * @return mixed|null
-     */
-    public function makeRequest($endpoint, $toArray = true)
-    {
-        try {
-            $graph = new Graph();
-            $graph->setBaseUrl("https://graph.microsoft.com/")
-                ->setApiVersion("v1.0")
-                ->setAccessToken(Tool::config('access_token'));
-            $response = $graph->createRequest('get', $endpoint)
-                ->addHeaders(["Content-Type" => "application/json"])
-                ->setReturnType(Stream::class)
-                ->execute();
-            return $toArray ? json_decode($response->getContents(), true) : $response->getContents();
-        } catch (GraphException $e) {
-            Tool::showMessage($e->getCode().': 请检查地址是否正确', false);
-            return null;
-        }
-    }
-
-    /**
      * 构造graph请求
      * @param $endpoint
      * @param bool $toArray
@@ -84,7 +54,8 @@ class GraphFetchController extends Controller
     public function requestGraph($endpoint, $toArray = true)
     {
         return Cache::remember('one:endpoint:'.$endpoint,$this->expires,function() use ($endpoint,$toArray) {
-            return $this->makeRequest( $endpoint,$toArray);
+            $fetch = new RequestController();
+            return $fetch->requestGraph('get', $endpoint,$toArray);
         });
     }
 
@@ -97,15 +68,8 @@ class GraphFetchController extends Controller
     public function requestHttp($method, $url)
     {
         return Cache::remember('one:url:'.$url,$this->expires,function() use ($method, $url) {
-            try {
-                $client = new Client();
-                $response = $client->request($method, $url);
-                $content = $response->getBody()->getContents();
-                return $content;
-            } catch (ClientException $e) {
-                Tool::showMessage($e->getCode().': 请检查链接是否正确', false);
-                return null;
-            }
+            $fetch = new RequestController();
+            return $fetch->requestHttp($method, $url);
         });
 
     }
@@ -128,10 +92,11 @@ class GraphFetchController extends Controller
                 $files = [];
                 foreach ($items['value'] as $item) {
                     if (isset($item['file'])) {
-                        if ($item['file']['mimeType'] == 'application/x-zip-compressed')
+                        /*if ($item['file']['mimeType'] == 'application/x-zip-compressed')
                             $item['ext'] = 'zip';
                         else
-                            $item['ext'] = Tool::getExt($item['file']['mimeType']);
+                            $item['ext'] = Tool::getExt($item['file']['mimeType']);*/
+                        $item['ext'] = strtolower(pathinfo($item['name'], PATHINFO_EXTENSION)); // mimeType显示有误
                     }
                     $files[$item['name']] = $item;
                 }
@@ -205,7 +170,9 @@ class GraphFetchController extends Controller
         $head = Tool::markdown2Html($this->oneFetchFilterContent('HEAD.md',$items));
         $readme = Tool::markdown2Html($this->oneFetchFilterContent('README.md',$items));
         $pathArr =  $path ? explode('|',$path):[];
-        $items = $this->oneFilterItem($items,['README.md','HEAD.md','.password','.deny']);
+        if (!session()->has('LogInfo')) {
+            $items = $this->oneFilterItem($items,['README.md','HEAD.md','.password','.deny']);
+        }
         return view('one',compact('items','path','pathArr','head','readme'));
     }
 
