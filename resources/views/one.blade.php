@@ -127,7 +127,7 @@
                             <div class="modal-body">
                                 <p class="text-danger">确认锁定目录，请输入密码(默认密码 12345678)：</p>
                                 <div class="form-group">
-                                    <input type="password" class="form-control" placeholder="请输入密码" id="lockField" required>
+                                    <input type="password" name="password" class="form-control" placeholder="请输入密码" id="lockField" required>
                                     <input type="hidden" name="path" value="{{ encrypt($path) }}">
                                 </div>
                             </div>
