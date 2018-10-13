@@ -3,147 +3,163 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
-use App\Models\Parameter;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Contracts\Encryption\DecryptException;
 
+/**
+ * OneDrive管理
+ * Class ManageController
+ * @package App\Http\Controllers
+ */
 class ManageController extends Controller
 {
     /**
-     * ManageController constructor.
+     * GraphController constructor.
      */
     public function __construct()
     {
-        $this->middleware('checkAuth')->except('login');
+        $this->middleware('checkToken');
     }
 
     /**
-     * 登录
+     * 图片上传
      * @param Request $request
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
      */
-    public function login(Request $request)
+    public function uploadImage(Request $request)
     {
-        if (!$request->isMethod('post')) {
-            return view('admin.login');
+        if (!$request->isMethod('post'))
+            return view('image');
+        $field = 'olaindex_img';
+        if (!$request->hasFile($field)) {
+            $data =  ['code' => 500, 'message' => '上传文件为空'];
+            return response()->json($data);
         }
-        $password = $request->get('password');
-        if (md5($password) == Tool::config('password'))
-        {
-            $logInfo = [
-                'LastLoginTime' => time(),
-                'LastLoginIP' => $request->getClientIp(),
-                'LastActivityTime' => time(),
+        $file = $request->file($field);
+        $rule = [$field => 'required|max:4096|image'];
+        $validator = \Illuminate\Support\Facades\Validator::make(request()->all(), $rule);
+        if ($validator->fails()) {
+            $data = ['code' => 500, 'message' => $validator->errors()->first()];
+            return response()->json($data);
+        }
+        if (!$file->isValid()) {
+            $data =  ['code' => 500, 'message' => '文件上传出错'];
+            return response()->json($data);
+        }
+        $path = $file->getRealPath();
+        if (file_exists($path) && is_readable($path)) {
+            $content = fopen($path,'r');
+            $stream = \GuzzleHttp\Psr7\stream_for($content);
+            $root = trim(Tool::config('root'),'/');
+            $image_hosting_path = trim(Tool::config('image_hosting_path'),'/');
+            $storeFilePath = $root. '/' . $image_hosting_path . '/' . date('Y'). '/' . date('m'). '/' . date('d'). '/'.str_random(8).'/'.$file->getClientOriginalName(); // 远程图片保存地址
+            $remoteFilePath = trim($storeFilePath,'/');
+            $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
+            $requestBody = $stream;
+            $graph = new RequestController();
+            $response = $graph->requestGraph('put',[$endpoint,$requestBody,[]],true);
+            $sign = $response['id'] . '.' . encrypt($response['eTag']);
+            $fileIdentifier = encrypt($sign);
+            $data = [
+                'code' => 200,
+                'data' => [
+                    'id' => $response['id'],
+                    'filename'=> $response['name'],
+                    'size' => $response['size'],
+                    'time' => $response['lastModifiedDateTime'],
+                    'url'=> route('origin.view',$response['id']),
+                    'delete' => route('delete',$fileIdentifier)
+                ]
             ];
-            Session::put('LogInfo',$logInfo);
-            return redirect()->route('admin.basic');
+            @unlink($path);
+            return response()->json($data);
         } else {
-            Tool::showMessage('密码错误',false);
-            return redirect()->back();
+            $data =  ['code' => 500, 'message' => '无法获取文件内容'];
+            return response()->json($data);
         }
     }
 
-    /**
-     * 退出
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function logout()
-    {
-        Session::forget('LogInfo');
-        Tool::showMessage('已退出');
-        return redirect()->route('list');
-    }
 
     /**
-     * 基础设置
+     * 文件上传
      * @param Request $request
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
      */
-    public function basic(Request $request)
+    public function uploadFile(Request $request)
     {
-        if (!$request->isMethod('post')) {
-            return view('admin.basic');
+        $this->middleware('checkAuth');
+        if (!$request->isMethod('post'))
+            return view('admin.file');
+        $field = 'olaindex_file';
+        $target_directory = $request->get('root','/');
+        if (!$request->hasFile($field)) {
+            $data =  ['code' => 500, 'message' => '上传文件或目录为空'];
+            return response()->json($data);
         }
-        $data = $request->except('_token');
-        $this->update($data);
-
-        return redirect()->back();
-    }
-
-    /**
-     * 显示设置
-     * @param Request $request
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     */
-    public function show(Request $request)
-    {
-        if (!request()->isMethod('post')) {
-            return view('admin.show');
+        $file = $request->file($field);
+        $rule = [$field => 'required|max:4096']; // 上传文件规则，单文件指定大小4M
+        $validator = \Illuminate\Support\Facades\Validator::make(request()->all(), $rule);
+        if ($validator->fails()) {
+            $data = ['code' => 500, 'message' => $validator->errors()->first()];
+            return response()->json($data);
         }
-        $data = $request->except('_token');
-        $this->update($data);
-
-        return redirect()->back();
-    }
-
-    /**
-     * 密码设置
-     * @param Request $request
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     */
-    public function profile(Request $request)
-    {
-        if (!$request->isMethod('post')) {
-            return view('admin.profile');
+        if (!$file->isValid()) {
+            $data =  ['code' => 500, 'message' => '文件上传出错'];
+            return response()->json($data);
         }
-        $old_password = $request->get('old_password');
-        $password = $request->get('password');
-        $password_confirm = $request->get('password_confirm');
-        if (md5($old_password) != Tool::config('password') || $old_password == '')  {
-            Tool::showMessage('请确保原密码的准确性！',false);
-            return redirect()->back();
-        }
-        if ($password != $password_confirm || $old_password == '' || $old_password == '') {
-            Tool::showMessage('两次密码不一致',false);
-            return redirect()->back();
-        }
-        $data = ['password' => md5($password)];
-        $this->update($data);
-        return redirect()->back();
-    }
-
-    /**
-     * 缓存清理
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function clear()
-    {
-        Artisan::call('cache:clear');
-        Tool::showMessage('清理成功');
-        return redirect()->route('admin.basic');
-    }
-
-    /**
-     * 设置更新
-     * @param $data
-     * @return bool|int
-     */
-    public function update($data)
-    {
-        $editData = [];
-        foreach ($data as $k => $v) {
-            $editData[] = [
-                'name' => $k,
-                'value' => $v
+        $path = $file->getRealPath();
+        if (file_exists($path) && is_readable($path)) {
+            $content = fopen($path,'r');
+            $stream = \GuzzleHttp\Psr7\stream_for($content);
+            $storeFilePath = trim($target_directory,'/'). '/' .$file->getClientOriginalName(); // 远程保存地址
+            $remoteFilePath = trim($storeFilePath,'/');
+            $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
+            $requestBody = $stream;
+            $graph = new RequestController();
+            $response = $graph->requestGraph('put',[$endpoint,$requestBody,[]],true);
+            $data = [
+                'code' => 200,
+                'data' => [
+                    'id' => $response['id'],
+                    'filename'=> $response['name'],
+                    'size' => $response['size'],
+                    'time' => $response['lastModifiedDateTime'],
+                    'url'=> route('origin.view',$response['id']),
+                ]
             ];
+            @unlink($path);
+            return response()->json($data);
+        } else {
+            $data =  ['code' => 500, 'message' => '无法获取文件内容'];
+            return response()->json($data);
         }
-        $config = new Parameter();
-        $response = $config->updateBatch($editData);
-        Cache::forget('config');
-        Tool::showMessage('更新成功');
-        return $response;
+    }
+
+    /**
+     * 删除元素
+     * @param $sign
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function deleteItem($sign)
+    {
+        try {
+            $deCode = decrypt($sign);
+        } catch (DecryptException $e) {
+            Tool::showMessage($e->getMessage(),false);
+            return view('message');
+        }
+        $reCode = explode('.' ,$deCode);
+        $id = $reCode[0];
+        try {
+            $eTag = decrypt($reCode[1]);
+        } catch (DecryptException $e) {
+            Tool::showMessage($e->getMessage(),false);
+            return view('message');
+        }
+        $endpoint = '/me/drive/items/' . $id;
+        $graph = new RequestController();
+        $graph->requestGraph('delete',[$endpoint,'',['if-match' => $eTag]],true);
+        Tool::showMessage('文件已删除');
+        return view('message');
     }
 }

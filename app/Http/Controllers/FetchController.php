@@ -7,7 +7,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 
-class GraphFetchController extends Controller
+/**
+ * 文件获取操作
+ * Class FetchController
+ * @package App\Http\Controllers
+ */
+class FetchController extends Controller
 {
     /**
      * 缓存超时时间 建议10分钟以下，否则会导致资源失效

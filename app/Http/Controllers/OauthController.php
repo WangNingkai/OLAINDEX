@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Cache;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\GenericProvider;
 
+/**
+ * 授权操作
+ * Class OauthController
+ * @package App\Http\Controllers
+ */
 class OauthController extends Controller
 {
     /**

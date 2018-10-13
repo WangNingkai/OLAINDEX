@@ -9,6 +9,11 @@ use GuzzleHttp\Psr7\Stream;
 use Microsoft\Graph\Exception\GraphException;
 use Microsoft\Graph\Graph;
 
+/**
+ * 处理请求操作
+ * Class RequestController
+ * @package App\Http\Controllers
+ */
 class RequestController extends Controller
 {
     /**

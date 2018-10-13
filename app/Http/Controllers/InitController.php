@@ -7,6 +7,11 @@ use App\Models\Parameter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * 初始化安装操作
+ * Class InitController
+ * @package App\Http\Controllers
+ */
 class InitController extends Controller
 {
     /**
