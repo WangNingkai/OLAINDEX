@@ -27,12 +27,12 @@
                 </div>
             </div>
         </div>
-        <div class="list-group">
+        <div class="list-group item-list">
             @if(!blank($pathArr))
-                <li class="list-group-item list-group-item-action" style="border:0;"><a href="{{ route('list',\App\Helpers\Tool::getParentUrl($pathArr)) }}"><i class="fa fa-arrow-left"></i> 返回上一层</a></li>
+                <li class="list-group-item list-group-item-action"><a href="{{ route('list',\App\Helpers\Tool::getParentUrl($pathArr)) }}"><i class="fa fa-arrow-left"></i> 返回上一层</a></li>
             @endif
             @foreach($items as $item)
-                <li class="list-group-item list-group-item-action" style="border:0;">
+                <li class="list-group-item list-group-item-action">
                     <div class="row">
                         <div class="col">
                             @if(isset($item['folder']))
@@ -64,6 +64,10 @@
                                     <a href="javascript:void(0)" data-clipboard-text="{{ route('download',$item['id']) }}" class="clipboard" title="已复制" data-toggle="tooltip"
                                        data-placement="right" ><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;
                                 @endif
+                                @if (session()->has('LogInfo') && in_array($item['name'],['.password','README.md','HEAD.md']))
+                                    <a onclick="javascript:return confirm('确定删除吗')"  href="{{ route('delete',encrypt($item['id'] . '.' . encrypt($item['eTag']))) }}" target="_blank"><i class="fa fa-trash" title="删除" data-toggle="modal" data-target="#deleteFileModal"></i></a>&nbsp;&nbsp;
+
+                                @endif
                             </span>
                         </div>
                     </div>
@@ -78,5 +82,63 @@
                 {!! $readme !!}
             </div>
         </div>
+    @endif
+    @if (session()->has('LogInfo'))
+
+        <ul id="menu" class="mfb-component--bl mfb-zoomin" data-mfb-toggle="click">
+            <li class="mfb-component__wrap">
+                <a href="#" class="mfb-component__button--main">
+                    <i class="mfb-component__main-icon--resting ion-plus-round"></i>
+                    <i class="mfb-component__main-icon--active ion-close-round"></i>
+                </a>
+                <ul class="mfb-component__list">
+                    @if (!array_key_exists('.password', $items))
+                        <li>
+                            <a href="#" data-mfb-label="加密目录" class="mfb-component__button--child" data-toggle="modal" data-target="#loclFolderModal">
+                                <i class="mfb-component__child-icon ion-locked"></i>
+                            </a>
+                        </li>
+                    @endif
+                    <li>
+                        <a href="#" data-mfb-label="添加/编辑 head" class="mfb-component__button--child">
+                            <i class="mfb-component__child-icon ion-edit"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-mfb-label="添加/编辑 readme" class="mfb-component__button--child">
+                            <i class="mfb-component__child-icon ion-compose"></i>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        @if (!array_key_exists('.password', $items))
+            <div class="modal fade" id="loclFolderModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <form action="{{ route('lock') }}" method="post">
+                        @csrf
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">加密目录</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p class="text-danger">确认锁定目录，请输入密码(默认密码 12345678)：</p>
+                                <div class="form-group">
+                                    <input type="password" class="form-control" placeholder="请输入密码" id="lockField" required>
+                                    <input type="hidden" name="path" value="{{ encrypt($path) }}">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">确定</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        @endif
     @endif
 @stop

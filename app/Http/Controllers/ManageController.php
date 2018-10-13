@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\Tool;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Artisan;
 
 /**
  * OneDrive管理
@@ -19,6 +20,7 @@ class ManageController extends Controller
     public function __construct()
     {
         $this->middleware('checkToken');
+        $this->middleware('checkAuth')->except('uploadImage');
     }
 
     /**
@@ -87,7 +89,6 @@ class ManageController extends Controller
      */
     public function uploadFile(Request $request)
     {
-        $this->middleware('checkAuth');
         if (!$request->isMethod('post'))
             return view('admin.file');
         $field = 'olaindex_file';
@@ -136,7 +137,7 @@ class ManageController extends Controller
     }
 
     /**
-     * 删除元素
+     * 删除文件
      * @param $sign
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
@@ -161,5 +162,23 @@ class ManageController extends Controller
         $graph->requestGraph('delete',[$endpoint,'',['if-match' => $eTag]],true);
         Tool::showMessage('文件已删除');
         return view('message');
+    }
+
+
+    public function lockFolder(Request $request)
+    {
+        $path = decrypt($request->get('path'));
+        $password = $request->get('password', '12345678');
+        $stream = \GuzzleHttp\Psr7\stream_for($password);
+        $root = trim(Tool::config('root'),'/');
+        $storeFilePath = trim($path,'/'). '/.password';
+        $remoteFilePath = $root. '/' .trim($storeFilePath,'/'); // 远程保存地址
+        $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
+        $requestBody = $stream;
+        $graph = new RequestController();
+        $response = $graph->requestGraph('put',[$endpoint,$requestBody,[]],true);
+        $response ? Tool::showMessage('操作成功，请牢记密码！') : Tool::showMessage('加密失败！',false);
+        Artisan::call('cache:clear');
+        return redirect()->back();
     }
 }

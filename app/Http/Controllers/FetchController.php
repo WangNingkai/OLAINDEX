@@ -58,7 +58,7 @@ class FetchController extends Controller
      */
     public function requestGraph($endpoint, $toArray = true)
     {
-        return Cache::remember('one:endpoint:'.$endpoint,$this->expires,function() use ($endpoint,$toArray) {
+        return Cache::remember('one:endpoint:'.$endpoint, $this->expires,function() use ($endpoint,$toArray) {
             $fetch = new RequestController();
             return $fetch->requestGraph('get', $endpoint,$toArray);
         });
@@ -149,7 +149,7 @@ class FetchController extends Controller
      * @param string $path
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function oneFetchItemList(Request $request, $path = '')
+    public function fetchItemList(Request $request, $path = '')
     {
         $graphPath = $this->convertPath($path);
         $query = $request->get('query', 'children');
@@ -161,7 +161,7 @@ class FetchController extends Controller
             if (Session::has('password:'.$path)) {
                 $data = Session::get('password:'.$path);
                 $expires = $data['expires'];
-                $password = $this->oneFetchContent($pass_id);
+                $password = $this->fetchContent($pass_id);
                 if ($password != decrypt($data['password']) || time() > $expires) {
                     Session::forget('password:'.$path);
                     Tool::showMessage('密码已过期',false);
@@ -171,12 +171,12 @@ class FetchController extends Controller
                 return view('password',compact('path','pass_id'));
             }
         }
-        $this->oneFilterFolder($items);
-        $head = Tool::markdown2Html($this->oneFetchFilterContent('HEAD.md',$items));
-        $readme = Tool::markdown2Html($this->oneFetchFilterContent('README.md',$items));
+        $this->filterFolder($items);
+        $head = Tool::markdown2Html($this->fetchFilterContent('HEAD.md',$items));
+        $readme = Tool::markdown2Html($this->fetchFilterContent('README.md',$items));
         $pathArr =  $path ? explode('|',$path):[];
         if (!session()->has('LogInfo')) {
-            $items = $this->oneFilterItem($items,['README.md','HEAD.md','.password','.deny']);
+            $items = $this->filterItem($items,['README.md','HEAD.md','.password','.deny']);
         }
         return view('one',compact('items','path','pathArr','head','readme'));
     }
@@ -186,7 +186,7 @@ class FetchController extends Controller
      * @param $itemId
      * @return array
      */
-    public function oneFetchItem($itemId)
+    public function fetchItem($itemId)
     {
         $endpoint = '/me/drive/items/' . $itemId;
         $response =  $this->requestGraph($endpoint, true);
@@ -198,7 +198,7 @@ class FetchController extends Controller
      * @param $itemId
      * @return \Illuminate\Http\RedirectResponse|mixed
      */
-    public function oneShowItem($itemId)
+    public function showItem($itemId)
     {
         $endpoint = '/me/drive/items/' . $itemId;
         $response =  $this->requestGraph($endpoint, true);
@@ -232,7 +232,7 @@ class FetchController extends Controller
                 return view($view,compact('file','pathArr'));
             }
         }
-        return $this->oneFetchDownload($item['id']);
+        return $this->fetchDownload($item['id']);
     }
 
     /**
@@ -241,7 +241,7 @@ class FetchController extends Controller
      * @param $itemId
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function oneFetchThumb(Request $request, $itemId)
+    public function fetchThumb(Request $request, $itemId)
     {
         $size = $request->get('size','large');
         $endpoint = "/me/drive/items/{$itemId}/thumbnails/0/{$size}";
@@ -259,9 +259,9 @@ class FetchController extends Controller
      * @param $itemId
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function oneFetchView($itemId)
+    public function fetchView($itemId)
     {
-        $file = $this->oneFetchItem($itemId);
+        $file = $this->fetchItem($itemId);
         $isBigFile = $file['size'] > 5*1024*1024 ?: false;
         if ($isBigFile) {
             Tool::showMessage('文件过大，请下载查看',false);
@@ -279,9 +279,9 @@ class FetchController extends Controller
      * @param $itemId
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function oneFetchDownload($itemId)
+    public function fetchDownload($itemId)
     {
-        $file = $this->oneFetchItem($itemId);
+        $file = $this->fetchItem($itemId);
         $url = $file['@microsoft.graph.downloadUrl'];
         return redirect()->away($url);
     }
@@ -291,9 +291,9 @@ class FetchController extends Controller
      * @param $itemId
      * @return string
      */
-    public function oneFetchContent($itemId)
+    public function fetchContent($itemId)
     {
-        $file = $this->oneFetchItem($itemId);
+        $file = $this->fetchItem($itemId);
         $url = $file['@microsoft.graph.downloadUrl'];
         return $this->requestHttp('get',$url);
     }
@@ -304,7 +304,7 @@ class FetchController extends Controller
      * @param $items
      * @return string
      */
-    public function oneFetchFilterContent($itemName,$items)
+    public function fetchFilterContent($itemName,$items)
     {
         if (empty($items[$itemName])) {
             return '';
@@ -319,7 +319,7 @@ class FetchController extends Controller
      * @param $itemName
      * @return mixed
      */
-    public function oneFilterItem($items,$itemName)
+    public function filterItem($items,$itemName)
     {
         if (is_array($itemName)) {
             foreach ($itemName as $item) {
@@ -335,7 +335,7 @@ class FetchController extends Controller
      * 过滤目录
      * @param $items
      */
-    public function oneFilterFolder($items)
+    public function filterFolder($items)
     {
         // .deny目录无法访问
         if (!empty($items['.deny'])) {
@@ -350,7 +350,7 @@ class FetchController extends Controller
      * 校验目录密码
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
      */
-    public function oneHandlePassword()
+    public function handlePassword()
     {
         $password = request()->get('password');
         $path = decrypt(request()->get('path'));
@@ -360,7 +360,7 @@ class FetchController extends Controller
             'expires' => time() + $this->expires * 60, // 目录密码过期时间
         ];
         Session::put('password:'.$path,$data);
-        $directory_password = $this->oneFetchContent($pass_id);
+        $directory_password = $this->fetchContent($pass_id);
         if ($password == $directory_password)
             return redirect()->route('list',$path);
         else {
