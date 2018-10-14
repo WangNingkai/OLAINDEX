@@ -94,21 +94,38 @@
                 <ul class="mfb-component__list">
                     @if (!array_key_exists('.password', $items))
                         <li>
-                            <a href="#" data-mfb-label="加密目录" class="mfb-component__button--child" data-toggle="modal" data-target="#loclFolderModal">
+                            <a href="javascript:void(0)" data-mfb-label="加密目录" class="mfb-component__button--child" data-toggle="modal" data-target="#loclFolderModal">
                                 <i class="mfb-component__child-icon ion-locked"></i>
                             </a>
                         </li>
                     @endif
-                    <li>
-                        <a href="#" data-mfb-label="添加/编辑 head" class="mfb-component__button--child">
-                            <i class="mfb-component__child-icon ion-edit"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" data-mfb-label="添加/编辑 readme" class="mfb-component__button--child">
-                            <i class="mfb-component__child-icon ion-compose"></i>
-                        </a>
-                    </li>
+                    @if (!array_key_exists('HEAD.md', $items))
+                        <li>
+                            <a href="{{ route('file.create',['name' => 'HEAD', 'path' => encrypt($path)]) }}" data-mfb-label="添加 head" class="mfb-component__button--child">
+                                <i class="mfb-component__child-icon ion-edit"></i>
+                            </a>
+                        </li>
+                    @else
+                        <li>
+                            <a href="{{ route('file.update',$items['HEAD.md']['id']) }}" data-mfb-label="编辑 head" class="mfb-component__button--child">
+                                <i class="mfb-component__child-icon ion-edit"></i>
+                            </a>
+                        </li>
+                    @endif
+                    @if (!array_key_exists('README.md', $items))
+                        <li>
+                            <a href="{{ route('file.create',['name' => 'README', 'path' => encrypt($path)]) }}" data-mfb-label="添加 readme" class="mfb-component__button--child">
+                                <i class="mfb-component__child-icon ion-compose"></i>
+                            </a>
+                        </li>
+                    @else
+                        <li>
+                            <a href="{{ route('file.update',$items['README.md']['id']) }}" data-mfb-label="编辑 readme" class="mfb-component__button--child">
+                                <i class="mfb-component__child-icon ion-compose"></i>
+                            </a>
+                        </li>
+                    @endif
+
                 </ul>
             </li>
         </ul>

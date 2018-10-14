@@ -137,6 +137,75 @@ class ManageController extends Controller
     }
 
     /**
+     * 加密目录
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function lockFolder(Request $request)
+    {
+        $path = decrypt($request->get('path'));
+        $password = $request->get('password', '12345678');
+        $stream = \GuzzleHttp\Psr7\stream_for($password);
+        $root = trim(Tool::config('root'),'/');
+        $storeFilePath = trim($path,'/'). '/.password';
+        $remoteFilePath = $root. '/' .trim($storeFilePath,'/'); // 远程保存地址
+        $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
+        $requestBody = $stream;
+        $graph = new RequestController();
+        $response = $graph->requestGraph('put',[$endpoint,$requestBody,[]],true);
+        $response ? Tool::showMessage('操作成功，请牢记密码！') : Tool::showMessage('加密失败！',false);
+        Artisan::call('cache:clear');
+        return redirect()->back();
+    }
+
+    public function createFile(Request $request)
+    {
+        if (!$request->isMethod('post')) {
+            return view('admin.add');
+        }
+        $name = $request->get('name');
+        $path = decrypt($request->get('path'));
+        $content = $request->get('content');
+        $stream = \GuzzleHttp\Psr7\stream_for($content);
+        $root = trim(Tool::config('root'),'/');
+        $storeFilePath = $root. '/' .str_replace('|','/', $path) . '/' . $name . '.md';
+        $remoteFilePath = trim($storeFilePath,'/');
+        $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
+        $requestBody = $stream;
+        $graph = new RequestController();
+        $response = $graph->requestGraph('put',[$endpoint,$requestBody,[]],true);
+        $response ? Tool::showMessage('添加成功！') : Tool::showMessage('添加失败！',false);
+        Artisan::call('cache:clear');
+        return redirect()->route('list',$path);
+
+    }
+
+    /**
+     * 编辑文本文件
+     * @param Request $request
+     * @param $itemId
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function updateFile(Request $request, $itemId)
+    {
+        if (!$request->isMethod('post')) {
+            $fetch = new FetchController();
+            $file = $fetch->fetchItem($itemId);
+            $file['content'] = $fetch->fetchContent($itemId);
+            return view('admin.edit',compact('file'));
+        }
+        $content = $request->get('content');
+        $stream = \GuzzleHttp\Psr7\stream_for($content);
+        $endpoint = "/me/drive/items/{$itemId}/content";
+        $requestBody = $stream;
+        $graph = new RequestController();
+        $response = $graph->requestGraph('put',[$endpoint,$requestBody,[]],true);
+        $response ? Tool::showMessage('修改成功！') : Tool::showMessage('修改失败！',false);
+        Artisan::call('cache:clear');
+        return redirect()->back();
+    }
+
+    /**
      * 删除文件
      * @param $sign
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
@@ -162,23 +231,5 @@ class ManageController extends Controller
         $graph->requestGraph('delete',[$endpoint,'',['if-match' => $eTag]],true);
         Tool::showMessage('文件已删除');
         return view('message');
-    }
-
-
-    public function lockFolder(Request $request)
-    {
-        $path = decrypt($request->get('path'));
-        $password = $request->get('password', '12345678');
-        $stream = \GuzzleHttp\Psr7\stream_for($password);
-        $root = trim(Tool::config('root'),'/');
-        $storeFilePath = trim($path,'/'). '/.password';
-        $remoteFilePath = $root. '/' .trim($storeFilePath,'/'); // 远程保存地址
-        $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
-        $requestBody = $stream;
-        $graph = new RequestController();
-        $response = $graph->requestGraph('put',[$endpoint,$requestBody,[]],true);
-        $response ? Tool::showMessage('操作成功，请牢记密码！') : Tool::showMessage('加密失败！',false);
-        Artisan::call('cache:clear');
-        return redirect()->back();
     }
 }

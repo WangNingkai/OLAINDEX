@@ -46,3 +46,6 @@ Route::post('/logout', 'AdminController@logout')->name('logout');
 Route::get('/admin/file', 'ManageController@uploadFile')->name('admin.file');
 Route::post('/admin/file/upload', 'ManageController@uploadFile')->name('admin.file.upload')->middleware('throttle:10,2');
 Route::post('/admin/lock/folder', 'ManageController@lockFolder')->name('lock');
+
+Route::any('/admin/file/create', 'ManageController@createFile')->name('file.create');
+Route::any('/admin/file/update/{itemId}', 'ManageController@updateFile')->name('file.update');
