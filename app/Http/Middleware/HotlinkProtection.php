@@ -31,7 +31,7 @@ class HotlinkProtection
             abort(403);
         }else{
             foreach ($badUA as $item) {
-                if(strstr($ua, $item)) {
+                if(str_contains($ua, $item)) {
                     abort(403);
                 }
             }
