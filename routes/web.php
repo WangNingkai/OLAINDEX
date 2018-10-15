@@ -23,11 +23,11 @@ Route::get('/refresh', 'OauthController@refreshToken')->name('refresh');
 Route::get('/', 'FetchController@fetchItemList');
 Route::get('/list/{path?}', 'FetchController@fetchItemList')->name('list');
 Route::get('/item/{itemId}', 'FetchController@showItem')->name('item');
-Route::get('/item/download/{itemId}', 'FetchController@fetchDownload')->name('download');
-Route::get('/item/content/{itemId}', 'FetchController@fetchContent')->name('content');
-Route::get('/item/thumb/{itemId}', 'FetchController@fetchThumb')->name('thumb')->middleware('throttle:10,2');
-Route::get('/item/view/{itemId}', 'FetchController@fetchView')->name('view')->middleware('throttle:10,2');
-Route::get('/item/origin/view/{itemId}', 'FetchController@fetchDownload')->name('origin.view');
+Route::get('/item/download/{itemId}', 'FetchController@fetchDownload')->name('download')->middleware('hotlinkProtection');
+//Route::get('/item/content/{itemId}', 'FetchController@fetchContent')->name('content')->middleware('hotlinkProtection');
+Route::get('/item/thumb/{itemId}', 'FetchController@fetchThumb')->name('thumb')->middleware('throttle:10,2','hotlinkProtection');
+Route::get('/item/view/{itemId}', 'FetchController@fetchView')->name('view')->middleware('throttle:10,2','hotlinkProtection');
+Route::get('/item/origin/view/{itemId}', 'FetchController@fetchDownload')->name('origin.view')->middleware('hotlinkProtection');
 Route::post('/password', 'FetchController@handlePassword')->name('password');
 
 // 图床

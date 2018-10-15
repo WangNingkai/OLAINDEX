@@ -52,6 +52,9 @@ class UpdateInstall extends Command
             case 'dev':
                 $result = $this->v_1_0();
             break;
+            case 'v1.0':
+                $result = $this->v_1_1();
+                break;
             default:
                 $result = $this->v_1_0();
         }
@@ -87,7 +90,24 @@ class UpdateInstall extends Command
                 'value' => $redirect_uri,
             ]
         ]);
-        return $result ? $this->returnStatus('更新成功') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移',false);
+        return $result ? $this->returnStatus('更新成功，version=v1.0') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移',false);
+    }
+
+    public function v_1_1()
+    {
+        $insert = \Illuminate\Support\Facades\DB::table('parameters')->insert([
+            [
+                'name' => 'hotlink_protection',
+                'value' => '',
+            ]
+        ]);
+        $update = false;
+        if ($insert) {
+            $update = \Illuminate\Support\Facades\DB::table('parameters')
+                ->where('name' , 'app_version')
+                ->update(['value' => 'v1.1']);
+        }
+        return $update ? $this->returnStatus('更新成功，version=v1.1') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移',false);
     }
 
     /**

@@ -42,6 +42,11 @@
             <input type="text" class="form-control" id="image_hosting_path" name="image_hosting_path" value="{{ \App\Helpers\Tool::config('image_hosting_path') }}">
             <span class="form-text text-danger">有效文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ |。</span>
         </div>
+        <div class="form-group">
+            <label class="form-control-label" for="hotlink_protection">防盗链</label>
+            <input type="text" class="form-control" id="hotlink_protection" name="hotlink_protection" value="{{ \App\Helpers\Tool::config('hotlink_protection') }}">
+            <span class="form-text text-danger">留空则不开启。链接空格隔开</span>
+        </div>
         <button type="submit" class="btn btn-primary">提交</button>
     </form>
 @stop
