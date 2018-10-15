@@ -22,7 +22,7 @@ class HotlinkProtection
         }
          // 简单处理防盗链，建议加入更加其他防盗链措施
         $whiteList = explode(' ', $hotlink_protection);
-        if ($request->server('HTTP_REFERER')) {
+        if (!$request->server('HTTP_REFERER')) {
             abort(403);
         }
         //判断$_SERVER['HTTP_REFERER'] 是不是处于白名单
