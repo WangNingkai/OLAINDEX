@@ -33,7 +33,7 @@
     <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
     <script>
         const ap = new APlayer({
-            container: document.getElementById('aplayer'),
+            container: document.getElementById("aplayer"),
             audio: [{
                 name: "{{ $file['name'] }}",
                 artist: 'unknown',

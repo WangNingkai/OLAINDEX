@@ -216,24 +216,38 @@ class FetchController extends Controller
             $pathArr = explode('/', $rest);
         }
         array_push($pathArr,$item['name']);
-        $item['thumb'] = route('thumb',$item['id']);
+        $item['thumb'] = $this->fetchThumbUrl($itemId,false);
+        if (in_array($item['ext'],['avi','mpg', 'mpeg', 'rm', 'rmvb', 'mov', 'wmv', 'asf', 'ts', 'flv'])) {
+            if(strpos($item['@microsoft.graph.downloadUrl'],"sharepoint.com") == false){
+                return $this->fetchDownload($item['id']);
+            }
+            $item['dash'] =  str_replace("thumbnail","videomanifest",$item['thumb'])."&part=index&format=dash&useScf=True&pretranscode=0&transcodeahead=0";
+        }
         $item['path'] = route('download',$item['id']);
         $patterns = $this->show;
         foreach ($patterns as $key => $suffix) {
             if(in_array($item['ext'],$suffix)){
                 $view = 'show.'.$key;
-                if (in_array($key,['stream','code']))
-                    $item['content'] = $this->requestHttp('get', $item['@microsoft.graph.downloadUrl']);
+                if (in_array($key,['stream','code'])) {
+                    if ($item['size'] > 5*1024*1024) {
+                        Tool::showMessage('文件过大，请下载查看',false);
+                        return redirect()->back();
+                    } else {
+                        $item['content'] = $this->requestHttp('get', $item['@microsoft.graph.downloadUrl']);
+                    }
+                }
                 if ($key == 'doc') {
                     $url = "https://view.officeapps.live.com/op/view.aspx?src=".urlencode($item['@microsoft.graph.downloadUrl']);
                     return redirect()->away($url);
                 }
                 $file = $item;
+//                dd($item);
                 return view($view,compact('file','pathArr'));
             }
         }
         return $this->fetchDownload($item['id']);
     }
+
 
     /**
      * 获取缩略图
@@ -244,14 +258,29 @@ class FetchController extends Controller
     public function fetchThumb(Request $request, $itemId)
     {
         $size = $request->get('size','large');
-        $endpoint = "/me/drive/items/{$itemId}/thumbnails/0/{$size}";
-        $response = $this->requestGraph($endpoint, true);
-        if (!$response) abort(404);
-        $url = $response['url'];
+        $url = $this->fetchThumbUrl($itemId, false, $size);
         $content =  $this->requestHttp('get',$url);
         return response($content,200, [
             'Content-Type' => 'image/png',
         ]);
+    }
+
+    /**
+     * 获取缩略图原始链接
+     * @param $itemId
+     * @param bool $redirect
+     * @param string $size
+     * @return mixed
+     */
+    public function fetchThumbUrl($itemId, $redirect = true, $size = 'large')
+    {
+        $endpoint = "/me/drive/items/{$itemId}/thumbnails/0/{$size}";
+        $response = $this->requestGraph($endpoint, true);
+        if (!$response) abort(404);
+        if ($redirect) {
+            return redirect()->away($response['url']);
+        }
+        return $response['url'];
     }
 
     /**

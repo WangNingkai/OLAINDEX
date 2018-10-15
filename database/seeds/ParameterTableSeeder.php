@@ -81,12 +81,12 @@ class ParameterTableSeeder extends Seeder
             ,
             [
                 'name' => 'video',
-                'value' => 'mkv mp4',
+                'value' => 'mkv mp4 webm avi mpg mpeg rm rmvb mov wmv asf ts flv',
             ]
             ,
             [
                 'name' => 'audio',
-                'value' => 'mp3',
+                'value' => 'mp3 ogg wav',
             ]
             ,
             [

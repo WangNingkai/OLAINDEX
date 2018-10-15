@@ -37,19 +37,20 @@
 
     <script>
         const dp = new DPlayer({
-            container: document.getElementById('dplayer'),  // 播放器容器元素
+            container: document.getElementById("dplayer"),  // 播放器容器元素
             autoplay: false,                                // 视频自动播放
-            theme:	'#b7daff',                              // 主题色
+            theme:	"#b7daff",                              // 主题色
             loop: true,                                     // 视频循环播放
-            lang: 'zh-cn',                                  // 播放器语言设置
+            lang: "zh-cn",                                  // 播放器语言设置
             screenshot: false,                              // 开启截图
             hotkey: true, 	                                // 开启热键
-            preload: 'auto',                                // 开启预加载
+            preload: "auto",                                // 开启预加载
             volume	: 0.7,                                  // 默认音量
             mutex: true,                                    // 互斥，阻止多个播放器同时播放
             video: {
-                url: "{{ $file['path'] }}",                 // 视频地址
-                pic: "{{ $file['thumb'] }}"                 // 视频封面
+                url: "{!! $file['dash'] ?? $file['path'] !!}",                 // 视频地址
+                pic: "{!! $file['thumb'] !!}",                // 视频封面
+                type: "@if(array_key_exists('dash',$file)) dash @else auto @endif"
             }
         });
     </script>
