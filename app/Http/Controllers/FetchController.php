@@ -179,6 +179,7 @@ class FetchController extends Controller
         if (!session()->has('LogInfo')) {
             $items = $this->filterItem($items,['README.md','HEAD.md','.password','.deny']);
         }
+        $items = Tool::arrayPage($items,'/list/'.$path,20);
         return view('one',compact('items','path','pathArr','head','readme'));
     }
 

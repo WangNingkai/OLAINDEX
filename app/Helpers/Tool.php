@@ -4,6 +4,8 @@ namespace App\Helpers;
 
 use App\Models\Parameter;
 use HyperDown\Parser;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 
@@ -223,5 +225,29 @@ class Tool
         } else {
             return str_replace('=', '', base64_encode($result));
         }
+    }
+
+    /**
+     * 数组分页
+     * @param $data
+     * @param $path
+     * @param int $perPage
+     * @return mixed
+     */
+    public static function arrayPage($data, $path, $perPage = 10)
+    {
+        //获取当前的分页数
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        //实例化collect方法
+        $collection = new Collection($data);
+        //定义一下每页显示多少个数据
+//        $perPage = 5;
+        //获取当前需要显示的数据列表$currentPage * $perPage
+        $currentPageDataResults = $collection->slice(($currentPage - 1) * $perPage, $perPage)->all();
+        //创建一个新的分页方法
+        $paginatedDataResults= new LengthAwarePaginator($currentPageDataResults, count($collection), $perPage);
+        //给分页加自定义url
+        $paginatedDataResults = $paginatedDataResults->setPath($path);
+        return $paginatedDataResults;
     }
 }

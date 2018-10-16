@@ -75,6 +75,9 @@
             @endforeach
         </div>
     </div>
+    <div class="text-center">
+        {{ $items->links('page') }}
+    </div>
     @if (!blank($readme))
         <div class="card border-light mb-3">
             <div class="card-header">README</div>
@@ -84,7 +87,6 @@
         </div>
     @endif
     @if (session()->has('LogInfo'))
-
         <ul id="menu" class="mfb-component--bl mfb-zoomin" data-mfb-toggle="click">
             <li class="mfb-component__wrap">
                 <a href="#" class="mfb-component__button--main">
