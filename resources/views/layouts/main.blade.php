@@ -83,7 +83,7 @@
 <script>
     $(function(){
         $('[data-fancybox="image-list"]').fancybox({
-            "type": "image",
+            type: "image",
             protect: true
         });
         let clipboard = new ClipboardJS('.clipboard');
