@@ -16,7 +16,7 @@ class VerifyAccessToken
      */
     public function handle($request, Closure $next)
     {
-        if (Tool::config('refresh_token') == '' || Tool::config('access_token_expires') == '' ) {
+        if (Tool::config('refresh_token') == '' || Tool::config('access_token_expires') == '' || Tool::config('access_token') == '') {
             return redirect()->route('oauth');
         }
         $now = time();
