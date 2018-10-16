@@ -41,7 +41,11 @@ class InitInstall extends Command
             $this->warn('创建命令 [ touch database/database.sqlite ]');
             return false;
         };
-        $this->warn('========== 初始化配置 ==========');
+        $this->warn('初始化配置 ...');
+        if (!file_exists(base_path('.env.example'))) {
+            $this->warn('目录不存在 .env.example 文件，请确保拉取仓库完整');
+            return false;
+        }
         $app_url = $this->ask('请输入应用域名');
         $envExample = file_get_contents(base_path('.env.example'));
         $search_db = [
@@ -61,14 +65,14 @@ class InitInstall extends Command
                 return false;
         }
         file_put_contents(base_path('.env'), $env);
-        $this->alert(' 应用回调地址请填写：'.trim($app_url,'/') .'/oauth ');
+        $this->info(' 应用回调地址请填写：'.trim($app_url,'/') .'/oauth ');
 //        $this->call('key:generate');
-        $this->warn('========== 正在执行数据库操作 ==========');
+        $this->warn('正在执行数据库操作 ...');
         $this->call('migrate');
         $this->call('db:seed');
-        $this->alert('手动执行以下命令确保目录读写权限');
-        $this->warn('chmod -R 755 storage/* && chown -R www:www *');
+        $this->warn('手动执行以下命令确保目录读写权限');
+        $this->info('chmod -R 755 storage/* && chown -R www:www *');
         $this->warn('========== 预安装完成，请继续下面的操作 ==========');
-        $this->alert(' 后台登录原始密码：12345678');
+        $this->info(' 后台登录原始密码：12345678');
     }
 }
