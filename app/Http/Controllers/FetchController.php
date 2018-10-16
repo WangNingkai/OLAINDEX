@@ -44,6 +44,7 @@ class FetchController extends Controller
             'stream' => explode(' ', Tool::config('stream')),
             'image' => explode(' ', Tool::config('image')),
             'video' => explode(' ', Tool::config('video')),
+            'dash' => explode(' ', Tool::config('dash')),
             'audio' => explode(' ', Tool::config('audio')),
             'code' => explode(' ', Tool::config('code')),
             'doc' => explode(' ', Tool::config('doc')),
@@ -217,12 +218,6 @@ class FetchController extends Controller
         }
         array_push($pathArr,$item['name']);
         $item['thumb'] = $this->fetchThumbUrl($itemId,false);
-        if (in_array($item['ext'],['avi','mpg', 'mpeg', 'rm', 'rmvb', 'mov', 'wmv', 'asf', 'ts', 'flv'])) {
-            if(strpos($item['@microsoft.graph.downloadUrl'],"sharepoint.com") == false){
-                return $this->fetchDownload($item['id']);
-            }
-            $item['dash'] =  str_replace("thumbnail","videomanifest",$item['thumb'])."&part=index&format=dash&useScf=True&pretranscode=0&transcodeahead=0";
-        }
         $item['path'] = route('download',$item['id']);
         $patterns = $this->show;
         foreach ($patterns as $key => $suffix) {
@@ -236,11 +231,18 @@ class FetchController extends Controller
                         $item['content'] = $this->requestHttp('get', $item['@microsoft.graph.downloadUrl']);
                     }
                 }
+                if ($key == 'dash') {
+                    if(strpos($item['@microsoft.graph.downloadUrl'],"sharepoint.com") == false){
+                        return $this->fetchDownload($item['id']);
+                    }
+                    $item['dash'] =  str_replace("thumbnail","videomanifest",$item['thumb'])."&part=index&format=dash&useScf=True&pretranscode=0&transcodeahead=0";
+                }
                 if ($key == 'doc') {
                     $url = "https://view.officeapps.live.com/op/view.aspx?src=".urlencode($item['@microsoft.graph.downloadUrl']);
                     return redirect()->away($url);
                 }
                 $file = $item;
+//                dump($key);
 //                dd($item);
                 return view($view,compact('file','pathArr'));
             }

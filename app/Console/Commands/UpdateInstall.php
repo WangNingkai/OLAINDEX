@@ -55,6 +55,9 @@ class UpdateInstall extends Command
             case 'v1.0':
                 $result = $this->v_1_1();
                 break;
+            case 'v1.1':
+                $result = $this->v_1_2();
+                break;
             default:
                 $result = $this->v_1_0();
         }
@@ -93,6 +96,9 @@ class UpdateInstall extends Command
         return $result ? $this->returnStatus('更新成功，version=v1.0') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移',false);
     }
 
+    /**
+     * @return array
+     */
     public function v_1_1()
     {
         $insert = \Illuminate\Support\Facades\DB::table('parameters')->insert([
@@ -108,6 +114,26 @@ class UpdateInstall extends Command
                 ->update(['value' => 'v1.1']);
         }
         return $update ? $this->returnStatus('更新成功，version=v1.1') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移',false);
+    }
+
+    /**
+     * @return array
+     */
+    public function v_1_2()
+    {
+        $insert = \Illuminate\Support\Facades\DB::table('parameters')->insert([
+            [
+                'name' => 'dash',
+                'value' => 'avi mpg mpeg rm rmvb mov wmv asf ts flv',
+            ]
+        ]);
+        $update = false;
+        if ($insert) {
+            $update = \Illuminate\Support\Facades\DB::table('parameters')
+                ->where('name' , 'video')
+                ->update(['value' => 'mkv mp4 webm']);
+        }
+        return $update ? $this->returnStatus('更新成功，version=v1.2') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移',false);
     }
 
     /**

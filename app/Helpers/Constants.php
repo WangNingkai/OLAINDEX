@@ -3,7 +3,7 @@ namespace App\Helpers;
 
 class Constants {
 
-    const LATEST_VERSION = 'v1.1';
+    const LATEST_VERSION = 'v1.2';
 
     const EXT = [
         'acx' => 'application/internet-property-stream',

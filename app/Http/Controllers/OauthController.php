@@ -34,7 +34,7 @@ class OauthController extends Controller
             'urlAuthorize'            => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
             'urlAccessToken'          => 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
             'urlResourceOwnerDetails' => 'https://outlook.office.com/api/v1.0/me',
-            'scopes'                  => 'openid profile user.read files.readwrite.all offline_access'
+            'scopes'                  => 'offline_access files.readwrite.all'
         ]);
     }
 

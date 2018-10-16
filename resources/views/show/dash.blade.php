@@ -18,20 +18,21 @@
                 <hr>
                 <label class="control-label">下载链接</label>
                 <div class="form-group">
-                        <div class="input-group mb-3">
-                            <input type="text" id="link1" class="form-control" aria-label="Amount (to the nearest dollar)" value="{{ $file['path'] }}">
-                            <div class="input-group-append">
-                                <a href="javascript:void(0)" style="text-decoration: none" data-toggle="tooltip" data-placement="right" data-clipboard-target="#link1" class="clipboard">
-                                    <span class="input-group-text">复制</span></a>
-                            </div>
+                    <div class="input-group mb-3">
+                        <input type="text" id="link1" class="form-control" aria-label="Amount (to the nearest dollar)" value="{{ $file['path'] }}">
+                        <div class="input-group-append">
+                            <a href="javascript:void(0)" style="text-decoration: none" data-toggle="tooltip" data-placement="right" data-clipboard-target="#link1" class="clipboard">
+                                <span class="input-group-text">复制</span></a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    </div>
 @stop
 @section('js')
+    <script src="https://cdn.jsdelivr.net/npm/dashjs/dist/dash.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dplayer/dist/DPlayer.min.js"></script>
     <script>
         const dp = new DPlayer({
@@ -44,11 +45,11 @@
             hotkey: true, 	                                // 开启热键
             preload: "auto",                                // 开启预加载
             volume	: 0.7,                                  // 默认音量
-            mutex: true,                                    // 互斥，阻止多个播放器同时播放
+            // mutex: true,                                    // 互斥，阻止多个播放器同时播放
             video: {
-                url: "{!! $file['path'] !!}",                 // 视频地址
+                url: "{!! $file['dash'] !!}",                 // 视频地址
                 pic: "{!! $file['thumb'] !!}",                // 视频封面
-                type: "auto"
+                type: "dash"
             }
         });
     </script>
