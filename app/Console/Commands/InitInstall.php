@@ -37,7 +37,7 @@ class InitInstall extends Command
     public function handle()
     {
         if (!file_exists(database_path('database.sqlite'))) {
-            $this->alert(' 未检测到数据库文件！请确认已在应用数据库目录创建 database.sqlite！');
+            $this->warn(' 未检测到数据库文件！请确认已在应用数据库目录创建 database.sqlite！');
             $this->warn('创建命令 [ touch database/database.sqlite ]');
             return false;
         };
