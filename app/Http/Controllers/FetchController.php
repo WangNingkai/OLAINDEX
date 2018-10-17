@@ -146,14 +146,13 @@ class FetchController extends Controller
 
     /**
      * 获取文件列表
-     * @param Request $request
      * @param string $path
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function fetchItemList(Request $request, $path = '')
+    public function fetchItemList($path = '')
     {
         $graphPath = $this->convertPath($path);
-        $query = $request->get('query', 'children');
+        $query = 'children';
         $endpoint = '/me/drive/root' . $graphPath . $query;
         $response =  $this->requestGraph($endpoint, true);
         $items =  $this->formatArray($response);
@@ -172,7 +171,7 @@ class FetchController extends Controller
                 return view('password',compact('path','pass_id'));
             }
         }
-        $this->filterFolder($items);
+        $this->forbidFolder($items);
         $head = Tool::markdown2Html($this->fetchFilterContent('HEAD.md',$items));
         $readme = Tool::markdown2Html($this->fetchFilterContent('README.md',$items));
         $pathArr =  $path ? explode('|',$path):[];
@@ -181,6 +180,55 @@ class FetchController extends Controller
         }
         $items = Tool::arrayPage($items,'/list/'.$path,20);
         return view('one',compact('items','path','pathArr','head','readme'));
+    }
+
+    /**
+     * 搜索
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function searchItemLIst(Request $request)
+    {
+        $keywords = $request->get('keywords');
+        $query = "search(q='{$keywords}')";
+        $endpoint = '/me/drive/root:/'. trim($this->root) .':/'. $query;
+        $response =  $this->requestGraph($endpoint, true);
+        $response['value'] = $this->fetchNextLinkItem($response,$response['value']);
+        $items_origin =  $this->formatArray($response);
+        $items = $this->filterFolder($items_origin); // 过滤结果中的文件夹
+        $items = Tool::arrayPage($items,'/search',20);
+        return view('search',compact('items'));
+    }
+
+    /**
+     * 过滤目录中的文件夹
+     * @param $items
+     * @return mixed
+     */
+    public function filterFolder($items)
+    {
+        foreach ($items as $key => $item) {
+            if (isset($item['folder'])) {
+                unset($items[$key]);
+            }
+        }
+        return $items;
+    }
+
+    /**
+     * 合并分页数据
+     * @param $data
+     * @param array $result
+     * @return array
+     */
+    public function fetchNextLinkItem($data, &$result = [])
+    {
+        if (isset($data['@odata.nextLink'])) {
+            $endpoint = mb_strstr($data['@odata.nextLink'],'/me');
+            $response =  $this->requestGraph($endpoint, true);
+            $result = array_merge($response['value'],$this->fetchNextLinkItem($response,$result));
+        }
+        return $result;
     }
 
     /**
@@ -243,8 +291,6 @@ class FetchController extends Controller
                     return redirect()->away($url);
                 }
                 $file = $item;
-//                dump($key);
-//                dd($item);
                 return view($view,compact('file','pathArr'));
             }
         }
@@ -367,7 +413,7 @@ class FetchController extends Controller
      * 过滤目录
      * @param $items
      */
-    public function filterFolder($items)
+    public function forbidFolder($items)
     {
         // .deny目录无法访问
         if (!empty($items['.deny'])) {

@@ -47,5 +47,9 @@ Route::get('/admin/file', 'ManageController@uploadFile')->name('admin.file');
 Route::post('/admin/file/upload', 'ManageController@uploadFile')->name('admin.file.upload')->middleware('throttle:10,2');
 Route::post('/admin/lock/folder', 'ManageController@lockFolder')->name('lock');
 
+// 文件管理
 Route::any('/admin/file/create', 'ManageController@createFile')->name('file.create');
 Route::any('/admin/file/update/{itemId}', 'ManageController@updateFile')->name('file.update');
+
+// 搜索
+Route::any('/search', 'FetchController@searchItemList')->name('search')->middleware('checkAuth');
