@@ -43,6 +43,7 @@ class AdminController extends Controller
                 'LastActivityTime' => time(),
             ];
             Session::put('LogInfo',$logInfo);
+            $request->session()->regenerate();
             return redirect()->route('admin.basic');
         } else {
             Tool::showMessage('密码错误',false);
@@ -52,11 +53,12 @@ class AdminController extends Controller
 
     /**
      * 退出
+     * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function logout()
+    public function logout(Request $request)
     {
-        Session::forget('LogInfo');
+        $request->session()->invalidate();
         Tool::showMessage('已退出');
         return redirect()->route('list');
     }
