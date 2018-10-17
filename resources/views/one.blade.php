@@ -23,7 +23,55 @@
                     <span class="pull-right">Size</span>
                 </div>
                 <div class="col">
-                    <span class="pull-right">Action</span>
+                    @if (session()->has('LogInfo'))
+                        <a class="pull-right dropdown-toggle" href="javascript:void(0)" id="actionDropdownLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</a>
+                        <div class="dropdown-menu" aria-labelledby="actionDropdownLink">
+                            @if (array_key_exists('README.md', $origin_items))
+                                <a class="dropdown-item" href="{{ route('file.update',$origin_items['README.md']['id']) }}">编辑 README</a>
+                            @else
+                                <a class="dropdown-item" href="{{ route('file.create',['name' => 'README', 'path' => encrypt($path)]) }}">添加 README</a>
+                            @endif
+                            @if (array_key_exists('HEAD.md', $origin_items))
+                                <a class="dropdown-item" href="{{ route('file.update',$origin_items['HEAD.md']['id']) }}">编辑 HEAD</a>
+
+                            @else
+                                <a class="dropdown-item" href="{{ route('file.create',['name' => 'HEAD', 'path' => encrypt($path)]) }}">添加 HEAD</a>
+                            @endif
+                            @if (!array_key_exists('.password', $origin_items))
+                                <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#loclFolderModal">加密目录</a>
+                            @endif
+                        </div>
+                        @if (!array_key_exists('.password', $origin_items))
+                            <div class="modal fade" id="loclFolderModal" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <form action="{{ route('lock') }}" method="post">
+                                        @csrf
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">加密目录</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p class="text-danger">确认锁定目录，请输入密码(默认密码 12345678)：</p>
+                                                <div class="form-group">
+                                                    <input type="password" name="password" class="form-control" placeholder="请输入密码" id="lockField" required>
+                                                    <input type="hidden" name="path" value="{{ encrypt($path) }}">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary">确定</button>
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        @endif
+                    @else
+                        <span class="pull-right"></span>
+                    @endif
                 </div>
             </div>
         </div>
@@ -85,79 +133,5 @@
                 {!! $readme !!}
             </div>
         </div>
-    @endif
-    @if (session()->has('LogInfo'))
-        <ul id="menu" class="mfb-component--bl mfb-zoomin" data-mfb-toggle="click">
-            <li class="mfb-component__wrap">
-                <a href="#" class="mfb-component__button--main">
-                    <i class="mfb-component__main-icon--resting ion-plus-round"></i>
-                    <i class="mfb-component__main-icon--active ion-close-round"></i>
-                </a>
-                <ul class="mfb-component__list">
-                    @if (!array_key_exists('.password', $items))
-                        <li>
-                            <a href="javascript:void(0)" data-mfb-label="加密目录" class="mfb-component__button--child" data-toggle="modal" data-target="#loclFolderModal">
-                                <i class="mfb-component__child-icon ion-locked"></i>
-                            </a>
-                        </li>
-                    @endif
-                    @if (!array_key_exists('HEAD.md', $items))
-                        <li>
-                            <a href="{{ route('file.create',['name' => 'HEAD', 'path' => encrypt($path)]) }}" data-mfb-label="添加 head" class="mfb-component__button--child">
-                                <i class="mfb-component__child-icon ion-edit"></i>
-                            </a>
-                        </li>
-                    @else
-                        <li>
-                            <a href="{{ route('file.update',$items['HEAD.md']['id']) }}" data-mfb-label="编辑 head" class="mfb-component__button--child">
-                                <i class="mfb-component__child-icon ion-edit"></i>
-                            </a>
-                        </li>
-                    @endif
-                    @if (!array_key_exists('README.md', $items))
-                        <li>
-                            <a href="{{ route('file.create',['name' => 'README', 'path' => encrypt($path)]) }}" data-mfb-label="添加 readme" class="mfb-component__button--child">
-                                <i class="mfb-component__child-icon ion-compose"></i>
-                            </a>
-                        </li>
-                    @else
-                        <li>
-                            <a href="{{ route('file.update',$items['README.md']['id']) }}" data-mfb-label="编辑 readme" class="mfb-component__button--child">
-                                <i class="mfb-component__child-icon ion-compose"></i>
-                            </a>
-                        </li>
-                    @endif
-
-                </ul>
-            </li>
-        </ul>
-        @if (!array_key_exists('.password', $items))
-            <div class="modal fade" id="loclFolderModal" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <form action="{{ route('lock') }}" method="post">
-                        @csrf
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">加密目录</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <p class="text-danger">确认锁定目录，请输入密码(默认密码 12345678)：</p>
-                                <div class="form-group">
-                                    <input type="password" name="password" class="form-control" placeholder="请输入密码" id="lockField" required>
-                                    <input type="hidden" name="path" value="{{ encrypt($path) }}">
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary">确定</button>
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        @endif
     @endif
 @stop

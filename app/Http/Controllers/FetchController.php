@@ -155,9 +155,9 @@ class FetchController extends Controller
         $query = 'children';
         $endpoint = '/me/drive/root' . $graphPath . $query;
         $response =  $this->requestGraph($endpoint, true);
-        $items =  $this->formatArray($response);
-        if (!empty($items['.password'])) {
-            $pass_id = $items['.password']['id'];
+        $origin_items =  $this->formatArray($response);
+        if (!empty($origin_items['.password'])) {
+            $pass_id = $origin_items['.password']['id'];
             if (Session::has('password:'.$path)) {
                 $data = Session::get('password:'.$path);
                 $expires = $data['expires'];
@@ -171,15 +171,15 @@ class FetchController extends Controller
                 return view('password',compact('path','pass_id'));
             }
         }
-        $this->forbidFolder($items);
-        $head = Tool::markdown2Html($this->fetchFilterContent('HEAD.md',$items));
-        $readme = Tool::markdown2Html($this->fetchFilterContent('README.md',$items));
+        $this->forbidFolder($origin_items);
+        $head = Tool::markdown2Html($this->fetchFilterContent('HEAD.md',$origin_items));
+        $readme = Tool::markdown2Html($this->fetchFilterContent('README.md',$origin_items));
         $pathArr =  $path ? explode('|',$path):[];
         if (!session()->has('LogInfo')) {
-            $items = $this->filterItem($items,['README.md','HEAD.md','.password','.deny']);
+            $origin_items = $this->filterItem($origin_items,['README.md','HEAD.md','.password','.deny']);
         }
-        $items = Tool::arrayPage($items,'/list/'.$path,20);
-        return view('one',compact('items','path','pathArr','head','readme'));
+        $items = Tool::arrayPage($origin_items,'/list/'.$path,20);
+        return view('one',compact('items','origin_items','path','pathArr','head','readme'));
     }
 
     /**
