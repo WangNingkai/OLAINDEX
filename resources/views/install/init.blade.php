@@ -24,7 +24,7 @@
         <div class="collapse navbar-collapse" id="navbarColor01">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('list') }}"> Home</a>
+                    <a class="nav-link" href="{{ route('list') }}"> 首页</a>
                 </li>
             </ul>
         </div>

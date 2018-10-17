@@ -32,13 +32,15 @@
         <div class="collapse navbar-collapse" id="navbarColor01">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.basic') }}">基础设置 </a>
+                    <a class="nav-link" href="{{ route('list') }}"> 首页</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.show') }}">显示设置 </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.profile') }}">其他设置 </a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">设置</a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{{ route('admin.basic') }}">基础设置 </a>
+                        <a class="dropdown-item" href="{{ route('admin.show') }}">显示设置 </a>
+                        <a class="dropdown-item" href="{{ route('admin.profile') }}">其他设置 </a>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('admin.file') }}">文件上传 </a>

@@ -194,8 +194,8 @@ class FetchController extends Controller
         $endpoint = '/me/drive/root:/'. trim($this->root) .':/'. $query;
         $response =  $this->requestGraph($endpoint, true);
         $response['value'] = $this->fetchNextLinkItem($response,$response['value']);
-        $items_origin =  $this->formatArray($response);
-        $items = $this->filterFolder($items_origin); // 过滤结果中的文件夹
+        $origin_items =  $this->formatArray($response);
+        $items = $this->filterFolder($origin_items); // 过滤结果中的文件夹
         $items = Tool::arrayPage($items,'/search',20);
         return view('search',compact('items'));
     }
