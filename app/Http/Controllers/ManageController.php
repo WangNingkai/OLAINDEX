@@ -158,6 +158,11 @@ class ManageController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * 新建文件
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
     public function createFile(Request $request)
     {
         if (!$request->isMethod('post')) {
