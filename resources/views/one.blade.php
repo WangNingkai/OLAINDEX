@@ -70,7 +70,7 @@
                             </div>
                         @endif
                     @else
-                        <span class="pull-right"></span>
+                        <span class="pull-right">Action</span>
                     @endif
                 </div>
             </div>
