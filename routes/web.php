@@ -56,12 +56,3 @@ Route::any('/admin/folder/create', 'ManageController@createFolder')->name('folde
 
 // 搜索
 Route::any('/search', 'FetchController@searchItemList')->name('search')->middleware('checkAuth');
-
-Route::any('/t', function () {
-    $fet = new \App\Http\Controllers\FetchController();
-    $graphPath = $fet->convertPath('Images');
-    $req = new \App\Http\Controllers\RequestController();
-    $params = ['/me/drive/root' . $graphPath, '', []];
-    $re = $req->requestGraph('get', $params, true);
-    dd($re['id']);
-});
