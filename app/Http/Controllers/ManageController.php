@@ -230,9 +230,9 @@ class ManageController extends Controller
             $itemId = $re['id'];
             $endpoint = "/me/drive/items/{$itemId}/children";
         }
-        $requestBody = '{"name":"'. $name.'","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
+        $requestBody = '{"name":"' . $name . '","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
         $response = $req->requestGraph('post', [$endpoint, $requestBody, []], true);
-        $response ? Tool::showMessage('新建目录！') : Tool::showMessage('新建目录失败！', false);
+        $response ? Tool::showMessage('新建目录成功！') : Tool::showMessage('新建目录失败！', false);
         Artisan::call('cache:clear');
         return redirect()->back();
     }

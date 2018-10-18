@@ -96,6 +96,7 @@
                                         </div>
                                         <div class="modal-body">
                                             <p class="text-danger">请确保目录名的唯一性，如果存在相同名称，服务器会自动选择新的名称。</p>
+                                            <p class="text-danger">文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ |。</p>
                                             <div class="form-group">
                                                 <input type="text" name="name" class="form-control" placeholder="请输入目录名"
                                                        required>
