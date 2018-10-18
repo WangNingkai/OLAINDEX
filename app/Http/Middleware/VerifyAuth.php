@@ -10,8 +10,8 @@ class VerifyAuth
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Closure $next
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -19,7 +19,7 @@ class VerifyAuth
         if (!Session::has('LogInfo')) {
             return redirect()->route('login');
         }
-        Session::put('LogInfo.LastActivityTime',time());
+        Session::put('LogInfo.LastActivityTime', time());
         return $next($request);
     }
 }

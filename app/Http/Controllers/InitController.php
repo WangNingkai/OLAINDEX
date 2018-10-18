@@ -25,7 +25,7 @@ class InitController extends Controller
         $client_id = Tool::config('client_id');
         $client_secret = Tool::config('client_secret');
         $redirect_uri = Tool::config('redirect_uri');
-        if ($client_id != '' && $client_secret != '' && $redirect_uri != '' ) {
+        if ($client_id != '' && $client_secret != '' && $redirect_uri != '') {
             return redirect()->route('list');
         }
         //  显示基础信息的填写、申请或提交应用信息、返回
@@ -35,8 +35,8 @@ class InitController extends Controller
         $client_id = $request->get('client_id');
         $client_secret = $request->get('client_secret');
         $redirect_uri = $request->get('redirect_uri');
-        if ($client_id == '' || $client_secret == '' || $redirect_uri == '' ) {
-            Tool::showMessage('参数请填写完整',false);
+        if ($client_id == '' || $client_secret == '' || $redirect_uri == '') {
+            Tool::showMessage('参数请填写完整', false);
             return redirect()->back();
         }
         // 写入数据库
@@ -68,7 +68,7 @@ class InitController extends Controller
         // 感谢donwa提供的方法
         $redirect_uri = $request->get('redirect_uri');
         $ru = "https://developer.microsoft.com/en-us/graph/quick-start?appID=_appId_&appName=_appName_&redirectUrl={$redirect_uri}&platform=option-php";
-        $deepLink = "/quickstart/graphIO?publicClientSupport=false&appName=OLAINDEX&redirectUrl={$redirect_uri}&allowImplicitFlow=false&ru=".urlencode($ru);
+        $deepLink = "/quickstart/graphIO?publicClientSupport=false&appName=OLAINDEX&redirectUrl={$redirect_uri}&allowImplicitFlow=false&ru=" . urlencode($ru);
         $app_url = "https://apps.dev.microsoft.com/?deepLink=" . urlencode($deepLink);
         return redirect()->away($app_url);
     }

@@ -10,7 +10,8 @@
             {{ $file['name'] }}
         </div>
         <div class="card-body">
-            <div class="text-center"><a href="{{ $file['path'] }}" class="btn btn-success"><i class="fa fa-download"></i> 下载</a></div>
+            <div class="text-center"><a href="{{ $file['path'] }}" class="btn btn-success"><i
+                        class="fa fa-download"></i> 下载</a></div>
             <hr>
             <div class="text-center">
                 <div id="aplayer"></div>
@@ -19,10 +20,12 @@
             <label class="control-label">下载链接</label>
             <div class="form-group">
                 <div class="input-group mb-3">
-                    <input type="text" id="link1" class="form-control" aria-label="Amount (to the nearest dollar)" value="{{ $file['path'] }}">
+                    <input type="text" id="link1" class="form-control" aria-label="Amount (to the nearest dollar)"
+                           value="{{ $file['path'] }}">
                     <div class="input-group-append">
                         <a href="javascript:void(0)" style="text-decoration: none" data-toggle="tooltip"
-                           data-placement="right" data-clipboard-target="#link1" class="clipboard"><span class="input-group-text">复制</span></a>
+                           data-placement="right" data-clipboard-target="#link1" class="clipboard"><span
+                                class="input-group-text">复制</span></a>
                     </div>
                 </div>
             </div>

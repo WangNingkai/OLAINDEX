@@ -53,8 +53,8 @@ class InitInstall extends Command
             'APP_URL=http://localhost',
         ];
         $replace_db = [
-            'APP_KEY='.str_random(32),
-            'APP_URL='.$app_url,
+            'APP_KEY=' . str_random(32),
+            'APP_URL=' . $app_url,
         ];
         $env = str_replace($search_db, $replace_db, $envExample);
         if (file_exists(base_path('.env'))) {
@@ -65,7 +65,7 @@ class InitInstall extends Command
                 return false;
         }
         file_put_contents(base_path('.env'), $env);
-        $this->info(' 应用回调地址请填写：'.trim($app_url,'/') .'/oauth ');
+        $this->info(' 应用回调地址请填写：' . trim($app_url, '/') . '/oauth ');
 //        $this->call('key:generate');
         $this->warn('正在执行数据库操作 ...');
         $this->call('migrate');

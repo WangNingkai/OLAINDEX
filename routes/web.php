@@ -1,5 +1,7 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -25,14 +27,14 @@ Route::get('/list/{path?}', 'FetchController@fetchItemList')->name('list');
 Route::get('/item/{itemId}', 'FetchController@showItem')->name('item');
 Route::get('/item/download/{itemId}', 'FetchController@fetchDownload')->name('download')->middleware('hotlinkProtection');
 //Route::get('/item/content/{itemId}', 'FetchController@fetchContent')->name('content')->middleware('hotlinkProtection');
-Route::get('/item/thumb/{itemId}', 'FetchController@fetchThumb')->name('thumb')->middleware('throttle:10,2','hotlinkProtection');
-Route::get('/item/view/{itemId}', 'FetchController@fetchView')->name('view')->middleware('throttle:10,2','hotlinkProtection');
+Route::get('/item/thumb/{itemId}', 'FetchController@fetchThumb')->name('thumb')->middleware('throttle:10,2', 'hotlinkProtection');
+Route::get('/item/view/{itemId}', 'FetchController@fetchView')->name('view')->middleware('throttle:10,2', 'hotlinkProtection');
 Route::get('/item/origin/view/{itemId}', 'FetchController@fetchDownload')->name('origin.view')->middleware('hotlinkProtection');
 Route::post('/password', 'FetchController@handlePassword')->name('password');
 
 // 图床
 Route::get('/image', 'ManageController@uploadImage')->name('image')->middleware('checkImage');
-Route::post('/image/upload', 'ManageController@uploadImage')->name('image.upload')->middleware('throttle:10,2','checkImage');
+Route::post('/image/upload', 'ManageController@uploadImage')->name('image.upload')->middleware('throttle:10,2', 'checkImage');
 Route::get('/item/delete/{itemId}', 'ManageController@deleteItem')->name('delete')->middleware('checkImage');
 
 // 后台管理
@@ -50,6 +52,16 @@ Route::post('/admin/lock/folder', 'ManageController@lockFolder')->name('lock');
 // 文件管理
 Route::any('/admin/file/create', 'ManageController@createFile')->name('file.create');
 Route::any('/admin/file/update/{itemId}', 'ManageController@updateFile')->name('file.update');
+Route::any('/admin/folder/create', 'ManageController@createFolder')->name('folder.create');
 
 // 搜索
 Route::any('/search', 'FetchController@searchItemList')->name('search')->middleware('checkAuth');
+
+Route::any('/t', function () {
+    $fet = new \App\Http\Controllers\FetchController();
+    $graphPath = $fet->convertPath('Images');
+    $req = new \App\Http\Controllers\RequestController();
+    $params = ['/me/drive/root' . $graphPath, '', []];
+    $re = $req->requestGraph('get', $params, true);
+    dd($re['id']);
+});

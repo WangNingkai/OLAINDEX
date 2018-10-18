@@ -42,16 +42,15 @@ class UpdateInstall extends Command
     {
         // 获取当前版本,默认开发版
         $this->warn('========== 开始更新 ==========');
-        $version = Tool::config('app_version','dev');
+        $version = Tool::config('app_version', 'dev');
         if ($version == Constants::LATEST_VERSION) {
             $this->info('已是最新版本，无需更新');
             return;
         }
-        switch ($version)
-        {
+        switch ($version) {
             case 'dev':
                 $result = $this->v_1_0();
-            break;
+                break;
             case 'v1.0':
                 $result = $this->v_1_1();
                 break;
@@ -93,7 +92,7 @@ class UpdateInstall extends Command
                 'value' => $redirect_uri,
             ]
         ]);
-        return $result ? $this->returnStatus('更新成功，version=v1.0') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移',false);
+        return $result ? $this->returnStatus('更新成功，version=v1.0') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
     }
 
     /**
@@ -110,10 +109,10 @@ class UpdateInstall extends Command
         $update = false;
         if ($insert) {
             $update = \Illuminate\Support\Facades\DB::table('parameters')
-                ->where('name' , 'app_version')
+                ->where('name', 'app_version')
                 ->update(['value' => 'v1.1']);
         }
-        return $update ? $this->returnStatus('更新成功，version=v1.1') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移',false);
+        return $update ? $this->returnStatus('更新成功，version=v1.1') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
     }
 
     /**
@@ -130,10 +129,10 @@ class UpdateInstall extends Command
         $update = false;
         if ($insert) {
             $update = \Illuminate\Support\Facades\DB::table('parameters')
-                ->where('name' , 'video')
+                ->where('name', 'video')
                 ->update(['value' => 'mkv mp4 webm']);
         }
-        return $update ? $this->returnStatus('更新成功，version=v1.2') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移',false);
+        return $update ? $this->returnStatus('更新成功，version=v1.2') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
     }
 
     /**
@@ -142,7 +141,7 @@ class UpdateInstall extends Command
      * @param bool $status
      * @return array
      */
-    public function returnStatus($msg,$status = true)
+    public function returnStatus($msg, $status = true)
     {
         return [
             'status' => $status,

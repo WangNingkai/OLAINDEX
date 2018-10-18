@@ -28,13 +28,13 @@ class OauthController extends Controller
     {
         $this->middleware('checkInstall');
         $this->provider = new GenericProvider([
-            'clientId'                => Tool::config('client_id'),
-            'clientSecret'            => Tool::config('client_secret'),
-            'redirectUri'             => Tool::config('redirect_uri'),
-            'urlAuthorize'            => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
-            'urlAccessToken'          => 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+            'clientId' => Tool::config('client_id'),
+            'clientSecret' => Tool::config('client_secret'),
+            'redirectUri' => Tool::config('redirect_uri'),
+            'urlAuthorize' => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+            'urlAccessToken' => 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
             'urlResourceOwnerDetails' => 'https://outlook.office.com/api/v1.0/me',
-            'scopes'                  => 'offline_access files.readwrite.all'
+            'scopes' => 'offline_access files.readwrite.all'
         ]);
     }
 
@@ -46,16 +46,16 @@ class OauthController extends Controller
     public function oauth(Request $request)
     {
         // 检测是否已授权
-        if (Tool::config('access_token') != '' && Tool::config('refresh_token') != '' && Tool::config('access_token_expires') != '' ) {
+        if (Tool::config('access_token') != '' && Tool::config('refresh_token') != '' && Tool::config('access_token_expires') != '') {
             return redirect()->route('list'); // 检测授权状态
         }
         if ($request->isMethod('GET') && !$request->has('code')) {
             // 生成state缓存，跳转授权登录
             $authorizationUrl = $this->provider->getAuthorizationUrl();
             $state = $this->provider->getState();
-            Cache::put('state',$state,10);
+            Cache::put('state', $state, 10);
             return redirect()->away($authorizationUrl); // 跳转授权登录
-        } elseif ( $request->isMethod('GET') && $request->has('code') ) {
+        } elseif ($request->isMethod('GET') && $request->has('code')) {
             // 验证 state
             if (empty($request->get('state')) || ($request->get('state') !== Cache::get('state'))) {
                 if (Cache::has('state'))
@@ -65,7 +65,7 @@ class OauthController extends Controller
             // 获取 accessToken & refreshToken
             try {
                 $accessToken = $this->provider->getAccessToken('authorization_code', [
-                    'code'     => $_GET['code']
+                    'code' => $_GET['code']
                 ]);
                 $access_token = $accessToken->getToken();
                 $refresh_token = $accessToken->getRefreshToken();

@@ -7,7 +7,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>初始化安装</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4/dist/{{ \App\Helpers\Tool::config('theme','materia') }}/bootstrap.min.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootswatch@4/dist/{{ \App\Helpers\Tool::config('theme','materia') }}/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@2/github-markdown.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fancybox@3/dist/css/jquery.fancybox.min.css">
@@ -17,7 +18,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
         <a class="navbar-brand" href="{{ route('list') }}">{{ \App\Helpers\Tool::config('name','OLAINDEX') }}</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01"
+                aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -43,7 +45,8 @@
             <form action="{{ route('apply') }}" method="get" target="_blank">
                 <div class="form-group">
                     <label class="form-control-label" for="redirect_uri">redirect_uri </label>
-                    <input type="text" class="form-control" id="redirect_uri" name="redirect_uri" value="{{ trim(config('app.url'),'/').'/oauth' }}">
+                    <input type="text" class="form-control" id="redirect_uri" name="redirect_uri"
+                           value="{{ trim(config('app.url'),'/').'/oauth' }}">
                     <span class="form-text text-danger">如已申请，请直接在下面配置填写</span>
                 </div>
                 <button type="submit" class="btn btn-info">申请</button>
@@ -57,7 +60,8 @@
                 @csrf
                 <div class="form-group">
                     <label class="form-control-label" for="redirect_uri">redirect_uri </label>
-                    <input type="text" class="form-control" id="redirect_uri" name="redirect_uri" value="{{ trim(config('app.url'),'/').'/oauth' }}">
+                    <input type="text" class="form-control" id="redirect_uri" name="redirect_uri"
+                           value="{{ trim(config('app.url'),'/').'/oauth' }}">
                     <span class="form-text text-danger">演示为本地地址，正确回调地址格式: https://you.domain/oauth 必须为 https</span>
                 </div>
                 <div class="form-group">
@@ -83,7 +87,8 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/return-top@1/dist/x-return-top.min.js" left="85%" bottom="10%" text="返回顶部"></script>
+<script src="https://cdn.jsdelivr.net/npm/return-top@1/dist/x-return-top.min.js" left="85%" bottom="10%"
+        text="返回顶部"></script>
 </body>
 
 </html>

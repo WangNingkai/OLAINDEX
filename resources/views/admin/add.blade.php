@@ -3,7 +3,13 @@
 @section('css')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/inscrybmde@1.11.4/dist/inscrybmde.min.css">
     <style>
-        .editor-preview img,.editor-preview-side img{box-sizing:border-box;max-width:100%;max-height:100%;box-shadow:0 0 5px rgba(0,0,0,.15);vertical-align:middle}
+        .editor-preview img, .editor-preview-side img {
+            box-sizing: border-box;
+            max-width: 100%;
+            max-height: 100%;
+            box-shadow: 0 0 5px rgba(0, 0, 0, .15);
+            vertical-align: middle
+        }
     </style>
 @stop
 @section('content')
@@ -90,7 +96,7 @@
             mdeditor.codemirror.on('optionChange', (item) => {
                 let fullscreen = item.getOption('fullScreen');
                 if (fullscreen)
-                    $(".editor-toolbar,.fullscreen,.CodeMirror-fullscreen").css('z-index','9998');
+                    $(".editor-toolbar,.fullscreen,.CodeMirror-fullscreen").css('z-index', '9998');
             });
         });
     </script>

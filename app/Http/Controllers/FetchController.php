@@ -194,7 +194,7 @@ class FetchController extends Controller
         if ($this->root == '/')
             $endpoint = '/me/drive/root/'. $query;
         else
-            $endpoint = '/me/drive/root:/'. trim($this->root) .':/'. $query;
+            $endpoint = '/me/drive/root:/'. trim($this->root,'/') .':/'. $query;
         $response =  $this->requestGraph($endpoint, true);
         $response['value'] = $this->fetchNextLinkItem($response,$response['value']);
         $origin_items =  $this->formatArray($response);

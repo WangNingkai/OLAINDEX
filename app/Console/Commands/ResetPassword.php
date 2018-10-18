@@ -40,8 +40,8 @@ class ResetPassword extends Command
     {
         $this->warn('========== 开始重置密码 ==========');
         $password = str_random(8);
-        DB::table('parameters')->where('name','password')->update(['value' => md5($password)]);
+        DB::table('parameters')->where('name', 'password')->update(['value' => md5($password)]);
         Artisan::call('cache:clear');
-        $this->info('重置密码成功，新密码：'.$password);
+        $this->info('重置密码成功，新密码：' . $password);
     }
 }
