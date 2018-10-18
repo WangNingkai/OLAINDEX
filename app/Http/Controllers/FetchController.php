@@ -191,7 +191,10 @@ class FetchController extends Controller
     {
         $keywords = $request->get('keywords');
         $query = "search(q='{$keywords}')";
-        $endpoint = '/me/drive/root:/'. trim($this->root) .':/'. $query;
+        if ($this->root == '/')
+            $endpoint = '/me/drive/root/'. $query;
+        else
+            $endpoint = '/me/drive/root:/'. trim($this->root) .':/'. $query;
         $response =  $this->requestGraph($endpoint, true);
         $response['value'] = $this->fetchNextLinkItem($response,$response['value']);
         $origin_items =  $this->formatArray($response);
