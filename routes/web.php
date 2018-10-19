@@ -35,7 +35,7 @@ Route::post('/password', 'FetchController@handlePassword')->name('password');
 // 图床
 Route::get('/image', 'ManageController@uploadImage')->name('image')->middleware('checkImage');
 Route::post('/image/upload', 'ManageController@uploadImage')->name('image.upload')->middleware('throttle:10,2', 'checkImage');
-Route::get('/item/delete/{itemId}', 'ManageController@deleteItem')->name('delete')->middleware('checkImage');
+Route::get('/item/delete/{itemId}', 'ManageController@deleteItem')->name('delete');
 
 // 后台管理
 Route::any('/login', 'AdminController@login')->name('login');
@@ -48,11 +48,9 @@ Route::post('/logout', 'AdminController@logout')->name('logout');
 Route::get('/admin/file', 'ManageController@uploadFile')->name('admin.file');
 Route::post('/admin/file/upload', 'ManageController@uploadFile')->name('admin.file.upload')->middleware('throttle:10,2');
 Route::post('/admin/lock/folder', 'ManageController@lockFolder')->name('lock');
-
 // 文件管理
 Route::any('/admin/file/create', 'ManageController@createFile')->name('file.create');
 Route::any('/admin/file/update/{itemId}', 'ManageController@updateFile')->name('file.update');
 Route::any('/admin/folder/create', 'ManageController@createFolder')->name('folder.create');
-
 // 搜索
 Route::any('/search', 'FetchController@searchItemList')->name('search')->middleware('checkAuth');

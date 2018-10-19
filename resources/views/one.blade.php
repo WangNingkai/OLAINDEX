@@ -158,6 +158,11 @@
                                         <a href="{{ route('origin.view',$item['id']) }}" data-fancybox="image-list"><i
                                                 class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
                                     @endif
+
+                                    @if(session()->has('LogInfo') && \App\Helpers\Tool::isEdited($item) )
+                                        <a href="{{ route('file.update',$item['id']) }}"><i
+                                                class="fa fa-pencil"></i></a>&nbsp;&nbsp;
+                                    @endif
                                     <a href="{{ route('download',$item['id']) }}"><i class="fa fa-download"
                                                                                      title="下载"></i></a>&nbsp;&nbsp;
                                     <a href="javascript:void(0)"
@@ -168,9 +173,7 @@
                                 @if (session()->has('LogInfo') && in_array($item['name'],['.password','README.md','HEAD.md']))
                                     <a onclick="javascript:return confirm('确定删除吗')"
                                        href="{{ route('delete',encrypt($item['id'] . '.' . encrypt($item['eTag']))) }}"
-                                       target="_blank"><i class="fa fa-trash" title="删除" data-toggle="modal"
-                                                          data-target="#deleteFileModal"></i></a>&nbsp;&nbsp;
-
+                                       target="_blank"><i class="fa fa-trash" title="删除"></i></a>&nbsp;&nbsp;
                                 @endif
                             </span>
                         </div>

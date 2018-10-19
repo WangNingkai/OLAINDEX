@@ -250,4 +250,18 @@ class Tool
         $paginatedDataResults = $paginatedDataResults->setPath($path);
         return $paginatedDataResults;
     }
+
+    public static function isEdited($file)
+    {
+        $code = explode(' ', self::config('code'));
+        $stream = explode(' ', self::config('stream'));
+        $exts = array_merge($code, $stream);
+        $isText = in_array($file['ext'],$exts);
+        $isBigFile = $file['size'] > 5 * 1024 * 1024 ?: false;
+        if (!$isBigFile && $isText) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
