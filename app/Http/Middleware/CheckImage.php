@@ -8,7 +8,7 @@ use Closure;
 class CheckImage
 {
     /**
-     * Handle an incoming request.
+     * 处理图床开启
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \Closure $next

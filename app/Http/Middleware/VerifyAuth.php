@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Session;
 class VerifyAuth
 {
     /**
-     * Handle an incoming request.
+     * 处理登陆
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \Closure $next

@@ -8,7 +8,7 @@ use Closure;
 class CheckInstall
 {
     /**
-     * Handle an incoming request.
+     * 处理验证安装
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \Closure $next

@@ -59,9 +59,9 @@ class FetchController extends Controller
      */
     public function requestGraph($endpoint, $toArray = true)
     {
-        return Cache::remember('one:endpoint:'.$endpoint, $this->expires,function() use ($endpoint,$toArray) {
+        return Cache::remember('one:endpoint:' . $endpoint, $this->expires, function () use ($endpoint, $toArray) {
             $fetch = new RequestController();
-            return $fetch->requestGraph('get', $endpoint,$toArray);
+            return $fetch->requestGraph('get', $endpoint, $toArray);
         });
     }
 
@@ -73,7 +73,7 @@ class FetchController extends Controller
      */
     public function requestHttp($method, $url)
     {
-        return Cache::remember('one:url:'.$url,$this->expires,function() use ($method, $url) {
+        return Cache::remember('one:url:' . $url, $this->expires, function () use ($method, $url) {
             $fetch = new RequestController();
             return $fetch->requestHttp($method, $url);
         });
@@ -134,12 +134,12 @@ class FetchController extends Controller
             if ($this->root == '/')
                 $newPath = ':/' . $dirPath . ':/';
             else
-                $newPath = ':/' . trim($this->root,'/') . '/' . $dirPath . ':/';
+                $newPath = ':/' . trim($this->root, '/') . '/' . $dirPath . ':/';
         } else {
             if ($this->root == '' || $this->root == '/')
                 $newPath = '/';
             else
-                $newPath = ':/' . trim($this->root,'/') . ':/';
+                $newPath = ':/' . trim($this->root, '/') . ':/';
         }
         return $newPath;
     }
@@ -154,32 +154,32 @@ class FetchController extends Controller
         $graphPath = $this->convertPath($path);
         $query = 'children';
         $endpoint = '/me/drive/root' . $graphPath . $query;
-        $response =  $this->requestGraph($endpoint, true);
-        $origin_items =  $this->formatArray($response);
+        $response = $this->requestGraph($endpoint, true);
+        $origin_items = $this->formatArray($response);
         if (!empty($origin_items['.password'])) {
             $pass_id = $origin_items['.password']['id'];
-            if (Session::has('password:'.$path)) {
-                $data = Session::get('password:'.$path);
+            if (Session::has('password:' . $path)) {
+                $data = Session::get('password:' . $path);
                 $expires = $data['expires'];
                 $password = $this->fetchContent($pass_id);
                 if ($password != decrypt($data['password']) || time() > $expires) {
-                    Session::forget('password:'.$path);
-                    Tool::showMessage('密码已过期',false);
-                    return view('password',compact('path','pass_id'));
+                    Session::forget('password:' . $path);
+                    Tool::showMessage('密码已过期', false);
+                    return view('password', compact('path', 'pass_id'));
                 }
             } else {
-                return view('password',compact('path','pass_id'));
+                return view('password', compact('path', 'pass_id'));
             }
         }
         $this->forbidFolder($origin_items);
-        $head = Tool::markdown2Html($this->fetchFilterContent('HEAD.md',$origin_items));
-        $readme = Tool::markdown2Html($this->fetchFilterContent('README.md',$origin_items));
-        $pathArr =  $path ? explode('|',$path):[];
+        $head = Tool::markdown2Html($this->fetchFilterContent('HEAD.md', $origin_items));
+        $readme = Tool::markdown2Html($this->fetchFilterContent('README.md', $origin_items));
+        $pathArr = $path ? explode('|', $path) : [];
         if (!session()->has('LogInfo')) {
-            $origin_items = $this->filterItem($origin_items,['README.md','HEAD.md','.password','.deny']);
+            $origin_items = $this->filterItem($origin_items, ['README.md', 'HEAD.md', '.password', '.deny']);
         }
-        $items = Tool::arrayPage($origin_items,'/list/'.$path,20);
-        return view('one',compact('items','origin_items','path','pathArr','head','readme'));
+        $items = Tool::arrayPage($origin_items, '/list/' . $path, 20);
+        return view('one', compact('items', 'origin_items', 'path', 'pathArr', 'head', 'readme'));
     }
 
     /**
@@ -192,15 +192,15 @@ class FetchController extends Controller
         $keywords = $request->get('keywords');
         $query = "search(q='{$keywords}')";
         if ($this->root == '/')
-            $endpoint = '/me/drive/root/'. $query;
+            $endpoint = '/me/drive/root/' . $query;
         else
-            $endpoint = '/me/drive/root:/'. trim($this->root,'/') .':/'. $query;
-        $response =  $this->requestGraph($endpoint, true);
-        $response['value'] = $this->fetchNextLinkItem($response,$response['value']);
-        $origin_items =  $this->formatArray($response);
+            $endpoint = '/me/drive/root:/' . trim($this->root, '/') . ':/' . $query;
+        $response = $this->requestGraph($endpoint, true);
+        $response['value'] = $this->fetchNextLinkItem($response, $response['value']);
+        $origin_items = $this->formatArray($response);
         $items = $this->filterFolder($origin_items); // 过滤结果中的文件夹
-        $items = Tool::arrayPage($items,'/search',20);
-        return view('search',compact('items'));
+        $items = Tool::arrayPage($items, '/search', 20);
+        return view('search', compact('items'));
     }
 
     /**
@@ -227,9 +227,9 @@ class FetchController extends Controller
     public function fetchNextLinkItem($data, &$result = [])
     {
         if (isset($data['@odata.nextLink'])) {
-            $endpoint = mb_strstr($data['@odata.nextLink'],'/me');
-            $response =  $this->requestGraph($endpoint, true);
-            $result = array_merge($response['value'],$this->fetchNextLinkItem($response,$result));
+            $endpoint = mb_strstr($data['@odata.nextLink'], '/me');
+            $response = $this->requestGraph($endpoint, true);
+            $result = array_merge($response['value'], $this->fetchNextLinkItem($response, $result));
         }
         return $result;
     }
@@ -242,8 +242,8 @@ class FetchController extends Controller
     public function fetchItem($itemId)
     {
         $endpoint = '/me/drive/items/' . $itemId;
-        $response =  $this->requestGraph($endpoint, true);
-        return $this->formatArray($response,false);
+        $response = $this->requestGraph($endpoint, true);
+        return $this->formatArray($response, false);
     }
 
     /**
@@ -254,47 +254,47 @@ class FetchController extends Controller
     public function showItem($itemId)
     {
         $endpoint = '/me/drive/items/' . $itemId;
-        $response =  $this->requestGraph($endpoint, true);
-        $item =  $this->formatArray($response,false);
+        $response = $this->requestGraph($endpoint, true);
+        $item = $this->formatArray($response, false);
         $path = $item['parentReference']['path'];
         if ($this->root == '/') {
-            $key = mb_strpos($path,':');
-            $path = mb_substr($path,$key + 1);
+            $key = mb_strpos($path, ':');
+            $path = mb_substr($path, $key + 1);
             $pathArr = explode('/', $path);
             unset($pathArr[0]);
         } else {
-            $path = mb_strstr($path,$this->root,false,'utf8');
-            $start = mb_strlen($this->root,'utf8');
-            $rest = mb_substr($path,$start,null,'utf8');
+            $path = mb_strstr($path, $this->root, false, 'utf8');
+            $start = mb_strlen($this->root, 'utf8');
+            $rest = mb_substr($path, $start, null, 'utf8');
             $pathArr = explode('/', $rest);
         }
-        array_push($pathArr,$item['name']);
-        $item['thumb'] = $this->fetchThumbUrl($itemId,false);
-        $item['path'] = route('download',$item['id']);
+        array_push($pathArr, $item['name']);
+        $item['thumb'] = $this->fetchThumbUrl($itemId, false);
+        $item['path'] = route('download', $item['id']);
         $patterns = $this->show;
         foreach ($patterns as $key => $suffix) {
-            if(in_array($item['ext'],$suffix)){
-                $view = 'show.'.$key;
-                if (in_array($key,['stream','code'])) {
-                    if ($item['size'] > 5*1024*1024) {
-                        Tool::showMessage('文件过大，请下载查看',false);
+            if (in_array($item['ext'], $suffix)) {
+                $view = 'show.' . $key;
+                if (in_array($key, ['stream', 'code'])) {
+                    if ($item['size'] > 5 * 1024 * 1024) {
+                        Tool::showMessage('文件过大，请下载查看', false);
                         return redirect()->back();
                     } else {
                         $item['content'] = $this->requestHttp('get', $item['@microsoft.graph.downloadUrl']);
                     }
                 }
                 if ($key == 'dash') {
-                    if(strpos($item['@microsoft.graph.downloadUrl'],"sharepoint.com") == false){
+                    if (strpos($item['@microsoft.graph.downloadUrl'], "sharepoint.com") == false) {
                         return $this->fetchDownload($item['id']);
                     }
-                    $item['dash'] =  str_replace("thumbnail","videomanifest",$item['thumb'])."&part=index&format=dash&useScf=True&pretranscode=0&transcodeahead=0";
+                    $item['dash'] = str_replace("thumbnail", "videomanifest", $item['thumb']) . "&part=index&format=dash&useScf=True&pretranscode=0&transcodeahead=0";
                 }
                 if ($key == 'doc') {
-                    $url = "https://view.officeapps.live.com/op/view.aspx?src=".urlencode($item['@microsoft.graph.downloadUrl']);
+                    $url = "https://view.officeapps.live.com/op/view.aspx?src=" . urlencode($item['@microsoft.graph.downloadUrl']);
                     return redirect()->away($url);
                 }
                 $file = $item;
-                return view($view,compact('file','pathArr'));
+                return view($view, compact('file', 'pathArr'));
             }
         }
         return $this->fetchDownload($item['id']);
@@ -309,10 +309,10 @@ class FetchController extends Controller
      */
     public function fetchThumb(Request $request, $itemId)
     {
-        $size = $request->get('size','large');
+        $size = $request->get('size', 'large');
         $url = $this->fetchThumbUrl($itemId, false, $size);
-        $content =  $this->requestHttp('get',$url);
-        return response($content,200, [
+        $content = $this->requestHttp('get', $url);
+        return response($content, 200, [
             'Content-Type' => 'image/png',
         ]);
     }
@@ -343,14 +343,14 @@ class FetchController extends Controller
     public function fetchView($itemId)
     {
         $file = $this->fetchItem($itemId);
-        $isBigFile = $file['size'] > 5*1024*1024 ?: false;
+        $isBigFile = $file['size'] > 5 * 1024 * 1024 ?: false;
         if ($isBigFile) {
-            Tool::showMessage('文件过大，请下载查看',false);
+            Tool::showMessage('文件过大，请下载查看', false);
             return redirect()->route('list');
         }
         $url = $file['@microsoft.graph.downloadUrl'];
-        $content =  $this->requestHttp('get',$url);
-        return response($content,200, [
+        $content = $this->requestHttp('get', $url);
+        return response($content, 200, [
             'Content-Type' => 'image/png',
         ]);
     }
@@ -376,7 +376,7 @@ class FetchController extends Controller
     {
         $file = $this->fetchItem($itemId);
         $url = $file['@microsoft.graph.downloadUrl'];
-        return $this->requestHttp('get',$url);
+        return $this->requestHttp('get', $url);
     }
 
     /**
@@ -385,13 +385,13 @@ class FetchController extends Controller
      * @param $items
      * @return string
      */
-    public function fetchFilterContent($itemName,$items)
+    public function fetchFilterContent($itemName, $items)
     {
         if (empty($items[$itemName])) {
             return '';
         }
         $url = $items[$itemName]['@microsoft.graph.downloadUrl'];
-        return $this->requestHttp('get',$url);
+        return $this->requestHttp('get', $url);
     }
 
     /**
@@ -400,7 +400,7 @@ class FetchController extends Controller
      * @param $itemName
      * @return mixed
      */
-    public function filterItem($items,$itemName)
+    public function filterItem($items, $itemName)
     {
         if (is_array($itemName)) {
             foreach ($itemName as $item) {
@@ -421,7 +421,7 @@ class FetchController extends Controller
         // .deny目录无法访问
         if (!empty($items['.deny'])) {
             if (!Session::has('LogInfo')) {
-                Tool::showMessage('目录访问受限，仅管理员可以访问！',false);
+                Tool::showMessage('目录访问受限，仅管理员可以访问！', false);
                 abort(403);
             }
         }
@@ -440,13 +440,13 @@ class FetchController extends Controller
             'password' => encrypt($password),
             'expires' => time() + $this->expires * 60, // 目录密码过期时间
         ];
-        Session::put('password:'.$path,$data);
+        Session::put('password:' . $path, $data);
         $directory_password = $this->fetchContent($pass_id);
         if ($password == $directory_password)
-            return redirect()->route('list',$path);
+            return redirect()->route('list', $path);
         else {
-            Tool::showMessage('密码错误',false);
-            return view('password',compact('path','pass_id'));
+            Tool::showMessage('密码错误', false);
+            return view('password', compact('path', 'pass_id'));
         }
     }
 }

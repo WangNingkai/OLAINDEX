@@ -8,7 +8,7 @@ use Closure;
 class VerifyAccessToken
 {
     /**
-     * Handle an incoming request.
+     * 处理access_token
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \Closure $next
