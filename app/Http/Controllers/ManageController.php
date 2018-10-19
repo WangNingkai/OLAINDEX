@@ -89,8 +89,7 @@ class ManageController extends Controller
      */
     public function uploadFile(Request $request)
     {
-        if (!$request->isMethod('post'))
-            return view('admin.file');
+        if (!$request->isMethod('post')) return view('admin.file');
         $field = 'olaindex_file';
         $target_directory = $request->get('root', '/');
         if (!$request->hasFile($field)) {
@@ -165,9 +164,7 @@ class ManageController extends Controller
      */
     public function createFile(Request $request)
     {
-        if (!$request->isMethod('post')) {
-            return view('admin.add');
-        }
+        if (!$request->isMethod('post')) return view('admin.add');
         $name = $request->get('name');
         $path = decrypt($request->get('path'));
         $content = $request->get('content');
@@ -222,9 +219,9 @@ class ManageController extends Controller
         $fetch = new FetchController();
         $graphPath = $fetch->convertPath($path);
         $req = new RequestController();
-        if ($graphPath == '/') { // 兼容根目录
+        if ($graphPath == '/')
             $endpoint = "/me/drive/root/children";
-        } else {
+        else {
             $params = ['/me/drive/root' . $graphPath, '', []];
             $re = $req->requestGraph('get', $params, true);
             $itemId = $re['id'];

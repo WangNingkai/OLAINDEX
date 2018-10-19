@@ -31,9 +31,7 @@ class AdminController extends Controller
      */
     public function login(Request $request)
     {
-        if (!$request->isMethod('post')) {
-            return view('admin.login');
-        }
+        if (!$request->isMethod('post')) return view('admin.login');
         $password = $request->get('password');
         if (md5($password) == Tool::config('password')) {
             $logInfo = [
@@ -69,12 +67,9 @@ class AdminController extends Controller
      */
     public function basic(Request $request)
     {
-        if (!$request->isMethod('post')) {
-            return view('admin.basic');
-        }
+        if (!$request->isMethod('post')) return view('admin.basic');
         $data = $request->except('_token');
         $this->update($data);
-
         return redirect()->back();
     }
 
@@ -85,12 +80,9 @@ class AdminController extends Controller
      */
     public function show(Request $request)
     {
-        if (!request()->isMethod('post')) {
-            return view('admin.show');
-        }
+        if (!request()->isMethod('post'))  return view('admin.show');
         $data = $request->except('_token');
         $this->update($data);
-
         return redirect()->back();
     }
 
@@ -101,9 +93,7 @@ class AdminController extends Controller
      */
     public function profile(Request $request)
     {
-        if (!$request->isMethod('post')) {
-            return view('admin.profile');
-        }
+        if (!$request->isMethod('post')) return view('admin.profile');
         $old_password = $request->get('old_password');
         $password = $request->get('password');
         $password_confirm = $request->get('password_confirm');

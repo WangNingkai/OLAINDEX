@@ -25,13 +25,9 @@ class InitController extends Controller
         $client_id = Tool::config('client_id');
         $client_secret = Tool::config('client_secret');
         $redirect_uri = Tool::config('redirect_uri');
-        if ($client_id != '' && $client_secret != '' && $redirect_uri != '') {
-            return redirect()->route('list');
-        }
+        if ($client_id != '' && $client_secret != '' && $redirect_uri != '') return redirect()->route('list');
         //  显示基础信息的填写、申请或提交应用信息、返回
-        if ($request->isMethod('get')) {
-            return view('install.init');
-        }
+        if ($request->isMethod('get')) return view('install.init');
         $client_id = $request->get('client_id');
         $client_secret = $request->get('client_secret');
         $redirect_uri = $request->get('redirect_uri');

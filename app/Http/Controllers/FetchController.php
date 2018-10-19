@@ -92,24 +92,14 @@ class FetchController extends Controller
         $items = is_array($response) ? $response : json_decode($response, true);
         if ($isList) {
             if (array_key_exists('value', $items)) {
-                if (empty($items['value'])) {
-                    return [];
-                }
+                if (empty($items['value'])) return [];
                 $files = [];
                 foreach ($items['value'] as $item) {
-                    if (isset($item['file'])) {
-                        /*if ($item['file']['mimeType'] == 'application/x-zip-compressed')
-                            $item['ext'] = 'zip';
-                        else
-                            $item['ext'] = Tool::getExt($item['file']['mimeType']);*/
-                        $item['ext'] = strtolower(pathinfo($item['name'], PATHINFO_EXTENSION)); // mimeType显示有误
-                    }
+                    if (isset($item['file'])) $item['ext'] = strtolower(pathinfo($item['name'], PATHINFO_EXTENSION)); // mimeType显示有误
                     $files[$item['name']] = $item;
                 }
                 return $files;
-            } else {
-                return [];
-            }
+            } else return [];
         } else {
             // 兼容文件信息
             $items['ext'] = strtolower(pathinfo($items['name'], PATHINFO_EXTENSION));
@@ -167,17 +157,13 @@ class FetchController extends Controller
                     Tool::showMessage('密码已过期', false);
                     return view('password', compact('path', 'pass_id'));
                 }
-            } else {
-                return view('password', compact('path', 'pass_id'));
-            }
+            } else return view('password', compact('path', 'pass_id'));
         }
         $this->forbidFolder($origin_items);
         $head = Tool::markdown2Html($this->fetchFilterContent('HEAD.md', $origin_items));
         $readme = Tool::markdown2Html($this->fetchFilterContent('README.md', $origin_items));
         $pathArr = $path ? explode('|', $path) : [];
-        if (!session()->has('LogInfo')) {
-            $origin_items = $this->filterItem($origin_items, ['README.md', 'HEAD.md', '.password', '.deny']);
-        }
+        if (!session()->has('LogInfo')) $origin_items = $this->filterItem($origin_items, ['README.md', 'HEAD.md', '.password', '.deny']);
         $items = Tool::arrayPage($origin_items, '/list/' . $path, 20);
         return view('one', compact('items', 'origin_items', 'path', 'pathArr', 'head', 'readme'));
     }
@@ -211,9 +197,7 @@ class FetchController extends Controller
     public function filterFolder($items)
     {
         foreach ($items as $key => $item) {
-            if (isset($item['folder'])) {
-                unset($items[$key]);
-            }
+            if (isset($item['folder'])) unset($items[$key]);
         }
         return $items;
     }
@@ -253,9 +237,7 @@ class FetchController extends Controller
      */
     public function showItem($itemId)
     {
-        $endpoint = '/me/drive/items/' . $itemId;
-        $response = $this->requestGraph($endpoint, true);
-        $item = $this->formatArray($response, false);
+        $item = $this->fetchItem($itemId);
         $path = $item['parentReference']['path'];
         if ($this->root == '/') {
             $key = mb_strpos($path, ':');
@@ -279,14 +261,10 @@ class FetchController extends Controller
                     if ($item['size'] > 5 * 1024 * 1024) {
                         Tool::showMessage('文件过大，请下载查看', false);
                         return redirect()->back();
-                    } else {
-                        $item['content'] = $this->requestHttp('get', $item['@microsoft.graph.downloadUrl']);
-                    }
+                    } else $item['content'] = $this->requestHttp('get', $item['@microsoft.graph.downloadUrl']);
                 }
                 if ($key == 'dash') {
-                    if (strpos($item['@microsoft.graph.downloadUrl'], "sharepoint.com") == false) {
-                        return $this->fetchDownload($item['id']);
-                    }
+                    if (strpos($item['@microsoft.graph.downloadUrl'], "sharepoint.com") == false) return $this->fetchDownload($item['id']);
                     $item['dash'] = str_replace("thumbnail", "videomanifest", $item['thumb']) . "&part=index&format=dash&useScf=True&pretranscode=0&transcodeahead=0";
                 }
                 if ($key == 'doc') {
@@ -329,9 +307,7 @@ class FetchController extends Controller
         $endpoint = "/me/drive/items/{$itemId}/thumbnails/0/{$size}";
         $response = $this->requestGraph($endpoint, true);
         if (!$response) abort(404);
-        if ($redirect) {
-            return redirect()->away($response['url']);
-        }
+        if ($redirect) return redirect()->away($response['url']);
         return $response['url'];
     }
 
@@ -387,9 +363,7 @@ class FetchController extends Controller
      */
     public function fetchFilterContent($itemName, $items)
     {
-        if (empty($items[$itemName])) {
-            return '';
-        }
+        if (empty($items[$itemName]))  return '';
         $url = $items[$itemName]['@microsoft.graph.downloadUrl'];
         return $this->requestHttp('get', $url);
     }
@@ -406,9 +380,7 @@ class FetchController extends Controller
             foreach ($itemName as $item) {
                 unset($items[$item]);
             }
-        } else {
-            unset($items[$itemName]);
-        }
+        } else unset($items[$itemName]);
         return $items;
     }
 
