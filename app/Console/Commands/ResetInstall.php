@@ -42,7 +42,10 @@ class ResetInstall extends Command
         $data = [
             'access_token' => '',
             'refresh_token' => '',
-            'access_token_expires' => ''
+            'access_token_expires' => '',
+            'root' => '/',
+            'image_hosting' => 0,
+            'image_hosting_path' => ''
         ];
         $editData = [];
         foreach ($data as $k => $v) {
