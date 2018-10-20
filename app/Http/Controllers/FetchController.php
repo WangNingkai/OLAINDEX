@@ -176,15 +176,19 @@ class FetchController extends Controller
     public function searchItemLIst(Request $request)
     {
         $keywords = $request->get('keywords');
-        $query = "search(q='{$keywords}')";
-        if ($this->root == '/')
-            $endpoint = '/me/drive/root/' . $query;
-        else
-            $endpoint = '/me/drive/root:/' . trim($this->root, '/') . ':/' . $query;
-        $response = $this->requestGraph($endpoint, true);
-        $response['value'] = $this->fetchNextLinkItem($response, $response['value']);
-        $origin_items = $this->formatArray($response);
-        $items = $this->filterFolder($origin_items); // 过滤结果中的文件夹
+        if ($keywords) {
+            $query = "search(q='{$keywords}')";
+            if ($this->root == '/')
+                $endpoint = '/me/drive/root/' . $query;
+            else
+                $endpoint = '/me/drive/root:/' . trim($this->root, '/') . ':/' . $query;
+            $response = $this->requestGraph($endpoint, true);
+            $response['value'] = $this->fetchNextLinkItem($response, $response['value']);
+            $origin_items = $this->formatArray($response);
+            $items = $this->filterFolder($origin_items); // 过滤结果中的文件夹
+        } else {
+            $items = [];
+        }
         $items = Tool::arrayPage($items, '/search', 20);
         return view('search', compact('items'));
     }

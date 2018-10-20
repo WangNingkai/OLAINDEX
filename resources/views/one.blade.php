@@ -196,29 +196,31 @@
     @endif
 @stop
 @section('js')
-    <script>
-        function deleteItem($sign) {
-            swal({
-                title: '确定删除吗？',
-                text: "删除后无法恢复",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonText: '确定删除',
-                cancelButtonText: '取消',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.value) {
-                    window.open('/item/delete/' + $sign, '_blank');
-                } else if (
-                    result.dismiss === swal.DismissReason.cancel
-                ) {
-                    swal(
-                        '已取消',
-                        '文件安全 :)',
-                        'error'
-                    )
-                }
-            })
-        }
-    </script>
+    @if(session()->has('LogInfo'))
+        <script>
+            function deleteItem($sign) {
+                swal({
+                    title: '确定删除吗？',
+                    text: "删除后无法恢复",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '确定删除',
+                    cancelButtonText: '取消',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.value) {
+                        window.open('/item/delete/' + $sign, '_blank');
+                    } else if (
+                        result.dismiss === swal.DismissReason.cancel
+                    ) {
+                        swal(
+                            '已取消',
+                            '文件安全 :)',
+                            'error'
+                        )
+                    }
+                })
+            }
+        </script>
+    @endif
 @stop
