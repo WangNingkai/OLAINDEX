@@ -47,8 +47,7 @@ class RequestController extends Controller
                 ->execute();
             return $toArray ? json_decode($response->getContents(), true) : $response->getContents();
         } catch (GraphException $e) {
-            Tool::showMessage($e->getCode() . ': 请检查地址是否正确', false);
-            return null;
+            abort($e->getCode());
         }
     }
 
@@ -67,8 +66,7 @@ class RequestController extends Controller
             $content = $response->getBody()->getContents();
             return $content;
         } catch (ClientException $e) {
-            Tool::showMessage($e->getCode() . ': 请检查链接是否正确', false);
-            return null;
+            abort($e->getCode());
         }
 
     }
