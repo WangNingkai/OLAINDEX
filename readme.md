@@ -74,10 +74,9 @@ php artisan update:install
 
 > 小弟的服务器性能有限，所以图片的上传和预览添加了路由请求次数限制，大家可以根据需求更改
 
+**路由路径 ：** `routes/web.php`
+
 ![route](https://image.ningkai.wang/item/origin/view/01HS36VADQV35WPMQ3AFHZ25AUTVCJIEVN)
-
-![routes/web.php](https://image.ningkai.wang/item/origin/view/01HS36VAARRNW3WPF6LJDYNYCE5CSPRDCP)
-
 
 **附：** 本软件仅供日常学习使用，不得用于任何商业用途；学习使用请遵守您所在国家的法律，任何非法行为由使用者本身承担。
 
