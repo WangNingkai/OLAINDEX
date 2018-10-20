@@ -1,6 +1,6 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ route('list') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('list') }}"><i class="fa fa-home"></i> Home</a></li>
         @if(!blank($pathArr))
             @foreach ($pathArr as $key => $value)
                 @if(end($pathArr) == $value)

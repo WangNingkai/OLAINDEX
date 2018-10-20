@@ -4,7 +4,7 @@
     @include('breadcrumb')
     @if (!blank($head))
         <div class="card border-light mb-3">
-            <div class="card-header">HEAD</div>
+            <div class="card-header"><i class="fa fa-hashtag"></i> HEAD</div>
             <div class="card-body markdown-body">
                 {!! $head !!}
             </div>
@@ -29,27 +29,27 @@
                         <div class="dropdown-menu" aria-labelledby="actionDropdownLink">
                             @if (array_key_exists('README.md', $origin_items))
                                 <a class="dropdown-item"
-                                   href="{{ route('file.update',$origin_items['README.md']['id']) }}">编辑 README</a>
+                                   href="{{ route('file.update',$origin_items['README.md']['id']) }}"><i class="fa fa-pencil-square-o"></i> 编辑 README</a>
                             @else
                                 <a class="dropdown-item"
-                                   href="{{ route('file.create',['name' => 'README', 'path' => encrypt($path)]) }}">添加
+                                   href="{{ route('file.create',['name' => 'README', 'path' => encrypt($path)]) }}"><i class="fa fa-plus-circle"></i> 添加
                                     README</a>
                             @endif
                             @if (array_key_exists('HEAD.md', $origin_items))
                                 <a class="dropdown-item"
-                                   href="{{ route('file.update',$origin_items['HEAD.md']['id']) }}">编辑 HEAD</a>
+                                   href="{{ route('file.update',$origin_items['HEAD.md']['id']) }}"><i class="fa fa-pencil-square-o"></i> 编辑 HEAD</a>
 
                             @else
                                 <a class="dropdown-item"
-                                   href="{{ route('file.create',['name' => 'HEAD', 'path' => encrypt($path)]) }}">添加
+                                   href="{{ route('file.create',['name' => 'HEAD', 'path' => encrypt($path)]) }}"><i class="fa fa-plus-circle"></i>  添加
                                     HEAD</a>
                             @endif
                             @if (!array_key_exists('.password', $origin_items))
                                 <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal"
-                                   data-target="#lockFolderModal">加密目录</a>
+                                   data-target="#lockFolderModal"><i class="fa fa-lock"></i> 加密目录</a>
                             @endif
                             <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal"
-                               data-target="#newFolderModal">新建目录</a>
+                               data-target="#newFolderModal"><i class="fa fa-plus-circle"></i> 新建目录</a>
                         </div>
                         @if (!array_key_exists('.password', $origin_items))
                             <div class="modal fade" id="lockFolderModal" tabindex="-1" aria-hidden="true">
@@ -58,7 +58,7 @@
                                         @csrf
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title">加密目录</h5>
+                                                <h5 class="modal-title"><i class="fa fa-lock"></i> 加密目录</h5>
                                                 <button type="button" class="close" data-dismiss="modal"
                                                         aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
@@ -89,7 +89,7 @@
                                     @csrf
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title">新建目录</h5>
+                                            <h5 class="modal-title"><i class="fa fa-plus-circle"></i> 新建目录</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -188,7 +188,7 @@
     </div>
     @if (!blank($readme))
         <div class="card border-light mb-3">
-            <div class="card-header">README</div>
+            <div class="card-header"><i class="fa fa-book"></i>  README</div>
             <div class="card-body markdown-body">
                 {!! $readme !!}
             </div>

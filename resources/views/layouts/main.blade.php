@@ -43,16 +43,16 @@
         <div class="collapse navbar-collapse" id="navbarColor01">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('list') }}"> 首页</a>
+                    <a class="nav-link" href="{{ route('list') }}"><i class="fa fa-home"></i> 首页</a>
                 </li>
                 @if (\App\Helpers\Tool::config('image_hosting',false))
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('image') }}"> 图床</a>
+                        <a class="nav-link" href="{{ route('image') }}"><i class="fa fa-cloud-upload"></i> 图床</a>
                     </li>
                 @endif
                 @if (session()->has('LogInfo'))
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.basic') }}"> 管理</a>
+                        <a class="nav-link" href="{{ route('admin.basic') }}"><i class="fa fa-tachometer" ></i> 管理</a>
                     </li>
                 @endif
             </ul>

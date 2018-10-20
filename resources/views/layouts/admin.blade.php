@@ -35,11 +35,11 @@
         <div class="collapse navbar-collapse" id="navbarColor01">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('list') }}"> 首页</a>
+                    <a class="nav-link" href="{{ route('list') }}"><i class="fa fa-home"></i> 首页</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                       aria-haspopup="true" aria-expanded="false">设置</a>
+                       aria-haspopup="true" aria-expanded="false"><i class="fa fa-cogs"></i> 设置</a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" href="{{ route('admin.basic') }}">基础设置 </a>
                         <a class="dropdown-item" href="{{ route('admin.show') }}">显示设置 </a>
@@ -47,19 +47,19 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.file') }}">文件上传 </a>
+                    <a class="nav-link" href="{{ route('admin.file') }}"><i class="fa fa-cloud-upload"></i> 文件上传 </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.clear') }}">缓存清理 </a>
+                    <a class="nav-link" href="{{ route('admin.clear') }}"><i class="fa fa-bolt"></i> 缓存清理 </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="https://onedrive.live.com/about/signin" target="_blank">OneDrive管理 </a>
+                    <a class="nav-link" href="https://onedrive.live.com/about/signin" target="_blank"><i class="fa fa-cloud"></i> OneDrive管理 </a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a href="{{ route('logout') }}" class="nav-link"
-                       onclick="event.preventDefault();document.getElementById('logout-form').submit();">退出</a>
+                       onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i class="fa fa-sign-out"></i> 退出</a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST"
                           style="display: none;">
                         @csrf

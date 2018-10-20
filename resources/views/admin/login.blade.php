@@ -23,7 +23,7 @@
         <div class="collapse navbar-collapse" id="navbarColor01">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('list') }}">首页 <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="{{ route('list') }}"><i class="fa fa-home"></i> 首页</a>
                 </li>
             </ul>
         </div>
@@ -38,7 +38,7 @@
     @endif
     <div class="card border-light mb-3">
         <div class="card-header">
-            登陆
+            <i class="fa fa-sign-in"></i> 登陆
         </div>
         <div class="card-body">
             <form action="" method="post">
