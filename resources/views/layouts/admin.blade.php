@@ -53,7 +53,7 @@
                     <a class="nav-link" href="{{ route('admin.clear') }}"><i class="fa fa-bolt"></i> 缓存清理 </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="https://onedrive.live.com/about/signin" target="_blank"><i class="fa fa-cloud"></i> OneDrive管理 </a>
+                    <a class="nav-link" href="https://onedrive.live.com" target="_blank"><i class="fa fa-cloud"></i> OneDrive管理 </a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto">
