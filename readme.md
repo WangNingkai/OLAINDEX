@@ -5,15 +5,9 @@ OLAINDEX
 
 ![OLAINDEX](https://i.loli.net/2018/10/11/5bbf40831f294.jpg)
 
-
-
 此图来自 [如有乐享](https://51.ruyo.net/)，感谢推广
 
 > 本项目受 Oneindex 启发，功能借鉴其思想，在这里感谢。 项目持续开发，会加入更多功能，欢迎大家提issue.
-
-
-![1.jpg](https://image.ningkai.wang/item/origin/view/01HS36VAGA2Q2RP3ZSKVGYAZW2IMBBTB3N)
-![2.jpg](https://image.ningkai.wang/item/origin/view/01HS36VADJ5MEMI6RGVVCJ3SJBBKRWOSRS)
 
 ### 简介
 
@@ -86,3 +80,9 @@ php artisan update:install
 
 
 **附：** 本软件仅供日常学习使用，不得用于任何商业用途；学习使用请遵守您所在国家的法律，任何非法行为由使用者本身承担。
+
+## 预览
+
+![1.jpg](https://image.ningkai.wang/item/origin/view/01HS36VAGA2Q2RP3ZSKVGYAZW2IMBBTB3N)
+
+![2.jpg](https://image.ningkai.wang/item/origin/view/01HS36VADJ5MEMI6RGVVCJ3SJBBKRWOSRS)
