@@ -170,10 +170,11 @@
                                        title="已复制" data-toggle="tooltip"
                                        data-placement="right"><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;
                                 @endif
-                                @if (session()->has('LogInfo') && in_array($item['name'],['.password','README.md','HEAD.md']))
-                                    <a onclick="javascript:return confirm('确定删除吗')"
-                                       href="{{ route('delete',encrypt($item['id'] . '.' . encrypt($item['eTag']))) }}"
-                                       target="_blank"><i class="fa fa-trash" title="删除"></i></a>&nbsp;&nbsp;
+                                @if (session()->has('LogInfo'))
+                                    <a onclick="deleteItem('{{ encrypt($item['id'] . '.' . encrypt($item['eTag'])) }}')"
+                                       href="javascript:void(0)"><i class="fa fa-trash"
+                                                                    title="删除"></i></a>&nbsp;
+                                    &nbsp;
                                 @endif
                             </span>
                         </div>
@@ -193,4 +194,31 @@
             </div>
         </div>
     @endif
+@stop
+@section('js')
+    <script>
+        function deleteItem($sign) {
+            swal({
+                title: '确定删除吗？',
+                text: "删除后无法恢复",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '确定删除',
+                cancelButtonText: '取消',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+                    window.open('/item/delete/' + $sign, '_blank');
+                } else if (
+                    result.dismiss === swal.DismissReason.cancel
+                ) {
+                    swal(
+                        '已取消',
+                        '文件安全 :)',
+                        'error'
+                    )
+                }
+            })
+        }
+    </script>
 @stop
