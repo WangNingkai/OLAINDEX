@@ -6,7 +6,7 @@
         <p class="lead">Another OneDrive Directory Index.</p>
         <hr class="my-4">
         <p class="lead">
-            <a class="btn btn-primary btn-lg" href="{{ route('list') }}" role="button">返回首页</a>
+            <a class="btn btn-primary btn-lg" href="{{ route('root') }}" role="button">返回首页</a>
         </p>
     </div>
 @stop

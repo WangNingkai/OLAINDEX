@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title','Root/'.implode('/',$pathArr))
+@section('title','Root/'.implode('/',$path_array))
 @section('content')
     @include('breadcrumb')
     @if (!blank($head))
@@ -32,7 +32,7 @@
                                    href="{{ route('file.update',$origin_items['README.md']['id']) }}"><i class="fa fa-pencil-square-o"></i> 编辑 README</a>
                             @else
                                 <a class="dropdown-item"
-                                   href="{{ route('file.create',['name' => 'README', 'path' => encrypt($path)]) }}"><i class="fa fa-plus-circle"></i> 添加
+                                   href="{{ route('file.create',['name' => 'README', 'path' => encrypt($origin_path)]) }}"><i class="fa fa-plus-circle"></i> 添加
                                     README</a>
                             @endif
                             @if (array_key_exists('HEAD.md', $origin_items))
@@ -41,7 +41,7 @@
 
                             @else
                                 <a class="dropdown-item"
-                                   href="{{ route('file.create',['name' => 'HEAD', 'path' => encrypt($path)]) }}"><i class="fa fa-plus-circle"></i>  添加
+                                   href="{{ route('file.create',['name' => 'HEAD', 'path' => encrypt($origin_path)]) }}"><i class="fa fa-plus-circle"></i>  添加
                                     HEAD</a>
                             @endif
                             @if (!array_key_exists('.password', $origin_items))
@@ -69,7 +69,7 @@
                                                 <div class="form-group">
                                                     <input type="password" name="password" class="form-control"
                                                            placeholder="请输入密码" id="lockField" required>
-                                                    <input type="hidden" name="path" value="{{ encrypt($path) }}">
+                                                    <input type="hidden" name="path" value="{{ encrypt($origin_path) }}">
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -100,7 +100,7 @@
                                             <div class="form-group">
                                                 <input type="text" name="name" class="form-control" placeholder="请输入目录名"
                                                        required>
-                                                <input type="hidden" name="path" value="{{ encrypt($path) }}">
+                                                <input type="hidden" name="path" value="{{ encrypt($origin_path) }}">
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -119,9 +119,9 @@
             </div>
         </div>
         <div class="list-group item-list">
-            @if(!blank($pathArr))
+            @if(!blank($path_array))
                 <li class="list-group-item list-group-item-action"><a
-                        href="{{ route('list',\App\Helpers\Tool::getParentUrl($pathArr)) }}"><i
+                        href="{{ route('root',\App\Helpers\Tool::getParentUrl($path_array)) }}"><i
                             class="fa fa-arrow-left"></i> 返回上一层</a></li>
             @endif
             @foreach($items as $item)
@@ -129,12 +129,12 @@
                     <div class="row">
                         <div class="col">
                             @if(isset($item['folder']))
-                                <a href="{{ route('list',$path ? $path.'|'.$item['name'] : $item['name']) }}"
+                                <a href="{{ route('root',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
                                    title="{{ $item['name'] }}">
                                     <i class="fa fa-folder"></i> {{ \App\Helpers\Tool::subStr($item['name'],0,20) }}
                                 </a>
                             @else
-                                <a href="{{ route('item',$item['id']) }}" title="{{ $item['name'] }}">
+                                <a href="{{ route('show',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}" title="{{ $item['name'] }}">
                                     <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i> {{ \App\Helpers\Tool::subStr($item['name'],0,20) }}
                                 </a>
                             @endif
@@ -150,12 +150,12 @@
                             <span class="pull-right">
                                 @if(isset($item['folder']))
                                     <a href="javascript:void(0)"
-                                       data-clipboard-text="{{ route('list',$path ? $path.'|'.$item['name'] : $item['name']) }}"
+                                       data-clipboard-text="{{ route('root',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
                                        class="clipboard" title="已复制" data-toggle="tooltip"
                                        data-placement="right"><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;
                                 @else
                                     @if(isset($item['image']))
-                                        <a href="{{ route('origin.view',$item['id']) }}" data-fancybox="image-list"><i
+                                        <a href="{{ route('download',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}" data-fancybox="image-list"><i
                                                 class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
                                     @endif
 
@@ -163,10 +163,10 @@
                                         <a href="{{ route('file.update',$item['id']) }}"><i
                                                 class="fa fa-pencil"></i></a>&nbsp;&nbsp;
                                     @endif
-                                    <a href="{{ route('download',$item['id']) }}"><i class="fa fa-download"
+                                    <a href="{{ route('download',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"><i class="fa fa-download"
                                                                                      title="下载"></i></a>&nbsp;&nbsp;
                                     <a href="javascript:void(0)"
-                                       data-clipboard-text="{{ route('download',$item['id']) }}" class="clipboard"
+                                       data-clipboard-text="{{ route('download',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}" class="clipboard"
                                        title="已复制" data-toggle="tooltip"
                                        data-placement="right"><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;
                                 @endif

@@ -54,7 +54,8 @@ class ManageController extends Controller
             $stream = \GuzzleHttp\Psr7\stream_for($content);
             $root = trim(Tool::config('root'), '/');
             $image_hosting_path = trim(Tool::config('image_hosting_path'), '/');
-            $storeFilePath = $root . '/' . $image_hosting_path . '/' . date('Y') . '/' . date('m') . '/' . date('d') . '/' . str_random(8) . '/' . $file->getClientOriginalName(); // 远程图片保存地址
+            $filePath = trim($image_hosting_path . '/' . date('Y') . '/' . date('m') . '/' . date('d') . '/' . str_random(8) . '/' . $file->getClientOriginalName(), '/');
+            $storeFilePath = $root . '/' . $filePath; // 远程图片保存地址
             $remoteFilePath = trim($storeFilePath, '/');
             $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
             $requestBody = $stream;
@@ -69,7 +70,7 @@ class ManageController extends Controller
                     'filename' => $response['name'],
                     'size' => $response['size'],
                     'time' => $response['lastModifiedDateTime'],
-                    'url' => route('origin.view', $response['id']),
+                    'url' => route('view', $filePath),
                     'delete' => route('delete', $fileIdentifier)
                 ]
             ];
@@ -124,7 +125,6 @@ class ManageController extends Controller
                     'filename' => $response['name'],
                     'size' => $response['size'],
                     'time' => $response['lastModifiedDateTime'],
-                    'url' => route('origin.view', $response['id']),
                 ]
             ];
             @unlink($path);
@@ -178,27 +178,29 @@ class ManageController extends Controller
         $response = $graph->requestGraph('put', [$endpoint, $requestBody, []], true);
         $response ? Tool::showMessage('添加成功！') : Tool::showMessage('添加失败！', false);
         Artisan::call('cache:clear');
-        return redirect()->route('list', $path);
+        return redirect()->route('root', $path);
 
     }
 
     /**
      * 编辑文本文件
      * @param Request $request
-     * @param $itemId
+     * @param $id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function updateFile(Request $request, $itemId)
+    public function updateFile(Request $request, $id)
     {
+
         if (!$request->isMethod('post')) {
             $fetch = new FetchController();
-            $file = $fetch->fetchItem($itemId);
-            $file['content'] = $fetch->fetchContent($itemId);
+            $file = $fetch->getFileById($id);
+            $file['content'] = $fetch->getContentById($id);
             return view('admin.edit', compact('file'));
         }
         $content = $request->get('content');
         $stream = \GuzzleHttp\Psr7\stream_for($content);
-        $endpoint = "/me/drive/items/{$itemId}/content";
+        $endpoint = "/me/drive/items/{$id}/content";
         $requestBody = $stream;
         $graph = new RequestController();
         $response = $graph->requestGraph('put', [$endpoint, $requestBody, []], true);

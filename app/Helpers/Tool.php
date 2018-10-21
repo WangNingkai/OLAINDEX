@@ -43,18 +43,12 @@ class Tool
      */
     public static function getUrl($key, $pathArr)
     {
-        $last = array_pop($pathArr);
-        $ext = strtolower(pathinfo($last, PATHINFO_EXTENSION));
-        // 兼容目录下就是文件的情况
-        if ($ext && count($pathArr) == 1) {
-            $key = $key - 1;
-        }
         $pathArr = array_slice($pathArr, 0, $key);
         $url = '';
         foreach ($pathArr as $param) {
-            $url .= '|' . $param;
+            $url .= '/' . $param;
         }
-        return trim($url, '|');
+        return trim($url, '/');
     }
 
     /**
@@ -70,9 +64,14 @@ class Tool
         }
         $url = '';
         foreach ($pathArr as $param) {
-            $url .= '|' . $param;
+            $url .= '/' . $param;
         }
-        return trim($url, '|');
+        return trim($url, '/');
+    }
+
+    public static function getOriginPath($url)
+    {
+        $root = self::config('root');
     }
 
     /**
@@ -256,7 +255,7 @@ class Tool
         $code = explode(' ', self::config('code'));
         $stream = explode(' ', self::config('stream'));
         $exts = array_merge($code, $stream);
-        $isText = in_array($file['ext'],$exts);
+        $isText = in_array($file['ext'], $exts);
         $isBigFile = $file['size'] > 5 * 1024 * 1024 ?: false;
         if (!$isBigFile && $isText) {
             return true;
