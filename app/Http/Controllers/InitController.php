@@ -51,7 +51,7 @@ class InitController extends Controller
         }
         $update = new Parameter();
         $update->updateBatch($editData);
-        return redirect()->route('root');
+        return redirect()->route('home');
     }
 
     /**

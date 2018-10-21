@@ -47,7 +47,7 @@ class OauthController extends Controller
     {
         // 检测是否已授权
         if (Tool::config('access_token') != '' && Tool::config('refresh_token') != '' && Tool::config('access_token_expires') != '') {
-            return redirect()->route('root'); // 检测授权状态
+            return redirect()->route('home'); // 检测授权状态
         }
         if ($request->isMethod('GET') && !$request->has('code')) {
             // 生成state缓存，跳转授权登录
@@ -77,7 +77,7 @@ class OauthController extends Controller
                 ];
                 $this->updateCache($data);
                 // 保存授权跳转
-                return redirect()->route('root');
+                return redirect()->route('home');
             } catch (IdentityProviderException $e) {
                 exit($e->getMessage());
             }

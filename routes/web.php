@@ -20,8 +20,8 @@ Route::any('/install/apply', 'InitController@apply')->name('apply');
 Route::get('/oauth', 'OauthController@oauth')->name('oauth');
 Route::get('/refresh', 'OauthController@refreshToken')->name('refresh');
 // 索引
-Route::get('/', 'IndexController@root');
-Route::get('/root/{query?}', 'IndexController@list')->where('query', '.*')->name('root');
+Route::get('/', 'IndexController@home');
+Route::get('/home/{query?}', 'IndexController@list')->where('query', '.*')->name('home');
 Route::get('/show/{query}', 'IndexController@show')->where('query', '.*')->name('show');
 Route::get('/download/{query}', 'IndexController@download')->where('query', '.*')->name('download')->middleware('hotlinkProtection');;
 Route::get('/view/{query}', 'IndexController@view')->where('query', '.*')->name('view')->middleware('hotlinkProtection');;

@@ -18,7 +18,7 @@ class CheckImage
     {
         $status = Tool::config('image_hosting', false);
         if (!$status) {
-            return redirect()->route('root');
+            return redirect()->route('home');
         }
         return $next($request);
     }

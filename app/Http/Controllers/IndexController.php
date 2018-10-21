@@ -28,7 +28,7 @@ class IndexController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function root(Request $request)
+    public function home(Request $request)
     {
         return $this->list($request);
     }
@@ -65,7 +65,7 @@ class IndexController extends Controller
         $readme = Tool::markdown2Html($this->fetch->getContentByName('README.md', $origin_items));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
         if (!session()->has('LogInfo')) $origin_items = $this->fetch->filterFiles($origin_items, ['README.md', 'HEAD.md', '.password', '.deny']);
-        $items = Tool::arrayPage($origin_items, '/root/' . $origin_path, 20);
+        $items = Tool::arrayPage($origin_items, '/home/' . $origin_path, 20);
         return view('one', compact('items', 'origin_items', 'origin_path', 'path_array', 'head', 'readme'));
     }
 
@@ -169,7 +169,7 @@ class IndexController extends Controller
         Session::put('password:' . $origin_path, $data);
         $directory_password = $this->fetch->getContentById($pass_id);
         if ($password == $directory_password)
-            return redirect()->route('root', $origin_path);
+            return redirect()->route('home', $origin_path);
         else {
             Tool::showMessage('密码错误', false);
             return view('password', compact('origin_path', 'pass_id'));

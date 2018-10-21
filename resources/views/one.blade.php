@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title','Root/'.implode('/',$path_array))
+@section('title','Home/'.implode('/',$path_array))
 @section('content')
     @include('breadcrumb')
     @if (!blank($head))
@@ -121,7 +121,7 @@
         <div class="list-group item-list">
             @if(!blank($path_array))
                 <li class="list-group-item list-group-item-action"><a
-                        href="{{ route('root',\App\Helpers\Tool::getParentUrl($path_array)) }}"><i
+                        href="{{ route('home',\App\Helpers\Tool::getParentUrl($path_array)) }}"><i
                             class="fa fa-arrow-left"></i> 返回上一层</a></li>
             @endif
             @foreach($items as $item)
@@ -129,7 +129,7 @@
                     <div class="row">
                         <div class="col">
                             @if(isset($item['folder']))
-                                <a href="{{ route('root',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
+                                <a href="{{ route('home',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
                                    title="{{ $item['name'] }}">
                                     <i class="fa fa-folder"></i> {{ \App\Helpers\Tool::subStr($item['name'],0,20) }}
                                 </a>
@@ -150,7 +150,7 @@
                             <span class="pull-right">
                                 @if(isset($item['folder']))
                                     <a href="javascript:void(0)"
-                                       data-clipboard-text="{{ route('root',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
+                                       data-clipboard-text="{{ route('home',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
                                        class="clipboard" title="已复制" data-toggle="tooltip"
                                        data-placement="right"><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;
                                 @else
