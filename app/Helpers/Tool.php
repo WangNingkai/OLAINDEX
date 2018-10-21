@@ -274,7 +274,7 @@ class Tool
         $fetch = new FetchController();
         $file = $fetch->getFileById($id);
         $path = $file['parentReference']['path'];
-        $root = self::config('root');
+        $root = self::config('root','/');
         if ($root == '/') {
             $key = mb_strpos($path, ':');
             $path = mb_substr($path, $key + 1);
