@@ -18,6 +18,7 @@ class IndexController extends Controller
      */
     public function __construct()
     {
+        $this->middleware('checkToken');
         $fetch = new FetchController();
         $this->fetch = $fetch;
     }

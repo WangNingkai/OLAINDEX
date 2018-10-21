@@ -20,6 +20,7 @@ class ManageController extends Controller
     public function __construct()
     {
         $this->middleware('checkAuth')->except('uploadImage');
+        $this->middleware('checkToken');
     }
 
     /**
