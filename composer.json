@@ -1,11 +1,15 @@
 {
     "name": "laravel/laravel",
     "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
     "license": "MIT",
     "type": "project",
     "require": {
         "php": "^7.1.3",
+        "ext-json": "*",
         "fideloper/proxy": "^4.0",
         "joyqi/hyper-down": "dev-master",
         "laravel/framework": "5.7.*",
