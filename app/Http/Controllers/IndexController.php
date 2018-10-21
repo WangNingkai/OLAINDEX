@@ -79,6 +79,7 @@ class IndexController extends Controller
         $origin_path = $this->fetch->convertPath($request->getPathInfo(), false);
         $path_array = $origin_path ? explode('/', $origin_path) : [];
         $file = $this->fetch->getFile($request);
+        if (isset($file['folder'])) abort(403);
         $file['thumb'] = $this->fetch->getThumbUrl($file['id'], false);
         $file['download'] = $file['@microsoft.graph.downloadUrl'];
         $patterns = $this->fetch->show;
