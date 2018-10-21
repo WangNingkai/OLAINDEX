@@ -22,7 +22,6 @@ class IndexController extends Controller
         $this->fetch = $fetch;
     }
 
-
     /**
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
