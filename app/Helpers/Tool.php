@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Http\Controllers\FetchController;
 use App\Models\Parameter;
 use HyperDown\Parser;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -250,6 +251,10 @@ class Tool
         return $paginatedDataResults;
     }
 
+    /**
+     * @param $file
+     * @return bool
+     */
     public static function isEdited($file)
     {
         $code = explode(' ', self::config('code'));
@@ -262,5 +267,26 @@ class Tool
         } else {
             return false;
         }
+    }
+
+    public static function id2Path($id)
+    {
+        $fetch = new FetchController();
+        $file = $fetch->getFileById($id);
+        $path = $file['parentReference']['path'];
+        $root = self::config('root');
+        if ($root == '/') {
+            $key = mb_strpos($path, ':');
+            $path = mb_substr($path, $key + 1);
+            $pathArr = explode('/', $path);
+            unset($pathArr[0]);
+        } else {
+            $path = mb_strstr($path, $root, false, 'utf8');
+            $start = mb_strlen($root, 'utf8');
+            $rest = mb_substr($path, $start, null, 'utf8');
+            $pathArr = explode('/', $rest);
+        }
+        array_push($pathArr, $file['name']);
+        return trim(implode('/',$pathArr),'/');
     }
 }

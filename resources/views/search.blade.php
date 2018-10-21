@@ -20,6 +20,9 @@
                     <div class="col d-none d-md-block d-md-none">
                         <span class="pull-right">Size</span>
                     </div>
+                    <div class="col d-none d-md-block d-md-none">
+                        <span class="pull-right">Action</span>
+                    </div>
                 </div>
             </div>
             <div class="list-group item-list">
@@ -27,7 +30,8 @@
                     <li class="list-group-item list-group-item-action">
                         <div class="row">
                             <div class="col">
-                                <a href="{{ $item['webUrl'] }}" title="{{ $item['name'] }}">
+                                <a href="{{ route('show',\App\Helpers\Tool::id2Path($item['id'])) }}"
+                                   title="{{ $item['name'] }}">
                                     <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i> {{ \App\Helpers\Tool::subStr($item['name'],0,20) }}
                                 </a>
                             </div>
@@ -37,6 +41,18 @@
                             </div>
                             <div class="col d-none d-md-block d-md-none">
                                 <span class="pull-right">{{ \App\Helpers\Tool::convertSize($item['size']) }}</span>
+                            </div>
+                            <div class="col d-none d-md-block d-md-none">
+                                <span class="pull-right">
+                                    <a href="{{ route('download',\App\Helpers\Tool::id2Path($item['id'])) }}"><i
+                                            class="fa fa-download"
+                                            title="下载"></i></a>&nbsp;&nbsp;
+                                    <a href="javascript:void(0)"
+                                       data-clipboard-text="{{ route('download',\App\Helpers\Tool::id2Path($item['id'])) }}"
+                                       class="clipboard"
+                                       title="已复制" data-toggle="tooltip"
+                                       data-placement="right"><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;
+                                </span>
                             </div>
                         </div>
                     </li>
