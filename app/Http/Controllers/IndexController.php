@@ -151,4 +151,28 @@ class IndexController extends Controller
         $items = Tool::arrayPage($items, '/search', 20);
         return view('search', compact('items'));
     }
+
+    /**
+     * 校验目录密码
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function handlePassword()
+    {
+        $password = request()->get('password');
+        $origin_path = decrypt(request()->get('origin_path'));
+        $pass_id = decrypt(request()->get('pass_id'));
+        $data = [
+            'password' => encrypt($password),
+            'expires' => time() + $this->fetch->expires * 60, // 目录密码过期时间
+        ];
+        Session::put('password:' . $origin_path, $data);
+        $directory_password = $this->fetch->getContentById($pass_id);
+        if ($password == $directory_password)
+            return redirect()->route('root', $origin_path);
+        else {
+            Tool::showMessage('密码错误', false);
+            return view('password', compact('origin_path', 'pass_id'));
+        }
+    }
 }
