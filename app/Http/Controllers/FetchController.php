@@ -37,7 +37,6 @@ class FetchController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('checkToken');
         $this->expires = Tool::config('expires', 10);
         $this->root = Tool::config('root', '/');
         $this->show = [

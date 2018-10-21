@@ -17,6 +17,14 @@ use Microsoft\Graph\Graph;
 class RequestController extends Controller
 {
     /**
+     * RequestController constructor.
+     */
+    public function __construct()
+    {
+        $this->middleware('checkToken');
+    }
+
+    /**
      * 构造graph请求
      * @param $method
      * @param $param
