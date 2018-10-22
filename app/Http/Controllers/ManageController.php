@@ -8,7 +8,7 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Artisan;
 
 /**
- * OneDrive管理
+ * 管理员 OneDrive 操作
  * Class ManageController
  * @package App\Http\Controllers
  */

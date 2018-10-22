@@ -6,6 +6,11 @@ use App\Helpers\Tool;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
+/**
+ * OneDrive 索引
+ * Class IndexController
+ * @package App\Http\Controllers
+ */
 class IndexController extends Controller
 {
     /**
@@ -24,6 +29,7 @@ class IndexController extends Controller
     }
 
     /**
+     * 首页
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -34,6 +40,7 @@ class IndexController extends Controller
     }
 
     /**
+     * 列表
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -70,6 +77,7 @@ class IndexController extends Controller
     }
 
     /**
+     * 展示
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -107,6 +115,7 @@ class IndexController extends Controller
     }
 
     /**
+     * 下载
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -118,6 +127,7 @@ class IndexController extends Controller
     }
 
     /**
+     * 图片预览
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -129,6 +139,7 @@ class IndexController extends Controller
     }
 
     /**
+     * 搜索
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
