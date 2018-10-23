@@ -66,6 +66,8 @@ php artisan update:install
 
 - master: 开发最新代码
 
+- dev: 开发测试代码（不稳定）
+
 ### TODO
 
 - 视频（已加入avi等格式的支持）字幕，音频歌词支持
