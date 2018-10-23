@@ -110,7 +110,10 @@ class IndexController extends Controller
                 }
                 return view($view, compact('file', 'path_array', 'origin_path'));
             } else {
-                break;
+                $last = end($patterns);
+                if ($last == $suffix) {
+                    break;
+                }
             }
         }
         return redirect()->away($file['download']);
