@@ -63,8 +63,9 @@ class InitInstall extends Command
                 file_put_contents(base_path('.env'), $env);
             } else
                 return false;
+        } else {
+            file_put_contents(base_path('.env'), $env);
         }
-        file_put_contents(base_path('.env'), $env);
         $this->info(' 应用回调地址请填写：' . trim($app_url, '/') . '/oauth ');
 //        $this->call('key:generate');
         $this->warn('正在执行数据库操作 ...');
