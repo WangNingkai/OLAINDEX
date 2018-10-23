@@ -2,6 +2,12 @@
 @section('title',$file['name'])
 @section('css')
     <link class="dplayer-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dplayer/dist/DPlayer.min.css">
+    <style>
+        .dplayer-video-wrap .dplayer-video {
+            width: 100%;
+            height: 640px;
+        }
+    </style>
 @stop
 @section('content')
     @include('breadcrumb')
