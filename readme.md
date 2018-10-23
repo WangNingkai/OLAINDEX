@@ -63,6 +63,8 @@ php artisan update:install
 
 - master: 开发最新代码
 
+- dev: 开发测试代码（不稳定）
+
 ### TODO
 
 - 目录友好显示
