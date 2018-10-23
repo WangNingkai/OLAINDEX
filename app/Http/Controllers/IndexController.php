@@ -88,7 +88,6 @@ class IndexController extends Controller
         $path_array = $origin_path ? explode('/', $origin_path) : [];
         $file = $this->fetch->getFile($request);
         if (isset($file['folder'])) abort(403);
-        $file['thumb'] = $this->fetch->getThumbUrl($file['id'], false);
         $file['download'] = $file['@microsoft.graph.downloadUrl'];
         $patterns = $this->fetch->show;
         foreach ($patterns as $key => $suffix) {
@@ -99,6 +98,9 @@ class IndexController extends Controller
                         Tool::showMessage('文件过大，请下载查看', false);
                         return redirect()->back();
                     } else $file['content'] = $this->fetch->requestHttp('get', $file['@microsoft.graph.downloadUrl']);
+                }
+                if (in_array($key, ['image', 'dash', 'video'])) {
+                    $file['thumb'] = $this->fetch->getThumbUrl($file['id'], false);
                 }
                 if ($key == 'dash') {
                     if (strpos($file['@microsoft.graph.downloadUrl'], "sharepoint.com") == false) return redirect()->away($file['download']);
