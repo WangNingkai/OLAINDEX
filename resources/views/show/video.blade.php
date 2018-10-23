@@ -26,7 +26,7 @@
                 <div class="form-group">
                     <div class="input-group mb-3">
                         <input type="text" id="link1" class="form-control" aria-label="Amount (to the nearest dollar)"
-                               value="{{ $file['download'] }}">
+                               value="{{ route('download',$origin_path ? $origin_path.'/'.$file['name'] : $file['name']) }}">
                         <div class="input-group-append">
                             <a href="javascript:void(0)" style="text-decoration: none" data-toggle="tooltip"
                                data-placement="right" data-clipboard-target="#link1" class="clipboard">
