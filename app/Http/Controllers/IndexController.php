@@ -109,6 +109,8 @@ class IndexController extends Controller
                     return redirect()->away($url);
                 }
                 return view($view, compact('file', 'path_array', 'origin_path'));
+            } else {
+                break;
             }
         }
         return redirect()->away($file['download']);
