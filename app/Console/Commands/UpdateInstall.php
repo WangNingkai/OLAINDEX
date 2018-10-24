@@ -55,10 +55,13 @@ class UpdateInstall extends Command
                 $result = $this->v_2_0();
                 break;
             case 'v1.0':
-                $result = $this->v_1_1();
+                $this->v_1_1();
+                $this->v_1_2();
+                $result = $this->v_2_0();
                 break;
             case 'v1.1':
-                $result = $this->v_1_2();
+                $this->v_1_2();
+                $result = $this->v_2_0();
                 break;
             case 'v1.2':
                 $result = $this->v_2_0();
