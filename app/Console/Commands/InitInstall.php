@@ -36,6 +36,8 @@ class InitInstall extends Command
      */
     public function handle()
     {
+        $this->warn('确保已经手动执行以下目录读写权限命令');
+        $this->info('chmod -R 755 storage/* && chown -R www:www *');
         if (!file_exists(database_path('database.sqlite'))) {
             $this->warn(' 未检测到数据库文件！请确认已在应用数据库目录创建 database.sqlite！');
             $this->warn('创建命令 [ touch database/database.sqlite ]');
@@ -71,8 +73,6 @@ class InitInstall extends Command
         $this->warn('正在执行数据库操作 ...');
         $this->call('migrate');
         $this->call('db:seed');
-        $this->warn('手动执行以下命令确保目录读写权限');
-        $this->info('chmod -R 755 storage/* && chown -R www:www *');
         $this->warn('========== 预安装完成，请继续下面的操作 ==========');
         $this->info(' 后台登录原始密码：12345678');
     }
