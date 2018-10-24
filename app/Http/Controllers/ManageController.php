@@ -170,7 +170,7 @@ class ManageController extends Controller
         $content = $request->get('content');
         $stream = \GuzzleHttp\Psr7\stream_for($content);
         $root = trim(Tool::config('root'), '/');
-        $storeFilePath = $root . '/' . str_replace('|', '/', $path) . '/' . $name . '.md';
+        $storeFilePath = $root . '/' . trim($path, '/') . '/' . $name . '.md';
         $remoteFilePath = trim($storeFilePath, '/');
         $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
         $requestBody = $stream;
