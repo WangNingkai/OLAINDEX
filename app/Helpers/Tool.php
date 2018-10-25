@@ -3,7 +3,6 @@
 namespace App\Helpers;
 
 use App\Models\Parameter;
-use HyperDown\Parser;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -110,8 +109,8 @@ class Tool
             }, $iframe[0]);
         }
         // markdown转html
-        $parser = new Parser();
-        $html = $parser->makeHtml($markdown);
+        $parser = new \Parsedown();
+        $html = $parser->text($markdown);
         $html = str_replace('<code class="', '<code class="lang-', $html);
         // 将临时字符串替换为 i_frame
         if (!empty($iframe[0])) {
