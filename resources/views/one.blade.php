@@ -139,8 +139,8 @@
                                     <i class="fa fa-folder"></i> {{ \App\Helpers\Tool::subStr($item['name'],0,20) }}
                                 </a>
                             @else
-                                <a href="@if( $item['ext'] == 'php'){{ route('show',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']).'.' }} @else {{ route('show',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
-                                   title="{{ $item['name'] }}@endif">
+                                <a href="@if( $item['ext'] == 'php'){{ route('show',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']).'.' }} @else{{ route('show',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}@endif"
+                                   title="{{ $item['name'] }}">
                                     <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i> {{ \App\Helpers\Tool::subStr($item['name'],0,20) }}
                                 </a>
                             @endif
@@ -169,11 +169,11 @@
                                         <a href="{{ route('file.update',$item['id']) }}"><i
                                                 class="fa fa-pencil"></i></a>&nbsp;&nbsp;
                                     @endif
-                                    <a href="@if( $item['ext'] == 'php'){{ route('download',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']).'.' }} @else {{ route('show',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"><i
+                                    <a href="@if( $item['ext'] == 'php') {{ route('download',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']).'.' }} @else {{ route('show',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}@endif"><i
                                             class="fa fa-download"
                                             title="下载"></i></a>&nbsp;&nbsp;
                                     <a href="javascript:void(0)"
-                                       data-clipboard-text="@if( $item['ext'] == 'php'){{ route('download',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']).'.' }} @else {{ route('show',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
+                                       data-clipboard-text="@if( $item['ext'] == 'php'){{ route('download',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']).'.' }}@else{{ route('show',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}@endif"
                                        class="clipboard"
                                        title="已复制" data-toggle="tooltip"
                                        data-placement="right"><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;
