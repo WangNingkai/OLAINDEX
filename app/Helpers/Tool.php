@@ -245,6 +245,7 @@ class Tool
     }
 
     /**
+     * 是否可编辑
      * @param $file
      * @return bool
      */

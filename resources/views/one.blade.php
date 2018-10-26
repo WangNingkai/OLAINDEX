@@ -29,19 +29,23 @@
                         <div class="dropdown-menu" aria-labelledby="actionDropdownLink">
                             @if (array_key_exists('README.md', $origin_items))
                                 <a class="dropdown-item"
-                                   href="{{ route('file.update',$origin_items['README.md']['id']) }}"><i class="fa fa-pencil-square-o"></i> 编辑 README</a>
+                                   href="{{ route('file.update',$origin_items['README.md']['id']) }}"><i
+                                        class="fa fa-pencil-square-o"></i> 编辑 README</a>
                             @else
                                 <a class="dropdown-item"
-                                   href="{{ route('file.create',['name' => 'README', 'path' => encrypt($origin_path)]) }}"><i class="fa fa-plus-circle"></i> 添加
+                                   href="{{ route('file.create',['name' => 'README', 'path' => encrypt($origin_path)]) }}"><i
+                                        class="fa fa-plus-circle"></i> 添加
                                     README</a>
                             @endif
                             @if (array_key_exists('HEAD.md', $origin_items))
                                 <a class="dropdown-item"
-                                   href="{{ route('file.update',$origin_items['HEAD.md']['id']) }}"><i class="fa fa-pencil-square-o"></i> 编辑 HEAD</a>
+                                   href="{{ route('file.update',$origin_items['HEAD.md']['id']) }}"><i
+                                        class="fa fa-pencil-square-o"></i> 编辑 HEAD</a>
 
                             @else
                                 <a class="dropdown-item"
-                                   href="{{ route('file.create',['name' => 'HEAD', 'path' => encrypt($origin_path)]) }}"><i class="fa fa-plus-circle"></i>  添加
+                                   href="{{ route('file.create',['name' => 'HEAD', 'path' => encrypt($origin_path)]) }}"><i
+                                        class="fa fa-plus-circle"></i> 添加
                                     HEAD</a>
                             @endif
                             @if (!array_key_exists('.password', $origin_items))
@@ -69,7 +73,8 @@
                                                 <div class="form-group">
                                                     <input type="password" name="password" class="form-control"
                                                            placeholder="请输入密码" id="lockField" required>
-                                                    <input type="hidden" name="path" value="{{ encrypt($origin_path) }}">
+                                                    <input type="hidden" name="path"
+                                                           value="{{ encrypt($origin_path) }}">
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -134,7 +139,8 @@
                                     <i class="fa fa-folder"></i> {{ \App\Helpers\Tool::subStr($item['name'],0,20) }}
                                 </a>
                             @else
-                                <a href="{{ route('show',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}" title="{{ $item['name'] }}">
+                                <a href="@if( $item['ext'] == 'php'){{ route('show',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']).'.' }} @else {{ route('show',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
+                                   title="{{ $item['name'] }}@endif">
                                     <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i> {{ \App\Helpers\Tool::subStr($item['name'],0,20) }}
                                 </a>
                             @endif
@@ -155,18 +161,20 @@
                                        data-placement="right"><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;
                                 @else
                                     @if(isset($item['image']))
-                                        <a href="{{ route('download',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}" data-fancybox="image-list"><i
+                                        <a href="{{ route('download',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
+                                           data-fancybox="image-list"><i
                                                 class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
                                     @endif
-
                                     @if(session()->has('LogInfo') && \App\Helpers\Tool::isEdited($item) )
                                         <a href="{{ route('file.update',$item['id']) }}"><i
                                                 class="fa fa-pencil"></i></a>&nbsp;&nbsp;
                                     @endif
-                                    <a href="{{ route('download',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"><i class="fa fa-download"
-                                                                                     title="下载"></i></a>&nbsp;&nbsp;
+                                    <a href="@if( $item['ext'] == 'php'){{ route('download',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']).'.' }} @else {{ route('show',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"><i
+                                            class="fa fa-download"
+                                            title="下载"></i></a>&nbsp;&nbsp;
                                     <a href="javascript:void(0)"
-                                       data-clipboard-text="{{ route('download',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}" class="clipboard"
+                                       data-clipboard-text="@if( $item['ext'] == 'php'){{ route('download',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']).'.' }} @else {{ route('show',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
+                                       class="clipboard"
                                        title="已复制" data-toggle="tooltip"
                                        data-placement="right"><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;
                                 @endif
@@ -188,7 +196,7 @@
     </div>
     @if (!blank($readme))
         <div class="card border-light mb-3">
-            <div class="card-header"><i class="fa fa-book"></i>  README</div>
+            <div class="card-header"><i class="fa fa-book"></i> README</div>
             <div class="card-body markdown-body">
                 {!! $readme !!}
             </div>
