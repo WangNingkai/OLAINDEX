@@ -1,5 +1,9 @@
 @extends('layouts.main')
 @section('title','Home/'.implode('/',$path_array))
+@section('css')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/css/blueimp-gallery-indicator.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/css/blueimp-gallery.min.css">
+@stop
 @section('content')
     @include('breadcrumb')
     @if (!blank($head))
@@ -194,6 +198,35 @@
     <div class="text-center">
         {{ $items->links('page') }}
     </div>
+    @if ($hasImage)
+        <div class="card border-light mb-3">
+            <div class="card-header">
+                图片列表
+            </div>
+            <div class="card-body">
+                <div id="links">
+                    @foreach($origin_items as $item)
+                        @if(isset($item['image']))
+                            <a href="{{ route('view',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
+                               title="{{ $item['name'] }}" data-gallery="image-list">
+                                <img src="{{ route('thumb',['id'=>$item['id'],'size'=>'small']) }}"
+                                     alt="{{ $item['name'] }}">
+                            </a>
+                        @endif
+                    @endforeach
+                </div>
+                <div id="blueimp-gallery" class="blueimp-gallery" data-start-slideshow="true" data-filter=":even">
+                    <div class="slides"></div>
+                    <h3 class="title"></h3>
+                    <a class="prev">‹</a>
+                    <a class="next">›</a>
+                    <a class="close">×</a>
+                    <a class="play-pause"></a>
+                    <ol class="indicator"></ol>
+                </div>
+            </div>
+        </div>
+    @endif
     @if (!blank($readme))
         <div class="card border-light mb-3">
             <div class="card-header"><i class="fa fa-book"></i> README</div>
@@ -204,6 +237,9 @@
     @endif
 @stop
 @section('js')
+    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/jquery.blueimp-gallery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/blueimp-gallery-indicator.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/blueimp-gallery-fullscreen.min.js"></script>
     @if(session()->has('LogInfo'))
         <script>
             function deleteItem($sign) {

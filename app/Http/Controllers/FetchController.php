@@ -188,7 +188,7 @@ class FetchController extends Controller
     public function getThumb(Request $request, $id)
     {
         $size = $request->get('size', 'large');
-        $url = $this->getThumbUrl($id, false, $size);
+        $url = $this->getThumbUrl($id, $size, false);
         $content = $this->requestHttp('get', $url);
         return response($content, 200, [
             'Content-Type' => 'image/png',
@@ -202,7 +202,7 @@ class FetchController extends Controller
      * @param string $size
      * @return mixed
      */
-    public function getThumbUrl($id, $redirect = true, $size = 'large')
+    public function getThumbUrl($id, $size = 'large', $redirect = true)
     {
         $endpoint = "/me/drive/items/{$id}/thumbnails/0/{$size}";
         $response = $this->requestGraph($endpoint, true);
@@ -307,5 +307,23 @@ class FetchController extends Controller
                 abort(403);
             }
         }
+    }
+
+    /**
+     * 判断列表是否含有图片
+     * @param $items
+     * @return bool
+     */
+    public function hasImage($items)
+    {
+        $hasImage =false;
+        foreach($items as $item)
+        {
+            if(isset($item['image'])) {
+                $hasImage = true;
+                break;
+            }
+        }
+        return $hasImage;
     }
 }

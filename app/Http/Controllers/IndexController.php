@@ -53,6 +53,7 @@ class IndexController extends Controller
         $endpoint = '/me/drive/root' . $graphPath . $query;
         $response = $this->fetch->requestGraph($endpoint, true);
         $origin_items = $this->fetch->formatArray($response);
+        $hasImage = $this->fetch->hasImage($origin_items);
         if (!empty($origin_items['.password'])) {
             $pass_id = $origin_items['.password']['id'];
             $pass_url = $origin_items['.password']['@microsoft.graph.downloadUrl'];
@@ -73,7 +74,7 @@ class IndexController extends Controller
         $path_array = $origin_path ? explode('/', $origin_path) : [];
         if (!session()->has('LogInfo')) $origin_items = $this->fetch->filterFiles($origin_items, ['README.md', 'HEAD.md', '.password', '.deny']);
         $items = Tool::arrayPage($origin_items, '/home/' . $origin_path, 20);
-        return view('one', compact('items', 'origin_items', 'origin_path', 'path_array', 'head', 'readme'));
+        return view('one', compact('items', 'origin_items', 'origin_path', 'path_array', 'head', 'readme','hasImage'));
     }
 
     /**
@@ -100,7 +101,7 @@ class IndexController extends Controller
                     } else $file['content'] = $this->fetch->requestHttp('get', $file['@microsoft.graph.downloadUrl']);
                 }
                 if (in_array($key, ['image', 'dash', 'video'])) {
-                    $file['thumb'] = $this->fetch->getThumbUrl($file['id'], false);
+                    $file['thumb'] = $this->fetch->getThumbUrl($file['id'], 'large',true);
                 }
                 if ($key == 'dash') {
                     if (strpos($file['@microsoft.graph.downloadUrl'], "sharepoint.com") == false) return redirect()->away($file['download']);
@@ -131,6 +132,18 @@ class IndexController extends Controller
         $file = $this->fetch->getFile($request, true);
         $download = $file['@microsoft.graph.downloadUrl'];
         return redirect()->away($download);
+    }
+
+    /**
+     * 缩略图
+     * @param $id
+     * @param $size
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function thumb($id,$size)
+    {
+        $url =  $this->fetch->getThumbUrl($id,$size,false);
+        return redirect()->away($url);
     }
 
     /**
