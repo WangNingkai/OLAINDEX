@@ -102,7 +102,7 @@ class IndexController extends Controller
                     } else $file['content'] = $this->fetch->requestHttp('get', $file['@microsoft.graph.downloadUrl']);
                 }
                 if (in_array($key, ['image', 'dash', 'video'])) {
-                    $file['thumb'] = $this->fetch->getThumbUrl($file['id'], 'large', true);
+                    $file['thumb'] = $this->fetch->getThumbUrl($file['id'], 'large', false);
                 }
                 if ($key == 'dash') {
                     if (strpos($file['@microsoft.graph.downloadUrl'], "sharepoint.com") == false) return redirect()->away($file['download']);

@@ -205,7 +205,7 @@
             </div>
             <div class="card-body">
                 <div id="links">
-                    @foreach($origin_items as $item)
+                    @foreach($items as $item)
                         @if(isset($item['image']))
                             <a href="{{ route('view',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
                                title="{{ $item['name'] }}" data-gallery="image-list">
