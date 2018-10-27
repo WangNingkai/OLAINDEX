@@ -52,6 +52,7 @@ class IndexController extends Controller
         $query = 'children';
         $endpoint = '/me/drive/root' . $graphPath . $query;
         $response = $this->fetch->requestGraph($endpoint, true);
+        $response['value'] = $this->fetch->getNextLinkList($response, $response['value']);
         $origin_items = $this->fetch->formatArray($response);
         $hasImage = $this->fetch->hasImage($origin_items);
         if (!empty($origin_items['.password'])) {
