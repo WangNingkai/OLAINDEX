@@ -87,12 +87,13 @@ php artisan update:install
 
 **路由路径 ：** `routes/web.php`
 
-![route](https://image.ningkai.wang/item/origin/view/01HS36VADQV35WPMQ3AFHZ25AUTVCJIEVN)
+![image.png](https://i.loli.net/2018/10/27/5bd473aa6bc75.png)
 
 **附：** 本软件仅供日常学习使用，不得用于任何商业用途；学习使用请遵守您所在国家的法律，任何非法行为由使用者本身承担。
 
 ## 预览
 
-![1.jpg](https://image.ningkai.wang/item/origin/view/01HS36VAGA2Q2RP3ZSKVGYAZW2IMBBTB3N)
+![image.png](https://i.loli.net/2018/10/27/5bd473a992fa6.png)
+![image.png](https://i.loli.net/2018/10/27/5bd473a7c6716.png)
 
-![2.jpg](https://image.ningkai.wang/item/origin/view/01HS36VADJ5MEMI6RGVVCJ3SJBBKRWOSRS)
+
