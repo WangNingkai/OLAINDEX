@@ -73,8 +73,8 @@ class IndexController extends Controller
         $readme = Tool::markdown2Html($this->fetch->getContentByName('README.md', $origin_items));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
         if (!session()->has('LogInfo')) $origin_items = $this->fetch->filterFiles($origin_items, ['README.md', 'HEAD.md', '.password', '.deny']);
-        $items = Tool::arrayPage($origin_items, '/home/' . $origin_path, 20);
-        return view('one', compact('items', 'origin_items', 'origin_path', 'path_array', 'head', 'readme','hasImage'));
+        $items = Tool::paginate($origin_items, 20);
+        return view('one', compact('items', 'origin_items', 'origin_path', 'path_array', 'head', 'readme', 'hasImage'));
     }
 
     /**
@@ -101,7 +101,7 @@ class IndexController extends Controller
                     } else $file['content'] = $this->fetch->requestHttp('get', $file['@microsoft.graph.downloadUrl']);
                 }
                 if (in_array($key, ['image', 'dash', 'video'])) {
-                    $file['thumb'] = $this->fetch->getThumbUrl($file['id'], 'large',true);
+                    $file['thumb'] = $this->fetch->getThumbUrl($file['id'], 'large', true);
                 }
                 if ($key == 'dash') {
                     if (strpos($file['@microsoft.graph.downloadUrl'], "sharepoint.com") == false) return redirect()->away($file['download']);
@@ -140,9 +140,9 @@ class IndexController extends Controller
      * @param $size
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function thumb($id,$size)
+    public function thumb($id, $size)
     {
-        $url =  $this->fetch->getThumbUrl($id,$size,false);
+        $url = $this->fetch->getThumbUrl($id, $size, false);
         return redirect()->away($url);
     }
 
@@ -179,7 +179,7 @@ class IndexController extends Controller
         } else {
             $items = [];
         }
-        $items = Tool::arrayPage($items, '/search', 20);
+        $items = Tool::paginate($items, 20);
         return view('search', compact('items'));
     }
 

@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Models\Parameter;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
@@ -242,6 +243,24 @@ class Tool
         //给分页加自定义url
         $paginatedDataResults = $paginatedDataResults->setPath($path);
         return $paginatedDataResults;
+    }
+
+    /**
+     * 数组分页 2
+     * @param $items
+     * @param $perPage
+     * @return LengthAwarePaginator
+     */
+    public static function paginate($items, $perPage)
+    {
+        $pageStart = request()->get('page', 1);
+        // Start displaying items from this number;
+        $offSet = ($pageStart * $perPage) - $perPage;
+
+        // Get only the items you need using array_slice
+        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
+
+        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage, Paginator::resolveCurrentPage(), ['path' => Paginator::resolveCurrentPath()]);
     }
 
     /**
