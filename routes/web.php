@@ -23,8 +23,8 @@ Route::get('/refresh', 'OauthController@refreshToken')->name('refresh');
 Route::get('/', 'IndexController@home');
 Route::get('/home/{query?}', 'IndexController@list')->where('query', '.*')->name('home');
 Route::get('/show/{query}', 'IndexController@show')->where('query', '.*')->name('show');
-Route::get('/download/{query}', 'IndexController@download')->where('query', '.*')->name('download')->middleware('hotlinkProtection');;
-Route::get('/view/{query}', 'IndexController@view')->where('query', '.*')->name('view')->middleware('hotlinkProtection');;
+Route::get('/download/{query}', 'IndexController@download')->where('query', '.*')->name('download')->middleware('hotlinkProtection');
+Route::get('/view/{query}', 'IndexController@view')->where('query', '.*')->name('view')->middleware('hotlinkProtection');
 Route::post('/password', 'IndexController@handlePassword')->name('password');
 Route::get('/thumb/{id}/size/{size}', 'IndexController@thumb')->name('thumb');
 // 图床

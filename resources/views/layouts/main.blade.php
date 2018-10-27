@@ -45,14 +45,16 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('home') }}"><i class="fa fa-home"></i> 首页</a>
                 </li>
-                @if (\App\Helpers\Tool::config('image_hosting',false))
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('image') }}"><i class="fa fa-cloud-upload"></i> 图床</a>
-                    </li>
+                @if (\App\Helpers\Tool::config('image_hosting',0))
+                    @if(\App\Helpers\Tool::config('image_hosting') == 2 && session()->has('LogInfo') || \App\Helpers\Tool::config('image_hosting') == 1)
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('image') }}"><i class="fa fa-cloud-upload"></i> 图床</a>
+                        </li>
+                    @endif
                 @endif
                 @if (session()->has('LogInfo'))
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.basic') }}"><i class="fa fa-tachometer" ></i> 管理</a>
+                        <a class="nav-link" href="{{ route('admin.basic') }}"><i class="fa fa-tachometer"></i> 管理</a>
                     </li>
                 @endif
             </ul>
