@@ -176,7 +176,7 @@ class UpdateInstall extends Command
         $data = \Illuminate\Support\Facades\DB::table('parameters')->pluck('value', 'name')->toArray();
         $data['app_version'] = 'v3.0';
         $saved = Tool::saveConfig($data);
-        return $saved ? $this->returnStatus('更新成功，version=v3.0') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
+        return $saved ? $this->returnStatus('更新成功，version=v3.0，请手动执行chmod 777 storage/app/config.json') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
     }
 
     /**
