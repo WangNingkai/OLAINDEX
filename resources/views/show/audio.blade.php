@@ -41,7 +41,7 @@
                 name: "{{ $file['name'] }}",
                 artist: 'unknown',
                 url: "{{ route('download',$origin_path) }}",
-                cover: "https://image.ningkai.wang/item/origin/view/01HS36VAAKXEI24NOGWVAZFQ5VNRZZ3JDR"
+                cover: "https://i.loli.net/2018/10/28/5bd571ce90e33.png"
             }]
         });
     </script>
