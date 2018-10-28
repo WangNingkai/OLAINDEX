@@ -29,7 +29,7 @@
                 <div class="col">
                     @if (session()->has('LogInfo'))
                         <a class="pull-right dropdown-toggle" href="javascript:void(0)" id="actionDropdownLink"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</a>
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">操作</a>
                         <div class="dropdown-menu" aria-labelledby="actionDropdownLink">
                             @if (array_key_exists('README.md', $origin_items))
                                 <a class="dropdown-item"
@@ -122,7 +122,7 @@
                             </div>
                         </div>
                     @else
-                        <span class="pull-right">Action</span>
+                        <span class="pull-right">操作</span>
                     @endif
                 </div>
             </div>
