@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
-use App\Models\Parameter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
@@ -128,17 +127,11 @@ class AdminController extends Controller
      */
     public function update($data)
     {
-        $editData = [];
-        foreach ($data as $k => $v) {
-            $editData[] = [
-                'name' => $k,
-                'value' => $v
-            ];
-        }
-        $config = new Parameter();
-        $response = $config->updateBatch($editData);
+        $config = Tool::config();
+        $config = array_merge($config, $data);
+        $saved = Tool::saveConfig($config);
         Cache::forget('config');
         Tool::showMessage('更新成功');
-        return $response;
+        return $saved;
     }
 }

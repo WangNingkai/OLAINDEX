@@ -52,25 +52,30 @@ class UpdateInstall extends Command
                 $this->v_1_0();
                 $this->v_1_1();
                 $this->v_1_2();
-                $result = $this->v_2_0();
+                $this->v_2_0();
+                $result = $this->v_3_0();
                 break;
             case 'v1.0':
                 $this->v_1_1();
                 $this->v_1_2();
-                $result = $this->v_2_0();
+                $this->v_2_0();
+                $result = $this->v_3_0();
                 break;
             case 'v1.1':
                 $this->v_1_2();
-                $result = $this->v_2_0();
+                $this->v_2_0();
+                $result = $this->v_3_0();
                 break;
             case 'v1.2':
-                $result = $this->v_2_0();
+                $this->v_2_0();
+                $result = $this->v_3_0();
                 break;
             default:
                 $this->v_1_0();
                 $this->v_1_1();
                 $this->v_1_2();
-                $result = $this->v_2_0();
+                $this->v_2_0();
+                $result = $this->v_3_0();
         }
         Artisan::call('cache:clear');
         $this->info($result['status'] . ':' . $result['msg']);
@@ -161,6 +166,17 @@ class UpdateInstall extends Command
             ->where('name', 'app_version')
             ->update(['value' => 'v2.0']);
         return $update ? $this->returnStatus('更新成功，version=v2.0') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
+    }
+
+    /**
+     * @return array
+     */
+    public function v_3_0()
+    {
+        $data = \Illuminate\Support\Facades\DB::table('parameters')->pluck('value', 'name')->toArray();
+        $data['app_version'] = 'v3.0';
+        $saved = Tool::saveConfig($data);
+        return $saved ? $this->returnStatus('更新成功，version=v3.0') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
     }
 
     /**

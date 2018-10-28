@@ -121,21 +121,6 @@ class Tool
     }
 
     /**
-     * 读取配置
-     * @param string $key
-     * @param string $default
-     * @return mixed|string
-     */
-    public static function config($key = '', $default = '')
-    {
-        // 读取配置缓存
-        $config = Cache::remember('config', 1440, function () {
-            return Parameter::query()->pluck('value', 'name')->toArray();
-        });
-        return $key ? (array_key_exists($key, $config) ? ($config[$key] ?: $default) : $default) : $config;
-    }
-
-    /**
      * 获取文件图片
      * @param $ext
      * @return string
@@ -176,77 +161,7 @@ class Tool
     }
 
     /**
-     * 加解密
-     * @param $string
-     * @param $operation
-     * @param string $key
-     * @return bool|mixed|string
-     */
-    public static function encrypt($string, $operation, $key = '')
-    {
-        $key = md5($key);
-        $key_length = strlen($key);
-        $string = $operation == 'D' ? base64_decode($string) : substr(md5($string . $key), 0, 8) . $string;
-        $string_length = strlen($string);
-        $randKey = [];
-        $box = [];
-        $result = '';
-        for ($i = 0; $i <= 255; $i++) {
-            $randKey[$i] = ord($key[$i % $key_length]);
-            $box[$i] = $i;
-        }
-
-        for ($j = $i = 0; $i < 256; $i++) {
-            $j = ($j + $box[$i] + $randKey[$i]) % 256;
-            $tmp = $box[$i];
-            $box[$i] = $box[$j];
-            $box[$j] = $tmp;
-        }
-        for ($a = $j = $i = 0; $i < $string_length; $i++) {
-            $a = ($a + 1) % 256;
-            $j = ($j + $box[$a]) % 256;
-            $tmp = $box[$a];
-            $box[$a] = $box[$j];
-            $box[$j] = $tmp;
-            $result .= chr(ord($string[$i]) ^ ($box[($box[$a] + $box[$j]) % 256]));
-        }
-        if ($operation == 'D') {
-            if (substr($result, 0, 8) == substr(md5(substr($result, 8) . $key), 0, 8)) {
-                return substr($result, 8);
-            } else {
-                return '';
-            }
-        } else {
-            return str_replace('=', '', base64_encode($result));
-        }
-    }
-
-    /**
      * 数组分页
-     * @param $data
-     * @param $path
-     * @param int $perPage
-     * @return mixed
-     */
-    public static function arrayPage($data, $path, $perPage = 10)
-    {
-        //获取当前的分页数
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        //实例化collect方法
-        $collection = new Collection($data);
-        //定义一下每页显示多少个数据
-//        $perPage = 5;
-        //获取当前需要显示的数据列表$currentPage * $perPage
-        $currentPageDataResults = $collection->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        //创建一个新的分页方法
-        $paginatedDataResults = new LengthAwarePaginator($currentPageDataResults, count($collection), $perPage);
-        //给分页加自定义url
-        $paginatedDataResults = $paginatedDataResults->setPath($path);
-        return $paginatedDataResults;
-    }
-
-    /**
-     * 数组分页 2
      * @param $items
      * @param $perPage
      * @return LengthAwarePaginator
@@ -281,4 +196,39 @@ class Tool
             return false;
         }
     }
+
+    /**
+     * 保存配置到json文件
+     * @param $config
+     * @return bool
+     */
+    public static function saveConfig($config)
+    {
+        $file = storage_path('app/config.json');
+        $saved = file_put_contents($file, json_encode($config));
+        if ($saved) {
+            Cache::forget('config');
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 从json文件读取配置
+     * @param string $key
+     * @param string $default
+     * @return mixed|string
+     */
+    public static function config($key = '', $default = '')
+    {
+        $config = Cache::remember('config', 1440, function () {
+            $file = storage_path('app/config.json');
+            $config = file_get_contents($file);
+            return json_decode($config, true);
+        });
+
+        return $key ? (array_key_exists($key, $config) ? ($config[$key] ?: $default) : $default) : $config;
+    }
+
 }

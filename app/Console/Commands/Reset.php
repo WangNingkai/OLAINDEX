@@ -39,11 +39,9 @@ class Reset extends Command
     {
         if ($this->confirm('重置应用将会清空全部数据库数据，继续吗？')) {
             $this->warn('========== 开始重置 ==========');
-            $this->call('migrate:reset');
             $this->call('cache:clear');
             $this->warn('========== 开始重建数据 ==========');
-            $this->call('migrate');
-            $this->call('db:seed');
+            copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
             $this->warn('========== 重建完成 ==========');
         } else
             return false;

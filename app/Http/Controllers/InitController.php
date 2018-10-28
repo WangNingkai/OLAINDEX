@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
-use App\Models\Parameter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -41,16 +40,10 @@ class InitController extends Controller
             'client_secret' => $client_secret,
             'redirect_uri' => $redirect_uri
         ];
+        $config = Tool::config();
+        $config = array_merge($config, $data);
+        Tool::saveConfig($config);
         Cache::forget('config');
-        $editData = [];
-        foreach ($data as $k => $v) {
-            $editData[] = [
-                'name' => $k,
-                'value' => $v
-            ];
-        }
-        $update = new Parameter();
-        $update->updateBatch($editData);
         return redirect()->route('home');
     }
 
