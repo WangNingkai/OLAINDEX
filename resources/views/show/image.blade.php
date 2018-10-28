@@ -11,7 +11,8 @@
                         src="{{ $file['thumb'] }}" alt="{{ $file['name'] }}" class="img-fluid"></a></div>
             <br>
             <div class="text-center">
-                <a href="{{ $file['download'] }}" class="btn btn-success"><i class="fa fa-download"></i> 下载</a> &nbsp;&nbsp;
+                <a href="{{ route('download',$origin_path) }}" class="btn btn-success"><i class="fa fa-download"></i> 下载</a>
+                &nbsp;&nbsp;
                 <a href="{{ route('view',$origin_path) }}"  data-fancybox="image-list" class="btn btn-info"><i class="fa fa-eye"></i>
                     点击查看原图</a>
             </div>
