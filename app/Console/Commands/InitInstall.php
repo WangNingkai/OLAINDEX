@@ -2,26 +2,23 @@
 
 namespace App\Console\Commands;
 
-use App\Helpers\Constants;
-use App\Helpers\Tool;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 
-class UpdateInstall extends Command
+class InitInstall extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'update:install';
+    protected $signature = 'init:install';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = '更新安装';
+    protected $description = '初始化安装';
 
     /**
      * Create a new command instance.
@@ -33,130 +30,50 @@ class UpdateInstall extends Command
         parent::__construct();
     }
 
+
     /**
-     * Execute the console command.
-     *
-     * @return mixed
+     * @return bool
      */
     public function handle()
     {
-        // 获取当前版本,默认开发版
-        $this->warn('========== 开始更新 ==========');
-        $version = Tool::config('app_version', 'dev');
-        if ($version == Constants::LATEST_VERSION) {
-            $this->info('已是最新版本，无需更新');
-            return;
+        $this->warn('确保已经手动执行以下目录读写权限命令');
+        $this->info('chmod -R 755 storage/* && chown -R www:www *');
+        if (!file_exists(database_path('database.sqlite'))) {
+            $this->warn(' 未检测到数据库文件！请确认已在应用数据库目录创建 database.sqlite！');
+            $this->warn('创建命令 [ touch database/database.sqlite ]');
+            return false;
+        };
+        $this->warn('初始化配置 ...');
+        if (!file_exists(base_path('.env.example'))) {
+            $this->warn('目录不存在 .env.example 文件，请确保拉取仓库完整');
+            return false;
         }
-        switch ($version) {
-            case 'dev':
-                $this->v_1_0();
-                $this->v_1_1();
-                $result = $this->v_1_2();
-                break;
-            case 'v1.0':
-                $this->v_1_0();
-                $result = $this->v_1_1();
-                break;
-            case 'v1.1':
-                $result = $this->v_1_2();
-                break;
-            default:
-                $this->v_1_0();
-                $this->v_1_1();
-                $result = $this->v_1_2();
-        }
-        Artisan::call('cache:clear');
-        $this->info($result['status'] . ':' . $result['msg']);
-        return;
-    }
-
-    /**
-     * v1.0迭代
-     * @return array
-     */
-    public function v_1_0()
-    {
-        $client_id = config('graph.clientId');
-        $client_secret = config('graph.clientSecret');
-        $redirect_uri = config('graph.redirectUri');
-        $result = \Illuminate\Support\Facades\DB::table('parameters')->insert([
-            [
-                'name' => 'app_version',
-                'value' => 'v1.0',
-            ],
-            [
-                'name' => 'client_id',
-                'value' => $client_id,
-            ],
-            [
-                'name' => 'client_secret',
-                'value' => $client_secret,
-            ],
-            [
-                'name' => 'redirect_uri',
-                'value' => $redirect_uri,
-            ]
-        ]);
-        return $result ? $this->returnStatus('更新成功，version=v1.0') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
-    }
-
-    /**
-     * @return array
-     */
-    public function v_1_1()
-    {
-        $insert = \Illuminate\Support\Facades\DB::table('parameters')->insert([
-            [
-                'name' => 'hotlink_protection',
-                'value' => '',
-            ]
-        ]);
-        $update = false;
-        if ($insert) {
-            $update = \Illuminate\Support\Facades\DB::table('parameters')
-                ->where('name', 'app_version')
-                ->update(['value' => 'v1.1']);
-        }
-        return $update ? $this->returnStatus('更新成功，version=v1.1') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
-    }
-
-    /**
-     * @return array
-     */
-    public function v_1_2()
-    {
-        $insert = \Illuminate\Support\Facades\DB::table('parameters')->insert([
-            [
-                'name' => 'dash',
-                'value' => 'avi mpg mpeg rm rmvb mov wmv asf ts flv',
-            ]
-        ]);
-        $update = false;
-        if ($insert) {
-            $update = \Illuminate\Support\Facades\DB::table('parameters')
-                ->where('name', 'video')
-                ->update(['value' => 'mkv mp4 webm']);
-            if ($update) {
-                $update = \Illuminate\Support\Facades\DB::table('parameters')
-                    ->where('name', 'app_version')
-                    ->update(['value' => 'v1.2']);
-            }
-        }
-        return $update ? $this->returnStatus('更新成功，version=v1.2') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
-    }
-
-    /**
-     * 返回状态
-     * @param $msg
-     * @param bool $status
-     * @return array
-     */
-    public function returnStatus($msg, $status = true)
-    {
-        return [
-            'status' => $status,
-            'msg' => $msg
+        $app_url = $this->ask('请输入应用域名');
+        $envExample = file_get_contents(base_path('.env.example'));
+        $search_db = [
+            'APP_KEY=',
+            'APP_URL=http://localhost',
         ];
+        $replace_db = [
+            'APP_KEY=' . str_random(32),
+            'APP_URL=' . $app_url,
+        ];
+        $env = str_replace($search_db, $replace_db, $envExample);
+        if (file_exists(base_path('.env'))) {
+            if ($this->confirm('目录存在 .env 文件，即将覆盖，继续吗？')) {
+                @unlink(base_path('.env'));
+                file_put_contents(base_path('.env'), $env);
+            } else
+                return false;
+        } else {
+            file_put_contents(base_path('.env'), $env);
+        }
+        $this->info(' 应用回调地址请填写：' . trim($app_url, '/') . '/oauth ');
+        $this->call('config:cache'); // 生成配置缓存否则报错
+        $this->warn('正在执行数据库操作 ...');
+        $this->call('migrate');
+        $this->call('db:seed');
+        $this->warn('========== 预安装完成，请继续下面的操作 ==========');
+        $this->info(' 后台登录原始密码：12345678');
     }
-
 }

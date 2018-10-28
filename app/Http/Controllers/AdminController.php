@@ -57,7 +57,7 @@ class AdminController extends Controller
     {
         $request->session()->invalidate();
         Tool::showMessage('已退出');
-        return redirect()->route('list');
+        return redirect()->route('home');
     }
 
     /**

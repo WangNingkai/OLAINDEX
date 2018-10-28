@@ -49,16 +49,28 @@ class UpdateInstall extends Command
         }
         switch ($version) {
             case 'dev':
-                $result = $this->v_1_0();
+                $this->v_1_0();
+                $this->v_1_1();
+                $this->v_1_2();
+                $result = $this->v_2_0();
                 break;
             case 'v1.0':
-                $result = $this->v_1_1();
+                $this->v_1_1();
+                $this->v_1_2();
+                $result = $this->v_2_0();
                 break;
             case 'v1.1':
-                $result = $this->v_1_2();
+                $this->v_1_2();
+                $result = $this->v_2_0();
+                break;
+            case 'v1.2':
+                $result = $this->v_2_0();
                 break;
             default:
-                $result = $this->v_1_0();
+                $this->v_1_0();
+                $this->v_1_1();
+                $this->v_1_2();
+                $result = $this->v_2_0();
         }
         Artisan::call('cache:clear');
         $this->info($result['status'] . ':' . $result['msg']);
@@ -131,8 +143,24 @@ class UpdateInstall extends Command
             $update = \Illuminate\Support\Facades\DB::table('parameters')
                 ->where('name', 'video')
                 ->update(['value' => 'mkv mp4 webm']);
+            if ($update) {
+                $update = \Illuminate\Support\Facades\DB::table('parameters')
+                    ->where('name', 'app_version')
+                    ->update(['value' => 'v1.2']);
+            }
         }
         return $update ? $this->returnStatus('更新成功，version=v1.2') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
+    }
+
+    /**
+     * @return array
+     */
+    public function v_2_0()
+    {
+        $update = \Illuminate\Support\Facades\DB::table('parameters')
+            ->where('name', 'app_version')
+            ->update(['value' => 'v2.0']);
+        return $update ? $this->returnStatus('更新成功，version=v2.0') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
     }
 
     /**

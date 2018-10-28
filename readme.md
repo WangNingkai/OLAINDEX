@@ -28,6 +28,8 @@ OLAINDEX
 - 支持自定义创建文件夹（需管理员）；
 - 支持文件/文件夹删除（需管理员）；
 - 后台基本管理，支持主题，预览设置等等（清理缓存后及时生效）（需管理员）。
+- v2.0 全新路径显示（pathinfo）
+- 添加看图相册
 
 ### 演示链接
 
@@ -47,6 +49,8 @@ OLAINDEX
 加入防盗链
 - **2018.10.16 / v1.2**
 支持dash视频流播放（理论支持大多数视频）
+- **2018.10.20 / v2.0**
+全新路径显示(原先模式的图床路径会失效，请谨慎升级)
 
 **从原先版本升级请自行执行以下代码：**
 
@@ -67,10 +71,15 @@ php artisan update:install
 
 ### TODO
 
-- 目录友好显示
 - 共享目录支持
 - 支持视频字幕，音频歌词
 - 支持后台大文件上传，断点续传
+
+### 捐赠
+
+提供免费搭建，也可以赏作者一杯咖啡钱。😊
+
+##### [打赏](https://pay.ningkai.wang) ： https://pay.ningkai.wang
 
 ### 其他 
 
@@ -78,12 +87,13 @@ php artisan update:install
 
 **路由路径 ：** `routes/web.php`
 
-![route](https://image.ningkai.wang/item/origin/view/01HS36VADQV35WPMQ3AFHZ25AUTVCJIEVN)
+![image.png](https://i.loli.net/2018/10/27/5bd473aa6bc75.png)
 
 **附：** 本软件仅供日常学习使用，不得用于任何商业用途；学习使用请遵守您所在国家的法律，任何非法行为由使用者本身承担。
 
 ## 预览
 
-![1.jpg](https://image.ningkai.wang/item/origin/view/01HS36VAGA2Q2RP3ZSKVGYAZW2IMBBTB3N)
+![image.png](https://i.loli.net/2018/10/27/5bd473a992fa6.png)
+![image.png](https://i.loli.net/2018/10/27/5bd473a7c6716.png)
 
-![2.jpg](https://image.ningkai.wang/item/origin/view/01HS36VADJ5MEMI6RGVVCJ3SJBBKRWOSRS)
+

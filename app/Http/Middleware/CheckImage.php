@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Helpers\Tool;
 use Closure;
+use Illuminate\Support\Facades\Session;
 
 class CheckImage
 {
@@ -16,9 +17,9 @@ class CheckImage
      */
     public function handle($request, Closure $next)
     {
-        $status = Tool::config('image_hosting', false);
-        if (!$status) {
-            return redirect()->route('list');
+        $status = Tool::config('image_hosting', 0);
+        if (!$status || $status == 2 && !Session::has('LogInfo')) {
+            return redirect()->route('home');
         }
         return $next($request);
     }

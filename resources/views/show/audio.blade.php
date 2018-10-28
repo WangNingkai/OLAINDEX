@@ -10,7 +10,7 @@
             {{ $file['name'] }}
         </div>
         <div class="card-body">
-            <div class="text-center"><a href="{{ $file['path'] }}" class="btn btn-success"><i
+            <div class="text-center"><a href="{{ route('download',$origin_path) }}" class="btn btn-success"><i
                         class="fa fa-download"></i> 下载</a></div>
             <hr>
             <div class="text-center">
@@ -21,7 +21,7 @@
             <div class="form-group">
                 <div class="input-group mb-3">
                     <input type="text" id="link1" class="form-control" aria-label="Amount (to the nearest dollar)"
-                           value="{{ $file['path'] }}">
+                           value="{{ route('download',$origin_path) }}">
                     <div class="input-group-append">
                         <a href="javascript:void(0)" style="text-decoration: none" data-toggle="tooltip"
                            data-placement="right" data-clipboard-target="#link1" class="clipboard"><span
@@ -40,8 +40,8 @@
             audio: [{
                 name: "{{ $file['name'] }}",
                 artist: 'unknown',
-                url: "{{ $file['path'] }}",
-                cover: "https://image.ningkai.wang/item/origin/view/01HS36VAAKXEI24NOGWVAZFQ5VNRZZ3JDR"
+                url: "{{ route('download',$origin_path) }}",
+                cover: "https://i.loli.net/2018/10/28/5bd571ce90e33.png"
             }]
         });
     </script>

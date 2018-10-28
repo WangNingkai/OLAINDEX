@@ -3,8 +3,8 @@
 namespace App\Helpers;
 
 use App\Models\Parameter;
-use HyperDown\Parser;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
@@ -43,18 +43,12 @@ class Tool
      */
     public static function getUrl($key, $pathArr)
     {
-        $last = array_pop($pathArr);
-        $ext = strtolower(pathinfo($last, PATHINFO_EXTENSION));
-        // 兼容目录下就是文件的情况
-        if ($ext && count($pathArr) == 1) {
-            $key = $key - 1;
-        }
         $pathArr = array_slice($pathArr, 0, $key);
         $url = '';
         foreach ($pathArr as $param) {
-            $url .= '|' . $param;
+            $url .= '/' . $param;
         }
-        return trim($url, '|');
+        return trim($url, '/');
     }
 
     /**
@@ -70,9 +64,9 @@ class Tool
         }
         $url = '';
         foreach ($pathArr as $param) {
-            $url .= '|' . $param;
+            $url .= '/' . $param;
         }
-        return trim($url, '|');
+        return trim($url, '/');
     }
 
     /**
@@ -116,8 +110,8 @@ class Tool
             }, $iframe[0]);
         }
         // markdown转html
-        $parser = new Parser();
-        $html = $parser->makeHtml($markdown);
+        $parser = new \Parsedown();
+        $html = $parser->text($markdown);
         $html = str_replace('<code class="', '<code class="lang-', $html);
         // 将临时字符串替换为 i_frame
         if (!empty($iframe[0])) {
@@ -251,12 +245,35 @@ class Tool
         return $paginatedDataResults;
     }
 
+    /**
+     * 数组分页 2
+     * @param $items
+     * @param $perPage
+     * @return LengthAwarePaginator
+     */
+    public static function paginate($items, $perPage)
+    {
+        $pageStart = request()->get('page', 1);
+        // Start displaying items from this number;
+        $offSet = ($pageStart * $perPage) - $perPage;
+
+        // Get only the items you need using array_slice
+        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
+
+        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage, Paginator::resolveCurrentPage(), ['path' => Paginator::resolveCurrentPath()]);
+    }
+
+    /**
+     * 是否可编辑
+     * @param $file
+     * @return bool
+     */
     public static function isEdited($file)
     {
         $code = explode(' ', self::config('code'));
         $stream = explode(' ', self::config('stream'));
         $exts = array_merge($code, $stream);
-        $isText = in_array($file['ext'],$exts);
+        $isText = in_array($file['ext'], $exts);
         $isBigFile = $file['size'] > 5 * 1024 * 1024 ?: false;
         if (!$isBigFile && $isText) {
             return true;

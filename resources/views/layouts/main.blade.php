@@ -34,7 +34,7 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
-        <a class="navbar-brand" href="{{ route('list') }}">{{ \App\Helpers\Tool::config('name','OLAINDEX') }}</a>
+        <a class="navbar-brand" href="{{ route('home') }}">{{ \App\Helpers\Tool::config('name','OLAINDEX') }}</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01"
                 aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -43,16 +43,18 @@
         <div class="collapse navbar-collapse" id="navbarColor01">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('list') }}"><i class="fa fa-home"></i> 首页</a>
+                    <a class="nav-link" href="{{ route('home') }}"><i class="fa fa-home"></i> 首页</a>
                 </li>
-                @if (\App\Helpers\Tool::config('image_hosting',false))
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('image') }}"><i class="fa fa-cloud-upload"></i> 图床</a>
-                    </li>
+                @if (\App\Helpers\Tool::config('image_hosting',0))
+                    @if(\App\Helpers\Tool::config('image_hosting') == 2 && session()->has('LogInfo') || \App\Helpers\Tool::config('image_hosting') == 1)
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('image') }}"><i class="fa fa-cloud-upload"></i> 图床</a>
+                        </li>
+                    @endif
                 @endif
                 @if (session()->has('LogInfo'))
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.basic') }}"><i class="fa fa-tachometer" ></i> 管理</a>
+                        <a class="nav-link" href="{{ route('admin.basic') }}"><i class="fa fa-tachometer"></i> 管理</a>
                     </li>
                 @endif
             </ul>

@@ -42,6 +42,11 @@
                        @if(\App\Helpers\Tool::config('image_hosting') == 0) checked @endif value="0">
                 <label class="custom-control-label" for="image_hosting0">关闭</label>
             </div>
+            <div class="custom-control custom-radio">
+                <input type="radio" id="image_hosting2" name="image_hosting" class="custom-control-input"
+                       @if(\App\Helpers\Tool::config('image_hosting') == 2) checked @endif value="2">
+                <label class="custom-control-label" for="image_hosting2">仅管理员开启</label>
+            </div>
         </div>
         <div class="form-group">
             <label class="form-control-label" for="image_hosting_path">图床地址</label>

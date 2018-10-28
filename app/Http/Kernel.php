@@ -65,5 +65,6 @@ class Kernel extends HttpKernel
         'checkImage' => \App\Http\Middleware\CheckImage::class,
         'checkInstall' => \App\Http\Middleware\CheckInstall::class,
         'hotlinkProtection' => \App\Http\Middleware\HotlinkProtection::class,
+        'handleIllegalFile' => \App\Http\Middleware\HandleIllegalFile::class,
     ];
 }
