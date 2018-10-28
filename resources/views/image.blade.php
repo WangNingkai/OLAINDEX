@@ -1,34 +1,23 @@
 @extends('layouts.main')
 @section('title','图床')
 @section('css')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/webuploader@0.1.8/dist/webuploader.min.css">
-    <link rel="stylesheet" href="{{ asset('css/wu.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dropzone@5/dist/min/dropzone.min.css">
+    <style>
+        .dropzone {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            background: white;
+        }
+    </style>
 @stop
 @section('content')
     <div class="card border-light mb-3">
         <div class="card-body">
             <div class="page-container">
-                <h3>图床</h3>
-                <p>您可以尝试文件拖拽，使用截图工具，然后激活窗口后粘贴，或者点击添加图片按钮.</p>
-                <div id="uploader" class="wu-example">
-                    <div class="queueList">
-                        <div id="dndArea" class="placeholder">
-                            <div id="filePicker"></div>
-                            <p>或将照片拖到这里，单次最多可选10张，最大单张图片支持4M</p>
-                        </div>
-                    </div>
-                    <div class="statusBar" style="display:none;">
-                        <div class="progress">
-                            <span class="text">0%</span>
-                            <span class="percentage"></span>
-                        </div>
-                        <div class="info"></div>
-                        <div class="btns">
-                            <div id="filePicker2"></div>
-                            <div class="uploadBtn">开始上传</div>
-                        </div>
-                    </div>
-                </div>
+                <h4>图床</h4>
+                <p>您可以尝试文件拖拽或者点击虚线框进行文件上传，单张图片最大支持4MB.</p>
+                <form class="dropzone" id="image-dropzone">
+                </form>
             </div>
         </div>
     </div>
@@ -76,6 +65,42 @@
     </div>
 @stop
 @section('js')
-    <script src="https://cdn.jsdelivr.net/npm/webuploader@0.1.8/dist/webuploader.min.js"></script>
-    <script src="{{ asset('js/wu.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dropzone@5/dist/min/dropzone.min.js"></script>
+    <script>
+        Dropzone.options.imageDropzone = {
+            url: Config.routes.upload_image,
+            method: 'post',
+            maxFilesize: 4,
+            paramName: 'olaindex_img',
+            maxFiles: 10,
+            acceptedFiles: 'image/*',
+            addRemoveLinks: true,
+            init: function () {
+                this.on('sending', function (file, xhr, formData) {
+                    formData.append('_token', Config._token);
+                });
+                this.on('success', function (file, response) {
+                    $('#showUrl').show();
+                    $('#urlCode').append(response.data.url + '\n');
+                    $('#htmlCode').append('&lt;img src=\'' + response.data.url + '\' alt=\'' + response.data.filename + '\' title=\'' + response.data.filename + '\' /&gt;' + '\n');
+                    $('#bbCode').append('[img]' + response.data.url + '[/img]' + '\n');
+                    $('#markdown').append('![' + response.data.filename + '](' + response.data.url + ')' + '\n');
+                    $('#markdownLinks').append('[![' + response.data.filename + '](' + response.data.url + ')]' + '(' + response.data.url + ')' + '\n');
+                    $('#deleteCode').append(response.data.delete + '\n')
+                });
+            },
+
+            dictDefaultMessage: '拖拽文件至此上传',
+            dictFallbackMessage: '浏览器不支持拖拽上传',
+            dictFileTooBig: '文件过大(@{{filesize}}MiB)，请重试',
+            dictInvalidFileType: '文件类型不支持',
+            dictResponseError: '上传错误 @{{statusCode}}',
+            dictCancelUpload: '取消上传',
+            dictUploadCanceled: '上传已取消',
+            dictCancelUploadConfirmation: '确定取消上传吗?',
+            dictRemoveFile: '移除此文件',
+            dictRemoveFileConfirmation: '确定移除此文件吗',
+            dictMaxFilesExceeded: '已达到最大上传数.',
+        };
+    </script>
 @stop
