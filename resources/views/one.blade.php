@@ -18,13 +18,13 @@
         <div class="card-header">
             <div class="row">
                 <div class="col">
-                    File
+                    文件
                 </div>
                 <div class="col d-none d-md-block d-md-none">
-                    <span class="pull-right">LastModifiedDateTime</span>
+                    <span class="pull-right">修改日期</span>
                 </div>
                 <div class="col d-none d-md-block d-md-none">
-                    <span class="pull-right">Size</span>
+                    <span class="pull-right">大小</span>
                 </div>
                 <div class="col">
                     @if (session()->has('LogInfo'))
