@@ -36,15 +36,16 @@ class InitInstall extends Command
      */
     public function handle()
     {
-        $this->warn('确保已经手动执行以下目录读写权限命令');
+        $this->warn('确保已经手动执行以下目录读写权限命令！');
         $this->info('chmod -R 755 storage/* && chown -R www:www *');
         if (!file_exists(storage_path('app/config.json'))) {
-            $this->warn(' 未检测到配置文件！正在创建配置文件 ！');
+            $this->warn('未检测到配置文件！正在创建配置文件！');
             copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
+            $this->info('创建完成！');
         };
-        $this->warn('初始化配置 ...');
+        $this->warn('开始初始化配置 ...');
         if (!file_exists(base_path('.env.example'))) {
-            $this->warn('目录不存在 .env.example 文件，请确保拉取仓库完整');
+            $this->warn('目录不存在 .env.example 文件，请确保拉取仓库完整！');
             return false;
         }
         $app_url = $this->ask('请输入应用域名');
@@ -67,9 +68,9 @@ class InitInstall extends Command
         } else {
             file_put_contents(base_path('.env'), $env);
         }
-        $this->info(' 应用回调地址请填写：' . trim($app_url, '/') . '/oauth ');
+        $this->info('应用回调地址请填写：' . trim($app_url, '/') . '/oauth ');
         $this->call('config:cache'); // 生成配置缓存否则报错
+        $this->warn('后台登录原始密码：12345678');
         $this->warn('========== 预安装完成，请继续下面的操作 ==========');
-        $this->info(' 后台登录原始密码：12345678');
     }
 }
