@@ -160,7 +160,7 @@ class UpdateInstall extends Command
         $update = \Illuminate\Support\Facades\DB::table('parameters')
             ->where('name', 'app_version')
             ->update(['value' => 'v2.0']);
-        return $update ? $this->returnStatus('更新成功，version=v1.2') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
+        return $update ? $this->returnStatus('更新成功，version=v2.0') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
     }
 
     /**
