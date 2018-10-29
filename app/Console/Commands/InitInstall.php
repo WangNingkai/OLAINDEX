@@ -52,7 +52,7 @@ class InitInstall extends Command
         $envExample = file_get_contents(base_path('.env.example'));
         $search_db = [
             'APP_KEY=',
-            'APP_URL=http://localhost',
+            'APP_URL=http://localhost:8000',
         ];
         $replace_db = [
             'APP_KEY=' . str_random(32),
@@ -63,8 +63,7 @@ class InitInstall extends Command
             if ($this->confirm('目录存在 .env 文件，即将覆盖，继续吗？')) {
                 @unlink(base_path('.env'));
                 file_put_contents(base_path('.env'), $env);
-            } else
-                return false;
+            }
         } else {
             file_put_contents(base_path('.env'), $env);
         }
