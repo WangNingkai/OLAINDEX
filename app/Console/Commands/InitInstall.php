@@ -70,6 +70,7 @@ class InitInstall extends Command
         $this->info('应用回调地址请填写：' . trim($app_url, '/') . '/oauth ');
         $this->call('config:cache'); // 生成配置缓存否则报错
         $this->warn('后台登录原始密码：12345678');
+        $this->info('请手动执行 chmod 777 storage/app/config.json 确保配置文件权限');
         $this->warn('========== 预安装完成，请继续下面的操作 ==========');
     }
 }
