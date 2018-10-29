@@ -42,9 +42,20 @@ class UpdateInstall extends Command
     {
         // 获取当前版本,默认开发版
         $this->warn('========== 开始更新 ==========');
-        $version = Tool::config('app_version', 'dev');
+        if (file_exists(database_path('database.sqlite'))) {
+            $this->warn('检测到数据库文件，即将从 database.sqlite 读取版本');
+            $this->warn('如果您您已升级3.0，建议删除数据库文件');
+            if ($this->confirm('继续吗？')) {
+                $version = \Illuminate\Support\Facades\DB::table('parameters')
+                    ->where('name', 'app_version')->value('value');
+            } else {
+                $version = Tool::config('app_version', 'dev');
+            }
+        } else {
+            $version = Tool::config('app_version', 'dev');
+        }
         if ($version == Constants::LATEST_VERSION) {
-            $this->info('已是最新版本，无需更新');
+            $this->info('已是最新版本, 无需更新');
             return;
         }
         switch ($version) {
@@ -184,7 +195,7 @@ class UpdateInstall extends Command
             $this->info('创建完成！');
         };
         $saved = Tool::saveConfig($data);
-        return $saved ? $this->returnStatus('更新成功，version=v3.0，请手动执行chmod 777 storage/app/config.json') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
+        return $saved ? $this->returnStatus('更新成功，version=v3.0，请手动执行chmod 777 storage/app/config.json '.PHP_EOL.' 并移除原数据库 rm -f database/database.sqlite') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
     }
 
     /**
