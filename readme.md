@@ -11,6 +11,8 @@ OLAINDEX
 
 ### 简介
 
+项目地址：[https://github.com/WangNingkai/OLAINDEX](https://github.com/WangNingkai/OLAINDEX)
+
 - 1.OneDrive 目录索引；
 - 2.基于最新 PHP 框架 laravel5 搭建而成；
 - 3.基于 bootswatch 响应式页面布局，适配PC、平板、手机；
@@ -30,6 +32,7 @@ OLAINDEX
 - 后台基本管理，支持主题，预览设置等等（清理缓存后及时生效）（需管理员）。
 - v2.0 全新路径显示（pathinfo）
 - 添加看图相册
+- 配置文件化，不再依赖数据库
 
 ### 演示链接
 
@@ -52,7 +55,7 @@ OLAINDEX
 - **2018.10.20 / v2.0**
 全新路径显示(原先模式的图床路径会失效，请谨慎升级)
 - **2018.10.28 / v3.0**
-抛弃数据库，数据json格式保存
+抛弃数据库，数据json格式保存，添加composer安装
 
 **从原先版本升级请自行执行以下代码：**
 
