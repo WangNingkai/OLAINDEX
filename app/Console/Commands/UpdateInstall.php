@@ -178,6 +178,11 @@ class UpdateInstall extends Command
     {
         $data = \Illuminate\Support\Facades\DB::table('parameters')->pluck('value', 'name')->toArray();
         $data['app_version'] = 'v3.0';
+        if (!file_exists(storage_path('app/config.json'))) {
+            $this->warn('未检测到配置文件！正在创建配置文件...');
+            copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
+            $this->info('创建完成！');
+        };
         $saved = Tool::saveConfig($data);
         return $saved ? $this->returnStatus('更新成功，version=v3.0，请手动执行chmod 777 storage/app/config.json') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
     }

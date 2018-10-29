@@ -207,7 +207,7 @@ class Tool
         $file = storage_path('app/config.json');
         if (!is_writable($file)) {
             self::showMessage('权限不足，无法写入配置文件');
-            abort(403);
+            abort(403,'权限不足，无法写入配置文件');
         };
         $saved = file_put_contents($file, json_encode($config));
         if ($saved) {
@@ -228,9 +228,12 @@ class Tool
     {
         $config = Cache::remember('config', 1440, function () {
             $file = storage_path('app/config.json');
+            if (!file_exists($file)) {
+                copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
+            };
             if (!is_readable($file)) {
                 self::showMessage('权限不足，无法预取配置文件');
-                abort(403);
+                abort(403,'权限不足，无法预取配置文件');
             };
             $config = file_get_contents($file);
             return json_decode($config, true);
