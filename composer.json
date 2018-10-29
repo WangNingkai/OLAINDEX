@@ -1,10 +1,18 @@
 {
-    "name": "wangningkai/OLAINDEX",
+    "name": "WangNingkai/OLAINDEX",
     "description": "✨ Another OneDrive Directory Index.",
     "keywords": [
         "OLAINDEX",
         "OneDrive",
         "laravel"
+    ],
+    "authors": [
+        {
+            "name": "wangningkai",
+            "email": "ningkai.wang@live.com",
+            "homepage": "https://imwnk.cn",
+            "role": "PHP Developer"
+        }
     ],
     "license": "MIT",
     "type": "project",
