@@ -36,12 +36,18 @@ class InitInstall extends Command
      */
     public function handle()
     {
+        $this->warn('确保已经手动执行以下目录读写权限命令');
+        $this->info('chmod -R 755 storage/* && chown -R www:www *');
         if (!file_exists(database_path('database.sqlite'))) {
-            $this->alert(' 未检测到数据库文件！请确认已在应用数据库目录创建 database.sqlite！');
+            $this->warn(' 未检测到数据库文件！请确认已在应用数据库目录创建 database.sqlite！');
             $this->warn('创建命令 [ touch database/database.sqlite ]');
             return false;
         };
-        $this->warn('========== 初始化配置 ==========');
+        $this->warn('初始化配置 ...');
+        if (!file_exists(base_path('.env.example'))) {
+            $this->warn('目录不存在 .env.example 文件，请确保拉取仓库完整');
+            return false;
+        }
         $app_url = $this->ask('请输入应用域名');
         $envExample = file_get_contents(base_path('.env.example'));
         $search_db = [
@@ -49,8 +55,8 @@ class InitInstall extends Command
             'APP_URL=http://localhost',
         ];
         $replace_db = [
-            'APP_KEY='.str_random(32),
-            'APP_URL='.$app_url,
+            'APP_KEY=' . str_random(32),
+            'APP_URL=' . $app_url,
         ];
         $env = str_replace($search_db, $replace_db, $envExample);
         if (file_exists(base_path('.env'))) {
@@ -59,16 +65,15 @@ class InitInstall extends Command
                 file_put_contents(base_path('.env'), $env);
             } else
                 return false;
+        } else {
+            file_put_contents(base_path('.env'), $env);
         }
-        file_put_contents(base_path('.env'), $env);
-        $this->alert(' 应用回调地址请填写：'.trim($app_url,'/') .'/oauth ');
-//        $this->call('key:generate');
-        $this->warn('========== 正在执行数据库操作 ==========');
+        $this->info(' 应用回调地址请填写：' . trim($app_url, '/') . '/oauth ');
+        $this->call('config:cache'); // 生成配置缓存否则报错
+        $this->warn('正在执行数据库操作 ...');
         $this->call('migrate');
         $this->call('db:seed');
-        $this->alert('手动执行以下命令确保目录读写权限');
-        $this->warn('chmod -R 755 storage/* && chown -R www:www *');
         $this->warn('========== 预安装完成，请继续下面的操作 ==========');
-        $this->alert(' 后台登录原始密码：12345678');
+        $this->info(' 后台登录原始密码：12345678');
     }
 }

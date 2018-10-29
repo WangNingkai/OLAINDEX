@@ -8,10 +8,10 @@ use Closure;
 class VerifyAccessToken
 {
     /**
-     * Handle an incoming request.
+     * 处理access_token
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Closure $next
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -21,10 +21,10 @@ class VerifyAccessToken
         }
         $now = time();
         $expires = Tool::config('access_token_expires');
-        $hasExpired =  $expires - $now < 0 ? true : false;
+        $hasExpired = $expires - $now < 0 ? true : false;
         if ($hasExpired) {
             $current = url()->current();
-            return redirect()->route('refresh')->with('refresh_redirect',$current);
+            return redirect()->route('refresh')->with('refresh_redirect', $current);
         }
         return $next($request);
     }

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Session;
 
 /**
  * 文件获取操作
- * Class FetchController
+ * Class FetchController2
  * @package App\Http\Controllers
  */
 class FetchController extends Controller
@@ -37,7 +37,6 @@ class FetchController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('checkToken');
         $this->expires = Tool::config('expires', 10);
         $this->root = Tool::config('root', '/');
         $this->show = [
@@ -55,28 +54,41 @@ class FetchController extends Controller
      * 构造graph请求
      * @param $endpoint
      * @param bool $toArray
-     * @return mixed
+     * @param bool $cache
+     * @return mixed|null
      */
-    public function requestGraph($endpoint, $toArray = true)
+    public function requestGraph($endpoint, $toArray = true, $cache = true)
     {
-        return Cache::remember('one:endpoint:'.$endpoint, $this->expires,function() use ($endpoint,$toArray) {
+        if ($cache) {
+            return Cache::remember('one:endpoint:' . $endpoint, $this->expires, function () use ($endpoint, $toArray) {
+                $fetch = new RequestController();
+                return $fetch->requestGraph('get', $endpoint, $toArray);
+            });
+        } else {
             $fetch = new RequestController();
-            return $fetch->requestGraph('get', $endpoint,$toArray);
-        });
+            return $fetch->requestGraph('get', $endpoint, $toArray);
+        }
     }
 
     /**
-     * 发送请求
+     * 构造http请求
      * @param $method
      * @param $url
+     * @param bool $cache
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function requestHttp($method, $url)
+    public function requestHttp($method, $url, $cache = true)
     {
-        return Cache::remember('one:url:'.$url,$this->expires,function() use ($method, $url) {
+        if ($cache) {
+            return Cache::remember('one:url:' . $url, $this->expires, function () use ($method, $url) {
+                $fetch = new RequestController();
+                return $fetch->requestHttp($method, $url);
+            });
+        } else {
             $fetch = new RequestController();
             return $fetch->requestHttp($method, $url);
-        });
+        }
 
     }
 
@@ -92,24 +104,14 @@ class FetchController extends Controller
         $items = is_array($response) ? $response : json_decode($response, true);
         if ($isList) {
             if (array_key_exists('value', $items)) {
-                if (empty($items['value'])) {
-                    return [];
-                }
+                if (empty($items['value'])) return [];
                 $files = [];
                 foreach ($items['value'] as $item) {
-                    if (isset($item['file'])) {
-                        /*if ($item['file']['mimeType'] == 'application/x-zip-compressed')
-                            $item['ext'] = 'zip';
-                        else
-                            $item['ext'] = Tool::getExt($item['file']['mimeType']);*/
-                        $item['ext'] = strtolower(pathinfo($item['name'], PATHINFO_EXTENSION)); // mimeType显示有误
-                    }
+                    if (isset($item['file'])) $item['ext'] = strtolower(pathinfo($item['name'], PATHINFO_EXTENSION)); // mimeType显示有误
                     $files[$item['name']] = $item;
                 }
                 return $files;
-            } else {
-                return [];
-            }
+            } else return [];
         } else {
             // 兼容文件信息
             $items['ext'] = strtolower(pathinfo($items['name'], PATHINFO_EXTENSION));
@@ -120,228 +122,160 @@ class FetchController extends Controller
     /**
      * 解析路径
      * @param $path
+     * @param bool $isQueryPath
+     * @param bool $isFile
+     * @param bool $isDownload
      * @return string
      */
-    public function convertPath($path)
+    public function convertPath($path, $isQueryPath = true, $isFile = false, $isDownload = false)
     {
-        if ($path) {
-            $pathArr = explode('|', $path);
-            $url = '';
-            foreach ($pathArr as $param) {
-                $url .= '/' . $param;
-            }
-            $dirPath = trim($url, '/');
-            if ($this->root == '/')
-                $newPath = ':/' . $dirPath . ':/';
-            else
-                $newPath = ':/' . trim($this->root,'/') . '/' . $dirPath . ':/';
+
+        $origin_path = trim(urldecode($path), '/');
+        if (!$isDownload)
+            $query_path = mb_substr($origin_path, 5);
+        else
+            $query_path = mb_substr($origin_path, 9);
+        if (!$isQueryPath) return $query_path;
+        if ($query_path) {
+            if ($this->root == '/') {
+                $request_path = ':/' . $query_path . ':/';
+            } else
+                $request_path = ':/' . trim($this->root, '/') . '/' . $query_path . ':/';
         } else {
             if ($this->root == '' || $this->root == '/')
-                $newPath = '/';
+                $request_path = '/';
             else
-                $newPath = ':/' . trim($this->root,'/') . ':/';
+                $request_path = ':/' . trim($this->root, '/') . ':/';
         }
-        return $newPath;
-    }
-
-    /**
-     * 获取文件列表
-     * @param Request $request
-     * @param string $path
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function fetchItemList(Request $request, $path = '')
-    {
-        $graphPath = $this->convertPath($path);
-        $query = $request->get('query', 'children');
-        $endpoint = '/me/drive/root' . $graphPath . $query;
-        $response =  $this->requestGraph($endpoint, true);
-        $items =  $this->formatArray($response);
-        if (!empty($items['.password'])) {
-            $pass_id = $items['.password']['id'];
-            if (Session::has('password:'.$path)) {
-                $data = Session::get('password:'.$path);
-                $expires = $data['expires'];
-                $password = $this->fetchContent($pass_id);
-                if ($password != decrypt($data['password']) || time() > $expires) {
-                    Session::forget('password:'.$path);
-                    Tool::showMessage('密码已过期',false);
-                    return view('password',compact('path','pass_id'));
-                }
-            } else {
-                return view('password',compact('path','pass_id'));
-            }
+        if ($isFile) {
+            return rtrim($request_path, ':/');
         }
-        $this->filterFolder($items);
-        $head = Tool::markdown2Html($this->fetchFilterContent('HEAD.md',$items));
-        $readme = Tool::markdown2Html($this->fetchFilterContent('README.md',$items));
-        $pathArr =  $path ? explode('|',$path):[];
-        if (!session()->has('LogInfo')) {
-            $items = $this->filterItem($items,['README.md','HEAD.md','.password','.deny']);
-        }
-        return view('one',compact('items','path','pathArr','head','readme'));
+        return $request_path;
     }
 
     /**
      * 获取文件
-     * @param $itemId
+     * @param Request $request
+     * @param bool $isDownload
      * @return array
      */
-    public function fetchItem($itemId)
+    public function getFile(Request $request, $isDownload = false)
     {
-        $endpoint = '/me/drive/items/' . $itemId;
-        $response =  $this->requestGraph($endpoint, true);
-        return $this->formatArray($response,false);
+        $graphPath = $this->convertPath($request->getPathInfo(), true, true, $isDownload);
+        $endpoint = '/me/drive/root' . $graphPath;
+        $response = $this->requestGraph($endpoint, true);
+        return $this->formatArray($response, false);
     }
 
     /**
-     * 展示文件信息
-     * @param $itemId
-     * @return \Illuminate\Http\RedirectResponse|mixed
+     * @param $id
+     * @return array
      */
-    public function showItem($itemId)
+    public function getFileById($id)
     {
-        $endpoint = '/me/drive/items/' . $itemId;
-        $response =  $this->requestGraph($endpoint, true);
-        $item =  $this->formatArray($response,false);
-        $path = $item['parentReference']['path'];
-        if ($this->root == '/') {
-            $key = mb_strpos($path,':');
-            $path = mb_substr($path,$key + 1);
-            $pathArr = explode('/', $path);
-            unset($pathArr[0]);
-        } else {
-            $path = mb_strstr($path,$this->root,false,'utf8');
-            $start = mb_strlen($this->root,'utf8');
-            $rest = mb_substr($path,$start,null,'utf8');
-            $pathArr = explode('/', $rest);
-        }
-        array_push($pathArr,$item['name']);
-        $item['thumb'] = $this->fetchThumbUrl($itemId,false);
-        $item['path'] = route('download',$item['id']);
-        $patterns = $this->show;
-        foreach ($patterns as $key => $suffix) {
-            if(in_array($item['ext'],$suffix)){
-                $view = 'show.'.$key;
-                if (in_array($key,['stream','code'])) {
-                    if ($item['size'] > 5*1024*1024) {
-                        Tool::showMessage('文件过大，请下载查看',false);
-                        return redirect()->back();
-                    } else {
-                        $item['content'] = $this->requestHttp('get', $item['@microsoft.graph.downloadUrl']);
-                    }
-                }
-                if ($key == 'dash') {
-                    if(strpos($item['@microsoft.graph.downloadUrl'],"sharepoint.com") == false){
-                        return $this->fetchDownload($item['id']);
-                    }
-                    $item['dash'] =  str_replace("thumbnail","videomanifest",$item['thumb'])."&part=index&format=dash&useScf=True&pretranscode=0&transcodeahead=0";
-                }
-                if ($key == 'doc') {
-                    $url = "https://view.officeapps.live.com/op/view.aspx?src=".urlencode($item['@microsoft.graph.downloadUrl']);
-                    return redirect()->away($url);
-                }
-                $file = $item;
-//                dump($key);
-//                dd($item);
-                return view($view,compact('file','pathArr'));
-            }
-        }
-        return $this->fetchDownload($item['id']);
+        $endpoint = '/me/drive/items/' . $id;
+        $response = $this->requestGraph($endpoint, true);
+        return $this->formatArray($response, false);
     }
-
 
     /**
      * 获取缩略图
      * @param Request $request
-     * @param $itemId
+     * @param $id
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function fetchThumb(Request $request, $itemId)
+    public function getThumb(Request $request, $id)
     {
-        $size = $request->get('size','large');
-        $url = $this->fetchThumbUrl($itemId, false, $size);
-        $content =  $this->requestHttp('get',$url);
-        return response($content,200, [
+        $size = $request->get('size', 'large');
+        $url = $this->getThumbUrl($id, $size, false);
+        $content = $this->requestHttp('get', $url);
+        return response($content, 200, [
             'Content-Type' => 'image/png',
         ]);
     }
 
     /**
      * 获取缩略图原始链接
-     * @param $itemId
+     * @param $id
      * @param bool $redirect
      * @param string $size
      * @return mixed
      */
-    public function fetchThumbUrl($itemId, $redirect = true, $size = 'large')
+    public function getThumbUrl($id, $size = 'large', $redirect = true)
     {
-        $endpoint = "/me/drive/items/{$itemId}/thumbnails/0/{$size}";
+        $endpoint = "/me/drive/items/{$id}/thumbnails/0/{$size}";
         $response = $this->requestGraph($endpoint, true);
         if (!$response) abort(404);
-        if ($redirect) {
-            return redirect()->away($response['url']);
-        }
+        if ($redirect) return redirect()->away($response['url']);
         return $response['url'];
     }
 
     /**
-     * 返回原图
-     * @param $itemId
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * 获取内容
+     * @param $url
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function fetchView($itemId)
+    public function getContent($url)
     {
-        $file = $this->fetchItem($itemId);
-        $isBigFile = $file['size'] > 5*1024*1024 ?: false;
-        if ($isBigFile) {
-            Tool::showMessage('文件过大，请下载查看',false);
-            return redirect()->route('list');
-        }
-        $url = $file['@microsoft.graph.downloadUrl'];
-        $content =  $this->requestHttp('get',$url);
-        return response($content,200, [
-            'Content-Type' => 'image/png',
-        ]);
+        return $this->requestHttp('get', $url);
     }
 
     /**
-     * 获取文件下载信息
-     * @param $itemId
-     * @return \Illuminate\Http\RedirectResponse
+     * ID获取内容
+     * @param $id
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function fetchDownload($itemId)
+    public function getContentById($id)
     {
-        $file = $this->fetchItem($itemId);
+        $file = $this->getFileById($id);
         $url = $file['@microsoft.graph.downloadUrl'];
-        return redirect()->away($url);
-    }
-
-    /**
-     * 获取文件内容
-     * @param $itemId
-     * @return string
-     */
-    public function fetchContent($itemId)
-    {
-        $file = $this->fetchItem($itemId);
-        $url = $file['@microsoft.graph.downloadUrl'];
-        return $this->requestHttp('get',$url);
+        return $this->requestHttp('get', $url);
     }
 
     /**
      * 获取过滤文件内容
-     * @param $itemName
+     * @param $filename
      * @param $items
      * @return string
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function fetchFilterContent($itemName,$items)
+    public function getContentByName($filename, $items)
     {
-        if (empty($items[$itemName])) {
-            return '';
+        if (empty($items[$filename])) return '';
+        $url = $items[$filename]['@microsoft.graph.downloadUrl'];
+        return $this->requestHttp('get', $url);
+    }
+
+    /**
+     * 合并分页数据
+     * @param $data
+     * @param array $result
+     * @return array
+     */
+    public function getNextLinkList($data, &$result = [])
+    {
+        if (isset($data['@odata.nextLink'])) {
+            $endpoint = mb_strstr($data['@odata.nextLink'], '/me');
+            $response = $this->requestGraph($endpoint, true);
+            $result = array_merge($response['value'], $this->getNextLinkList($response, $result));
         }
-        $url = $items[$itemName]['@microsoft.graph.downloadUrl'];
-        return $this->requestHttp('get',$url);
+        return $result;
+    }
+
+    /**
+     * 过滤目录中的文件夹
+     * @param $items
+     * @return mixed
+     */
+    public function filterFolder($items)
+    {
+        foreach ($items as $key => $item) {
+            if (isset($item['folder'])) unset($items[$key]);
+        }
+        return $items;
     }
 
     /**
@@ -350,53 +284,46 @@ class FetchController extends Controller
      * @param $itemName
      * @return mixed
      */
-    public function filterItem($items,$itemName)
+    public function filterFiles($items, $itemName)
     {
         if (is_array($itemName)) {
             foreach ($itemName as $item) {
                 unset($items[$item]);
             }
-        } else {
-            unset($items[$itemName]);
-        }
+        } else unset($items[$itemName]);
         return $items;
     }
 
     /**
-     * 过滤目录
+     * 过滤禁用目录
      * @param $items
      */
-    public function filterFolder($items)
+    public function filterForbidFolder($items)
     {
         // .deny目录无法访问
         if (!empty($items['.deny'])) {
             if (!Session::has('LogInfo')) {
-                Tool::showMessage('目录访问受限，仅管理员可以访问！',false);
+                Tool::showMessage('目录访问受限，仅管理员可以访问！', false);
                 abort(403);
             }
         }
     }
 
     /**
-     * 校验目录密码
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
+     * 判断列表是否含有图片
+     * @param $items
+     * @return bool
      */
-    public function handlePassword()
+    public function hasImage($items)
     {
-        $password = request()->get('password');
-        $path = decrypt(request()->get('path'));
-        $pass_id = decrypt(request()->get('pass_id'));
-        $data = [
-            'password' => encrypt($password),
-            'expires' => time() + $this->expires * 60, // 目录密码过期时间
-        ];
-        Session::put('password:'.$path,$data);
-        $directory_password = $this->fetchContent($pass_id);
-        if ($password == $directory_password)
-            return redirect()->route('list',$path);
-        else {
-            Tool::showMessage('密码错误',false);
-            return view('password',compact('path','pass_id'));
+        $hasImage =false;
+        foreach($items as $item)
+        {
+            if(isset($item['image'])) {
+                $hasImage = true;
+                break;
+            }
         }
+        return $hasImage;
     }
 }

@@ -31,34 +31,33 @@ class AdminController extends Controller
      */
     public function login(Request $request)
     {
-        if (!$request->isMethod('post')) {
-            return view('admin.login');
-        }
+        if (!$request->isMethod('post')) return view('admin.login');
         $password = $request->get('password');
-        if (md5($password) == Tool::config('password'))
-        {
+        if (md5($password) == Tool::config('password')) {
             $logInfo = [
                 'LastLoginTime' => time(),
                 'LastLoginIP' => $request->getClientIp(),
                 'LastActivityTime' => time(),
             ];
-            Session::put('LogInfo',$logInfo);
+            Session::put('LogInfo', $logInfo);
+            $request->session()->regenerate();
             return redirect()->route('admin.basic');
         } else {
-            Tool::showMessage('密码错误',false);
+            Tool::showMessage('密码错误', false);
             return redirect()->back();
         }
     }
 
     /**
      * 退出
+     * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function logout()
+    public function logout(Request $request)
     {
-        Session::forget('LogInfo');
+        $request->session()->invalidate();
         Tool::showMessage('已退出');
-        return redirect()->route('list');
+        return redirect()->route('home');
     }
 
     /**
@@ -68,12 +67,9 @@ class AdminController extends Controller
      */
     public function basic(Request $request)
     {
-        if (!$request->isMethod('post')) {
-            return view('admin.basic');
-        }
+        if (!$request->isMethod('post')) return view('admin.basic');
         $data = $request->except('_token');
         $this->update($data);
-
         return redirect()->back();
     }
 
@@ -84,12 +80,9 @@ class AdminController extends Controller
      */
     public function show(Request $request)
     {
-        if (!request()->isMethod('post')) {
-            return view('admin.show');
-        }
+        if (!request()->isMethod('post'))  return view('admin.show');
         $data = $request->except('_token');
         $this->update($data);
-
         return redirect()->back();
     }
 
@@ -100,18 +93,16 @@ class AdminController extends Controller
      */
     public function profile(Request $request)
     {
-        if (!$request->isMethod('post')) {
-            return view('admin.profile');
-        }
+        if (!$request->isMethod('post')) return view('admin.profile');
         $old_password = $request->get('old_password');
         $password = $request->get('password');
         $password_confirm = $request->get('password_confirm');
-        if (md5($old_password) != Tool::config('password') || $old_password == '')  {
-            Tool::showMessage('请确保原密码的准确性！',false);
+        if (md5($old_password) != Tool::config('password') || $old_password == '') {
+            Tool::showMessage('请确保原密码的准确性！', false);
             return redirect()->back();
         }
         if ($password != $password_confirm || $old_password == '' || $old_password == '') {
-            Tool::showMessage('两次密码不一致',false);
+            Tool::showMessage('两次密码不一致', false);
             return redirect()->back();
         }
         $data = ['password' => md5($password)];

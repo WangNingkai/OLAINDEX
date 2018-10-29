@@ -3,7 +3,9 @@
 namespace App\Helpers;
 
 use App\Models\Parameter;
-use HyperDown\Parser;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 
@@ -23,14 +25,14 @@ class Tool
 
     /**
      *文件大小转换
-    * @param string $size  原始大小
-    * @return string 转换大小
-    */
+     * @param string $size 原始大小
+     * @return string 转换大小
+     */
     public static function convertSize($size)
     {
         $units = array(' B', ' KB', ' MB', ' GB', ' TB');
         for ($i = 0; $size >= 1024 && $i < 4; $i++) $size /= 1024;
-        return @round($size, 2).$units[$i];
+        return @round($size, 2) . $units[$i];
     }
 
     /**
@@ -39,20 +41,14 @@ class Tool
      * @param $pathArr
      * @return string
      */
-    public static function getUrl($key,$pathArr)
+    public static function getUrl($key, $pathArr)
     {
-        $last = array_pop($pathArr);
-        $ext = strtolower(pathinfo($last, PATHINFO_EXTENSION));
-        // 兼容目录下就是文件的情况
-        if ($ext && count($pathArr) == 1) {
-            $key = $key - 1;
-        }
-        $pathArr = array_slice($pathArr,0,$key);
-        $url= '';
+        $pathArr = array_slice($pathArr, 0, $key);
+        $url = '';
         foreach ($pathArr as $param) {
-            $url .= '|'.$param;
+            $url .= '/' . $param;
         }
-        return trim($url,'|');
+        return trim($url, '/');
     }
 
     /**
@@ -63,15 +59,14 @@ class Tool
     public static function getParentUrl($pathArr)
     {
         array_pop($pathArr);
-        if (count($pathArr) == 0)
-        {
+        if (count($pathArr) == 0) {
             return '';
         }
-        $url= '';
+        $url = '';
         foreach ($pathArr as $param) {
-            $url .= '|'.$param;
+            $url .= '/' . $param;
         }
-        return trim($url,'|');
+        return trim($url, '/');
     }
 
     /**
@@ -115,8 +110,8 @@ class Tool
             }, $iframe[0]);
         }
         // markdown转html
-        $parser = new Parser();
-        $html = $parser->makeHtml($markdown);
+        $parser = new \Parsedown();
+        $html = $parser->text($markdown);
         $html = str_replace('<code class="', '<code class="lang-', $html);
         // 将临时字符串替换为 i_frame
         if (!empty($iframe[0])) {
@@ -150,7 +145,7 @@ class Tool
         $patterns = Constants::ICON;
         $icon = '';
         foreach ($patterns as $key => $suffix) {
-            if(in_array($ext,$suffix[1])) {
+            if (in_array($ext, $suffix[1])) {
                 $icon = $suffix[0];
                 break;
             } else {
@@ -170,7 +165,7 @@ class Tool
         $patterns = Constants::EXT;
         $suffix = '';
         foreach ($patterns as $ext => $mime) {
-            if($mimeType == $mime){
+            if ($mimeType == $mime) {
                 $suffix = $ext;
                 break;
             } else {
@@ -187,15 +182,16 @@ class Tool
      * @param string $key
      * @return bool|mixed|string
      */
-    public static function encrypt($string,$operation,$key=''){
+    public static function encrypt($string, $operation, $key = '')
+    {
         $key = md5($key);
         $key_length = strlen($key);
-        $string=$operation == 'D' ? base64_decode($string) : substr(md5($string.$key),0,8).$string;
+        $string = $operation == 'D' ? base64_decode($string) : substr(md5($string . $key), 0, 8) . $string;
         $string_length = strlen($string);
         $randKey = [];
         $box = [];
         $result = '';
-        for($i=0; $i<=255; $i++){
+        for ($i = 0; $i <= 255; $i++) {
             $randKey[$i] = ord($key[$i % $key_length]);
             $box[$i] = $i;
         }
@@ -222,6 +218,67 @@ class Tool
             }
         } else {
             return str_replace('=', '', base64_encode($result));
+        }
+    }
+
+    /**
+     * 数组分页
+     * @param $data
+     * @param $path
+     * @param int $perPage
+     * @return mixed
+     */
+    public static function arrayPage($data, $path, $perPage = 10)
+    {
+        //获取当前的分页数
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        //实例化collect方法
+        $collection = new Collection($data);
+        //定义一下每页显示多少个数据
+//        $perPage = 5;
+        //获取当前需要显示的数据列表$currentPage * $perPage
+        $currentPageDataResults = $collection->slice(($currentPage - 1) * $perPage, $perPage)->all();
+        //创建一个新的分页方法
+        $paginatedDataResults = new LengthAwarePaginator($currentPageDataResults, count($collection), $perPage);
+        //给分页加自定义url
+        $paginatedDataResults = $paginatedDataResults->setPath($path);
+        return $paginatedDataResults;
+    }
+
+    /**
+     * 数组分页 2
+     * @param $items
+     * @param $perPage
+     * @return LengthAwarePaginator
+     */
+    public static function paginate($items, $perPage)
+    {
+        $pageStart = request()->get('page', 1);
+        // Start displaying items from this number;
+        $offSet = ($pageStart * $perPage) - $perPage;
+
+        // Get only the items you need using array_slice
+        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
+
+        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage, Paginator::resolveCurrentPage(), ['path' => Paginator::resolveCurrentPath()]);
+    }
+
+    /**
+     * 是否可编辑
+     * @param $file
+     * @return bool
+     */
+    public static function isEdited($file)
+    {
+        $code = explode(' ', self::config('code'));
+        $stream = explode(' ', self::config('stream'));
+        $exts = array_merge($code, $stream);
+        $isText = in_array($file['ext'], $exts);
+        $isBigFile = $file['size'] > 5 * 1024 * 1024 ?: false;
+        if (!$isBigFile && $isText) {
+            return true;
+        } else {
+            return false;
         }
     }
 }

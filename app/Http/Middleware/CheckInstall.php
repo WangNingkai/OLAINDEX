@@ -8,10 +8,10 @@ use Closure;
 class CheckInstall
 {
     /**
-     * Handle an incoming request.
+     * 处理验证安装
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Closure $next
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -20,7 +20,7 @@ class CheckInstall
         $client_id = Tool::config('client_id');
         $client_secret = Tool::config('client_secret');
         $redirect_uri = Tool::config('redirect_uri');
-        if ($client_id == '' || $client_secret == '' || $redirect_uri == '' ) {
+        if ($client_id == '' || $client_secret == '' || $redirect_uri == '') {
             return redirect()->route('_1stInstall');
         }
         return $next($request);
