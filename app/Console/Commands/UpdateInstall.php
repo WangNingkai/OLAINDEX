@@ -43,9 +43,9 @@ class UpdateInstall extends Command
         // 获取当前版本,默认开发版
         $this->warn('========== 开始更新 ==========');
         if (file_exists(database_path('database.sqlite'))) {
+            $this->warn('如果您您已升级3.0，建议删除数据库文件再进行操作');
             $this->warn('检测到数据库文件，即将从 database.sqlite 读取版本');
-            $this->warn('如果您您已升级3.0，建议删除数据库文件');
-            if ($this->confirm('继续吗？')) {
+            if ($this->confirm('继续从数据库获取版本吗？')) {
                 $version = \Illuminate\Support\Facades\DB::table('parameters')
                     ->where('name', 'app_version')->value('value');
             } else {
