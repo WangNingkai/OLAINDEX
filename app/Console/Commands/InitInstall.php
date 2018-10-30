@@ -52,7 +52,7 @@ class InitInstall extends Command
         $envExample = file_get_contents(base_path('.env.example'));
         $search_db = [
             'APP_KEY=',
-            'APP_URL=http://localhost',
+            'APP_URL=http://localhost:8000',
         ];
         $replace_db = [
             'APP_KEY=' . str_random(32),
@@ -63,14 +63,14 @@ class InitInstall extends Command
             if ($this->confirm('目录存在 .env 文件，即将覆盖，继续吗？')) {
                 @unlink(base_path('.env'));
                 file_put_contents(base_path('.env'), $env);
-            } else
-                return false;
+            }
         } else {
             file_put_contents(base_path('.env'), $env);
         }
         $this->info('应用回调地址请填写：' . trim($app_url, '/') . '/oauth ');
         $this->call('config:cache'); // 生成配置缓存否则报错
         $this->warn('后台登录原始密码：12345678');
+        $this->info('请手动执行 chmod 777 storage/app/config.json 确保配置文件权限');
         $this->warn('========== 预安装完成，请继续下面的操作 ==========');
     }
 }
