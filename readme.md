@@ -39,6 +39,8 @@ OLAINDEX
 
 > 由于本项目基于Laravel 开发，新手建议查看 laravel 的环境搭建再进行部署。
 
+**再次强调：希望看完wiki以确保操作环境达到要求！如出现错误提示，建议提供完整截图或相关完整报错错代码**
+
 **帮助文档 ：**[Wiki](https://github.com/WangNingkai/OLAINDEX/wiki)
 
 ### 更新升级
