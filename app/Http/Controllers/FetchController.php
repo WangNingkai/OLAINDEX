@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Session;
 
 /**
  * 文件获取操作
- * Class FetchController2
+ * Class FetchController
  * @package App\Http\Controllers
  */
 class FetchController extends Controller
