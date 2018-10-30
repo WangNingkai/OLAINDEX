@@ -17,14 +17,14 @@
                placeholder="在此输入要上传的目录位置（默认 OneDrive 根目录）">
     </div>
     <div class="form-group">
-        <form class="dropzone" id="image-dropzone">
+        <form class="dropzone" id="file-dropzone">
         </form>
     </div>
 @stop
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/dropzone@5/dist/min/dropzone.min.js"></script>
     <script>
-        Dropzone.options.imageDropzone = {
+        Dropzone.options.fileDropzone = {
             url: Config.routes.upload_file,
             method: 'post',
             maxFilesize: 4,
