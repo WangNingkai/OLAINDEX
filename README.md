@@ -32,7 +32,7 @@
 - v2.0 全新路径显示（pathinfo）
 - 添加看图相册
 - 配置文件化，不再依赖数据库
-- 支持 Heroku 搭建，亲测（搭建地址：http://imwnk-olaindex.herokuapp.com）。
+- 支持 Heroku 搭建，亲测（搭建地址：`http://imwnk-olaindex.herokuapp.com`）。
 
 ### 演示链接
 
