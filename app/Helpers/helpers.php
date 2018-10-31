@@ -29,3 +29,20 @@ if (!function_exists('id2path')) {
         return trim(implode('/', $pathArr), '/');
     }
 }
+
+if (!function_exists('path2id')) {
+    /**
+     * @param $path
+     * @param bool $root
+     * @return mixed
+     */
+    function path2id($path, $root = false)
+    {
+        if ($root) {
+            $path = Tool::config('root') . '/' . trim($path, '/');
+        }
+        $fetch = new FetchController();
+        $item = $fetch->requestGraph('/me/drive/root:/' . trim($path, '/'));
+        return $item['id'];
+    }
+}
