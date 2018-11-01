@@ -69,6 +69,17 @@ class Tool
         return trim($url, '/');
     }
 
+    public static function handleUrl($path)
+    {
+        $url = [];
+        foreach (explode('/', $path) as $key => $value) {
+            if (empty(!$value)) {
+                $url[] = rawurlencode($value);
+            }
+        }
+        return @implode('/', $url);
+    }
+
     /**
      * 字符串截取，支持中文和其他编码
      *

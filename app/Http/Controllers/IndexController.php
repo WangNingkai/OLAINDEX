@@ -202,7 +202,7 @@ class IndexController extends Controller
         Session::put('password:' . $origin_path, $data);
         $directory_password = $this->fetch->getContentById($pass_id);
         if ($password == $directory_password)
-            return redirect()->route('home', urlencode($origin_path));
+            return redirect()->route('home', Tool::handleUrl($origin_path));
         else {
             Tool::showMessage('密码错误', false);
             return view('password', compact('origin_path', 'pass_id'));
