@@ -3,7 +3,7 @@
         <li class="breadcrumb-item"><a href="{{ route('home') }}"><i class="fa fa-home"></i> Home</a></li>
         @if(!blank($path_array))
             @foreach ($path_array as $key => $value)
-                @if(end($path_array) == $value)
+                @if(end($path_array) == $value && $key == (count($path_array) - 1))
                     <li class="breadcrumb-item active">{{ $value }}</li>
                 @else
                     @if (!blank($value))
