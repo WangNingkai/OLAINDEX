@@ -48,8 +48,8 @@ class IndexController extends Controller
      */
     public function list(Request $request)
     {
-        $graphPath = $this->fetch->convertPath($request->getPathInfo());
-        $origin_path = $this->fetch->convertPath($request->getPathInfo(), false);
+        $graphPath = urldecode($this->fetch->convertPath($request->getPathInfo()));
+        $origin_path = urldecode($this->fetch->convertPath($request->getPathInfo(), false));
         $query = 'children';
         $endpoint = '/me/drive/root' . $graphPath . $query;
         $response = $this->fetch->requestGraph($endpoint, true);
@@ -87,7 +87,7 @@ class IndexController extends Controller
      */
     public function show(Request $request)
     {
-        $origin_path = $this->fetch->convertPath($request->getPathInfo(), false);
+        $origin_path = urldecode($this->fetch->convertPath($request->getPathInfo(), false));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
         $file = $this->fetch->getFile($request);
         if (isset($file['folder'])) abort(403);

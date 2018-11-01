@@ -74,7 +74,7 @@ class Tool
         $url = [];
         foreach (explode('/', $path) as $key => $value) {
             if (empty(!$value)) {
-                $url[] = rawurlencode($value);
+                $url[] = urlencode($value);
             }
         }
         return @implode('/', $url);
