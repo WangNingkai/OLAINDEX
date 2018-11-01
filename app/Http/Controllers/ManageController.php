@@ -136,27 +136,6 @@ class ManageController extends Controller
     }
 
     /**
-     * @param $path
-     * @param $url
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function uploadUrl($path, $url)
-    {
-        // 仅支持OneDrive个人版
-        $path = trim(dirname($path));
-        $endpoint = "/me/drive/items/{$path}/children";
-        $graph = new RequestController();
-        $data = [
-            '@microsoft.graph.sourceUrl' => $url,
-            'name' => pathinfo($path, PATHINFO_BASENAME),
-            'file' => '{}',
-        ];
-        $requestBody = json_encode($data);
-        $response = $graph->request('post', [$endpoint, $requestBody, ['Prefer' => 'respond-async']]);
-        dd($response);
-    }
-
-    /**
      * 加密目录
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
