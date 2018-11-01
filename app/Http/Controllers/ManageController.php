@@ -136,10 +136,9 @@ class ManageController extends Controller
     }
 
     /**
-     *
-     * @param string $path 带文件名的路径
-     * @param string $url 远程文件地址
-     * @return string
+     * @param $path
+     * @param $url
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function uploadUrl($path, $url)
     {
@@ -153,7 +152,7 @@ class ManageController extends Controller
             'file' => '{}',
         ];
         $requestBody = json_encode($data);
-        $response = $graph->requestGraph('post', [$endpoint, '', ['Prefer' => 'respond-async']], false);
+        $response = $graph->request('post', [$endpoint, $requestBody, ['Prefer' => 'respond-async']]);
         dd($response);
     }
 
