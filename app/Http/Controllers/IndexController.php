@@ -74,6 +74,7 @@ class IndexController extends Controller
         $head = Tool::markdown2Html($this->fetch->getContentByName('HEAD.md', $origin_items));
         $readme = Tool::markdown2Html($this->fetch->getContentByName('README.md', $origin_items));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
+//        dd($path_array);
         if (!session()->has('LogInfo')) $origin_items = $this->fetch->filterFiles($origin_items, ['README.md', 'HEAD.md', '.password', '.deny']);
         $items = Tool::paginate($origin_items, 20);
         return view('one', compact('items', 'origin_items', 'origin_path', 'path_array', 'head', 'readme', 'hasImage'));

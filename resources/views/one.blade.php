@@ -130,7 +130,7 @@
         <div class="list-group item-list">
             @if(!blank($path_array))
                 <li class="list-group-item list-group-item-action"><a
-                        href="{{ route('home',\App\Helpers\Tool::getParentUrl($path_array)) }}"><i
+                        href="{{ route('home',\App\Helpers\Tool::handleUrl(\App\Helpers\Tool::getParentUrl($path_array))) }}"><i
                             class="fa fa-arrow-left"></i> 返回上一层</a></li>
             @endif
             @foreach($items as $item)
