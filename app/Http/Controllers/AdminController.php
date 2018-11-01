@@ -30,6 +30,7 @@ class AdminController extends Controller
      */
     public function login(Request $request)
     {
+        if (Session::has('LogInfo')) return redirect()->route('admin.basic');
         if (!$request->isMethod('post')) return view('admin.login');
         $password = $request->get('password');
         if (md5($password) == Tool::config('password')) {
@@ -79,7 +80,7 @@ class AdminController extends Controller
      */
     public function show(Request $request)
     {
-        if (!request()->isMethod('post'))  return view('admin.show');
+        if (!request()->isMethod('post')) return view('admin.show');
         $data = $request->except('_token');
         $this->update($data);
         return redirect()->back();

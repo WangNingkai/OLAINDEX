@@ -138,12 +138,12 @@
                     <div class="row">
                         <div class="col">
                             @if(isset($item['folder']))
-                                <a href="{{ route('home',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
+                                <a href="{{ route('home',urlencode($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                    title="{{ $item['name'] }}">
                                     <i class="fa fa-folder"></i> {{ \App\Helpers\Tool::subStr($item['name'],0,20) }}
                                 </a>
                             @else
-                                <a href="{{ route('show',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
+                                <a href="{{ route('show',urlencode($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                    title="{{ $item['name'] }}">
                                     <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i> {{ \App\Helpers\Tool::subStr($item['name'],0,20) }}
                                 </a>
@@ -160,12 +160,12 @@
                             <span class="pull-right">
                                 @if(isset($item['folder']))
                                     <a href="javascript:void(0)"
-                                       data-clipboard-text="{{ route('home',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
+                                       data-clipboard-text="{{ route('home',urlencode($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                        class="clipboard" title="已复制" data-toggle="tooltip"
                                        data-placement="right"><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;
                                 @else
                                     @if(isset($item['image']))
-                                        <a href="{{ route('view',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
+                                        <a href="{{ route('view',urlencode($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                            data-fancybox="image-list"><i
                                                 class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
                                     @endif
@@ -173,11 +173,11 @@
                                         <a href="{{ route('file.update',$item['id']) }}"><i
                                                 class="fa fa-pencil"></i></a>&nbsp;&nbsp;
                                     @endif
-                                    <a href="{{ route('download',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"><i
+                                    <a href="{{ route('download',urlencode($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"><i
                                             class="fa fa-download"
                                             title="下载"></i></a>&nbsp;&nbsp;
                                     <a href="javascript:void(0)"
-                                       data-clipboard-text="{{ route('download',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
+                                       data-clipboard-text="{{ route('download',urlencode($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                        class="clipboard"
                                        title="已复制" data-toggle="tooltip"
                                        data-placement="right"><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;

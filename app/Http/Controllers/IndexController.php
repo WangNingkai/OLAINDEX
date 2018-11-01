@@ -52,7 +52,9 @@ class IndexController extends Controller
         $origin_path = $this->fetch->convertPath($request->getPathInfo(), false);
         $query = 'children';
         $endpoint = '/me/drive/root' . $graphPath . $query;
+
         $response = $this->fetch->requestGraph($endpoint, true);
+//        dd($origin_path);
         $response['value'] = $this->fetch->getNextLinkList($response, $response['value']);
         $origin_items = $this->fetch->formatArray($response);
         $hasImage = $this->fetch->hasImage($origin_items);
@@ -76,6 +78,7 @@ class IndexController extends Controller
         $path_array = $origin_path ? explode('/', $origin_path) : [];
         if (!session()->has('LogInfo')) $origin_items = $this->fetch->filterFiles($origin_items, ['README.md', 'HEAD.md', '.password', '.deny']);
         $items = Tool::paginate($origin_items, 20);
+//        dd($items);
         return view('one', compact('items', 'origin_items', 'origin_path', 'path_array', 'head', 'readme', 'hasImage'));
     }
 
@@ -202,7 +205,7 @@ class IndexController extends Controller
         Session::put('password:' . $origin_path, $data);
         $directory_password = $this->fetch->getContentById($pass_id);
         if ($password == $directory_password)
-            return redirect()->route('home', $origin_path);
+            return redirect()->route('home', urlencode($origin_path));
         else {
             Tool::showMessage('密码错误', false);
             return view('password', compact('origin_path', 'pass_id'));

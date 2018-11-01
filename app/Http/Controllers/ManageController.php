@@ -178,7 +178,7 @@ class ManageController extends Controller
         $response = $graph->requestGraph('put', [$endpoint, $requestBody, []], true);
         $response ? Tool::showMessage('添加成功！') : Tool::showMessage('添加失败！', false);
         Artisan::call('cache:clear');
-        return redirect()->route('home', $path);
+        return redirect()->route('home', urlencode($path));
 
     }
 

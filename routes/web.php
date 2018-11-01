@@ -50,14 +50,3 @@ Route::any('/admin/file/edit/{id}', 'ManageController@updateFile')->name('file.u
 Route::post('/admin/folder/create', 'ManageController@createFolder')->name('folder.create');
 // 搜索
 Route::any('/search', 'IndexController@search')->name('search')->middleware('checkAuth');
-
-//Route::get('t',function(){
-//    $request = new \App\Http\Controllers\RequestController();
-//    $data = [
-//        '@microsoft.graph.sourceUrl' => 'http://xn.tn/trailer.mp4',
-//        'name' => 'test.mp4',
-//        'file' => '{}',
-//    ];
-//    $res = $request->request('post',['/me/drive/items/图片/children',json_encode($data),['Prefer' => 'respond-async']]);
-//    dd($res->getHeader('Location'));
-//});
