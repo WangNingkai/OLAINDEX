@@ -136,6 +136,28 @@ class ManageController extends Controller
     }
 
     /**
+     *
+     * @param string $path 带文件名的路径
+     * @param string $url 远程文件地址
+     * @return string
+     */
+    public function uploadUrl($path, $url)
+    {
+        // 仅支持OneDrive个人版
+        $path = trim(dirname($path));
+        $endpoint = "/me/drive/items/{$path}/children";
+        $graph = new RequestController();
+        $data = [
+            '@microsoft.graph.sourceUrl' => $url,
+            'name' => pathinfo($path, PATHINFO_BASENAME),
+            'file' => '{}',
+        ];
+        $requestBody = json_encode($data);
+        $response = $graph->requestGraph('post', [$endpoint, '', ['Prefer' => 'respond-async']], false);
+        dd($response);
+    }
+
+    /**
      * 加密目录
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
