@@ -51,16 +51,13 @@ class ManageController extends Controller
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
             $content = fopen($path, 'r');
-            $stream = \GuzzleHttp\Psr7\stream_for($content);
             $root = trim(Tool::config('root'), '/');
             $image_hosting_path = trim(Tool::config('image_hosting_path'), '/');
             $filePath = trim($image_hosting_path . '/' . date('Y') . '/' . date('m') . '/' . date('d') . '/' . str_random(8) . '/' . $file->getClientOriginalName(), '/');
             $storeFilePath = $root . '/' . $filePath; // 远程图片保存地址
             $remoteFilePath = trim($storeFilePath, '/');
-            $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
-            $requestBody = $stream;
-            $graph = new RequestController();
-            $response = $graph->requestGraph('put', [$endpoint, $requestBody, []], true);
+            $upload = new UploadController();
+            $response = $upload->upload($remoteFilePath, $content);
             $sign = $response['id'] . '.' . encrypt($response['eTag']);
             $fileIdentifier = encrypt($sign);
             $data = [
@@ -111,13 +108,10 @@ class ManageController extends Controller
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
             $content = fopen($path, 'r');
-            $stream = \GuzzleHttp\Psr7\stream_for($content);
             $storeFilePath = trim($target_directory, '/') . '/' . $file->getClientOriginalName(); // 远程保存地址
             $remoteFilePath = trim($storeFilePath, '/');
-            $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
-            $requestBody = $stream;
-            $graph = new RequestController();
-            $response = $graph->requestGraph('put', [$endpoint, $requestBody, []], true);
+            $upload = new UploadController();
+            $response = $upload->upload($remoteFilePath, $content);
             $data = [
                 'code' => 200,
                 'data' => [
@@ -144,21 +138,18 @@ class ManageController extends Controller
     {
         $path = decrypt($request->get('path'));
         $password = $request->get('password', '12345678');
-        $stream = \GuzzleHttp\Psr7\stream_for($password);
         $root = trim(Tool::config('root'), '/');
         $storeFilePath = trim($path, '/') . '/.password';
         $remoteFilePath = trim($root . '/' . trim($storeFilePath, '/'), '/'); // 远程保存地址
-        $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
-        $requestBody = $stream;
-        $graph = new RequestController();
-        $response = $graph->requestGraph('put', [$endpoint, $requestBody, []], true);
+        $upload = new UploadController();
+        $response = $upload->upload($remoteFilePath, $password);
         $response ? Tool::showMessage('操作成功，请牢记密码！') : Tool::showMessage('加密失败！', false);
         Artisan::call('cache:clear');
         return redirect()->back();
     }
 
     /**
-     * 新建文件
+     * 新建 head/readme.md 文件
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
@@ -168,14 +159,11 @@ class ManageController extends Controller
         $name = $request->get('name');
         $path = decrypt($request->get('path'));
         $content = $request->get('content');
-        $stream = \GuzzleHttp\Psr7\stream_for($content);
         $root = trim(Tool::config('root'), '/');
         $storeFilePath = $root . '/' . trim($path, '/') . '/' . $name . '.md';
         $remoteFilePath = trim($storeFilePath, '/');
-        $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
-        $requestBody = $stream;
-        $graph = new RequestController();
-        $response = $graph->requestGraph('put', [$endpoint, $requestBody, []], true);
+        $upload = new UploadController();
+        $response = $upload->upload($remoteFilePath, $content);
         $response ? Tool::showMessage('添加成功！') : Tool::showMessage('添加失败！', false);
         Artisan::call('cache:clear');
         return redirect()->route('home', Tool::handleUrl($path));

@@ -2,10 +2,8 @@
 
 namespace App\Helpers;
 
-use App\Models\Parameter;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 
@@ -69,6 +67,11 @@ class Tool
         return trim($url, '/');
     }
 
+    /**
+     * 处理utl
+     * @param $path
+     * @return string
+     */
     public static function handleUrl($path)
     {
         $url = [];
@@ -78,6 +81,65 @@ class Tool
             }
         }
         return @implode('/', $url);
+    }
+
+    /**
+     * 获取文件图标
+     * @param $ext
+     * @return string
+     */
+    public static function getExtIcon($ext)
+    {
+        $patterns = Constants::ICON;
+        $icon = '';
+        foreach ($patterns as $key => $suffix) {
+            if (in_array($ext, $suffix[1])) {
+                $icon = $suffix[0];
+                break;
+            } else {
+                $icon = 'fa-file-text-o';
+            }
+        }
+        return $icon;
+    }
+
+    /**
+     * 获取文件后缀
+     * @param $mimeType
+     * @return int|string
+     */
+    public static function getExt($mimeType)
+    {
+        $patterns = Constants::EXT;
+        $suffix = '';
+        foreach ($patterns as $ext => $mime) {
+            if ($mimeType == $mime) {
+                $suffix = $ext;
+                break;
+            } else {
+                $suffix = 'unknown';
+            }
+        }
+        return $suffix;
+    }
+
+    /**
+     * 文件是否可编辑
+     * @param $file
+     * @return bool
+     */
+    public static function canEdit($file)
+    {
+        $code = explode(' ', self::config('code'));
+        $stream = explode(' ', self::config('stream'));
+        $exts = array_merge($code, $stream);
+        $isText = in_array($file['ext'], $exts);
+        $isBigFile = $file['size'] > 5 * 1024 * 1024 ?: false;
+        if (!$isBigFile && $isText) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -132,46 +194,6 @@ class Tool
     }
 
     /**
-     * 获取文件图片
-     * @param $ext
-     * @return string
-     */
-    public static function getExtIcon($ext)
-    {
-        $patterns = Constants::ICON;
-        $icon = '';
-        foreach ($patterns as $key => $suffix) {
-            if (in_array($ext, $suffix[1])) {
-                $icon = $suffix[0];
-                break;
-            } else {
-                $icon = 'fa-file-text-o';
-            }
-        }
-        return $icon;
-    }
-
-    /**
-     * 获取文件后缀
-     * @param $mimeType
-     * @return int|string
-     */
-    public static function getExt($mimeType)
-    {
-        $patterns = Constants::EXT;
-        $suffix = '';
-        foreach ($patterns as $ext => $mime) {
-            if ($mimeType == $mime) {
-                $suffix = $ext;
-                break;
-            } else {
-                $suffix = 'unknown';
-            }
-        }
-        return $suffix;
-    }
-
-    /**
      * 数组分页
      * @param $items
      * @param $perPage
@@ -187,25 +209,6 @@ class Tool
         $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
 
         return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage, Paginator::resolveCurrentPage(), ['path' => Paginator::resolveCurrentPath()]);
-    }
-
-    /**
-     * 是否可编辑
-     * @param $file
-     * @return bool
-     */
-    public static function isEdited($file)
-    {
-        $code = explode(' ', self::config('code'));
-        $stream = explode(' ', self::config('stream'));
-        $exts = array_merge($code, $stream);
-        $isText = in_array($file['ext'], $exts);
-        $isBigFile = $file['size'] > 5 * 1024 * 1024 ?: false;
-        if (!$isBigFile && $isText) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /**

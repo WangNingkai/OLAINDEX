@@ -98,7 +98,7 @@ class RequestController extends Controller
         }
         $baseUrl = GraphConstants::REST_ENDPOINT;
         $apiVersion = GraphConstants::API_VERSION;
-        //Send request with opaque URL
+        // Send request with opaque URL
         if (stripos($endpoint, "http") === 0) {
             $requestUrl = $endpoint;
         } else {
