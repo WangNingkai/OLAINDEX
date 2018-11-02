@@ -78,7 +78,7 @@ class OauthController extends Controller
                 // 保存授权跳转
                 return redirect()->route('home');
             } catch (IdentityProviderException $e) {
-                exit($e->getMessage());
+                return response()->json(['code' => $e->getCode(), 'msg' => $e->getMessage()]);
             }
         }
     }
@@ -86,11 +86,11 @@ class OauthController extends Controller
 
     /**
      * 刷新授权
+     * @param bool $redirect
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function refreshToken()
+    public function refreshToken($redirect = true)
     {
-        $redirect = session('refresh_redirect') ?? '/';
         $existingRefreshToken = Tool::config('refresh_token');
         try {
             $newAccessToken = $this->provider->getAccessToken('refresh_token', [
@@ -105,9 +105,14 @@ class OauthController extends Controller
                 'access_token_expires' => $expires
             ];
             $this->update($data);
-            return redirect()->away($redirect);
+            if ($redirect) {
+                $redirect = session('refresh_redirect') ?? '/';
+                return redirect()->away($redirect);
+            } else {
+                return response()->json(['code' => 200, 'msg' => 'ok']);
+            }
         } catch (IdentityProviderException $e) {
-            exit($e->getMessage());
+            return response()->json(['code' => $e->getCode(), 'msg' => $e->getMessage()]);
         }
     }
 

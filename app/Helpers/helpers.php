@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\FetchController;
+use App\Http\Controllers\RequestController;
+use App\Http\Controllers\OauthController;
 use App\Helpers\Tool;
 
 if (!function_exists('id2path')) {
@@ -44,5 +46,46 @@ if (!function_exists('path2id')) {
         $fetch = new FetchController();
         $item = $fetch->requestGraph('/me/drive/root:/' . trim($path, '/'));
         return $item['id'];
+    }
+}
+
+if (!function_exists('quota')) {
+    /**
+     * 获取磁盘信息
+     * @param string $key
+     * @return bool
+     */
+    function quota($key = '')
+    {
+        if (refresh_token()) {
+            $request = new RequestController();
+            $res = $request->requestGraph('get', '/me/drive');
+            $quota = $res['quota'];
+            foreach ($quota as $k => $item) {
+                $quota[$k] = Tool::convertSize($item);
+            }
+            return $key ? $quota[$key] : $quota;
+        } else {
+            return false;
+        }
+    }
+}
+
+
+if (!function_exists('refresh_token')) {
+    /**
+     * @return bool
+     */
+    function refresh_token()
+    {
+        $expires = Tool::config('access_token_expires');
+        $hasExpired = $expires - time() < 0 ? true : false;
+        if ($hasExpired) {
+            $oauth = new OauthController();
+            $res = json_decode($oauth->refreshToken(false), true);
+            return $res['code'] === 200;
+        } else {
+            return true;
+        }
     }
 }

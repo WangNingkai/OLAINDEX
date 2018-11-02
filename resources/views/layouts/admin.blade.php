@@ -53,13 +53,15 @@
                     <a class="nav-link" href="{{ route('admin.clear') }}"><i class="fa fa-bolt"></i> 缓存清理 </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="https://onedrive.live.com" target="_blank"><i class="fa fa-cloud"></i> OneDrive管理 </a>
+                    <a class="nav-link" href="https://onedrive.live.com" target="_blank"><i class="fa fa-cloud"></i>
+                        OneDrive管理 </a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a href="{{ route('logout') }}" class="nav-link"
-                       onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i class="fa fa-sign-out"></i> 退出</a>
+                       onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i
+                            class="fa fa-sign-out"></i> 退出</a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST"
                           style="display: none;">
                         @csrf
@@ -77,6 +79,13 @@
             <p>{{ session()->pull('alertMessage') }}</p>
         </div>
     @endif
+    <div class="bg-white">
+        <p>
+            <span class="text-danger">已使用: {{ quota('used') }} &nbsp;&nbsp;</span>
+            <span class="text-warning">剩余: {{ quota('remaining') }} &nbsp;&nbsp;</span>
+            <span class="text-success">全部: {{ quota('total') }} &nbsp;&nbsp;</span>
+        </p>
+    </div>
     <div class="card border-light mb-3">
         <div class="card-header">
             @yield('title')
