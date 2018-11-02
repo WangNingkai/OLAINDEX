@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Cache;
 use App\Http\Controllers\FetchController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\OauthController;
@@ -53,20 +54,23 @@ if (!function_exists('quota')) {
     /**
      * 获取磁盘信息
      * @param string $key
-     * @return bool
+     * @return array|mixed
      */
     function quota($key = '')
     {
         if (refresh_token()) {
-            $request = new RequestController();
-            $res = $request->requestGraph('get', '/me/drive');
-            $quota = $res['quota'];
-            foreach ($quota as $k => $item) {
-                $quota[$k] = Tool::convertSize($item);
-            }
+            $quota = Cache::remember('quota', Tool::config('expires'), function () {
+                $request = new RequestController();
+                $res = $request->requestGraph('get', '/me/drive');
+                $quota = $res['quota'];
+                foreach ($quota as $k => $item) {
+                    $quota[$k] = Tool::convertSize($item);
+                }
+                return $quota;
+            });
             return $key ? $quota[$key] : $quota;
         } else {
-            return false;
+            return [];
         }
     }
 }

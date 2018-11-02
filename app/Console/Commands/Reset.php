@@ -18,7 +18,7 @@ class Reset extends Command
      *
      * @var string
      */
-    protected $description = '重置应用';
+    protected $description = 'Reset App';
 
     /**
      * Create a new command instance.

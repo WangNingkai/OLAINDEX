@@ -249,6 +249,7 @@ class ManageController extends Controller
         $graph = new RequestController();
         $graph->requestGraph('delete', [$endpoint, '', ['if-match' => $eTag]], true);
         Tool::showMessage('文件已删除');
+        Artisan::call('cache:clear');
         return view('message');
     }
 }

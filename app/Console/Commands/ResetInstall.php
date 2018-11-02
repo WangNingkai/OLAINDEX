@@ -13,14 +13,14 @@ class ResetInstall extends Command
      *
      * @var string
      */
-    protected $signature = 'reset:install';
+    protected $signature = 'reset:user';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = '重置帐号';
+    protected $description = 'Reset User';
 
     /**
      * Create a new command instance.
