@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 
 /**
- * 文件获取操作
+ * 取出文件操作
  * Class FetchController
  * @package App\Http\Controllers
  */
@@ -53,20 +53,20 @@ class FetchController extends Controller
     /**
      * 构造graph请求
      * @param $endpoint
-     * @param bool $toArray
      * @param bool $cache
-     * @return mixed|null
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function requestGraph($endpoint, $toArray = true, $cache = true)
+    public function requestGraph($endpoint, $cache = true)
     {
         if ($cache) {
-            return Cache::remember('one:endpoint:' . $endpoint, $this->expires, function () use ($endpoint, $toArray) {
+            return Cache::remember('one:endpoint:' . $endpoint, $this->expires, function () use ($endpoint) {
                 $fetch = new RequestController();
-                return $fetch->requestGraph('get', $endpoint, $toArray);
+                return $fetch->requestGraph('get', $endpoint);
             });
         } else {
             $fetch = new RequestController();
-            return $fetch->requestGraph('get', $endpoint, $toArray);
+            return $fetch->requestGraph('get', $endpoint);
         }
     }
 
@@ -162,49 +162,34 @@ class FetchController extends Controller
      * @param Request $request
      * @param bool $isDownload
      * @return array
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getFile(Request $request, $isDownload = false)
     {
         $graphPath = urldecode($this->convertPath($request->getPathInfo(), true, true, $isDownload));
         $endpoint = '/me/drive/root' . $graphPath;
-        $response = $this->requestGraph($endpoint, true);
+        $response = $this->requestGraph($endpoint);
         return $this->formatArray($response, false);
     }
 
     /**
      * @param $id
      * @return array
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getFileById($id)
     {
         $endpoint = '/me/drive/items/' . $id;
-        $response = $this->requestGraph($endpoint, true);
+        $response = $this->requestGraph($endpoint);
         return $this->formatArray($response, false);
     }
 
     /**
-     * 获取缩略图
-     * @param Request $request
      * @param $id
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function getThumb(Request $request, $id)
-    {
-        $size = $request->get('size', 'large');
-        $url = $this->getThumbUrl($id, $size, false);
-        $content = $this->requestHttp('get', $url);
-        return response($content, 200, [
-            'Content-Type' => 'image/png',
-        ]);
-    }
-
-    /**
-     * 获取缩略图原始链接
-     * @param $id
-     * @param bool $redirect
      * @param string $size
-     * @return mixed
+     * @param bool $redirect
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getThumbUrl($id, $size = 'large', $redirect = true)
     {
@@ -216,7 +201,6 @@ class FetchController extends Controller
     }
 
     /**
-     * 获取内容
      * @param $url
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -254,16 +238,16 @@ class FetchController extends Controller
     }
 
     /**
-     * 合并分页数据
      * @param $data
      * @param array $result
      * @return array
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getNextLinkList($data, &$result = [])
     {
         if (isset($data['@odata.nextLink'])) {
             $endpoint = mb_strstr($data['@odata.nextLink'], '/me');
-            $response = $this->requestGraph($endpoint, true);
+            $response = $this->requestGraph($endpoint);
             $result = array_merge($response['value'], $this->getNextLinkList($response, $result));
         }
         return $result;

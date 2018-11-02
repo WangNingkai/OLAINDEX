@@ -52,7 +52,7 @@ class IndexController extends Controller
         $origin_path = urldecode($this->fetch->convertPath($request->getPathInfo(), false));
         $query = 'children';
         $endpoint = '/me/drive/root' . $graphPath . $query;
-        $response = $this->fetch->requestGraph($endpoint, true);
+        $response = $this->fetch->requestGraph($endpoint);
         $response['value'] = $this->fetch->getNextLinkList($response, $response['value']);
         $origin_items = $this->fetch->formatArray($response);
         $hasImage = $this->fetch->hasImage($origin_items);
@@ -74,7 +74,6 @@ class IndexController extends Controller
         $head = Tool::markdown2Html($this->fetch->getContentByName('HEAD.md', $origin_items));
         $readme = Tool::markdown2Html($this->fetch->getContentByName('README.md', $origin_items));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
-//        dd($path_array);
         if (!session()->has('LogInfo')) $origin_items = $this->fetch->filterFiles($origin_items, ['README.md', 'HEAD.md', '.password', '.deny']);
         $items = Tool::paginate($origin_items, 20);
         return view('one', compact('items', 'origin_items', 'origin_path', 'path_array', 'head', 'readme', 'hasImage'));
@@ -126,9 +125,9 @@ class IndexController extends Controller
     }
 
     /**
-     * 下载
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function download(Request $request)
     {
@@ -138,10 +137,10 @@ class IndexController extends Controller
     }
 
     /**
-     * 缩略图
      * @param $id
      * @param $size
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function thumb($id, $size)
     {
@@ -150,9 +149,9 @@ class IndexController extends Controller
     }
 
     /**
-     * 图片预览
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function view(Request $request)
     {
@@ -162,9 +161,9 @@ class IndexController extends Controller
     }
 
     /**
-     * 搜索
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function search(Request $request)
     {
@@ -175,7 +174,7 @@ class IndexController extends Controller
                 $endpoint = '/me/drive/root/' . $query;
             else
                 $endpoint = '/me/drive/root:/' . trim($this->fetch->root, '/') . ':/' . $query;
-            $response = $this->fetch->requestGraph($endpoint, true, false);
+            $response = $this->fetch->requestGraph($endpoint, true);
             $response['value'] = $this->fetch->getNextLinkList($response, $response['value']);
             $origin_items = $this->fetch->formatArray($response);
             $items = $this->fetch->filterFolder($origin_items); // 过滤结果中的文件夹

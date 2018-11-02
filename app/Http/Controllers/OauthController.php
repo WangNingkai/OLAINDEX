@@ -59,7 +59,7 @@ class OauthController extends Controller
             if (empty($request->get('state')) || ($request->get('state') !== Cache::get('state'))) {
                 if (Cache::has('state'))
                     Cache::forget('state');
-                exit('Invalid state');
+                return response()->json(['code' => 400, 'msg' => 'Invalid state']);
             }
             // 获取 accessToken & refreshToken
             try {

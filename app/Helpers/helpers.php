@@ -10,6 +10,7 @@ if (!function_exists('id2path')) {
     /**
      * @param $id
      * @return string
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     function id2path($id)
     {
@@ -38,6 +39,7 @@ if (!function_exists('path2id')) {
      * @param $path
      * @param bool $root
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     function path2id($path, $root = false)
     {

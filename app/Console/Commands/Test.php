@@ -31,13 +31,17 @@ class Test extends Command
         parent::__construct();
     }
 
+    /**
+     * @return string
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function handle()
     {
         if (!refresh_token()) {
             return 'refresh token error';
         }
         $od = new OneDriveController();
-        $res = $od->getDrive();
+        $res = $od->listChildren();
         dd($res);
     }
 }

@@ -5,10 +5,6 @@ namespace App\Http\Controllers;
 use App\Helpers\Tool;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Psr7\Stream;
-use Microsoft\Graph\Core\GraphConstants;
-use Microsoft\Graph\Exception\GraphException;
-use Microsoft\Graph\Graph;
 
 /**
  * 处理请求操作
@@ -22,32 +18,52 @@ class RequestController extends Controller
      * @param $method
      * @param $param
      * @param bool $toArray
-     * @return mixed|null
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function requestGraph($method, $param, $toArray = true)
     {
+        $allowMethod = ['get', 'post', 'put', 'patch', 'delete'];
+        if (!in_array(strtolower($method), $allowMethod)) exit('请求参数异常');
         if (is_array($param)) {
             list($endpoint, $requestBody, $requestHeaders) = $param;
             $requestHeaders = $requestHeaders ?? [];
             $requestBody = $requestBody ?? '';
-            $headers = array_merge($requestHeaders, ["Content-Type" => "application/json"]);
+            $headers = $requestHeaders ?? [];
         } else {
             $endpoint = $param;
             $requestBody = '';
-            $headers = ["Content-Type" => "application/json"];
+            $headers = [];
+        }
+        if (!is_string($requestBody) || !is_a($requestBody, 'GuzzleHttp\Psr7\Stream')) {
+            $requestBody = json_encode($requestBody);
+        }
+        $baseUrl = 'https://graph.microsoft.com/';
+        $apiVersion = 'v1.0';
+        // Send request with opaque URL
+        if (stripos($endpoint, "http") === 0) {
+            $requestUrl = $endpoint;
+        } else {
+            $requestUrl = $apiVersion . $endpoint;
         }
         try {
-            $graph = new Graph();
-            $graph->setBaseUrl("https://graph.microsoft.com/")
-                ->setApiVersion("v1.0")
-                ->setAccessToken(Tool::config('access_token'));
-            $response = $graph->createRequest($method, $endpoint)
-                ->addHeaders($headers)
-                ->attachBody($requestBody)
-                ->setReturnType(Stream::class)
-                ->execute();
-            return $toArray ? json_decode($response->getContents(), true) : $response->getContents();
-        } catch (GraphException $e) {
+            $token = Tool::config('access_token');
+            $clientSettings = [
+                'base_uri' => $baseUrl,
+                'headers' => array_merge($headers, [
+                    'Host' => $baseUrl,
+                    'Content-Type' => 'application/json',
+                    'Authorization' => 'Bearer ' . $token
+                ])
+            ];
+            $client = new Client($clientSettings);
+            $response = $client->request($method, $requestUrl, [
+                'body' => $requestBody,
+                'stream' => true,
+                'timeout' => 5
+            ]);
+            return $toArray ? json_decode($response->getBody()->getContents(), true) : $response->getBody()->getContents();
+        } catch (ClientException $e) {
             abort($e->getCode());
         }
     }
@@ -64,11 +80,11 @@ class RequestController extends Controller
         try {
             $client = new Client();
             $response = $client->request($method, $url);
-            $content = $response->getBody()->getContents();
-            return $content;
+            $response = $response->getBody()->getContents();
         } catch (ClientException $e) {
             abort($e->getCode());
         }
+        return $response ?? null;
 
     }
 
@@ -76,7 +92,7 @@ class RequestController extends Controller
      * 发送请求
      * @param $method
      * @param $param
-     * @return \Illuminate\Http\JsonResponse
+     * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function request($method, $param)
@@ -98,8 +114,8 @@ class RequestController extends Controller
         if (!is_string($requestBody) || !is_a($requestBody, 'GuzzleHttp\\Psr7\\Stream')) {
             $requestBody = json_encode($requestBody);
         }
-        $baseUrl = GraphConstants::REST_ENDPOINT;
-        $apiVersion = GraphConstants::API_VERSION;
+        $baseUrl = 'https://graph.microsoft.com/';
+        $apiVersion = 'v1.0';
         // Send request with opaque URL
         if (stripos($endpoint, "http") === 0) {
             $requestUrl = $endpoint;
@@ -123,9 +139,9 @@ class RequestController extends Controller
                 'timeout' => $timeout
             ]);
         } catch (ClientException $e) {
-            $response = ['code' => $e->getCode(), 'msg' => $e->getMessage()];
+            $response = json_encode(['code' => $e->getCode(), 'msg' => $e->getMessage()]);
         }
-        return response()->json($response);
+        return $response;
     }
 
 }

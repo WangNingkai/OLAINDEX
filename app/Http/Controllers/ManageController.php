@@ -27,6 +27,7 @@ class ManageController extends Controller
      * 图片上传
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function uploadImage(Request $request)
     {
@@ -84,6 +85,7 @@ class ManageController extends Controller
      * 文件上传
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function uploadFile(Request $request)
     {
@@ -134,6 +136,7 @@ class ManageController extends Controller
      * 加密目录
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function lockFolder(Request $request)
     {
@@ -153,6 +156,7 @@ class ManageController extends Controller
      * 新建 head/readme.md 文件
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function createFile(Request $request)
     {
@@ -202,6 +206,7 @@ class ManageController extends Controller
      * 创建目录
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function createFolder(Request $request)
     {
@@ -229,6 +234,7 @@ class ManageController extends Controller
      * 删除文件
      * @param $sign
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function deleteItem($sign)
     {
