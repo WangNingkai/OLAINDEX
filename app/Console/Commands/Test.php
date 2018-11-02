@@ -2,10 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Helpers\Tool;
-use App\Http\Controllers\OauthController;
-use App\Http\Controllers\RequestController;
-use App\Http\Controllers\UploadController;
+use App\Http\Controllers\OneDriveController;
 use Illuminate\Console\Command;
 
 class Test extends Command
@@ -34,22 +31,13 @@ class Test extends Command
         parent::__construct();
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
     public function handle()
     {
         if (!refresh_token()) {
-            return;
+            return 'refresh token error';
         }
-        $request = new RequestController();
-        $res = $request->requestGraph('get', '/me/drive');
-        $quota = $res['quota'];
-        foreach ($quota as $key => $item) {
-            $quota[$key] = Tool::convertSize($item);
-        }
-        dd($quota);
+        $od = new OneDriveController();
+        $res = $od->getDrive();
+        dd($res);
     }
 }

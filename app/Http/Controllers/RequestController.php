@@ -76,7 +76,7 @@ class RequestController extends Controller
      * 发送请求
      * @param $method
      * @param $param
-     * @return mixed|\Psr\Http\Message\ResponseInterface|string
+     * @return \Illuminate\Http\JsonResponse
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function request($method, $param)
@@ -84,14 +84,16 @@ class RequestController extends Controller
         $allowMethod = ['get', 'post', 'put', 'patch', 'delete'];
         if (!in_array(strtolower($method), $allowMethod)) exit('请求参数异常');
         if (is_array($param)) {
-            list($endpoint, $requestBody, $requestHeaders) = $param;
+            list($endpoint, $requestBody, $requestHeaders, $timeout) = $param;
             $requestHeaders = $requestHeaders ?? [];
             $requestBody = $requestBody ?? '';
-            $headers = array_merge($requestHeaders, ["Content-Type" => "application/json"]);
+            $headers = $requestHeaders ?? [];
+            $timeout = $timeout ?? 5;
         } else {
             $endpoint = $param;
             $requestBody = '';
-            $headers = ["Content-Type" => "application/json"];
+            $headers = [];
+            $timeout = 5;
         }
         if (!is_string($requestBody) || !is_a($requestBody, 'GuzzleHttp\\Psr7\\Stream')) {
             $requestBody = json_encode($requestBody);
@@ -118,12 +120,12 @@ class RequestController extends Controller
             $response = $client->request($method, $requestUrl, [
                 'body' => $requestBody,
                 'stream' => true,
-                'timeout' => 5
+                'timeout' => $timeout
             ]);
         } catch (ClientException $e) {
-            abort($e->getCode(), $e->getMessage());
+            $response = ['code' => $e->getCode(), 'msg' => $e->getMessage()];
         }
-        return $response ?? null;
+        return response()->json($response);
     }
 
 }

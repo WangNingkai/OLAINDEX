@@ -56,8 +56,8 @@ class ManageController extends Controller
             $filePath = trim($image_hosting_path . '/' . date('Y') . '/' . date('m') . '/' . date('d') . '/' . str_random(8) . '/' . $file->getClientOriginalName(), '/');
             $storeFilePath = $root . '/' . $filePath; // 远程图片保存地址
             $remoteFilePath = trim($storeFilePath, '/');
-            $upload = new UploadController();
-            $response = $upload->upload($remoteFilePath, $content);
+            $od = new OneDriveController();
+            $response = $od->upload($remoteFilePath, $content);
             $sign = $response['id'] . '.' . encrypt($response['eTag']);
             $fileIdentifier = encrypt($sign);
             $data = [
@@ -108,10 +108,11 @@ class ManageController extends Controller
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
             $content = fopen($path, 'r');
+            $root = trim(Tool::config('root'), '/');
             $storeFilePath = trim($target_directory, '/') . '/' . $file->getClientOriginalName(); // 远程保存地址
-            $remoteFilePath = trim($storeFilePath, '/');
-            $upload = new UploadController();
-            $response = $upload->upload($remoteFilePath, $content);
+            $remoteFilePath = $root . '/' . $storeFilePath;
+            $od = new OneDriveController();
+            $response = $od->upload($remoteFilePath, $content);
             $data = [
                 'code' => 200,
                 'data' => [
@@ -141,8 +142,8 @@ class ManageController extends Controller
         $root = trim(Tool::config('root'), '/');
         $storeFilePath = trim($path, '/') . '/.password';
         $remoteFilePath = trim($root . '/' . trim($storeFilePath, '/'), '/'); // 远程保存地址
-        $upload = new UploadController();
-        $response = $upload->upload($remoteFilePath, $password);
+        $od = new OneDriveController();
+        $response = $od->upload($remoteFilePath, $password);
         $response ? Tool::showMessage('操作成功，请牢记密码！') : Tool::showMessage('加密失败！', false);
         Artisan::call('cache:clear');
         return redirect()->back();
@@ -162,8 +163,8 @@ class ManageController extends Controller
         $root = trim(Tool::config('root'), '/');
         $storeFilePath = $root . '/' . trim($path, '/') . '/' . $name . '.md';
         $remoteFilePath = trim($storeFilePath, '/');
-        $upload = new UploadController();
-        $response = $upload->upload($remoteFilePath, $content);
+        $od = new OneDriveController();
+        $response = $od->upload($remoteFilePath, $content);
         $response ? Tool::showMessage('添加成功！') : Tool::showMessage('添加失败！', false);
         Artisan::call('cache:clear');
         return redirect()->route('home', Tool::handleUrl($path));

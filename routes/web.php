@@ -50,3 +50,8 @@ Route::any('/admin/file/edit/{id}', 'ManageController@updateFile')->name('file.u
 Route::post('/admin/folder/create', 'ManageController@createFolder')->name('folder.create');
 // 搜索
 Route::any('/search', 'IndexController@search')->name('search')->middleware('checkAuth');
+
+Route::get('t', function () {
+    $od = new \App\Http\Controllers\OneDriveController();
+    dd($od->getDrive());
+});
