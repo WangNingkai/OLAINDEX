@@ -7,7 +7,6 @@ use App\Helpers\Tool;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Response;
-use Illuminate\Support\Facades\Cache;
 
 /**
  * OneDrive Graph
@@ -22,18 +21,11 @@ class OneDriveController extends Controller
     public $access_token;
 
     /**
-     * 缓存超时时间 建议10分钟以下，否则会导致资源失效
-     * @var int|mixed|string
-     */
-    public $expires = 10;
-
-    /**
      * OneDriveController constructor.
      */
     public function __construct()
     {
         $this->access_token = Tool::config('access_token');
-        $this->expires = Tool::config('expires', 10);
     }
 
     /**

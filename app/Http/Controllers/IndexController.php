@@ -80,16 +80,12 @@ class IndexController extends Controller
     {
         $graphPath = urldecode(Tool::convertPath($request->getPathInfo()));
         $origin_path = urldecode(Tool::convertPath($request->getPathInfo(), false));
-//        $response = $this->od->listChildrenByPath($graphPath);
-//        $response['value'] = $this->od->getNextLinkList($response, $response['value']);
-//        $origin_items = $this->od->formatArray($response);
         $origin_items = Cache::remember('one:' . $graphPath, $this->expires, function () use ($graphPath) {
             $response = $this->od->listChildrenByPath($graphPath);
             $response['value'] = $this->od->getNextLinkList($response, $response['value']);
             return $this->od->formatArray($response);
         });
         $hasImage = Tool::hasImages($origin_items);
-//        dd($origin_items);
         // 处理加密目录
         if (!empty($origin_items['.password'])) {
             $pass_id = $origin_items['.password']['id'];
