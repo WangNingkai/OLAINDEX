@@ -7,6 +7,7 @@ use App\Helpers\Tool;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * OneDrive Graph
@@ -21,12 +22,18 @@ class OneDriveController extends Controller
     public $access_token;
 
     /**
+     * 缓存超时时间 建议10分钟以下，否则会导致资源失效
+     * @var int|mixed|string
+     */
+    public $expires = 10;
+
+    /**
      * OneDriveController constructor.
      */
     public function __construct()
     {
-        $access_token = Tool::config('access_token');;
-        $this->access_token = $access_token;
+        $this->access_token = Tool::config('access_token');
+        $this->expires = Tool::config('expires', 10);
     }
 
     /**
@@ -39,6 +46,7 @@ class OneDriveController extends Controller
      */
     public function request($method, $param, $stream = true)
     {
+
         if (is_array($param)) {
             @list($endpoint, $requestBody, $requestHeaders, $timeout) = $param;
             $requestBody = $requestBody ?? '';
@@ -75,10 +83,10 @@ class OneDriveController extends Controller
                     'track_redirects' => true
                 ]
             ]);
+            return $response;
         } catch (ClientException $e) {
-            $response = json_encode(['code' => $e->getCode(), 'msg' => $e->getMessage()]);
+            abort($e->getCode(), $e->getMessage());
         }
-        return $response;
     }
 
     /**
@@ -157,12 +165,7 @@ class OneDriveController extends Controller
     {
         $endpoint = "/me/drive/items/{$itemId}/content";
         $response = $this->request('get', $endpoint, false);
-        if (is_a($response, 'GuzzleHttp\Psr7\Response')) {
-            return $response->getHeaderLine('X-Guzzle-Redirect-History');
-        } else {
-            $response = json_decode($response, true);
-            abort($response['code'], $response['msg']);
-        }
+        return $response->getHeaderLine('X-Guzzle-Redirect-History');
     }
 
     /**
@@ -174,12 +177,7 @@ class OneDriveController extends Controller
     {
         $endpoint = "/me/drive/root:/{$path}:/content";
         $response = $this->request('get', $endpoint, false);
-        if (is_a($response, 'GuzzleHttp\Psr7\Response')) {
-            return $response->getHeaderLine('X-Guzzle-Redirect-History');
-        } else {
-            $response = json_decode($response, true);
-            abort($response['code'], $response['msg']);
-        }
+        return $response->getHeaderLine('X-Guzzle-Redirect-History');
     }
 
     /**
@@ -214,12 +212,7 @@ class OneDriveController extends Controller
             ],
         ]);
         $response = $this->request('post', [$endpoint, $body], false);
-        if (is_a($response, 'GuzzleHttp\Psr7\Response')) {
-            return $response->getHeaderLine('X-Guzzle-Redirect-History');
-        } else {
-            $response = json_decode($response, true);
-            abort($response['code'], $response['msg']);
-        }
+        return $response->getHeaderLine('X-Guzzle-Redirect-History');
     }
 
     /**
@@ -497,8 +490,8 @@ class OneDriveController extends Controller
             return '/';
         }
         $path = $item['parentReference']['path'];
-        if (starts_with($path,'/drive/root:')) {
-            $path = str_after($path,'/drive/root:');
+        if (starts_with($path, '/drive/root:')) {
+            $path = str_after($path, '/drive/root:');
         }
         // 兼容根目录
         if ($path == '') {
@@ -534,22 +527,18 @@ class OneDriveController extends Controller
      */
     public function toArray($response)
     {
-        return $response = json_decode($response->getBody()->getContents(), true);
+        $response = json_decode($response->getBody()->getContents(), true);
+        return $response;
     }
 
     /**
      * 处理响应
-     * @param $response
+     * @param $response Response
      * @return mixed
      */
     public function handleResponse($response)
     {
-        if (!is_a($response, 'GuzzleHttp\Psr7\Response')) {
-            $response = json_decode($response, true);
-            abort($response['code'], $response['msg']);
-        } else {
-            return $this->toArray($response);
-        }
+        return $this->toArray($response);
     }
 
 
