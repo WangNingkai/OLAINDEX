@@ -140,12 +140,12 @@
                             @if(isset($item['folder']))
                                 <a href="{{ route('home',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                    title="{{ $item['name'] }}">
-                                    <i class="fa fa-folder"></i> {{ \App\Helpers\Tool::subStr($item['name'],0,20) }}
+                                    <i class="fa fa-folder"></i> {{ str_limit($item['name'],20) }}
                                 </a>
                             @else
                                 <a href="{{ route('show',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                    title="{{ $item['name'] }}">
-                                    <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i> {{ \App\Helpers\Tool::subStr($item['name'],0,20) }}
+                                    <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i> {{ str_limit($item['name'],20) }}
                                 </a>
                             @endif
                         </div>

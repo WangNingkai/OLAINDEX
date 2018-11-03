@@ -83,23 +83,25 @@ class IndexController extends Controller
         $response = $this->od->listChildrenByPath($graphPath);
         $response['value'] = $this->od->getNextLinkList($response, $response['value']);
         $origin_items = $this->od->formatArray($response);
-//        dd($origin_items);
-        $hasImage = Tool::hasImage($origin_items);
+        $hasImage = Tool::hasImages($origin_items);
+        // 处理加密目录
         if (!empty($origin_items['.password'])) {
             $pass_id = $origin_items['.password']['id'];
             $pass_url = $origin_items['.password']['@microsoft.graph.downloadUrl'];
-            if (Session::has('password:' . $origin_path)) {
-                $data = Session::get('password:' . $origin_path);
+            $key = 'password:' . $origin_path;
+            if (Session::has($key)) {
+                $data = Session::get($key);
                 $expires = $data['expires'];
                 $password = Tool::getFileContent($pass_url);
                 if ($password != decrypt($data['password']) || time() > $expires) {
-                    Session::forget('password:' . $origin_path);
+                    Session::forget($key);
                     Tool::showMessage('密码已过期', false);
                     return view('password', compact('origin_path', 'pass_id'));
                 }
             } else return view('password', compact('origin_path', 'pass_id'));
         }
-        Tool::filterForbidFolder($origin_items);
+        // 过滤目录&处理内容
+        Tool::hasForbidFolder($origin_items);
         $head = array_key_exists('HEAD.md', $origin_items) ? Tool::markdown2Html(Tool::getFileContent($origin_items['HEAD.md']['@microsoft.graph.downloadUrl'])) : '';
         $readme = array_key_exists('README.md', $origin_items) ? Tool::markdown2Html(Tool::getFileContent($origin_items['README.md']['@microsoft.graph.downloadUrl'])) : '';
         $path_array = $origin_path ? explode('/', $origin_path) : [];
@@ -211,12 +213,13 @@ class IndexController extends Controller
         } else {
             $items = [];
         }
+
         $items = Tool::paginate($items, 20);
         return view('search', compact('items'));
     }
 
     /**
-     * 校验目录密码
+     * 处理加密目录
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */

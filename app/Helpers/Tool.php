@@ -2,10 +2,8 @@
 
 namespace App\Helpers;
 
-use App\Http\Controllers\GraphRequestController;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Psr7\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
@@ -38,12 +36,44 @@ class Tool
     }
 
     /**
-     * 获取包屑导航栏路径
+     * markdown转html
+     *
+     * @param string $markdown
+     * @return array
+     */
+    public static function markdown2Html($markdown)
+    {
+        $parser = new \Parsedown();
+        $html = $parser->text($markdown);
+        $html = str_replace('<code class="', '<code class="lang-', $html);
+        return $html;
+    }
+
+    /**
+     * 数组分页
+     * @param $items
+     * @param $perPage
+     * @return LengthAwarePaginator
+     */
+    public static function paginate($items, $perPage)
+    {
+        $pageStart = request()->get('page', 1);
+        // Start displaying items from this number;
+        $offSet = ($pageStart * $perPage) - $perPage;
+
+        // Get only the items you need using array_slice
+        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
+
+        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage, Paginator::resolveCurrentPage(), ['path' => Paginator::resolveCurrentPath()]);
+    }
+
+    /**
+     * 获取包屑导航url
      * @param $key
      * @param $pathArr
      * @return string
      */
-    public static function getUrl($key, $pathArr)
+    public static function getBreadcrumbUrl($key, $pathArr)
     {
         $pathArr = array_slice($pathArr, 0, $key);
         $url = '';
@@ -54,7 +84,7 @@ class Tool
     }
 
     /**
-     * 获取上一级 Url
+     * 获取父级url
      * @param $pathArr
      * @return string
      */
@@ -72,7 +102,7 @@ class Tool
     }
 
     /**
-     * 处理utl
+     * 处理url
      * @param $path
      * @return string
      */
@@ -144,75 +174,6 @@ class Tool
         } else {
             return false;
         }
-    }
-
-    /**
-     * 字符串截取，支持中文和其他编码
-     *
-     * @param string $str 需要转换的字符串
-     * @param integer $start 开始位置
-     * @param string $length 截取长度
-     * @param boolean $suffix 截断显示字符
-     * @param string $charset 编码格式
-     * @return string
-     */
-    public static function subStr($str, $start, $length, $suffix = true, $charset = "utf-8")
-    {
-        $slice = mb_substr($str, $start, $length, $charset);
-        $omit = mb_strlen($str) >= $length ? '...' : '';
-        return $suffix ? $slice . $omit : $slice;
-    }
-
-    /**
-     * markdown 转 html
-     *
-     * @param string $markdown
-     * @return array
-     */
-    public static function markdown2Html($markdown)
-    {
-        preg_match_all('/&lt;iframe.*iframe&gt;/', $markdown, $iframe);
-        // 如果有 i_frame 则先替换为临时字符串
-        if (!empty($iframe[0])) {
-            $tmp = [];
-            // 组合临时字符串
-            foreach ($iframe[0] as $k => $v) {
-                $tmp[] = '【iframe' . $k . '】';
-            }
-            // 替换临时字符串
-            $markdown = str_replace($iframe[0], $tmp, $markdown);
-            // 转义 i_frame
-            $replace = array_map(function ($v) {
-                return htmlspecialchars_decode($v);
-            }, $iframe[0]);
-        }
-        // markdown转html
-        $parser = new \Parsedown();
-        $html = $parser->text($markdown);
-        $html = str_replace('<code class="', '<code class="lang-', $html);
-        // 将临时字符串替换为 i_frame
-        if (!empty($iframe[0])) {
-            $html = str_replace($tmp, $replace, $html);
-        }
-        return $html;
-    }
-
-    /**
-     * 数组分页
-     * @param $items
-     * @param $perPage
-     * @return LengthAwarePaginator
-     */
-    public static function paginate($items, $perPage)
-    {
-        $pageStart = request()->get('page', 1);
-        // Start displaying items from this number;
-        $offSet = ($pageStart * $perPage) - $perPage;
-
-        // Get only the items you need using array_slice
-        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
-
-        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage, Paginator::resolveCurrentPage(), ['path' => Paginator::resolveCurrentPath()]);
     }
 
     /**
@@ -301,7 +262,7 @@ class Tool
      * @param $items
      * @return bool
      */
-    public static function hasImage($items)
+    public static function hasImages($items)
     {
         $hasImage = false;
         foreach ($items as $item) {
@@ -321,14 +282,34 @@ class Tool
      */
     public static function getFileContent($url)
     {
-        try {
-            $client = new Client();
-            $response = $client->request('get', $url);
-            $response = $response->getBody()->getContents();
-        } catch (ClientException $e) {
-            $response = response()->json(['code' => $e->getCode(), 'msg' => $e->getMessage()]);
+        return self::getFileContentByUrl($url);
+    }
+
+    /**
+     * url获取远程文件内容
+     * @param $url
+     * @param bool $cache
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public static function getFileContentByUrl($url, $cache = true)
+    {
+        if ($cache) {
+            return Cache::remember('one:' . $url, self::config('expires'), function () use ($url) {
+                try {
+                    $client = new Client();
+                    $response = $client->request('get', $url);
+                    $response = $response->getBody()->getContents();
+                } catch (ClientException $e) {
+                    $response = response()->json(['code' => $e->getCode(), 'msg' => $e->getMessage()]);
+                }
+                return $response ?? null;
+            });
+        } else {
+            return self::getFileContent($url);
         }
-        return $response ?? null;
+
+
     }
 
 
@@ -339,9 +320,9 @@ class Tool
      */
     public static function filterFolder($items)
     {
-        foreach ($items as $key => $item) {
-            if (isset($item['folder'])) unset($items[$key]);
-        }
+        $items = array_where($items, function ($value, $key) {
+            return !isset($value['folder']);
+        });
         return $items;
     }
 
@@ -354,9 +335,7 @@ class Tool
     public static function filterFiles($items, $itemName)
     {
         if (is_array($itemName)) {
-            foreach ($itemName as $item) {
-                unset($items[$item]);
-            }
+            array_except($items, $itemName);
         } else unset($items[$itemName]);
         return $items;
     }
@@ -365,7 +344,7 @@ class Tool
      * 过滤禁用目录
      * @param $items
      */
-    public static function filterForbidFolder($items)
+    public static function hasForbidFolder($items)
     {
         // .deny目录无法访问
         if (!empty($items['.deny'])) {

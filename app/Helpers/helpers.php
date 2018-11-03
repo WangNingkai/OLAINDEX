@@ -47,3 +47,37 @@ if (!function_exists('refresh_token')) {
         }
     }
 }
+
+if (!function_exists('id2path')) {
+
+    /**
+     * @param $id
+     * @return string
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    function id2path($id)
+    {
+        $od = new \App\Http\Controllers\OneDriveController();
+        $response = $od->getItem($id);
+        $item = $od->formatArray($response, false);
+        if (!array_key_exists('path', $item['parentReference']) && $item['name'] == 'root') {
+            return '/';
+        }
+        $path = $item['parentReference']['path'];
+        if (starts_with($path, '/drive/root:')) {
+            $path = str_after($path, '/drive/root:');
+        }
+        // 兼容根目录
+        if ($path == '') {
+            $pathArr = [];
+        } else {
+            $pathArr = explode('/', $path);
+            if (trim(Tool::config('root'), '/') != '') {
+                $pathArr = array_slice($pathArr, 2);
+            }
+        }
+        array_push($pathArr, $item['name']);
+        return trim(implode('/', $pathArr), '/');
+
+    }
+}

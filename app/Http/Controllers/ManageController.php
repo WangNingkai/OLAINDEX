@@ -146,7 +146,12 @@ class ManageController extends Controller
      */
     public function lockFolder(Request $request)
     {
-        $path = decrypt($request->get('path'));
+        try {
+            $path = decrypt($request->get('path'));
+        } catch (DecryptException $e) {
+            Tool::showMessage($e->getMessage(), false);
+            return view('message');
+        }
         $password = $request->get('password', '12345678');
         $root = trim(Tool::config('root'), '/');
         $storeFilePath = trim($path, '/') . '/.password';
@@ -167,7 +172,12 @@ class ManageController extends Controller
     {
         if (!$request->isMethod('post')) return view('admin.add');
         $name = $request->get('name');
-        $path = decrypt($request->get('path'));
+        try {
+            $path = decrypt($request->get('path'));
+        } catch (DecryptException $e) {
+            Tool::showMessage($e->getMessage(), false);
+            return view('message');
+        }
         $content = $request->get('content');
         $root = trim(Tool::config('root'), '/');
         $storeFilePath = $root . '/' . trim($path, '/') . '/' . $name . '.md';
@@ -208,7 +218,12 @@ class ManageController extends Controller
      */
     public function createFolder(Request $request)
     {
-        $path = decrypt($request->get('path'));
+        try {
+            $path = decrypt($request->get('path'));
+        } catch (DecryptException $e) {
+            Tool::showMessage($e->getMessage(), false);
+            return view('message');
+        }
         $name = $request->get('name');
         $graphPath = Tool::convertPath($path);
         $response = $this->od->mkdirByPath($name,$graphPath);

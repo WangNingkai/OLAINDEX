@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Constants;
 use App\Helpers\Tool;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -49,8 +50,8 @@ class OneDriveController extends Controller
             $headers = [];
             $timeout = 5;
         }
-        $baseUrl = 'https://graph.microsoft.com/';
-        $apiVersion = 'v1.0';
+        $baseUrl = Constants::REST_ENDPOINT;
+        $apiVersion = Constants::API_VERSION;
         if (stripos($endpoint, "http") === 0) {
             $requestUrl = $endpoint;
         } else {
@@ -416,6 +417,7 @@ class OneDriveController extends Controller
     }
 
     /**
+     * 大文件上传创建session
      * @param $path
      * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -434,6 +436,7 @@ class OneDriveController extends Controller
     }
 
     /**
+     * 分片上传
      * @param $url
      * @param $file
      * @param $offset
@@ -457,6 +460,7 @@ class OneDriveController extends Controller
     }
 
     /**
+     * 分片上传状态
      * @param $url
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -468,6 +472,7 @@ class OneDriveController extends Controller
     }
 
     /**
+     * 删除分片上传任务
      * @param $url
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -479,6 +484,7 @@ class OneDriveController extends Controller
     }
 
     /**
+     * id转path
      * @param $itemId
      * @return string
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -491,15 +497,24 @@ class OneDriveController extends Controller
             return '/';
         }
         $path = $item['parentReference']['path'];
-        $key = mb_strpos($path, ':');
-        $path = mb_substr($path, $key + 1);
-        $pathArr = explode('/', $path);
-        unset($pathArr[0]);
+        if (starts_with($path,'/drive/root:')) {
+            $path = str_after($path,'/drive/root:');
+        }
+        // 兼容根目录
+        if ($path == '') {
+            $pathArr = [];
+        } else {
+            $pathArr = explode('/', $path);
+            if (trim(Tool::config('root'), '/') != '') {
+                $pathArr = array_slice($pathArr, 1);
+            }
+        }
         array_push($pathArr, $item['name']);
         return trim(implode('/', $pathArr), '/');
     }
 
     /**
+     * path转id
      * @param $path
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException

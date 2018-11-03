@@ -32,7 +32,7 @@
                             <div class="col">
                                 <a href="{{ route('show',\App\Helpers\Tool::handleUrl(id2path($item['id']))) }}"
                                    title="{{ $item['name'] }}">
-                                    <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i> {{ \App\Helpers\Tool::subStr($item['name'],0,20) }}
+                                    <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i> {{ str_limit($item['name'],20) }}
                                 </a>
                             </div>
                             <div class="col d-none d-md-block d-md-none">

@@ -7,6 +7,9 @@ class Constants
 
     const LATEST_VERSION = 'v3.0';
 
+    const API_VERSION = 'v1.0';
+    const REST_ENDPOINT = 'https://graph.microsoft.com/';
+
     const EXT = [
         'acx' => 'application/internet-property-stream',
         'ai' => 'application/postscript',
