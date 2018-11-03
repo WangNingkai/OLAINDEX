@@ -64,7 +64,7 @@ class OauthController extends Controller
             // 获取 accessToken & refreshToken
             try {
                 $accessToken = $this->provider->getAccessToken('authorization_code', [
-                    'code' => $_GET['code']
+                    'code' => $request->get('code')
                 ]);
                 $access_token = $accessToken->getToken();
                 $refresh_token = $accessToken->getRefreshToken();
