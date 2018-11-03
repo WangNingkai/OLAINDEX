@@ -308,8 +308,6 @@ class Tool
         } else {
             return self::getFileContent($url);
         }
-
-
     }
 
 

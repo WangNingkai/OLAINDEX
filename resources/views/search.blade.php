@@ -30,7 +30,7 @@
                     <li class="list-group-item list-group-item-action">
                         <div class="row">
                             <div class="col">
-                                <a href="{{ route('show',\App\Helpers\Tool::handleUrl(id2path($item['id']))) }}"
+                                <a href="{{ route('show',\App\Helpers\Tool::handleUrl($item['path'])) }}"
                                    title="{{ $item['name'] }}">
                                     <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i> {{ str_limit($item['name'],20) }}
                                 </a>
@@ -44,12 +44,12 @@
                             </div>
                             <div class="col d-none d-md-block d-md-none">
                                 <span class="pull-right">
-                                    <a href="{{ route('download',\App\Helpers\Tool::handleUrl(id2path($item['id']))) }}"><i
+                                    <a href="{{ route('download',\App\Helpers\Tool::handleUrl($item['path'])) }}"><i
                                             class="fa fa-download"
                                             title="下载"></i></a>&nbsp;&nbsp;
                                     <a href="javascript:void(0)"
-                                       data-clipboard-text="{{ route('download',\App\Helpers\Tool::handleUrl(id2path($item['id']))) }}"
-                                       data-clipboard-text="{{ route('download',\App\Helpers\Tool::handleUrl(id2path($item['id']))) }}"
+                                       data-clipboard-text="{{ route('download',\App\Helpers\Tool::handleUrl($item['path'])) }}"
+                                       data-clipboard-text="{{ route('download',\App\Helpers\Tool::handleUrl($item['path'])) }}"
                                        class="clipboard"
                                        title="已复制" data-toggle="tooltip"
                                        data-placement="right"><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;

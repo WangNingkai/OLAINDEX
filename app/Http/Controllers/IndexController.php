@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 
 /**
@@ -79,10 +80,16 @@ class IndexController extends Controller
     {
         $graphPath = urldecode(Tool::convertPath($request->getPathInfo()));
         $origin_path = urldecode(Tool::convertPath($request->getPathInfo(), false));
-        $response = $this->od->listChildrenByPath($graphPath);
-        $response['value'] = $this->od->getNextLinkList($response, $response['value']);
-        $origin_items = $this->od->formatArray($response);
+//        $response = $this->od->listChildrenByPath($graphPath);
+//        $response['value'] = $this->od->getNextLinkList($response, $response['value']);
+//        $origin_items = $this->od->formatArray($response);
+        $origin_items = Cache::remember('one:' . $graphPath, $this->expires, function () use ($graphPath) {
+            $response = $this->od->listChildrenByPath($graphPath);
+            $response['value'] = $this->od->getNextLinkList($response, $response['value']);
+            return $this->od->formatArray($response);
+        });
         $hasImage = Tool::hasImages($origin_items);
+//        dd($origin_items);
         // 处理加密目录
         if (!empty($origin_items['.password'])) {
             $pass_id = $origin_items['.password']['id'];
@@ -117,11 +124,13 @@ class IndexController extends Controller
      */
     public function show(Request $request)
     {
-        $graphPath = urldecode(Tool::convertPath($request->getPathInfo(),true,true));
+        $graphPath = urldecode(Tool::convertPath($request->getPathInfo(), true, true));
         $origin_path = urldecode(Tool::convertPath($request->getPathInfo(), false));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
-        $response = $this->od->getItemByPath($graphPath);
-        $file = $this->od->formatArray($response,false);
+        $file = Cache::remember('one:' . $graphPath, $this->expires, function () use ($graphPath) {
+            $response = $this->od->getItemByPath($graphPath);
+            return $this->od->formatArray($response, false);
+        });
         if (isset($file['folder'])) abort(403);
         $file['download'] = $file['@microsoft.graph.downloadUrl'];
         $patterns = $this->show;
@@ -159,13 +168,14 @@ class IndexController extends Controller
     /**
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function download(Request $request)
     {
-        $graphPath = urldecode(Tool::convertPath($request->getPathInfo(),true,true));
-        $response = $this->od->getItemByPath($graphPath);
-        $file = $this->od->formatArray($response,false);
+        $graphPath = urldecode(Tool::convertPath($request->getPathInfo(), true, true));
+        $file = Cache::remember('one:' . $graphPath, $this->expires, function () use ($graphPath) {
+            $response = $this->od->getItemByPath($graphPath);
+            return $this->od->formatArray($response, false);
+        });
         $url = $file['@microsoft.graph.downloadUrl'];
         return redirect()->away($url);
     }
@@ -185,13 +195,14 @@ class IndexController extends Controller
     /**
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function view(Request $request)
     {
-        $graphPath = urldecode(Tool::convertPath($request->getPathInfo(),true,true));
-        $response = $this->od->getItemByPath($graphPath);
-        $file = $this->od->formatArray($response,false);
+        $graphPath = urldecode(Tool::convertPath($request->getPathInfo(), true, true));
+        $file = Cache::remember('one:' . $graphPath, $this->expires, function () use ($graphPath) {
+            $response = $this->od->getItemByPath($graphPath);
+            return $this->od->formatArray($response, false);
+        });
         $download = $file['@microsoft.graph.downloadUrl'];
         return redirect()->away($download);
     }
@@ -205,15 +216,22 @@ class IndexController extends Controller
     {
         $keywords = $request->get('keywords');
         if ($keywords) {
-            $response = $this->od->search($this->root,$keywords);
+            $response = $this->od->search($this->root, $keywords);
             $response['value'] = $this->od->getNextLinkList($response, $response['value']);
             $origin_items = $this->od->formatArray($response);
             $items = Tool::filterFolder($origin_items); // 过滤结果中的文件夹
         } else {
             $items = [];
         }
-
-        $items = Tool::paginate($items, 20);
+        $list = [];
+        foreach ($items as $item) {
+            $path = $this->od->itemIdToPath($item['parentReference']['id']) . '/' . $item['name'];
+            if (starts_with($path, $this->root)) {
+                $path = str_after($path, $this->root);
+            }
+            $list[$item['name']] = array_add($item, 'path', $path);
+        }
+        $items = Tool::paginate($list, 20);
         return view('search', compact('items'));
     }
 
