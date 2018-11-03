@@ -14,9 +14,27 @@ use Illuminate\Support\Facades\Session;
 class IndexController extends Controller
 {
     /**
-     * @var FetchController
+     * @var OneDriveController
      */
-    public $fetch;
+    public $od;
+
+    /**
+     * 缓存超时时间 建议10分钟以下，否则会导致资源失效
+     * @var int|mixed|string
+     */
+    public $expires = 10;
+
+    /**
+     * 根目录
+     * @var mixed|string
+     */
+    public $root = '/';
+
+    /**
+     * 展示文件数组
+     * @var array
+     */
+    public $show = [];
 
     /**
      * IndexController constructor.
@@ -25,8 +43,20 @@ class IndexController extends Controller
     {
         $this->middleware('checkToken');
         $this->middleware('handleIllegalFile');
-        $fetch = new FetchController();
-        $this->fetch = $fetch;
+        $od = new OneDriveController();
+        $this->od = $od;
+
+        $this->expires = Tool::config('expires', 10);
+        $this->root = Tool::config('root', '/');
+        $this->show = [
+            'stream' => explode(' ', Tool::config('stream')),
+            'image' => explode(' ', Tool::config('image')),
+            'video' => explode(' ', Tool::config('video')),
+            'dash' => explode(' ', Tool::config('dash')),
+            'audio' => explode(' ', Tool::config('audio')),
+            'code' => explode(' ', Tool::config('code')),
+            'doc' => explode(' ', Tool::config('doc')),
+        ];
     }
 
     /**
@@ -48,21 +78,20 @@ class IndexController extends Controller
      */
     public function list(Request $request)
     {
-        $graphPath = urldecode($this->fetch->convertPath($request->getPathInfo()));
-        $origin_path = urldecode($this->fetch->convertPath($request->getPathInfo(), false));
-        $query = 'children';
-        $endpoint = '/me/drive/root' . $graphPath . $query;
-        $response = $this->fetch->requestGraph($endpoint);
-        $response['value'] = $this->fetch->getNextLinkList($response, $response['value']);
-        $origin_items = $this->fetch->formatArray($response);
-        $hasImage = $this->fetch->hasImage($origin_items);
+        $graphPath = urldecode(Tool::convertPath($request->getPathInfo()));
+        $origin_path = urldecode(Tool::convertPath($request->getPathInfo(), false));
+        $response = $this->od->listChildrenByPath($graphPath);
+        $response['value'] = $this->od->getNextLinkList($response, $response['value']);
+        $origin_items = $this->od->formatArray($response);
+//        dd($origin_items);
+        $hasImage = Tool::hasImage($origin_items);
         if (!empty($origin_items['.password'])) {
             $pass_id = $origin_items['.password']['id'];
             $pass_url = $origin_items['.password']['@microsoft.graph.downloadUrl'];
             if (Session::has('password:' . $origin_path)) {
                 $data = Session::get('password:' . $origin_path);
                 $expires = $data['expires'];
-                $password = $this->fetch->getContent($pass_url);
+                $password = Tool::getFileContent($pass_url);
                 if ($password != decrypt($data['password']) || time() > $expires) {
                     Session::forget('password:' . $origin_path);
                     Tool::showMessage('密码已过期', false);
@@ -70,11 +99,11 @@ class IndexController extends Controller
                 }
             } else return view('password', compact('origin_path', 'pass_id'));
         }
-        $this->fetch->filterForbidFolder($origin_items);
-        $head = Tool::markdown2Html($this->fetch->getContentByName('HEAD.md', $origin_items));
-        $readme = Tool::markdown2Html($this->fetch->getContentByName('README.md', $origin_items));
+        Tool::filterForbidFolder($origin_items);
+        $head = array_key_exists('HEAD.md', $origin_items) ? Tool::markdown2Html(Tool::getFileContent($origin_items['HEAD.md']['@microsoft.graph.downloadUrl'])) : '';
+        $readme = array_key_exists('README.md', $origin_items) ? Tool::markdown2Html(Tool::getFileContent($origin_items['README.md']['@microsoft.graph.downloadUrl'])) : '';
         $path_array = $origin_path ? explode('/', $origin_path) : [];
-        if (!session()->has('LogInfo')) $origin_items = $this->fetch->filterFiles($origin_items, ['README.md', 'HEAD.md', '.password', '.deny']);
+        if (!session()->has('LogInfo')) $origin_items = Tool::filterFiles($origin_items, ['README.md', 'HEAD.md', '.password', '.deny']);
         $items = Tool::paginate($origin_items, 20);
         return view('one', compact('items', 'origin_items', 'origin_path', 'path_array', 'head', 'readme', 'hasImage'));
     }
@@ -87,12 +116,14 @@ class IndexController extends Controller
      */
     public function show(Request $request)
     {
-        $origin_path = urldecode($this->fetch->convertPath($request->getPathInfo(), false));
+        $graphPath = urldecode(Tool::convertPath($request->getPathInfo(),true,true));
+        $origin_path = urldecode(Tool::convertPath($request->getPathInfo(), false));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
-        $file = $this->fetch->getFile($request);
+        $response = $this->od->getItemByPath($graphPath);
+        $file = $this->od->formatArray($response,false);
         if (isset($file['folder'])) abort(403);
         $file['download'] = $file['@microsoft.graph.downloadUrl'];
-        $patterns = $this->fetch->show;
+        $patterns = $this->show;
         foreach ($patterns as $key => $suffix) {
             if (in_array($file['ext'], $suffix)) {
                 $view = 'show.' . $key;
@@ -100,10 +131,10 @@ class IndexController extends Controller
                     if ($file['size'] > 5 * 1024 * 1024) {
                         Tool::showMessage('文件过大，请下载查看', false);
                         return redirect()->back();
-                    } else $file['content'] = $this->fetch->requestHttp('get', $file['@microsoft.graph.downloadUrl']);
+                    } else $file['content'] = Tool::getFileContent($file['@microsoft.graph.downloadUrl']);
                 }
                 if (in_array($key, ['image', 'dash', 'video'])) {
-                    $file['thumb'] = $this->fetch->getThumbUrl($file['id'], 'large', false);
+                    $file['thumb'] = $this->od->thumbnails($file['id'], 'large');
                 }
                 if ($key == 'dash') {
                     if (strpos($file['@microsoft.graph.downloadUrl'], "sharepoint.com") == false) return redirect()->away($file['download']);
@@ -131,9 +162,11 @@ class IndexController extends Controller
      */
     public function download(Request $request)
     {
-        $file = $this->fetch->getFile($request, true);
-        $download = $file['@microsoft.graph.downloadUrl'];
-        return redirect()->away($download);
+        $graphPath = urldecode(Tool::convertPath($request->getPathInfo(),true,true));
+        $response = $this->od->getItemByPath($graphPath);
+        $file = $this->od->formatArray($response,false);
+        $url = $file['@microsoft.graph.downloadUrl'];
+        return redirect()->away($url);
     }
 
     /**
@@ -144,7 +177,7 @@ class IndexController extends Controller
      */
     public function thumb($id, $size)
     {
-        $url = $this->fetch->getThumbUrl($id, $size, false);
+        $url = $this->od->thumbnails($id, $size);
         return redirect()->away($url);
     }
 
@@ -155,7 +188,9 @@ class IndexController extends Controller
      */
     public function view(Request $request)
     {
-        $file = $this->fetch->getFile($request, false);
+        $graphPath = urldecode(Tool::convertPath($request->getPathInfo(),true,true));
+        $response = $this->od->getItemByPath($graphPath);
+        $file = $this->od->formatArray($response,false);
         $download = $file['@microsoft.graph.downloadUrl'];
         return redirect()->away($download);
     }
@@ -169,15 +204,10 @@ class IndexController extends Controller
     {
         $keywords = $request->get('keywords');
         if ($keywords) {
-            $query = "search(q='{$keywords}')";
-            if ($this->fetch->root == '/')
-                $endpoint = '/me/drive/root/' . $query;
-            else
-                $endpoint = '/me/drive/root:/' . trim($this->fetch->root, '/') . ':/' . $query;
-            $response = $this->fetch->requestGraph($endpoint, true);
-            $response['value'] = $this->fetch->getNextLinkList($response, $response['value']);
-            $origin_items = $this->fetch->formatArray($response);
-            $items = $this->fetch->filterFolder($origin_items); // 过滤结果中的文件夹
+            $response = $this->od->search($this->root,$keywords);
+            $response['value'] = $this->od->getNextLinkList($response, $response['value']);
+            $origin_items = $this->od->formatArray($response);
+            $items = Tool::filterFolder($origin_items); // 过滤结果中的文件夹
         } else {
             $items = [];
         }
@@ -197,10 +227,10 @@ class IndexController extends Controller
         $pass_id = decrypt(request()->get('pass_id'));
         $data = [
             'password' => encrypt($password),
-            'expires' => time() + $this->fetch->expires * 60, // 目录密码过期时间
+            'expires' => time() + $this->expires * 60, // 目录密码过期时间
         ];
         Session::put('password:' . $origin_path, $data);
-        $directory_password = $this->fetch->getContentById($pass_id);
+        $directory_password = Tool::getFileContent($this->od->download($pass_id));
         if ($password == $directory_password)
             return redirect()->route('home', Tool::handleUrl($origin_path));
         else {

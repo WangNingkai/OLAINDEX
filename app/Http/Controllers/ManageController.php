@@ -15,12 +15,20 @@ use Illuminate\Support\Facades\Artisan;
 class ManageController extends Controller
 {
     /**
+     * @var OneDriveController
+     */
+    public $od;
+
+    /**
      * GraphController constructor.
      */
     public function __construct()
     {
         $this->middleware('checkAuth')->except(['uploadImage', 'deleteItem']);
         $this->middleware('checkToken');
+        $od = new OneDriveController();
+        $this->od = $od;
+
     }
 
     /**
@@ -57,8 +65,7 @@ class ManageController extends Controller
             $filePath = trim($image_hosting_path . '/' . date('Y') . '/' . date('m') . '/' . date('d') . '/' . str_random(8) . '/' . $file->getClientOriginalName(), '/');
             $storeFilePath = $root . '/' . $filePath; // 远程图片保存地址
             $remoteFilePath = trim($storeFilePath, '/');
-            $od = new OneDriveController();
-            $response = $od->upload($remoteFilePath, $content);
+            $response = $this->od->uploadByPath($remoteFilePath, $content);
             $sign = $response['id'] . '.' . encrypt($response['eTag']);
             $fileIdentifier = encrypt($sign);
             $data = [
@@ -113,8 +120,7 @@ class ManageController extends Controller
             $root = trim(Tool::config('root'), '/');
             $storeFilePath = trim($target_directory, '/') . '/' . $file->getClientOriginalName(); // 远程保存地址
             $remoteFilePath = $root . '/' . $storeFilePath;
-            $od = new OneDriveController();
-            $response = $od->upload($remoteFilePath, $content);
+            $response = $this->od->uploadByPath($remoteFilePath, $content);
             $data = [
                 'code' => 200,
                 'data' => [
@@ -145,8 +151,7 @@ class ManageController extends Controller
         $root = trim(Tool::config('root'), '/');
         $storeFilePath = trim($path, '/') . '/.password';
         $remoteFilePath = trim($root . '/' . trim($storeFilePath, '/'), '/'); // 远程保存地址
-        $od = new OneDriveController();
-        $response = $od->upload($remoteFilePath, $password);
+        $response = $this->od->uploadByPath($remoteFilePath, $password);
         $response ? Tool::showMessage('操作成功，请牢记密码！') : Tool::showMessage('加密失败！', false);
         Artisan::call('cache:clear');
         return redirect()->back();
@@ -167,8 +172,7 @@ class ManageController extends Controller
         $root = trim(Tool::config('root'), '/');
         $storeFilePath = $root . '/' . trim($path, '/') . '/' . $name . '.md';
         $remoteFilePath = trim($storeFilePath, '/');
-        $od = new OneDriveController();
-        $response = $od->upload($remoteFilePath, $content);
+        $response = $this->od->uploadByPath($remoteFilePath, $content);
         $response ? Tool::showMessage('添加成功！') : Tool::showMessage('添加失败！', false);
         Artisan::call('cache:clear');
         return redirect()->route('home', Tool::handleUrl($path));
@@ -184,19 +188,13 @@ class ManageController extends Controller
      */
     public function updateFile(Request $request, $id)
     {
-
         if (!$request->isMethod('post')) {
-            $fetch = new FetchController();
-            $file = $fetch->getFileById($id);
-            $file['content'] = $fetch->getContentById($id);
+            $file = $this->od->getItem($id);
+            $file['content'] = Tool::getFileContent($file['@microsoft.graph.downloadUrl']);
             return view('admin.edit', compact('file'));
         }
         $content = $request->get('content');
-        $stream = \GuzzleHttp\Psr7\stream_for($content);
-        $endpoint = "/me/drive/items/{$id}/content";
-        $requestBody = $stream;
-        $graph = new RequestController();
-        $response = $graph->requestGraph('put', [$endpoint, $requestBody, []], true);
+        $response = $this->od->upload($id,$content);
         $response ? Tool::showMessage('修改成功！') : Tool::showMessage('修改失败！', false);
         Artisan::call('cache:clear');
         return redirect()->back();
@@ -212,19 +210,8 @@ class ManageController extends Controller
     {
         $path = decrypt($request->get('path'));
         $name = $request->get('name');
-        $fetch = new FetchController();
-        $graphPath = $fetch->convertPath($path);
-        $req = new RequestController();
-        if ($graphPath == '/')
-            $endpoint = "/me/drive/root/children";
-        else {
-            $params = ['/me/drive/root' . $graphPath, '', []];
-            $re = $req->requestGraph('get', $params, true);
-            $itemId = $re['id'];
-            $endpoint = "/me/drive/items/{$itemId}/children";
-        }
-        $requestBody = '{"name":"' . $name . '","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
-        $response = $req->requestGraph('post', [$endpoint, $requestBody, []], true);
+        $graphPath = Tool::convertPath($path);
+        $response = $this->od->mkdirByPath($name,$graphPath);
         $response ? Tool::showMessage('新建目录成功！') : Tool::showMessage('新建目录失败！', false);
         Artisan::call('cache:clear');
         return redirect()->back();
@@ -252,9 +239,7 @@ class ManageController extends Controller
             Tool::showMessage($e->getMessage(), false);
             return view('message');
         }
-        $endpoint = '/me/drive/items/' . $id;
-        $graph = new RequestController();
-        $graph->requestGraph('delete', [$endpoint, '', ['if-match' => $eTag]], true);
+        $this->od->deleteItem($id,$eTag);
         Tool::showMessage('文件已删除');
         Artisan::call('cache:clear');
         return view('message');

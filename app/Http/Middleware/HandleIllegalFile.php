@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Http\Controllers\FetchController;
+use App\Helpers\Tool;
 use Closure;
 
 class HandleIllegalFile
@@ -16,8 +16,7 @@ class HandleIllegalFile
      */
     public function handle($request, Closure $next)
     {
-        $fetch = new FetchController();
-        $origin_path = urldecode($fetch->convertPath($request->getPathInfo(), false));
+        $origin_path = urldecode(Tool::convertPath($request->getPathInfo(), false));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
         $fileName = array_pop($path_array);
         $illegalFile = ['README.md', 'HEAD.md', '.password', '.deny'];

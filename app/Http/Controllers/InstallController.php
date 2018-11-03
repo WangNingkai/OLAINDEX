@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Cache;
 
 /**
  * 初始化安装操作
- * Class InitController
+ * Class InstallController
  * @package App\Http\Controllers
  */
-class InitController extends Controller
+class InstallController extends Controller
 {
     /**
      * 首次安装

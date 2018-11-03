@@ -2,6 +2,10 @@
 
 namespace App\Helpers;
 
+use App\Http\Controllers\GraphRequestController;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
@@ -253,6 +257,123 @@ class Tool
             return json_decode($config, true);
         });
         return $key ? (array_key_exists($key, $config) ? ($config[$key] ?: $default) : $default) : $config;
+    }
+
+    /**
+     * 解析路径
+     * @param $path
+     * @param bool $isQuery
+     * @param bool $isFile
+     * @return string
+     */
+    public static function convertPath($path, $isQuery = true, $isFile = false)
+    {
+
+        $origin_path = trim($path, '/');
+        $path_array = explode('/', $origin_path);
+        $base = ['home', 'view', 'show', 'download'];
+        if (in_array($path_array[0], $base)) {
+            unset($path_array[0]);
+            $query_path = implode('/', $path_array);
+        } else {
+            $query_path = $origin_path;
+        }
+        if (!$isQuery) return $query_path;
+        if ($query_path) {
+            if (self::config('root') == '/') {
+                $request_path = ':/' . $query_path . ':/';
+            } else
+                $request_path = ':/' . trim(self::config('root'), '/') . '/' . $query_path . ':/';
+        } else {
+            if (self::config('root') == '' || self::config('root') == '/')
+                $request_path = '/';
+            else
+                $request_path = ':/' . trim(self::config('root'), '/') . ':/';
+        }
+        if ($isFile) {
+            return rtrim($request_path, ':/');
+        }
+        return $request_path;
+    }
+
+    /**
+     * 判断列表是否含有图片
+     * @param $items
+     * @return bool
+     */
+    public static function hasImage($items)
+    {
+        $hasImage = false;
+        foreach ($items as $item) {
+            if (isset($item['image'])) {
+                $hasImage = true;
+                break;
+            }
+        }
+        return $hasImage;
+    }
+
+    /**
+     * 获取远程文件内容
+     * @param $url
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public static function getFileContent($url)
+    {
+        try {
+            $client = new Client();
+            $response = $client->request('get', $url);
+            $response = $response->getBody()->getContents();
+        } catch (ClientException $e) {
+            $response = response()->json(['code' => $e->getCode(), 'msg' => $e->getMessage()]);
+        }
+        return $response ?? null;
+    }
+
+
+    /**
+     * 过滤文件夹
+     * @param $items
+     * @return mixed
+     */
+    public static function filterFolder($items)
+    {
+        foreach ($items as $key => $item) {
+            if (isset($item['folder'])) unset($items[$key]);
+        }
+        return $items;
+    }
+
+    /**
+     * 过滤指定文件
+     * @param $items
+     * @param $itemName
+     * @return mixed
+     */
+    public static function filterFiles($items, $itemName)
+    {
+        if (is_array($itemName)) {
+            foreach ($itemName as $item) {
+                unset($items[$item]);
+            }
+        } else unset($items[$itemName]);
+        return $items;
+    }
+
+    /**
+     * 过滤禁用目录
+     * @param $items
+     */
+    public static function filterForbidFolder($items)
+    {
+        // .deny目录无法访问
+        if (!empty($items['.deny'])) {
+            if (!Session::has('LogInfo')) {
+                self::showMessage('目录访问受限，仅管理员可以访问！', false);
+                abort(403);
+            }
+        }
     }
 
 }
