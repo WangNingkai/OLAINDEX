@@ -157,6 +157,7 @@ class OneDriveController extends Controller
     {
         $endpoint = "/me/drive/items/{$itemId}/content";
         $response = $this->request('get', $endpoint, false);
+        dd($response);
         return $response->getHeaderLine('X-Guzzle-Redirect-History');
     }
 
@@ -204,19 +205,7 @@ class OneDriveController extends Controller
             ],
         ]);
         $response = $this->request('post', [$endpoint, $body], false);
-        return $response->getHeaderLine('X-Guzzle-Redirect-History');
-    }
-
-    /**
-     * 获取操作进度
-     * @param $url
-     * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function getMonitorStatus($url)
-    {
-        $response = $this->request('patch', $url);
-        return $this->handleResponse($response);
+        return $response->getHeaderLine('Location');
     }
 
     /**
@@ -227,15 +216,17 @@ class OneDriveController extends Controller
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function move($itemId, $parentItemId, $itemName)
+    public function move($itemId, $parentItemId, $itemName = '')
     {
         $endpoint = "/me/drive/items/{$itemId}";
-        $body = json_encode([
+        $content = [
             'parentReference' => [
                 'id' => $parentItemId
-            ],
-            'name' => $itemName
-        ]);
+            ]
+        ];
+        if ($itemName)
+            $content = array_add($content, 'name', $itemName);
+        $body = json_encode($content);
         $response = $this->request('patch', [$endpoint, $body]);
         return $this->handleResponse($response);
     }
@@ -332,8 +323,51 @@ class OneDriveController extends Controller
         $endpoint = "/me/drive/items/{$itemId}/createLink";
         $body = '{"type": "view","scope": "anonymous"}';
         $response = $this->request('post', [$endpoint, $body]);
-        return $this->handleResponse($response);
+        return $this->handleResponse($response)['link']['webUrl'];
 
+    }
+
+    /**
+     * 删除分享链接
+     * @param $itemId
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function deleteShareLink($itemId)
+    {
+        $permissions = $this->listPermission($itemId);
+        $permission = array_first($permissions, function ($value) {
+            return $value['roles'][0] == 'read';
+        });
+        $permissionId = array_get($permission,'id');
+        return $this->deletePermission($itemId,$permissionId);
+    }
+
+    /**
+     * 列举文件权限
+     * @param $itemId
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function listPermission($itemId)
+    {
+        $endpoint = "/me/drive/items/{$itemId}/permissions";
+        $response = $this->request('get', $endpoint);
+        return $this->handleResponse($response)['value'];
+    }
+
+    /**
+     * 删除指定权限
+     * @param $itemId
+     * @param $permissionId
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function deletePermission($itemId,$permissionId)
+    {
+        $endpoint = "/me/drive/items/{$itemId}/permissions/{$permissionId}";
+        $response = $this->request('delete', $endpoint);
+        return $this->handleResponse($response);
     }
 
     /**

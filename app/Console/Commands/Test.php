@@ -2,11 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Helpers\Tool;
 use App\Http\Controllers\OneDriveController;
-use App\Http\Controllers\GraphRequestController;
 use Illuminate\Console\Command;
-use Microsoft\Graph\Model\DriveItem;
 
 class Test extends Command
 {
@@ -37,5 +34,8 @@ class Test extends Command
 
     public function handle()
     {
+        if (!refresh_token()){
+            echo 'refresh token error';
+        }
     }
 }
