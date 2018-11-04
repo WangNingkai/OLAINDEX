@@ -254,4 +254,62 @@ class ManageController extends Controller
         Artisan::call('cache:clear');
         return view('message');
     }
+
+    /**
+     * 复制
+     * @param $sourcePath
+     * @param $targetPath
+     * @return string
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function copyItem($sourcePath, $targetPath)
+    {
+        $itemId = $this->od->pathToItemId($sourcePath);
+        $parentItemId = $this->od->pathToItemId($targetPath);
+        $response = $this->od->copy($itemId, $parentItemId);
+        Artisan::call('cache:clear');
+        return $response; // 返回复制进度
+    }
+
+    /**
+     * 移动
+     * @param $sourcePath
+     * @param $targetPath
+     * @param string $itemName
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function moveItem($sourcePath, $targetPath, $itemName = '')
+    {
+        $itemId = $this->od->pathToItemId($sourcePath);
+        $parentItemId = $this->od->pathToItemId($targetPath);
+        $response = $this->od->move($itemId, $parentItemId, $itemName);
+        Artisan::call('cache:clear');
+        return $response;
+    }
+
+    /**
+     * 创建分享链接
+     * @param $itemPath
+     * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function createShareLink($itemPath)
+    {
+        $itemId = $this->od->pathToItemId($itemPath);
+        $response = $this->od->createShareLink($itemId);
+        return $response; // 返回链接
+    }
+    /**
+     * 创建分享链接
+     * @param $itemPath
+     * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function deleteShareLink($itemPath)
+    {
+        $itemId = $this->od->pathToItemId($itemPath);
+        $this->od->deleteShareLink($itemId);
+        return [];
+    }
 }
