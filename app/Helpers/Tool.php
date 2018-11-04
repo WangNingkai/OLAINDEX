@@ -111,7 +111,7 @@ class Tool
         $url = [];
         foreach (explode('/', $path) as $key => $value) {
             if (empty(!$value)) {
-                $url[] = urlencode($value);
+                $url[] = rawurlencode($value);
             }
         }
         return @implode('/', $url);
@@ -229,7 +229,6 @@ class Tool
      */
     public static function convertPath($path, $isQuery = true, $isFile = false)
     {
-
         $origin_path = trim($path, '/');
         $path_array = explode('/', $origin_path);
         $base = ['home', 'view', 'show', 'download'];
@@ -238,7 +237,7 @@ class Tool
             $query_path = implode('/', $path_array);
         } else $query_path = $origin_path;
         if (!$isQuery) return $query_path;
-        $root = trim(self::config('root'), '/');
+        $root = trim(self::handleUrl(self::config('root')), '/');
         if ($query_path)
             $request_path = empty($root) ? ":/{$query_path}:/" : ":/{$root}/{$query_path}:/";
         else

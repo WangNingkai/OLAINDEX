@@ -78,8 +78,8 @@ class IndexController extends Controller
      */
     public function list(Request $request)
     {
-        $graphPath = urldecode(Tool::convertPath($request->getPathInfo()));
-        $origin_path = urldecode(Tool::convertPath($request->getPathInfo(), false));
+        $graphPath = Tool::convertPath($request->getPathInfo());
+        $origin_path = rawurldecode(Tool::convertPath($request->getPathInfo(), false));
         $origin_items = Cache::remember('one:' . $graphPath, $this->expires, function () use ($graphPath) {
             $response = $this->od->listChildrenByPath($graphPath);
             $response['value'] = $this->od->getNextLinkList($response, $response['value']);
@@ -123,7 +123,7 @@ class IndexController extends Controller
      */
     public function show(Request $request)
     {
-        $graphPath = urldecode(Tool::convertPath($request->getPathInfo(), true, true));
+        $graphPath = Tool::convertPath($request->getPathInfo(), true, true);
         $origin_path = urldecode(Tool::convertPath($request->getPathInfo(), false));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
         $file = Cache::remember('one:' . $graphPath, $this->expires, function () use ($graphPath) {
@@ -170,7 +170,7 @@ class IndexController extends Controller
      */
     public function download(Request $request)
     {
-        $graphPath = urldecode(Tool::convertPath($request->getPathInfo(), true, true));
+        $graphPath = Tool::convertPath($request->getPathInfo(), true, true);
         $file = Cache::remember('one:' . $graphPath, $this->expires, function () use ($graphPath) {
             $response = $this->od->getItemByPath($graphPath);
             return $this->od->formatArray($response, false);
@@ -197,7 +197,7 @@ class IndexController extends Controller
      */
     public function view(Request $request)
     {
-        $graphPath = urldecode(Tool::convertPath($request->getPathInfo(), true, true));
+        $graphPath = Tool::convertPath($request->getPathInfo(), true, true);
         $file = Cache::remember('one:' . $graphPath, $this->expires, function () use ($graphPath) {
             $response = $this->od->getItemByPath($graphPath);
             return $this->od->formatArray($response, false);

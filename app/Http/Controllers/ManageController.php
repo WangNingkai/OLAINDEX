@@ -60,10 +60,9 @@ class ManageController extends Controller
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
             $content = fopen($path, 'r');
-            $image_hosting_path = trim(Tool::config('image_hosting_path'), '/');
+            $image_hosting_path = trim(Tool::handleUrl(Tool::config('image_hosting_path')), '/');
             $filePath = trim($image_hosting_path . '/' . date('Y') . '/' . date('m') . '/' . date('d') . '/' . str_random(8) . '/' . $file->getClientOriginalName(), '/');
-            $storeFilePath = Tool::convertPath($filePath); // 远程图片保存地址
-            $remoteFilePath = trim($storeFilePath, '/');
+            $remoteFilePath = Tool::convertPath($filePath); // 远程图片保存地址
             $response = $this->od->uploadByPath($remoteFilePath, $content);
             $sign = $response['id'] . '.' . encrypt($response['eTag']);
             $fileIdentifier = encrypt($sign);
@@ -116,9 +115,8 @@ class ManageController extends Controller
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
             $content = fopen($path, 'r');
-            $root = trim(Tool::config('root'), '/');
-            $storeFilePath = trim($target_directory, '/') . '/' . $file->getClientOriginalName(); // 远程保存地址
-            $remoteFilePath = $root . '/' . $storeFilePath;
+            $storeFilePath = trim(Tool::handleUrl($target_directory), '/') . '/' . $file->getClientOriginalName(); // 远程保存地址
+            $remoteFilePath = Tool::convertPath($storeFilePath); // 远程文件保存地址
             $response = $this->od->uploadByPath($remoteFilePath, $content);
             $data = [
                 'code' => 200,
@@ -152,9 +150,8 @@ class ManageController extends Controller
             return view('message');
         }
         $password = $request->get('password', '12345678');
-        $root = trim(Tool::config('root'), '/');
         $storeFilePath = trim($path, '/') . '/.password';
-        $remoteFilePath = trim($root . '/' . trim($storeFilePath, '/'), '/'); // 远程保存地址
+        $remoteFilePath = Tool::convertPath($storeFilePath); // 远程password保存地址
         $response = $this->od->uploadByPath($remoteFilePath, $password);
         $response ? Tool::showMessage('操作成功，请牢记密码！') : Tool::showMessage('加密失败！', false);
         Artisan::call('cache:clear');
@@ -178,9 +175,8 @@ class ManageController extends Controller
             return view('message');
         }
         $content = $request->get('content');
-        $root = trim(Tool::config('root'), '/');
-        $storeFilePath = $root . '/' . trim($path, '/') . '/' . $name . '.md';
-        $remoteFilePath = trim($storeFilePath, '/');
+        $storeFilePath = trim($path, '/') . '/' . $name . '.md';
+        $remoteFilePath = Tool::convertPath($storeFilePath); // 远程md保存地址
         $response = $this->od->uploadByPath($remoteFilePath, $content);
         $response ? Tool::showMessage('添加成功！') : Tool::showMessage('添加失败！', false);
         Artisan::call('cache:clear');
@@ -203,7 +199,7 @@ class ManageController extends Controller
             return view('admin.edit', compact('file'));
         }
         $content = $request->get('content');
-        $response = $this->od->upload($id,$content);
+        $response = $this->od->upload($id, $content);
         $response ? Tool::showMessage('修改成功！') : Tool::showMessage('修改失败！', false);
         Artisan::call('cache:clear');
         return redirect()->back();
@@ -225,7 +221,7 @@ class ManageController extends Controller
         }
         $name = $request->get('name');
         $graphPath = Tool::convertPath($path);
-        $response = $this->od->mkdirByPath($name,$graphPath);
+        $response = $this->od->mkdirByPath($name, $graphPath);
         $response ? Tool::showMessage('新建目录成功！') : Tool::showMessage('新建目录失败！', false);
         Artisan::call('cache:clear');
         return redirect()->back();
@@ -253,7 +249,7 @@ class ManageController extends Controller
             Tool::showMessage($e->getMessage(), false);
             return view('message');
         }
-        $this->od->deleteItem($id,$eTag);
+        $this->od->deleteItem($id, $eTag);
         Tool::showMessage('文件已删除');
         Artisan::call('cache:clear');
         return view('message');

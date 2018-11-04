@@ -170,7 +170,6 @@ class OneDriveController extends Controller
     {
         $endpoint = "/me/drive/items/{$itemId}/content";
         $response = $this->request('get', $endpoint, false);
-        dd($response);
         return $response->getHeaderLine('X-Guzzle-Redirect-History');
     }
 
@@ -421,9 +420,8 @@ class OneDriveController extends Controller
      */
     public function uploadByPath($path, $content)
     {
-        $path = trim($path, '/');
         $stream = \GuzzleHttp\Psr7\stream_for($content);
-        $endpoint = "/me/drive/root:/{$path}:/content";
+        $endpoint = "/me/drive/root{$path}content";
         $body = $stream;
         $response = $this->request('put', [$endpoint, $body]);
         return $this->handleResponse($response);
