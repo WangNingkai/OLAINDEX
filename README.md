@@ -46,6 +46,8 @@
 
 **帮助文档 ：**[Wiki](https://github.com/WangNingkai/OLAINDEX/wiki)
 
+**QQ讨论交流群：946906682**
+
 ### 更新升级
 
 - **2018.10.10 / v1.0**
