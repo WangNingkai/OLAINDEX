@@ -86,6 +86,9 @@ class IndexController extends Controller
             return $this->od->formatArray($response);
         });
         $hasImage = Tool::hasImages($origin_items);
+        $origin_items = array_where($origin_items, function ($value) {
+            return !array_has($value,'package.type');
+        });
         // 处理加密目录
         if (!empty($origin_items['.password'])) {
             $pass_id = $origin_items['.password']['id'];

@@ -122,7 +122,7 @@ class Tool
      * @param $ext
      * @return string
      */
-    public static function getExtIcon($ext)
+    public static function getExtIcon($ext = '')
     {
         $patterns = Constants::ICON;
         $icon = '';
@@ -236,25 +236,33 @@ class Tool
         if (in_array($path_array[0], $base)) {
             unset($path_array[0]);
             $query_path = implode('/', $path_array);
-        } else {
-            $query_path = $origin_path;
-        }
+        } else $query_path = $origin_path;
         if (!$isQuery) return $query_path;
-        if ($query_path) {
-            if (self::config('root') == '/') {
-                $request_path = ':/' . $query_path . ':/';
-            } else
-                $request_path = ':/' . trim(self::config('root'), '/') . '/' . $query_path . ':/';
-        } else {
-            if (self::config('root') == '' || self::config('root') == '/')
-                $request_path = '/';
-            else
-                $request_path = ':/' . trim(self::config('root'), '/') . ':/';
-        }
-        if ($isFile) {
+        $root = trim(self::config('root'), '/');
+        if ($query_path)
+            $request_path = empty($root) ? ":/{$query_path}:/" : ":/{$root}/{$query_path}:/";
+        else
+            $request_path = empty($root) ? '/' : ":/{$root}:/";
+        if ($isFile)
             return rtrim($request_path, ':/');
-        }
         return $request_path;
+    }
+
+    public static function getAbsolutePath($path)
+    {
+        $path = str_replace(['/', '\\', '//'], '/', $path);
+
+        $parts = array_filter(explode('/', $path), 'strlen');
+        $absolutes = [];
+        foreach ($parts as $part) {
+            if ('.' == $part) continue;
+            if ('..' == $part) {
+                array_pop($absolutes);
+            } else {
+                $absolutes[] = $part;
+            }
+        }
+        return str_replace('//', '/', '/' . implode('/', $absolutes) . '/');
     }
 
     /**
@@ -318,7 +326,7 @@ class Tool
      */
     public static function filterFolder($items)
     {
-        $items = array_where($items, function ($value, $key) {
+        $items = array_where($items, function ($value) {
             return !isset($value['folder']);
         });
         return $items;

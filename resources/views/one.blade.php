@@ -145,7 +145,7 @@
                             @else
                                 <a href="{{ route('show',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                    title="{{ $item['name'] }}">
-                                    <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i> {{ str_limit($item['name'],20) }}
+                                    <i class="fa {{ \App\Helpers\Tool::getExtIcon($item['ext'] ?? '') }}"></i> {{ str_limit($item['name'],20) }}
                                 </a>
                             @endif
                         </div>

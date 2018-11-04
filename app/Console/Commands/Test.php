@@ -37,5 +37,7 @@ class Test extends Command
         if (!refresh_token()){
             echo 'refresh token error';
         }
+        $od = new OneDriveController();
+
     }
 }

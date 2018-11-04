@@ -60,10 +60,9 @@ class ManageController extends Controller
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
             $content = fopen($path, 'r');
-            $root = trim(Tool::config('root'), '/');
             $image_hosting_path = trim(Tool::config('image_hosting_path'), '/');
             $filePath = trim($image_hosting_path . '/' . date('Y') . '/' . date('m') . '/' . date('d') . '/' . str_random(8) . '/' . $file->getClientOriginalName(), '/');
-            $storeFilePath = $root . '/' . $filePath; // 远程图片保存地址
+            $storeFilePath = Tool::convertPath($filePath); // 远程图片保存地址
             $remoteFilePath = trim($storeFilePath, '/');
             $response = $this->od->uploadByPath($remoteFilePath, $content);
             $sign = $response['id'] . '.' . encrypt($response['eTag']);

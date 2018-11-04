@@ -149,6 +149,19 @@ class OneDriveController extends Controller
     }
 
     /**
+     * 获取文件
+     * @param $path
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function getItemByPath($path)
+    {
+        $endpoint = "/me/drive/root{$path}";
+        $response = $this->request('get', $endpoint);
+        return $this->handleResponse($response);
+    }
+
+    /**
      * @param $itemId
      * @return string
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -168,22 +181,9 @@ class OneDriveController extends Controller
      */
     public function downloadByPath($path)
     {
-        $endpoint = "/me/drive/root:/{$path}:/content";
+        $endpoint = "/me/drive/root{$path}/content";
         $response = $this->request('get', $endpoint, false);
         return $response->getHeaderLine('X-Guzzle-Redirect-History');
-    }
-
-    /**
-     * 获取文件
-     * @param $path
-     * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function getItemByPath($path)
-    {
-        $endpoint = "/me/drive/root{$path}";
-        $response = $this->request('get', $endpoint);
-        return $this->handleResponse($response);
     }
 
     /**
@@ -339,8 +339,8 @@ class OneDriveController extends Controller
         $permission = array_first($permissions, function ($value) {
             return $value['roles'][0] == 'read';
         });
-        $permissionId = array_get($permission,'id');
-        return $this->deletePermission($itemId,$permissionId);
+        $permissionId = array_get($permission, 'id');
+        return $this->deletePermission($itemId, $permissionId);
     }
 
     /**
@@ -363,7 +363,7 @@ class OneDriveController extends Controller
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function deletePermission($itemId,$permissionId)
+    public function deletePermission($itemId, $permissionId)
     {
         $endpoint = "/me/drive/items/{$itemId}/permissions/{$permissionId}";
         $response = $this->request('delete', $endpoint);
@@ -407,8 +407,8 @@ class OneDriveController extends Controller
     {
         $stream = \GuzzleHttp\Psr7\stream_for($content);
         $endpoint = "/me/drive/items/{$id}/content";
-        $requestBody = $stream;
-        $response = $this->request('put', [$endpoint, $requestBody]);
+        $body = $stream;
+        $response = $this->request('put', [$endpoint, $body]);
         return $this->handleResponse($response);
     }
 
@@ -424,15 +424,30 @@ class OneDriveController extends Controller
         $path = trim($path, '/');
         $stream = \GuzzleHttp\Psr7\stream_for($content);
         $endpoint = "/me/drive/root:/{$path}:/content";
-        $requestBody = $stream;
-        $response = $this->request('put', [$endpoint, $requestBody]);
+        $body = $stream;
+        $response = $this->request('put', [$endpoint, $body]);
         return $this->handleResponse($response);
     }
 
-    // todo:个人版离线下载
-    public function uploadUrl($path, $url)
+    /**
+     * 个人版离线下载 (实验性)
+     * @param string $remote 带文件名的远程路径
+     * @param string $url 链接
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function uploadUrl($remote, $url)
     {
-
+        $path = Tool::getAbsolutePath(dirname($remote));
+        // $pathId = $this->pathToItemId($path);
+        // $endpoint = "/me/drive/items/{$pathId}/children"; // by id
+        $handledPath = Tool::handleUrl(trim($path, '/'));
+        $graphPath = empty($handledPath) ? '/' : ":/{$handledPath}:/";
+        $endpoint = "/me/drive/root{$graphPath}children";
+        $headers = ['Prefer' => 'respond-async'];
+        $body = '{"@microsoft.graph.sourceUrl":"'.$url.'","name":"'.pathinfo($remote, PATHINFO_BASENAME).'","file":{}}';
+        $response = $this->request('post', [$endpoint, $body, $headers]);
+        return $response->getHeaderLine('Location');
     }
 
     /**
@@ -579,12 +594,12 @@ class OneDriveController extends Controller
         if ($isList) {
             if (array_key_exists('value', $response)) {
                 if (empty($response['value'])) return [];
-                $files = [];
+                $items = [];
                 foreach ($response['value'] as $item) {
                     if (isset($item['file'])) $item['ext'] = strtolower(pathinfo($item['name'], PATHINFO_EXTENSION));
-                    $files[$item['name']] = $item;
+                    $items[$item['name']] = $item;
                 }
-                return $files;
+                return $items;
             } else return [];
         } else {
             // 兼容文件信息
