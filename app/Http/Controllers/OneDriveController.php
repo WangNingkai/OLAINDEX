@@ -582,7 +582,6 @@ class OneDriveController extends Controller
         return $this->toArray($response);
     }
 
-
     /**
      * 文件信息格式化
      * @param $response

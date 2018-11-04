@@ -38,6 +38,5 @@ class Test extends Command
             echo 'refresh token error';
         }
         $od = new OneDriveController();
-
     }
 }
