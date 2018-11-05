@@ -102,7 +102,13 @@ class OneDriveController extends Controller
     {
         $endpoint = $itemId ? "/me/drive/items/{$itemId}/children" : "/me/drive/root/children";
         $response = $this->request('get', $endpoint);
-        return $this->handleResponse($response);
+        if ($response instanceof Response) {
+            $response = json_decode($response->getBody()->getContents(), true);
+            $data = $this->getNextLinkList($response);
+            return response()->json(['code' => 200, 'data' => $data]);
+        } else {
+            return $response;
+        }
     }
 
     /**
@@ -115,23 +121,36 @@ class OneDriveController extends Controller
     {
         $endpoint = $path == '/' ? "/me/drive/root/children" : "/me/drive/root{$path}children";
         $response = $this->request('get', $endpoint);
-        return $this->handleResponse($response);
+        if ($response instanceof Response) {
+            $response = json_decode($response->getBody()->getContents(), true);
+            $data = $this->getNextLinkList($response);
+            return response()->json(['code' => 200, 'data' => $data]);
+        } else {
+            return $response;
+        }
     }
 
     /**
      * @param $list
      * @param array $result
-     * @return array
+     * @return array|false|mixed|\Psr\Http\Message\ResponseInterface|string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getNextLinkList($list, &$result = [])
     {
-        if (isset($data['@odata.nextLink'])) {
+        if (isset($list['@odata.nextLink'])) {
             $endpoint = mb_strstr($list['@odata.nextLink'], '/me');
             $response = $this->request('get', $endpoint);
-            $result = array_merge($response['value'], $this->getNextLinkList($response, $result));
+            if ($response instanceof Response) {
+                $response = json_decode($response->getBody()->getContents(), true);
+                $result = array_merge($response['value'], $this->getNextLinkList($response, $result));
+                return $result;
+            } else {
+                return $response;
+            }
+        } else {
+            return $list;
         }
-        return $result;
     }
 
     /**
@@ -169,7 +188,16 @@ class OneDriveController extends Controller
     {
         $endpoint = "/me/drive/items/{$itemId}/content";
         $response = $this->request('get', $endpoint, false);
-        return $response->getHeaderLine('X-Guzzle-Redirect-History');
+        if ($response instanceof Response) {
+            return response()->json([
+                'code' => 200,
+                'data' => [
+                    'redirect' => $response->getHeaderLine('X-Guzzle-Redirect-History')
+                ]
+            ]);
+        } else {
+            return $response;
+        }
     }
 
     /**
@@ -181,7 +209,16 @@ class OneDriveController extends Controller
     {
         $endpoint = "/me/drive/root{$path}/content";
         $response = $this->request('get', $endpoint, false);
-        return $response->getHeaderLine('X-Guzzle-Redirect-History');
+        if ($response instanceof Response) {
+            return response()->json([
+                'code' => 200,
+                'data' => [
+                    'redirect' => $response->getHeaderLine('X-Guzzle-Redirect-History')
+                ]
+            ]);
+        } else {
+            return $response;
+        }
     }
 
     /**
@@ -203,7 +240,16 @@ class OneDriveController extends Controller
             ],
         ]);
         $response = $this->request('post', [$endpoint, $body], false);
-        return $response->getHeaderLine('Location');
+        if ($response instanceof Response) {
+            return response()->json([
+                'code' => 200,
+                'data' => [
+                    'redirect' => $response->getHeaderLine('Location')
+                ]
+            ]);
+        } else {
+            return $response;
+        }
     }
 
     /**
@@ -293,7 +339,13 @@ class OneDriveController extends Controller
         else
             $endpoint = '/me/drive/root:/' . trim($path, '/') . ':/' . "search(q='{$query}')";
         $response = $this->request('get', $endpoint);
-        return $this->handleResponse($response);
+        if ($response instanceof Response) {
+            $response = json_decode($response->getBody()->getContents(), true);
+            $data = $this->getNextLinkList($response);
+            return response()->json(['code' => 200, 'data' => $data]);
+        } else {
+            return $response;
+        }
     }
 
     /**
@@ -307,7 +359,7 @@ class OneDriveController extends Controller
     {
         $endpoint = "/me/drive/items/{$itemId}/thumbnails/0/{$size}";
         $response = $this->request('get', $endpoint);
-        return $this->handleResponse($response)['url'];
+        return $this->handleResponse($response);
     }
 
     /**
@@ -321,7 +373,7 @@ class OneDriveController extends Controller
         $endpoint = "/me/drive/items/{$itemId}/createLink";
         $body = '{"type": "view","scope": "anonymous"}';
         $response = $this->request('post', [$endpoint, $body]);
-        return $this->handleResponse($response)['link']['webUrl'];
+        return $this->handleResponse($response);
 
     }
 
@@ -334,11 +386,15 @@ class OneDriveController extends Controller
     public function deleteShareLink($itemId)
     {
         $permissions = $this->listPermission($itemId);
-        $permission = array_first($permissions, function ($value) {
-            return $value['roles'][0] == 'read';
-        });
-        $permissionId = array_get($permission, 'id');
-        return $this->deletePermission($itemId, $permissionId);
+        if ($permissions instanceof Response) {
+            $permission = array_first($permissions, function ($value) {
+                return $value['roles'][0] == 'read';
+            });
+            $permissionId = array_get($permission, 'id');
+            return $this->deletePermission($itemId, $permissionId);
+        } else {
+            return $permissions;
+        }
     }
 
     /**
@@ -351,7 +407,7 @@ class OneDriveController extends Controller
     {
         $endpoint = "/me/drive/items/{$itemId}/permissions";
         $response = $this->request('get', $endpoint);
-        return $this->handleResponse($response)['value'];
+        return $this->handleResponse($response);
     }
 
     /**
@@ -447,7 +503,16 @@ class OneDriveController extends Controller
         $headers = ['Prefer' => 'respond-async'];
         $body = '{"@microsoft.graph.sourceUrl":"' . $url . '","name":"' . pathinfo($remote, PATHINFO_BASENAME) . '","file":{}}';
         $response = $this->request('post', [$endpoint, $body, $headers]);
-        return $response->getHeaderLine('Location');
+        if ($response instanceof Response) {
+            return response()->json([
+                'code' => 200,
+                'data' => [
+                    'redirect' => $response->getHeaderLine('Location')
+                ]
+            ]);
+        } else {
+            return $response;
+        }
     }
 
     /**
@@ -526,25 +591,36 @@ class OneDriveController extends Controller
     public function itemIdToPath($itemId)
     {
         $response = $this->getItem($itemId);
-        $item = $this->formatArray($response, false);
-        if (!array_key_exists('path', $item['parentReference']) && $item['name'] == 'root') {
-            return '/';
-        }
-        $path = $item['parentReference']['path'];
-        if (starts_with($path, '/drive/root:')) {
-            $path = str_after($path, '/drive/root:');
-        }
-        // 兼容根目录
-        if ($path == '') {
-            $pathArr = [];
-        } else {
-            $pathArr = explode('/', $path);
-            if (trim(Tool::config('root'), '/') != '') {
-                $pathArr = array_slice($pathArr, 1);
+        if ($response instanceof Response) {
+            // todo: 转换
+            $item = $this->formatArray($response, false);
+            if (!array_key_exists('path', $item['parentReference']) && $item['name'] == 'root') {
+                return '/';
             }
+            $path = $item['parentReference']['path'];
+            if (starts_with($path, '/drive/root:')) {
+                $path = str_after($path, '/drive/root:');
+            }
+            // 兼容根目录
+            if ($path == '') {
+                $pathArr = [];
+            } else {
+                $pathArr = explode('/', $path);
+                if (trim(Tool::config('root'), '/') != '') {
+                    $pathArr = array_slice($pathArr, 1);
+                }
+            }
+            array_push($pathArr, $item['name']);
+            $path = trim(implode('/', $pathArr), '/');
+            return response()->json([
+                'code' => 200,
+                'data' => [
+                    'path' => $path
+                ]]);
+        } else {
+            return $response;
         }
-        array_push($pathArr, $item['name']);
-        return trim(implode('/', $pathArr), '/');
+
     }
 
     /**
@@ -569,7 +645,7 @@ class OneDriveController extends Controller
     public function handleResponse($response)
     {
         if ($response->getStatusCode() == 200) {
-            return response()->json(['code' => 200, 'msg' => 'ok', 'data' => json_decode($response->getBody()->getContents(), true)]);
+            return response()->json(['code' => 200, 'data' => json_decode($response->getBody()->getContents(), true)]);
         } else {
             return $response;
         }

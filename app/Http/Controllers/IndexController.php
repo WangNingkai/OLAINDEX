@@ -81,6 +81,7 @@ class IndexController extends Controller
         $graphPath = Tool::convertPath($request->getPathInfo());
         $origin_path = rawurldecode(Tool::convertPath($request->getPathInfo(), false));
         $origin_items = Cache::remember('one:' . $graphPath, $this->expires, function () use ($graphPath) {
+
             $response = $this->od->listChildrenByPath($graphPath);
             $response['value'] = $this->od->getNextLinkList($response, $response['value']);
             return $this->od->formatArray($response);

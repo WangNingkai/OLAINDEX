@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
@@ -360,9 +361,19 @@ class Tool
         }
     }
 
-    public static function handleResponse($response)
+    /**
+     * @param $response JsonResponse
+     * @param bool $origin
+     * @return array
+     */
+    public static function handleResponse($response, $origin = true)
     {
-
+        $data = json_encode($response->getData());
+        if ($origin) {
+            return json_decode($data, true);
+        } else {
+            return json_decode($data, true)['data'];
+        }
     }
 
 }

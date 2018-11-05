@@ -55,7 +55,7 @@ Route::post('/admin/path2id', 'ManageController@pathToItemId')->name('admin.path
 Route::any('/search', 'IndexController@search')->name('search')->middleware('checkAuth');
 Route::any('/t', function () {
     $od = new \App\Http\Controllers\OneDriveController();
-    return $res = $od->getDrive();
-//    dd($res);
+    $res = $od->getDrive();
+    dd(\App\Helpers\Tool::handleResponse($res, false));
 })->middleware('checkToken');
 
