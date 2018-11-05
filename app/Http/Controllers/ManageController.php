@@ -257,34 +257,34 @@ class ManageController extends Controller
 
     /**
      * 复制文件
-     * @param $sourcePath
-     * @param $targetPath
+     * @param Request $request
      * @return string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function copyItem($sourcePath, $targetPath)
+    public function copyItem(Request $request)
     {
+        $sourcePath = $request->get('source');
+        $targetPath = $request->get('target');
         $itemId = $this->od->pathToItemId($sourcePath);
+        dd($itemId);
         $parentItemId = $this->od->pathToItemId($targetPath);
         $response = $this->od->copy($itemId, $parentItemId);
-        Artisan::call('cache:clear');
         return $response; // 返回复制进度链接
     }
 
     /**
      * 移动文件
-     * @param $sourcePath
-     * @param $targetPath
-     * @param string $itemName
+     * @param Request $request
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function moveItem($sourcePath, $targetPath, $itemName = '')
+    public function moveItem(Request $request)
     {
+        $sourcePath = $request->get('source');
+        $targetPath = $request->get('target');
         $itemId = $this->od->pathToItemId($sourcePath);
         $parentItemId = $this->od->pathToItemId($targetPath);
-        $response = $this->od->move($itemId, $parentItemId, $itemName);
-        Artisan::call('cache:clear');
+        $response = $this->od->move($itemId, $parentItemId);
         return $response;
     }
 
@@ -312,5 +312,11 @@ class ManageController extends Controller
         $itemId = $this->od->pathToItemId($itemPath);
         $this->od->deleteShareLink($itemId);
         return [];
+    }
+
+    public function pathToItemId(Request $request)
+    {
+        $path = $request->get('path');
+        return $this->od->pathToItemId($path);
     }
 }

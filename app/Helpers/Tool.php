@@ -310,7 +310,7 @@ class Tool
                 } catch (ClientException $e) {
                     $response = response()->json(['code' => $e->getCode(), 'msg' => $e->getMessage()]);
                 }
-                return $response ?? null;
+                return $response ?? '';
             });
         } else {
             return self::getFileContent($url);
@@ -358,6 +358,11 @@ class Tool
                 abort(403);
             }
         }
+    }
+
+    public static function handleResponse($response)
+    {
+
     }
 
 }

@@ -18,7 +18,9 @@ if (!function_exists('quota')) {
                 $res = $od->getDrive();
                 $quota = $res['quota'];
                 foreach ($quota as $k => $item) {
-                    $quota[$k] = Tool::convertSize($item);
+                    if (!is_string($item)) {
+                        $quota[$k] = Tool::convertSize($item);
+                    }
                 }
                 return $quota;
             });

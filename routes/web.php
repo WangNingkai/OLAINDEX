@@ -31,7 +31,6 @@ Route::get('/thumb/{id}/size/{size}', 'IndexController@thumb')->name('thumb');
 Route::get('/image', 'ManageController@uploadImage')->name('image')->middleware('checkImage');
 Route::post('/image/upload', 'ManageController@uploadImage')->name('image.upload')->middleware('throttle:10,2', 'checkImage');
 Route::get('/item/delete/{sign}', 'ManageController@deleteItem')->name('delete');
-
 // 管理
 Route::any('/login', 'AdminController@login')->name('login');
 Route::post('/logout', 'AdminController@logout')->name('logout');
@@ -39,7 +38,6 @@ Route::any('/admin', 'AdminController@basic')->name('admin.basic');
 Route::any('/admin/show', 'AdminController@show')->name('admin.show');
 Route::any('/admin/profile', 'AdminController@profile')->name('admin.profile');
 Route::any('/admin/clear', 'AdminController@clear')->name('admin.clear');
-
 // 文件上传
 Route::get('/admin/file', 'ManageController@uploadFile')->name('admin.file');
 Route::post('/admin/file/upload', 'ManageController@uploadFile')->name('admin.file.upload')->middleware('throttle:10,2');
@@ -48,5 +46,16 @@ Route::post('/admin/lock/folder', 'ManageController@lockFolder')->name('lock');
 Route::any('/admin/file/add', 'ManageController@createFile')->name('file.create');
 Route::any('/admin/file/edit/{id}', 'ManageController@updateFile')->name('file.update');
 Route::post('/admin/folder/create', 'ManageController@createFolder')->name('folder.create');
+// 复制移动
+Route::view('/admin/other', 'admin.other')->name('admin.other');
+Route::post('/admin/copy', 'ManageController@copyItem')->name('admin.copy');
+Route::post('/admin/move', 'ManageController@moveItem')->name('admin.move');
+Route::post('/admin/path2id', 'ManageController@pathToItemId')->name('admin.path2id');
 // 搜索
 Route::any('/search', 'IndexController@search')->name('search')->middleware('checkAuth');
+Route::any('/t', function () {
+    $od = new \App\Http\Controllers\OneDriveController();
+    return $res = $od->getDrive();
+//    dd($res);
+})->middleware('checkToken');
+

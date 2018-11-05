@@ -21,7 +21,7 @@
             </div>
         </div>
     </div>
-    <div id="showUrl" style="display: none;">
+    <div id="showUrl" class="invisible">
         <ul id="navTab" class="nav nav-tabs">
             <li class="nav-item active">
                 <a class="nav-link" data-toggle="tab" href="#urlPanel">URL</a>
@@ -80,7 +80,7 @@
                     formData.append('_token', Config._token);
                 });
                 this.on('success', function (file, response) {
-                    $('#showUrl').show();
+                    $('#showUrl').removeClass('invisible');
                     $('#urlCode').append(response.data.url + '\n');
                     $('#htmlCode').append('&lt;img src=\'' + response.data.url + '\' alt=\'' + response.data.filename + '\' title=\'' + response.data.filename + '\' /&gt;' + '\n');
                     $('#bbCode').append('[img]' + response.data.url + '[/img]' + '\n');

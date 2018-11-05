@@ -38,7 +38,6 @@ class OneDriveController extends Controller
      */
     public function request($method, $param, $stream = true)
     {
-
         if (is_array($param)) {
             @list($endpoint, $requestBody, $requestHeaders, $timeout) = $param;
             $requestBody = $requestBody ?? '';
@@ -77,7 +76,7 @@ class OneDriveController extends Controller
             ]);
             return $response;
         } catch (ClientException $e) {
-            abort($e->getCode(), $e->getMessage());
+            return response()->json(['code' => $e->getCode(), 'msg' => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -563,24 +562,17 @@ class OneDriveController extends Controller
     }
 
     /**
-     * 返回body格式化
-     * @param $response Response
-     * @return mixed
-     */
-    public function toArray($response)
-    {
-        $response = json_decode($response->getBody()->getContents(), true);
-        return $response;
-    }
-
-    /**
      * 处理响应
-     * @param $response Response
+     * @param $response Response|\Illuminate\Http\JsonResponse
      * @return mixed
      */
     public function handleResponse($response)
     {
-        return $this->toArray($response);
+        if ($response->getStatusCode() == 200) {
+            return response()->json(['code' => 200, 'msg' => 'ok', 'data' => json_decode($response->getBody()->getContents(), true)]);
+        } else {
+            return $response;
+        }
     }
 
     /**

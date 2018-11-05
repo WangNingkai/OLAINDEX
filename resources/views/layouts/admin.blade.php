@@ -16,7 +16,10 @@
         Config = {
             'routes': {
                 'upload_image': '{{ route('image.upload') }}',
-                'upload_file': '{{ route('admin.file.upload') }}'
+                'upload_file': '{{ route('admin.file.upload') }}',
+                'copy': '{{ route('admin.copy') }}',
+                'move': '{{ route('admin.move') }}',
+                'path2id': '{{ route('admin.path2id') }}'
             },
             '_token': '{{ csrf_token() }}',
         };
@@ -39,15 +42,20 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                       aria-haspopup="true" aria-expanded="false"><i class="fa fa-cogs"></i> 设置</a>
+                       aria-haspopup="true" aria-expanded="false"><i class="fa fa-cog"></i> 设置</a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" href="{{ route('admin.basic') }}">基础设置 </a>
                         <a class="dropdown-item" href="{{ route('admin.show') }}">显示设置 </a>
-                        <a class="dropdown-item" href="{{ route('admin.profile') }}">其他设置 </a>
+                        <a class="dropdown-item" href="{{ route('admin.profile') }}">密码设置 </a>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.file') }}"><i class="fa fa-cloud-upload"></i> 文件上传 </a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                       aria-haspopup="true" aria-expanded="false"><i class="fa fa-cogs"></i> 其它</a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{{ route('admin.file') }}">文件上传 </a>
+                        <a class="dropdown-item" href="{{ route('admin.other') }}">文件操作 </a>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('admin.clear') }}"><i class="fa fa-bolt"></i> 缓存清理 </a>
@@ -63,7 +71,7 @@
                        onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i
                             class="fa fa-sign-out"></i> 退出</a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                          style="display: none;">
+                          class="invisible">
                         @csrf
                     </form>
                 </li>
@@ -81,6 +89,7 @@
     @endif
     <div class="bg-white">
         <p>
+            <span class="text-info">状态: {{ quota('state') }} &nbsp;&nbsp;</span>
             <span class="text-danger">已使用: {{ quota('used') }} &nbsp;&nbsp;</span>
             <span class="text-warning">剩余: {{ quota('remaining') }} &nbsp;&nbsp;</span>
             <span class="text-success">全部: {{ quota('total') }} &nbsp;&nbsp;</span>

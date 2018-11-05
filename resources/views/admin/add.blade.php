@@ -15,7 +15,7 @@
 @section('content')
     <form action="" method="post">
         @csrf
-        <textarea name="content" id="mde" style="display:none;"></textarea>
+        <textarea name="content" id="mde" class="invisible"></textarea>
         <button type="submit" id="submit_btn" class="btn btn-primary">提交</button>
     </form>
 @stop
