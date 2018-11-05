@@ -81,7 +81,6 @@ class IndexController extends Controller
         $graphPath = Tool::convertPath($request->getPathInfo());
         $origin_path = rawurldecode(Tool::convertPath($request->getPathInfo(), false));
         $origin_items = Cache::remember('one:' . $graphPath, $this->expires, function () use ($graphPath) {
-
             $response = $this->od->listChildrenByPath($graphPath);
             $response['value'] = $this->od->getNextLinkList($response, $response['value']);
             return $this->od->formatArray($response);
@@ -250,7 +249,9 @@ class IndexController extends Controller
             'expires' => time() + $this->expires * 60, // 目录密码过期时间
         ];
         Session::put('password:' . $origin_path, $data);
-        $directory_password = Tool::getFileContent($this->od->download($pass_id));
+        $file = $this->od->getItem($pass_id);
+        // todo:密码处理
+        $directory_password = Tool::getFileContent($file['']);
         if ($password == $directory_password)
             return redirect()->route('home', Tool::handleUrl($origin_path));
         else {

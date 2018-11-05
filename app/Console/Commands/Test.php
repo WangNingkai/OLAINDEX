@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Helpers\Tool;
 use App\Http\Controllers\OneDriveController;
 use Illuminate\Console\Command;
 
@@ -38,7 +39,10 @@ class Test extends Command
             echo 'refresh token error';
         }
         $od = new OneDriveController();
-//        $res = $od->getDrive()['quota'];
-        dd(quota());
+//        $res = $od->copy('01FGBPEHQ2EQPJOIGQGZFIHHK62KN5CMGS',"01FGBPEHQFQQPZR6N6RZEKUARUO6TQD7GP");
+//        $res = $od->pathToItemId('/tmp');
+//        $res = Tool::handleResponse($od->listChildrenByPath('/'),true);
+        $res = $od->listChildrenByPath(':/share/Images/my/class1:/');
+        dd($res);
     }
 }

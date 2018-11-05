@@ -56,9 +56,17 @@ Route::any('/search', 'IndexController@search')->name('search')->middleware('che
 Route::any('/t', function () {
     refresh_token();
     $od = new \App\Http\Controllers\OneDriveController();
-    $res = $od->download('01FGBPEHQ2EQPJOIGQGZFIHHK62KN5CMGS');
+    // 01FGBPEHQ2EQPJOIGQGZFIHHK62KN5CMGS
+    $res = $od->listChildrenByPath(':/share/Images/my/class1:/');
+    $res = \App\Helpers\Tool::handleResponse($res);
+    if ($res['code'] == 200) {
+        dd($od->formatArray($res['data']));
+    } else {
+        return $res;
+    }
+
 //    $res = $od->getDrive();
-    dd($res);
+//    dd($res);
 //    dd(\App\Helpers\Tool::handleResponse($res, false));
 })->middleware('checkToken');
 
