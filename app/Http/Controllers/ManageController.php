@@ -256,7 +256,7 @@ class ManageController extends Controller
     }
 
     /**
-     * 复制
+     * 复制文件
      * @param $sourcePath
      * @param $targetPath
      * @return string
@@ -268,11 +268,11 @@ class ManageController extends Controller
         $parentItemId = $this->od->pathToItemId($targetPath);
         $response = $this->od->copy($itemId, $parentItemId);
         Artisan::call('cache:clear');
-        return $response; // 返回复制进度
+        return $response; // 返回复制进度链接
     }
 
     /**
-     * 移动
+     * 移动文件
      * @param $sourcePath
      * @param $targetPath
      * @param string $itemName
@@ -298,10 +298,11 @@ class ManageController extends Controller
     {
         $itemId = $this->od->pathToItemId($itemPath);
         $response = $this->od->createShareLink($itemId);
-        return $response; // 返回链接
+        return $response; // 返回分享链接
     }
+
     /**
-     * 创建分享链接
+     * 删除分享链接
      * @param $itemPath
      * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
      * @throws \GuzzleHttp\Exception\GuzzleException

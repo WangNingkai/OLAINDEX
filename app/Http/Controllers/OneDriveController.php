@@ -436,6 +436,9 @@ class OneDriveController extends Controller
      */
     public function uploadUrl($remote, $url)
     {
+        if ($this->getDrive()['driveType'] == 'business') {
+            abort(400, '企业账号无法使用离线下载');
+        }
         $path = Tool::getAbsolutePath(dirname($remote));
         // $pathId = $this->pathToItemId($path);
         // $endpoint = "/me/drive/items/{$pathId}/children"; // by id
@@ -443,7 +446,7 @@ class OneDriveController extends Controller
         $graphPath = empty($handledPath) ? '/' : ":/{$handledPath}:/";
         $endpoint = "/me/drive/root{$graphPath}children";
         $headers = ['Prefer' => 'respond-async'];
-        $body = '{"@microsoft.graph.sourceUrl":"'.$url.'","name":"'.pathinfo($remote, PATHINFO_BASENAME).'","file":{}}';
+        $body = '{"@microsoft.graph.sourceUrl":"' . $url . '","name":"' . pathinfo($remote, PATHINFO_BASENAME) . '","file":{}}';
         $response = $this->request('post', [$endpoint, $body, $headers]);
         return $response->getHeaderLine('Location');
     }

@@ -38,5 +38,7 @@ class Test extends Command
             echo 'refresh token error';
         }
         $od = new OneDriveController();
+        $res = $od->getDrive()['driveType'];
+        dd($res);
     }
 }
