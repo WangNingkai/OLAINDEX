@@ -7,6 +7,7 @@ use App\Helpers\Tool;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Stream;
 
 /**
  * OneDrive Graph
@@ -74,9 +75,10 @@ class OneDriveController extends Controller
                     'track_redirects' => true
                 ]
             ]);
+            dd($response);
             return $response;
         } catch (ClientException $e) {
-            return response()->json(['code' => $e->getCode(), 'msg' => $e->getMessage()], $e->getCode());
+            return $this->response([], $e->getCode(), $e->getMessage());
         }
     }
 
@@ -105,7 +107,7 @@ class OneDriveController extends Controller
         if ($response instanceof Response) {
             $response = json_decode($response->getBody()->getContents(), true);
             $data = $this->getNextLinkList($response);
-            return response()->json(['code' => 200, 'data' => $data]);
+            return $this->response($data);
         } else {
             return $response;
         }
@@ -124,7 +126,7 @@ class OneDriveController extends Controller
         if ($response instanceof Response) {
             $response = json_decode($response->getBody()->getContents(), true);
             $data = $this->getNextLinkList($response);
-            return response()->json(['code' => 200, 'data' => $data]);
+            return $this->response($data);
         } else {
             return $response;
         }
@@ -188,13 +190,12 @@ class OneDriveController extends Controller
     {
         $endpoint = "/me/drive/items/{$itemId}/content";
         $response = $this->request('get', $endpoint, false);
-        if ($response instanceof Response) {
-            return response()->json([
-                'code' => 200,
-                'data' => [
-                    'redirect' => $response->getHeaderLine('X-Guzzle-Redirect-History')
-                ]
-            ]);
+        dd($response);
+        if ($response instanceof Stream) {
+            $data = [
+                'redirect' => $response->getHeaderLine('X-Guzzle-Redirect-History')
+            ];
+            return $this->response($data);
         } else {
             return $response;
         }
@@ -210,12 +211,10 @@ class OneDriveController extends Controller
         $endpoint = "/me/drive/root{$path}/content";
         $response = $this->request('get', $endpoint, false);
         if ($response instanceof Response) {
-            return response()->json([
-                'code' => 200,
-                'data' => [
-                    'redirect' => $response->getHeaderLine('X-Guzzle-Redirect-History')
-                ]
-            ]);
+            $data = [
+                'redirect' => $response->getHeaderLine('X-Guzzle-Redirect-History')
+            ];
+            return $this->response($data);
         } else {
             return $response;
         }
@@ -241,12 +240,10 @@ class OneDriveController extends Controller
         ]);
         $response = $this->request('post', [$endpoint, $body], false);
         if ($response instanceof Response) {
-            return response()->json([
-                'code' => 200,
-                'data' => [
-                    'redirect' => $response->getHeaderLine('Location')
-                ]
-            ]);
+            $data = [
+                'redirect' => $response->getHeaderLine('Location')
+            ];
+            return $this->response($data);
         } else {
             return $response;
         }
@@ -342,7 +339,7 @@ class OneDriveController extends Controller
         if ($response instanceof Response) {
             $response = json_decode($response->getBody()->getContents(), true);
             $data = $this->getNextLinkList($response);
-            return response()->json(['code' => 200, 'data' => $data]);
+            return response($data);
         } else {
             return $response;
         }
@@ -504,12 +501,10 @@ class OneDriveController extends Controller
         $body = '{"@microsoft.graph.sourceUrl":"' . $url . '","name":"' . pathinfo($remote, PATHINFO_BASENAME) . '","file":{}}';
         $response = $this->request('post', [$endpoint, $body, $headers]);
         if ($response instanceof Response) {
-            return response()->json([
-                'code' => 200,
-                'data' => [
-                    'redirect' => $response->getHeaderLine('Location')
-                ]
-            ]);
+            $data = [
+                'redirect' => $response->getHeaderLine('Location')
+            ];
+            return $this->response($data);
         } else {
             return $response;
         }
@@ -612,11 +607,9 @@ class OneDriveController extends Controller
             }
             array_push($pathArr, $item['name']);
             $path = trim(implode('/', $pathArr), '/');
-            return response()->json([
-                'code' => 200,
-                'data' => [
-                    'path' => $path
-                ]]);
+            return response([
+                'path' => $path
+            ]);
         } else {
             return $response;
         }
@@ -633,8 +626,12 @@ class OneDriveController extends Controller
     {
         $endpoint = $path == '/' ? '/me/drive/root' : '/me/drive/root:/' . trim($path, '/');
         $response = $this->request('get', $endpoint);
-        $item = $this->handleResponse($response);
-        return $item['id'] ?? false;
+        if ($response instanceof Response) {
+            $response = json_decode($response->getBody()->getContents(), true);
+            return $response['id'] ?? '';
+        } else {
+            return $response;
+        }
     }
 
     /**
@@ -645,7 +642,8 @@ class OneDriveController extends Controller
     public function handleResponse($response)
     {
         if ($response->getStatusCode() == 200) {
-            return response()->json(['code' => 200, 'data' => json_decode($response->getBody()->getContents(), true)]);
+            $data = json_decode($response->getBody()->getContents(), true);
+            return $this->response($data);
         } else {
             return $response;
         }
@@ -724,5 +722,21 @@ class OneDriveController extends Controller
         $handler = fopen($file, "rb") ?? die('获取文件内容失败');
         fseek($handler, $offset);
         return fread($handler, $length);
+    }
+
+    /**
+     * 返回
+     * @param $data
+     * @param string $msg
+     * @param int $code
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function response($data, $code = 200, $msg = 'ok')
+    {
+        return response()->json([
+            'code' => $code,
+            'msg' => $msg,
+            'data' => $data
+        ], $code);
     }
 }

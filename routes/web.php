@@ -54,8 +54,11 @@ Route::post('/admin/path2id', 'ManageController@pathToItemId')->name('admin.path
 // 搜索
 Route::any('/search', 'IndexController@search')->name('search')->middleware('checkAuth');
 Route::any('/t', function () {
+    refresh_token();
     $od = new \App\Http\Controllers\OneDriveController();
-    $res = $od->getDrive();
-    dd(\App\Helpers\Tool::handleResponse($res, false));
+    $res = $od->download('01FGBPEHQ2EQPJOIGQGZFIHHK62KN5CMGS');
+//    $res = $od->getDrive();
+    dd($res);
+//    dd(\App\Helpers\Tool::handleResponse($res, false));
 })->middleware('checkToken');
 
