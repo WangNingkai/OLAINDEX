@@ -54,6 +54,8 @@ Route::post('/admin/path2id', 'ManageController@pathToItemId')->name('admin.path
 // 搜索
 Route::any('/search', 'IndexController@search')->name('search')->middleware('checkAuth');
 Route::any('/search/file/{id}', 'IndexController@searchShow')->name('search.show')->middleware('checkAuth');
+
+// 测试路由
 Route::any('/t', function () {
 })->middleware('checkToken');
 
