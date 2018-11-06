@@ -43,19 +43,22 @@
     <script>
         $(function () {
             $("#submit_btn").on("click", function () {
-
                 let action = $("#action").val();
                 let source = $("#source").val();
                 let target = $("#target").val();
-                getItemId(source);
+
+                // 移动
+
+                // 复制
+
+
+                // source_id = getItemId(source);
+                getItemId(target);
                 return;
                 if (action === '' || source === '' || target === '') {
                     swal('提示', '请确保提交内容完整', 'warning');
                     return false;
                 }
-                return;
-
-
                 url = (action === 'copy' ? Config.routes.copy : Config.routes.move);
                 axios.post(url, {
                     source: source,

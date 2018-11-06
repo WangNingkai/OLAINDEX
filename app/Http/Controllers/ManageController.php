@@ -286,7 +286,6 @@ class ManageController extends Controller
     {
         $itemId = $request->get('source');
         $parentItemId = $request->get('target');
-        // todo:
         $response = $this->od->copy($itemId, $parentItemId);
         return $response; // 返回复制进度链接
     }
@@ -301,7 +300,6 @@ class ManageController extends Controller
     {
         $itemId = $request->get('source');
         $parentItemId = $request->get('target');
-        // todo:
         $response = $this->od->move($itemId, $parentItemId);
         return $response;
     }
@@ -315,7 +313,6 @@ class ManageController extends Controller
     public function createShareLink($itemId)
     {
         $response = $this->od->createShareLink($itemId);
-        // todo:
         return $response; // 返回分享链接
     }
 
@@ -327,9 +324,8 @@ class ManageController extends Controller
      */
     public function deleteShareLink($itemId)
     {
-        $this->od->deleteShareLink($itemId);
-        // todo:
-        return [];
+        $response = $this->od->deleteShareLink($itemId);
+        return $response;
     }
 
     /**
