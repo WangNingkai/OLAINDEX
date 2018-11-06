@@ -627,7 +627,7 @@ class OneDriveController extends Controller
      */
     public function pathToItemId($path)
     {
-        $endpoint = $path == '/' ? '/me/drive/root' : '/me/drive/root:/' . trim($path, '/');
+        $endpoint = $path == '/' ? '/me/drive/root' : '/me/drive/root' . $path;
         $response = $this->request('get', $endpoint);
         if ($response instanceof Response) {
             $response = json_decode($response->getBody()->getContents(), true);

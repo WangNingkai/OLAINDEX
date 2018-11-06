@@ -284,11 +284,9 @@ class ManageController extends Controller
      */
     public function copyItem(Request $request)
     {
-        $sourcePath = $request->get('source');
-        $targetPath = $request->get('target');
-        $itemId = $this->od->pathToItemId($sourcePath);
-        dd($itemId);
-        $parentItemId = $this->od->pathToItemId($targetPath);
+        $itemId = $request->get('source');
+        $parentItemId = $request->get('target');
+        // todo:
         $response = $this->od->copy($itemId, $parentItemId);
         return $response; // 返回复制进度链接
     }
@@ -301,43 +299,47 @@ class ManageController extends Controller
      */
     public function moveItem(Request $request)
     {
-        $sourcePath = $request->get('source');
-        $targetPath = $request->get('target');
-        $itemId = $this->od->pathToItemId($sourcePath);
-        $parentItemId = $this->od->pathToItemId($targetPath);
+        $itemId = $request->get('source');
+        $parentItemId = $request->get('target');
+        // todo:
         $response = $this->od->move($itemId, $parentItemId);
         return $response;
     }
 
     /**
      * 创建分享链接
-     * @param $itemPath
+     * @param $itemId
      * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function createShareLink($itemPath)
+    public function createShareLink($itemId)
     {
-        $itemId = $this->od->pathToItemId($itemPath);
         $response = $this->od->createShareLink($itemId);
+        // todo:
         return $response; // 返回分享链接
     }
 
     /**
      * 删除分享链接
-     * @param $itemPath
-     * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
+     * @param $itemId
+     * @return array
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function deleteShareLink($itemPath)
+    public function deleteShareLink($itemId)
     {
-        $itemId = $this->od->pathToItemId($itemPath);
         $this->od->deleteShareLink($itemId);
+        // todo:
         return [];
     }
 
+    /**
+     * @param Request $request
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function pathToItemId(Request $request)
     {
-        $path = $request->get('path');
-        return $this->od->pathToItemId($path);
+        $graphPath = Tool::convertPath($request->get('path'));
+        return $this->od->pathToItemId($graphPath);
     }
 }

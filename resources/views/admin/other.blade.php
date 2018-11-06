@@ -18,7 +18,7 @@
                 </div>
                 <input type="text" class="form-control" name="source" id="source">
             </div>
-            <span class="form-text text-danger">填写完整文件地址（包括文件名）</span>
+            <span class="form-text text-danger">填写完整地址（包括文件名）</span>
         </div>
     </div>
     <div class="form-group">
@@ -30,7 +30,7 @@
                 </div>
                 <input type="text" class="form-control" name="target" id="target">
             </div>
-            <span class="form-text text-danger">移动文件请填写完整文件地址（包括文件名）</span>
+            <span class="form-text text-danger">移动文件请填写完整文件地址（包括文件名）不填默认为根目录</span>
         </div>
     </div>
     <div class="form-group invisible">
@@ -43,15 +43,16 @@
     <script>
         $(function () {
             $("#submit_btn").on("click", function () {
+
                 let action = $("#action").val();
                 let source = $("#source").val();
                 let target = $("#target").val();
-
+                getItemId(source);
+                return;
                 if (action === '' || source === '' || target === '') {
                     swal('提示', '请确保提交内容完整', 'warning');
                     return false;
                 }
-                getItemId(source);
                 return;
 
 
