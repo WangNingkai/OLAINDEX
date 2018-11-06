@@ -136,16 +136,16 @@
             @foreach($items as $item)
                 <li class="list-group-item list-group-item-action">
                     <div class="row">
-                        <div class="col">
+                        <div class="col" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
                             @if(isset($item['folder']))
                                 <a href="{{ route('home',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                    title="{{ $item['name'] }}">
-                                    <i class="fa fa-folder"></i> {{ str_limit($item['name'],20) }}
+                                    <i class="fa fa-folder"></i> {{ $item['name'] }}
                                 </a>
                             @else
                                 <a href="{{ route('show',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                    title="{{ $item['name'] }}">
-                                    <i class="fa {{ \App\Helpers\Tool::getExtIcon($item['ext'] ?? '') }}"></i> {{ str_limit($item['name'],20) }}
+                                    <i class="fa {{ \App\Helpers\Tool::getExtIcon($item['ext'] ?? '') }}"></i> {{ $item['name'] }}
                                 </a>
                             @endif
                         </div>

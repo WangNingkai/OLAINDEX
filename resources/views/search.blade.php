@@ -29,10 +29,10 @@
                 @foreach($items as $item)
                     <li class="list-group-item list-group-item-action">
                         <div class="row">
-                            <div class="col">
+                            <div class="col" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
                                 <a href="{{ route('search.show',$item['id']) }}"
                                    title="{{ $item['name'] }}">
-                                    <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i> {{ str_limit($item['name'],20) }}
+                                    <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i> {{ $item['name'] }}
                                 </a>
                             </div>
                             <div class="col d-none d-md-block d-md-none">
