@@ -53,4 +53,7 @@ Route::post('/admin/move', 'ManageController@moveItem')->name('admin.move');
 Route::post('/admin/path2id', 'ManageController@pathToItemId')->name('admin.path2id');
 // 搜索
 Route::any('/search', 'IndexController@search')->name('search')->middleware('checkAuth');
+Route::any('/search/file/{id}', 'IndexController@searchShow')->name('search.show')->middleware('checkAuth');
+Route::any('/t', function () {
+})->middleware('checkToken');
 

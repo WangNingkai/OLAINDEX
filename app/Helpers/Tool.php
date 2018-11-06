@@ -238,6 +238,7 @@ class Tool
             $query_path = implode('/', $path_array);
         } else $query_path = $origin_path;
         if (!$isQuery) return $query_path;
+        $query_path = Tool::handleUrl(rawurldecode($query_path));
         $root = trim(self::handleUrl(self::config('root')), '/');
         if ($query_path)
             $request_path = empty($root) ? ":/{$query_path}:/" : ":/{$root}/{$query_path}:/";
@@ -248,6 +249,11 @@ class Tool
         return $request_path;
     }
 
+    /**
+     * 绝对路径转换
+     * @param $path
+     * @return mixed
+     */
     public static function getAbsolutePath($path)
     {
         $path = str_replace(['/', '\\', '//'], '/', $path);

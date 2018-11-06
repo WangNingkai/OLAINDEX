@@ -39,7 +39,8 @@ class Test extends Command
             echo 'refresh token error';
         }
         $od = new OneDriveController();
-        $res = $od->request('get', '/me/drive');
+        $res = $od->itemIdToPath('01FGBPEHQ2EQPJOIGQGZFIHHK62KN5CMGS');
+//        $res = $od->request('get', '/me/drive');
         dd($res);
     }
 }

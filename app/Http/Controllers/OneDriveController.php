@@ -318,7 +318,7 @@ class OneDriveController extends Controller
             $response = json_decode($response->getBody()->getContents(), true);
             $data = $this->getNextLinkList($response);
             $res = $this->formatArray($data);
-            return response($res);
+            return $this->response($res);
         } else {
             return $response;
         }
@@ -592,9 +592,11 @@ class OneDriveController extends Controller
         $result = $this->getItem($itemId);
         $response = Tool::handleResponse($result);
         if ($response['code'] == 200) {
-            $item = $this->formatArray($response, false);
+            $item = $response['data'];
             if (!array_key_exists('path', $item['parentReference']) && $item['name'] == 'root') {
-                return '/';
+                return $this->response([
+                    'path' => '/'
+                ]);
             }
             $path = $item['parentReference']['path'];
             if (starts_with($path, '/drive/root:')) {
@@ -611,7 +613,7 @@ class OneDriveController extends Controller
             }
             array_push($pathArr, $item['name']);
             $path = trim(implode('/', $pathArr), '/');
-            return response([
+            return $this->response([
                 'path' => $path
             ]);
         } else {

@@ -255,16 +255,31 @@ class IndexController extends Controller
         } else {
             $items = [];
         }
-        $list = [];
-        foreach ($items as $item) {
-            $path = $this->od->itemIdToPath($item['parentReference']['id']) . '/' . $item['name'];
-            if (starts_with($path, $this->root)) {
-                $path = str_after($path, $this->root);
-            }
-            $list[$item['name']] = array_add($item, 'path', $path);
-        }
-        $items = Tool::paginate($list, 20);
+        $items = Tool::paginate($items, 20);
         return view('search', compact('items'));
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function searchShow($id)
+    {
+        $result = $this->od->itemIdToPath($id);
+        $response = Tool::handleResponse($result);
+        if ($response['code'] == 200) {
+            $originPath = $response['data']['path'];
+            if (trim($this->root, '/') != '') {
+                $path = str_after($originPath, $this->root);
+            } else {
+                $path = $originPath;
+            }
+        } else {
+            Tool::showMessage('获取连接失败', false);
+            $path = '/';
+        }
+        return redirect('/show/' . $path);
     }
 
     /**
