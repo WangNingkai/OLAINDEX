@@ -284,8 +284,8 @@ class ManageController extends Controller
      */
     public function copyItem(Request $request)
     {
-        $itemId = $request->get('source');
-        $parentItemId = $request->get('target');
+        $itemId = $request->get('source_id');
+        $parentItemId = $request->get('target_id');
         $response = $this->od->copy($itemId, $parentItemId);
         return $response; // 返回复制进度链接
     }
@@ -298,8 +298,8 @@ class ManageController extends Controller
      */
     public function moveItem(Request $request)
     {
-        $itemId = $request->get('source');
-        $parentItemId = $request->get('target');
+        $itemId = $request->get('source_id');
+        $parentItemId = $request->get('target_id');
         $response = $this->od->move($itemId, $parentItemId);
         return $response;
     }

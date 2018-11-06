@@ -132,7 +132,7 @@
             @if(!blank($path_array))
                 <li class="list-group-item list-group-item-action"><a
                         href="{{ route('home',\App\Helpers\Tool::handleUrl(\App\Helpers\Tool::getParentUrl($path_array))) }}"><i
-                            class="fa fa-arrow-left"></i> 返回上一层</a></li>
+                            class="fa fa-level-up"></i> 返回上一层</a></li>
             @endif
             @foreach($items as $item)
                 <li class="list-group-item list-group-item-action">
@@ -160,16 +160,11 @@
                         </div>
                         <div class="col">
                             <span class="pull-right">
-                                @if(array_has($item,'folder'))
-                                    <a href="javascript:void(0)"
-                                       data-clipboard-text="{{ route('home',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
-                                       class="clipboard" title="已复制" data-toggle="tooltip"
-                                       data-placement="right"><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;
-                                @else
-                                    @if(array_has($item,'image')))
-                                    <a href="{{ route('view',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
-                                       data-fancybox="image-list"><i
-                                            class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
+                                @if(!array_has($item,'folder'))
+                                    @if(array_has($item,'image'))
+                                        <a href="{{ route('view',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
+                                           data-fancybox="image-list"><i
+                                                class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
                                     @endif
                                     @if(session()->has('LogInfo') && \App\Helpers\Tool::canEdit($item) )
                                         <a href="{{ route('file.update',$item['id']) }}"><i
@@ -178,11 +173,6 @@
                                     <a href="{{ route('download',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"><i
                                             class="fa fa-download"
                                             title="下载"></i></a>&nbsp;&nbsp;
-                                    <a href="javascript:void(0)"
-                                       data-clipboard-text="{{ route('download',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
-                                       class="clipboard"
-                                       title="已复制" data-toggle="tooltip"
-                                       data-placement="right"><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;
                                 @endif
                                 @if (session()->has('LogInfo'))
                                     <a onclick="deleteItem('{{ encrypt($item['id'] . '.' . encrypt($item['eTag'])) }}')"
@@ -256,14 +246,8 @@
                 }).then((result) => {
                     if (result.value) {
                         window.open('/item/delete/' + $sign, '_blank');
-                    } else if (
-                        result.dismiss === swal.DismissReason.cancel
-                    ) {
-                        swal(
-                            '已取消',
-                            '文件安全 :)',
-                            'error'
-                        )
+                    } else if (result.dismiss === swal.DismissReason.cancel) {
+                        swal('已取消', '文件安全 :)', 'error');
                     }
                 })
             }

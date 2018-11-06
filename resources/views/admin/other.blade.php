@@ -5,8 +5,8 @@
         <label for="action">操作：</label>
         <select class="custom-select" id="action" name="action">
             <option value="">请选择操作</option>
-            <option value="copy">复制</option>
             <option value="move">移动</option>
+            <option value="copy">复制</option>
         </select>
     </div>
     <div class="form-group">
@@ -17,6 +17,7 @@
                     <span class="input-group-text">od://</span>
                 </div>
                 <input type="text" class="form-control" name="source" id="source">
+                <input type="hidden" name="source_id" id="source_id">
             </div>
             <span class="form-text text-danger">填写完整地址（包括文件名）</span>
         </div>
@@ -29,8 +30,9 @@
                     <span class="input-group-text">od://</span>
                 </div>
                 <input type="text" class="form-control" name="target" id="target">
+                <input type="hidden" name="target_id" id="target_id">
             </div>
-            <span class="form-text text-danger">移动文件请填写完整文件地址（包括文件名）不填默认为根目录</span>
+            <span class="form-text text-danger">移动文件请填写完整文件地址</span>
         </div>
     </div>
     <div class="form-group invisible">
@@ -46,58 +48,96 @@
                 let action = $("#action").val();
                 let source = $("#source").val();
                 let target = $("#target").val();
-
-                // 移动
-
-                // 复制
-
-
-                // source_id = getItemId(source);
-                getItemId(target);
-                return;
-                if (action === '' || source === '' || target === '') {
+                if (source === target) {
+                    swal('提示', '请确保源地址与目标不一致', 'warning');
+                    return false;
+                }
+                if (action === 'move') {
+                    // 移动
+                    fetchItemId(source, "source_id");
+                    fetchItemId(target, "target_id");
+                    setTimeout(function () {
+                        let source_id = $("#source_id").val();
+                        let target_id = $("#target_id").val();
+                        move(source_id, target_id);
+                    }, 2000);
+                } else if (action === 'copy') {
+                    // 复制
+                    if (source === '' || target === '') {
+                        swal('提示', '源地址与目标地址错误', 'warning');
+                        return false;
+                    }
+                    fetchItemId(source, "source_id");
+                    fetchItemId(target, "target_id");
+                    setTimeout(function () {
+                        let source_id = $("#source_id").val();
+                        let target_id = $("#target_id").val();
+                        copy(source_id, target_id);
+                    }, 2000);
+                } else {
                     swal('提示', '请确保提交内容完整', 'warning');
                     return false;
                 }
-                url = (action === 'copy' ? Config.routes.copy : Config.routes.move);
-                axios.post(url, {
-                    source: source,
-                    target: target,
-                    _token: Config._token
-                })
+            });
+            /*function getStatus(url) {
+                axios.get(url)
                     .then(function (response) {
-                        if (response.status === 200) {
-                            console.log(response);
-                            // url = response.data.data.url;
-                            // setInterval("getStatus(url)", 2000);
-                        }
+                        console.log(response);
                     })
                     .catch(function (error) {
                         console.log(error);
                     });
-            });
+            }*/
         });
 
-        function getStatus(url) {
-            axios.get(url)
-                .then(function (response) {
-                    console.log(response.data);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-        }
-
-        function getItemId(path) {
+        function fetchItemId(path, to) {
             axios.post(Config.routes.path2id, {
                 path: path,
                 _token: Config._token
             })
                 .then(function (response) {
-                    console.log(response.data);
+                    let res = response.data;
+                    $("#" + to).val(res.data.id);
                 })
                 .catch(function (error) {
                     console.log(error);
+                    swal('提示', '源地址无效', 'warning');
+                });
+        }
+
+        function move(source_id, target_id) {
+            axios.post(Config.routes.move, {
+                source_id: source_id,
+                target_id: target_id,
+                _token: Config._token
+            })
+                .then(function (response) {
+                    let res = response.data;
+                    console.log(res);
+                    swal('移动成功');
+                    setTimeout(window.location.reload(), 1000);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    swal('提示', '移动出现问题，请检查文件是否存在', 'warning');
+                });
+        }
+
+        function copy(source_id, target_id) {
+            axios.post(Config.routes.copy, {
+                source_id: source_id,
+                target_id: target_id,
+                _token: Config._token
+            })
+                .then(function (response) {
+                    let res = response.data;
+                    console.log(res);
+                    swal('复制成功');
+                    setTimeout(window.location.reload(), 1000);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    swal('提示', '复制出现问题，请检查文件是否存在', 'warning');
                 });
         }
     </script>
