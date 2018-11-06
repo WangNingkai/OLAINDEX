@@ -147,8 +147,10 @@ class OneDriveController extends Controller
             $response = $this->request('get', $endpoint);
             $data = json_decode($response->getBody()->getContents(), true);
             $result = array_merge($list['value'], $this->getNextLinkList($data, $result));
-            return $result;
+        } else {
+            $result = array_merge($list['value'], $result);
         }
+        return $result;
     }
 
     /**
