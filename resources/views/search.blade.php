@@ -45,7 +45,7 @@
                             <div class="col">
                                 <span class="pull-right">
                                     <a href="{{ route('search.show',$item['id']) }}"><i
-                                            class="fa fa-info"
+                                            class="fa fa-info-circle"
                                             title="详情"></i></a>&nbsp;&nbsp;
                                 </span>
                             </div>
