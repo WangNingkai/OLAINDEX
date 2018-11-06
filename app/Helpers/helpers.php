@@ -15,18 +15,23 @@ if (!function_exists('quota')) {
         if (refresh_token()) {
             $quota = Cache::remember('quota', Tool::config('expires'), function () {
                 $od = new \App\Http\Controllers\OneDriveController();
-                $res = $od->getDrive();
-                $quota = $res['quota'];
-                foreach ($quota as $k => $item) {
-                    if (!is_string($item)) {
-                        $quota[$k] = Tool::convertSize($item);
+                $drive = $od->getDrive();
+                $res = Tool::handleResponse($drive);
+                if ($res['code'] == 200) {
+                    $quota = $res['data']['quota'];
+                    foreach ($quota as $k => $item) {
+                        if (!is_string($item)) {
+                            $quota[$k] = Tool::convertSize($item);
+                        }
                     }
+                    return $quota;
+                } else {
+                    return [];
                 }
-                return $quota;
             });
-            return $key ? $quota[$key] : $quota;
+            return $key ? $quota[$key] ?? '' : $quota ?? '';
         } else {
-            return [];
+            return '';
         }
     }
 }

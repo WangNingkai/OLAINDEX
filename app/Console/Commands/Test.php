@@ -35,14 +35,11 @@ class Test extends Command
 
     public function handle()
     {
-        if (!refresh_token()){
+        if (!refresh_token()) {
             echo 'refresh token error';
         }
         $od = new OneDriveController();
-//        $res = $od->copy('01FGBPEHQ2EQPJOIGQGZFIHHK62KN5CMGS',"01FGBPEHQFQQPZR6N6RZEKUARUO6TQD7GP");
-//        $res = $od->pathToItemId('/tmp');
-//        $res = Tool::handleResponse($od->listChildrenByPath('/'),true);
-        $res = $od->listChildrenByPath(':/share/Images/my/class1:/');
+        $res = $od->request('get', '/me/drive');
         dd($res);
     }
 }

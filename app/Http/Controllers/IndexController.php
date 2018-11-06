@@ -81,13 +81,18 @@ class IndexController extends Controller
         $graphPath = Tool::convertPath($request->getPathInfo());
         $origin_path = rawurldecode(Tool::convertPath($request->getPathInfo(), false));
         $origin_items = Cache::remember('one:' . $graphPath, $this->expires, function () use ($graphPath) {
-            $response = $this->od->listChildrenByPath($graphPath);
-            $response['value'] = $this->od->getNextLinkList($response, $response['value']);
-            return $this->od->formatArray($response);
+            $result = $this->od->listChildrenByPath($graphPath);
+            $response = Tool::handleResponse($result);
+            if ($response['code'] == 200) {
+                return $response['data'];
+            } else {
+                Tool::showMessage($response['msg'], false);
+                return [];
+            }
         });
         $hasImage = Tool::hasImages($origin_items);
         $origin_items = array_where($origin_items, function ($value) {
-            return !array_has($value,'package.type');
+            return !array_has($value, 'package.type');
         });
         // 处理加密目录
         if (!empty($origin_items['.password'])) {
@@ -127,9 +132,15 @@ class IndexController extends Controller
         $origin_path = urldecode(Tool::convertPath($request->getPathInfo(), false));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
         $file = Cache::remember('one:' . $graphPath, $this->expires, function () use ($graphPath) {
-            $response = $this->od->getItemByPath($graphPath);
-            return $this->od->formatArray($response, false);
+            $result = $this->od->getItemByPath($graphPath);
+            $response = Tool::handleResponse($result);
+            if ($response['code'] == 200) {
+                return $response['data'];
+            } else {
+                return null;
+            }
         });
+        if (!$file) abort(404);
         if (isset($file['folder'])) abort(403);
         $file['download'] = $file['@microsoft.graph.downloadUrl'];
         $patterns = $this->show;
@@ -143,7 +154,11 @@ class IndexController extends Controller
                     } else $file['content'] = Tool::getFileContent($file['@microsoft.graph.downloadUrl']);
                 }
                 if (in_array($key, ['image', 'dash', 'video'])) {
-                    $file['thumb'] = $this->od->thumbnails($file['id'], 'large');
+                    $result = $this->od->thumbnails($file['id'], 'large');
+                    $response = Tool::handleResponse($result);
+                    if ($response['code'] == 200) {
+                        $file['thumb'] = $response['data']['url'];
+                    } else $file['thumb'] = '';// todo:
                 }
                 if ($key == 'dash') {
                     if (strpos($file['@microsoft.graph.downloadUrl'], "sharepoint.com") == false) return redirect()->away($file['download']);
@@ -172,8 +187,13 @@ class IndexController extends Controller
     {
         $graphPath = Tool::convertPath($request->getPathInfo(), true, true);
         $file = Cache::remember('one:' . $graphPath, $this->expires, function () use ($graphPath) {
-            $response = $this->od->getItemByPath($graphPath);
-            return $this->od->formatArray($response, false);
+            $result = $this->od->getItemByPath($graphPath);
+            $response = Tool::handleResponse($result);
+            if ($response['code'] == 200) {
+                return $response['data'];
+            } else {
+                return null;
+            }
         });
         $url = $file['@microsoft.graph.downloadUrl'];
         return redirect()->away($url);
@@ -187,7 +207,11 @@ class IndexController extends Controller
      */
     public function thumb($id, $size)
     {
-        $url = $this->od->thumbnails($id, $size);
+        $result = $this->od->thumbnails($id, $size);
+        $response = Tool::handleResponse($result);
+        if ($response['code'] == 200) {
+            $url = $response['data']['url'];
+        } else $url = '';// todo:
         return redirect()->away($url);
     }
 
@@ -199,8 +223,13 @@ class IndexController extends Controller
     {
         $graphPath = Tool::convertPath($request->getPathInfo(), true, true);
         $file = Cache::remember('one:' . $graphPath, $this->expires, function () use ($graphPath) {
-            $response = $this->od->getItemByPath($graphPath);
-            return $this->od->formatArray($response, false);
+            $result = $this->od->getItemByPath($graphPath);
+            $response = Tool::handleResponse($result);
+            if ($response['code'] == 200) {
+                return $response['data'];
+            } else {
+                return null;
+            }
         });
         $download = $file['@microsoft.graph.downloadUrl'];
         return redirect()->away($download);
@@ -215,10 +244,14 @@ class IndexController extends Controller
     {
         $keywords = $request->get('keywords');
         if ($keywords) {
-            $response = $this->od->search($this->root, $keywords);
-            $response['value'] = $this->od->getNextLinkList($response, $response['value']);
-            $origin_items = $this->od->formatArray($response);
-            $items = Tool::filterFolder($origin_items); // 过滤结果中的文件夹
+            $result = $this->od->search($this->root, $keywords);
+            $response = Tool::handleResponse($result);
+            if ($response['code'] == 200) {
+                $items = Tool::filterFolder($response['data']); // 过滤结果中的文件夹
+            } else {
+                Tool::showMessage('搜索失败', true);
+                $items = [];
+            }
         } else {
             $items = [];
         }
@@ -249,9 +282,14 @@ class IndexController extends Controller
             'expires' => time() + $this->expires * 60, // 目录密码过期时间
         ];
         Session::put('password:' . $origin_path, $data);
-        $file = $this->od->getItem($pass_id);
-        // todo:密码处理
-        $directory_password = Tool::getFileContent($file['']);
+        $result = $this->od->getItem($pass_id);
+        $response = Tool::handleResponse($result);
+        if ($response['code'] == 200) {
+            $directory_password = Tool::getFileContent($response['data']['@microsoft.graph.downloadUrl']);
+        } else {
+            Tool::showMessage('获取文件夹密码失败', false);
+            $directory_password = '';
+        }
         if ($password == $directory_password)
             return redirect()->route('home', Tool::handleUrl($origin_path));
         else {

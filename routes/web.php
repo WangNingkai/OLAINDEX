@@ -53,20 +53,4 @@ Route::post('/admin/move', 'ManageController@moveItem')->name('admin.move');
 Route::post('/admin/path2id', 'ManageController@pathToItemId')->name('admin.path2id');
 // 搜索
 Route::any('/search', 'IndexController@search')->name('search')->middleware('checkAuth');
-Route::any('/t', function () {
-    refresh_token();
-    $od = new \App\Http\Controllers\OneDriveController();
-    // 01FGBPEHQ2EQPJOIGQGZFIHHK62KN5CMGS
-    $res = $od->listChildrenByPath(':/share/Images/my/class1:/');
-    $res = \App\Helpers\Tool::handleResponse($res);
-    if ($res['code'] == 200) {
-        dd($od->formatArray($res['data']));
-    } else {
-        return $res;
-    }
-
-//    $res = $od->getDrive();
-//    dd($res);
-//    dd(\App\Helpers\Tool::handleResponse($res, false));
-})->middleware('checkToken');
 

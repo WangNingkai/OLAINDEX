@@ -63,22 +63,27 @@ class ManageController extends Controller
             $image_hosting_path = trim(Tool::handleUrl(Tool::config('image_hosting_path')), '/');
             $filePath = trim($image_hosting_path . '/' . date('Y') . '/' . date('m') . '/' . date('d') . '/' . str_random(8) . '/' . $file->getClientOriginalName(), '/');
             $remoteFilePath = Tool::convertPath($filePath); // 远程图片保存地址
-            $response = $this->od->uploadByPath($remoteFilePath, $content);
-            $sign = $response['id'] . '.' . encrypt($response['eTag']);
-            $fileIdentifier = encrypt($sign);
-            $data = [
-                'code' => 200,
-                'data' => [
-                    'id' => $response['id'],
-                    'filename' => $response['name'],
-                    'size' => $response['size'],
-                    'time' => $response['lastModifiedDateTime'],
-                    'url' => route('view', $filePath),
-                    'delete' => route('delete', $fileIdentifier)
-                ]
-            ];
-            @unlink($path);
-            return response()->json($data);
+            $result = $this->od->uploadByPath($remoteFilePath, $content);
+            $response = Tool::handleResponse($result);
+            if ($response['code'] == 200) {
+                $sign = $response['data']['id'] . '.' . encrypt($response['data']['eTag']);
+                $fileIdentifier = encrypt($sign);
+                $data = [
+                    'code' => 200,
+                    'data' => [
+                        'id' => $response['data']['id'],
+                        'filename' => $response['data']['name'],
+                        'size' => $response['data']['size'],
+                        'time' => $response['data']['lastModifiedDateTime'],
+                        'url' => route('view', $filePath),
+                        'delete' => route('delete', $fileIdentifier)
+                    ]
+                ];
+                @unlink($path);
+                return response()->json($data);
+            } else {
+                return $result;
+            }
         } else {
             $data = ['code' => 500, 'message' => '无法获取文件内容'];
             return response()->json($data);
@@ -117,18 +122,22 @@ class ManageController extends Controller
             $content = fopen($path, 'r');
             $storeFilePath = trim(Tool::handleUrl($target_directory), '/') . '/' . $file->getClientOriginalName(); // 远程保存地址
             $remoteFilePath = Tool::convertPath($storeFilePath); // 远程文件保存地址
-            $response = $this->od->uploadByPath($remoteFilePath, $content);
-            $data = [
-                'code' => 200,
-                'data' => [
-                    'id' => $response['id'],
-                    'filename' => $response['name'],
-                    'size' => $response['size'],
-                    'time' => $response['lastModifiedDateTime'],
-                ]
-            ];
-            @unlink($path);
-            return response()->json($data);
+            $result = $this->od->uploadByPath($remoteFilePath, $content);
+            $response = Tool::handleResponse($result);
+            if ($response['code'] = 200) {
+                $data = [
+                    'code' => 200,
+                    'data' => [
+                        'id' => $response['data']['id'],
+                        'filename' => $response['data']['name'],
+                        'size' => $response['data']['size'],
+                        'time' => $response['data']['lastModifiedDateTime'],
+                    ]
+                ];
+                @unlink($path);
+                return response()->json($data);
+            } else return $result;
+
         } else {
             $data = ['code' => 500, 'message' => '无法获取文件内容'];
             return response()->json($data);
@@ -152,8 +161,9 @@ class ManageController extends Controller
         $password = $request->get('password', '12345678');
         $storeFilePath = trim($path, '/') . '/.password';
         $remoteFilePath = Tool::convertPath($storeFilePath); // 远程password保存地址
-        $response = $this->od->uploadByPath($remoteFilePath, $password);
-        $response ? Tool::showMessage('操作成功，请牢记密码！') : Tool::showMessage('加密失败！', false);
+        $result = $this->od->uploadByPath($remoteFilePath, $password);
+        $response = Tool::handleResponse($result);
+        $response['code'] == 200 ? Tool::showMessage('操作成功，请牢记密码！') : Tool::showMessage('加密失败！', false);
         Artisan::call('cache:clear');
         return redirect()->back();
     }
@@ -177,8 +187,9 @@ class ManageController extends Controller
         $content = $request->get('content');
         $storeFilePath = trim($path, '/') . '/' . $name . '.md';
         $remoteFilePath = Tool::convertPath($storeFilePath); // 远程md保存地址
-        $response = $this->od->uploadByPath($remoteFilePath, $content);
-        $response ? Tool::showMessage('添加成功！') : Tool::showMessage('添加失败！', false);
+        $result = $this->od->uploadByPath($remoteFilePath, $content);
+        $response = Tool::handleResponse($result);
+        $response['code'] == 200 ? Tool::showMessage('添加成功！') : Tool::showMessage('添加失败！', false);
         Artisan::call('cache:clear');
         return redirect()->route('home', Tool::handleUrl($path));
 
@@ -194,13 +205,21 @@ class ManageController extends Controller
     public function updateFile(Request $request, $id)
     {
         if (!$request->isMethod('post')) {
-            $file = $this->od->getItem($id);
-            $file['content'] = Tool::getFileContent($file['@microsoft.graph.downloadUrl']);
+            $result = $this->od->getItem($id);
+            $response = Tool::handleResponse($result);
+            if ($response['code'] == 200) {
+                $file = $response['data'];
+                $file['content'] = Tool::getFileContent($file['@microsoft.graph.downloadUrl']);
+            } else {
+                Tool::showMessage('获取文件失败', false);
+                $file = '';
+            }
             return view('admin.edit', compact('file'));
         }
         $content = $request->get('content');
-        $response = $this->od->upload($id, $content);
-        $response ? Tool::showMessage('修改成功！') : Tool::showMessage('修改失败！', false);
+        $result = $this->od->upload($id, $content);
+        $response = Tool::handleResponse($result);
+        $response['code'] == 200 ? Tool::showMessage('修改成功！') : Tool::showMessage('修改失败！', false);
         Artisan::call('cache:clear');
         return redirect()->back();
     }
@@ -221,8 +240,9 @@ class ManageController extends Controller
         }
         $name = $request->get('name');
         $graphPath = Tool::convertPath($path);
-        $response = $this->od->mkdirByPath($name, $graphPath);
-        $response ? Tool::showMessage('新建目录成功！') : Tool::showMessage('新建目录失败！', false);
+        $result = $this->od->mkdirByPath($name, $graphPath);
+        $response = Tool::handleResponse($result);
+        $response['code'] == 200 ? Tool::showMessage('新建目录成功！') : Tool::showMessage('新建目录失败！', false);
         Artisan::call('cache:clear');
         return redirect()->back();
     }
@@ -249,8 +269,9 @@ class ManageController extends Controller
             Tool::showMessage($e->getMessage(), false);
             return view('message');
         }
-        $this->od->deleteItem($id, $eTag);
-        Tool::showMessage('文件已删除');
+        $result = $this->od->deleteItem($id, $eTag);
+        $response = Tool::handleResponse($result);
+        $response['code'] == 200 ? Tool::showMessage('文件已删除') : Tool::showMessage('文件删除失败', false);
         Artisan::call('cache:clear');
         return view('message');
     }
