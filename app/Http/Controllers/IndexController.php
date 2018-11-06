@@ -141,7 +141,7 @@ class IndexController extends Controller
             }
         });
         if (!$file) abort(404);
-        if (isset($file['folder'])) abort(403);
+        if (array_has($file, 'folder')) abort(403);
         $file['download'] = $file['@microsoft.graph.downloadUrl'];
         $patterns = $this->show;
         foreach ($patterns as $key => $suffix) {

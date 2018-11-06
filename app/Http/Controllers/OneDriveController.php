@@ -140,7 +140,7 @@ class OneDriveController extends Controller
      */
     public function getNextLinkList($list, &$result = [])
     {
-        if (isset($list['@odata.nextLink'])) {
+        if (array_has($list, '@odata.nextLink')) {
             $endpoint = str_after($list['@odata.nextLink'], Constants::REST_ENDPOINT . Constants::API_VERSION);
             $response = $this->request('get', $endpoint);
             $data = json_decode($response->getBody()->getContents(), true);
@@ -294,6 +294,8 @@ class OneDriveController extends Controller
             $statusCode = $response->getStatusCode();
             if ($statusCode == 204) {
                 return $this->response(['deleted' => true]);
+            } else {
+                return $this->handleResponse($response);
             }
         } else {
             return $response;
@@ -408,6 +410,8 @@ class OneDriveController extends Controller
             $statusCode = $response->getStatusCode();
             if ($statusCode == 204) {
                 return $this->response(['deleted' => true]);
+            } else {
+                return $this->handleResponse($response);
             }
         } else {
             return $response;
@@ -485,26 +489,28 @@ class OneDriveController extends Controller
         if ($drive['code'] == 200) {
             if ($drive['data']['driveType'] == 'business') {
                 return $this->response(['driveType' => $drive['data']['driveType']], 400, '企业账号无法使用离线下载');
-            }
-            $path = Tool::getAbsolutePath(dirname($remote));
-            // $pathId = $this->pathToItemId($path);
-            // $endpoint = "/me/drive/items/{$pathId}/children"; // by id
-            $handledPath = Tool::handleUrl(trim($path, '/'));
-            $graphPath = empty($handledPath) ? '/' : ":/{$handledPath}:/";
-            $endpoint = "/me/drive/root{$graphPath}children";
-            $headers = ['Prefer' => 'respond-async'];
-            $body = '{"@microsoft.graph.sourceUrl":"' . $url . '","name":"' . pathinfo($remote, PATHINFO_BASENAME) . '","file":{}}';
-            $response = $this->request('post', [$endpoint, $body, $headers]);
-            if ($response instanceof Response) {
-                $data = [
-                    'redirect' => $response->getHeaderLine('Location')
-                ];
-                return $this->response($data);
             } else {
-                return $response;
+                $path = Tool::getAbsolutePath(dirname($remote));
+                // $pathId = $this->pathToItemId($path);
+                // $endpoint = "/me/drive/items/{$pathId}/children"; // by id
+                $handledPath = Tool::handleUrl(trim($path, '/'));
+                $graphPath = empty($handledPath) ? '/' : ":/{$handledPath}:/";
+                $endpoint = "/me/drive/root{$graphPath}children";
+                $headers = ['Prefer' => 'respond-async'];
+                $body = '{"@microsoft.graph.sourceUrl":"' . $url . '","name":"' . pathinfo($remote, PATHINFO_BASENAME) . '","file":{}}';
+                $response = $this->request('post', [$endpoint, $body, $headers]);
+                if ($response instanceof Response) {
+                    $data = [
+                        'redirect' => $response->getHeaderLine('Location')
+                    ];
+                    return $this->response($data);
+                } else {
+                    return $response;
+                }
             }
+        } else {
+            return $drive;
         }
-
     }
 
     /**
@@ -665,7 +671,7 @@ class OneDriveController extends Controller
         if ($isList) {
             $items = [];
             foreach ($response as $item) {
-                if (isset($item['file'])) $item['ext'] = strtolower(pathinfo($item['name'], PATHINFO_EXTENSION));
+                if (array_has($item, 'file')) $item['ext'] = strtolower(pathinfo($item['name'], PATHINFO_EXTENSION));
                 $items[$item['name']] = $item;
             }
             return $items;

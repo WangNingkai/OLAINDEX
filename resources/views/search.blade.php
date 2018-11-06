@@ -12,16 +12,16 @@
             <div class="card-header">
                 <div class="row">
                     <div class="col">
-                        File
+                        文件
                     </div>
                     <div class="col d-none d-md-block d-md-none">
-                        <span class="pull-right">LastModifiedDateTime</span>
+                        <span class="pull-right">最后修改时间</span>
                     </div>
-                    <div class="col d-none d-md-block d-md-none">
-                        <span class="pull-right">Size</span>
+                    <div class="col">
+                        <span class="pull-right">大小</span>
                     </div>
-                    <div class="col d-none d-md-block d-md-none">
-                        <span class="pull-right">Action</span>
+                    <div class="col">
+                        <span class="pull-right">操作</span>
                     </div>
                 </div>
             </div>
@@ -39,14 +39,14 @@
                                 <span
                                     class="pull-right">{{ date('Y-m-d H:i:s',strtotime($item['lastModifiedDateTime'])) }}</span>
                             </div>
-                            <div class="col d-none d-md-block d-md-none">
+                            <div class="col">
                                 <span class="pull-right">{{ \App\Helpers\Tool::convertSize($item['size']) }}</span>
                             </div>
-                            <div class="col d-none d-md-block d-md-none">
+                            <div class="col">
                                 <span class="pull-right">
                                     <a href="{{ route('search.show',$item['id']) }}"><i
-                                            class="fa fa-eye"
-                                            title="下载"></i></a>&nbsp;&nbsp;
+                                            class="fa fa-info"
+                                            title="详情"></i></a>&nbsp;&nbsp;
                                 </span>
                             </div>
                         </div>

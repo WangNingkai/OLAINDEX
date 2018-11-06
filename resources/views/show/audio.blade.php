@@ -20,7 +20,7 @@
             <label class="control-label">下载链接</label>
             <div class="form-group">
                 <div class="input-group mb-3">
-                    <input type="text" id="link1" class="form-control" aria-label="Amount (to the nearest dollar)"
+                    <input type="text" id="link1" class="form-control"
                            value="{{ route('download',\App\Helpers\Tool::handleUrl($origin_path)) }}">
                     <div class="input-group-append">
                         <a href="javascript:void(0)" style="text-decoration: none" data-toggle="tooltip"

@@ -23,7 +23,7 @@
                 <div class="col d-none d-md-block d-md-none">
                     <span class="pull-right">修改日期</span>
                 </div>
-                <div class="col d-none d-md-block d-md-none">
+                <div class="col">
                     <span class="pull-right">大小</span>
                 </div>
                 <div class="col">
@@ -138,7 +138,7 @@
                 <li class="list-group-item list-group-item-action">
                     <div class="row">
                         <div class="col" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
-                            @if(isset($item['folder']))
+                            @if(array_has($item,'folder'))
                                 <a href="{{ route('home',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                    title="{{ $item['name'] }}">
                                     <i class="fa fa-folder"></i> {{ $item['name'] }}
@@ -154,21 +154,22 @@
                             <span
                                 class="pull-right">{{ date('Y-m-d H:i:s',strtotime($item['lastModifiedDateTime'])) }}</span>
                         </div>
-                        <div class="col d-none d-md-block d-md-none">
-                            <span class="pull-right">{{ \App\Helpers\Tool::convertSize($item['size']) }}</span>
+                        <div class="col">
+                            <span
+                                class="pull-right">{{ array_has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</span>
                         </div>
                         <div class="col">
                             <span class="pull-right">
-                                @if(isset($item['folder']))
+                                @if(array_has($item,'folder'))
                                     <a href="javascript:void(0)"
                                        data-clipboard-text="{{ route('home',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                        class="clipboard" title="已复制" data-toggle="tooltip"
                                        data-placement="right"><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;
                                 @else
-                                    @if(isset($item['image']))
-                                        <a href="{{ route('view',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
-                                           data-fancybox="image-list"><i
-                                                class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
+                                    @if(array_has($item,'image')))
+                                    <a href="{{ route('view',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
+                                       data-fancybox="image-list"><i
+                                            class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
                                     @endif
                                     @if(session()->has('LogInfo') && \App\Helpers\Tool::canEdit($item) )
                                         <a href="{{ route('file.update',$item['id']) }}"><i
@@ -207,7 +208,7 @@
             <div class="card-body">
                 <div id="links">
                     @foreach($items as $item)
-                        @if(isset($item['image']))
+                        @if(array_has($item,'image'))
                             <a href="{{ route('view',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
                                title="{{ $item['name'] }}" data-gallery="image-list">
                                 <img src="{{ route('thumb',['id'=>$item['id'],'size'=>'small']) }}"
