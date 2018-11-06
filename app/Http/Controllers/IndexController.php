@@ -115,7 +115,7 @@ class IndexController extends Controller
         $head = array_key_exists('HEAD.md', $origin_items) ? Tool::markdown2Html(Tool::getFileContent($origin_items['HEAD.md']['@microsoft.graph.downloadUrl'])) : '';
         $readme = array_key_exists('README.md', $origin_items) ? Tool::markdown2Html(Tool::getFileContent($origin_items['README.md']['@microsoft.graph.downloadUrl'])) : '';
         $path_array = $origin_path ? explode('/', $origin_path) : [];
-        if (!session()->has('LogInfo')) $origin_items = Tool::filterFiles($origin_items, ['README.md', 'HEAD.md', '.password', '.deny']);
+        if (!session()->has('LogInfo')) $origin_items = array_except($origin_items, ['README.md', 'HEAD.md', '.password', '.deny']);
         $items = Tool::paginate($origin_items, 20);
         return view('one', compact('items', 'origin_items', 'origin_path', 'path_array', 'head', 'readme', 'hasImage'));
     }

@@ -339,20 +339,6 @@ class Tool
     }
 
     /**
-     * 过滤指定文件
-     * @param $items
-     * @param $itemName
-     * @return mixed
-     */
-    public static function filterFiles($items, $itemName)
-    {
-        if (is_array($itemName)) {
-            array_except($items, $itemName);
-        } else unset($items[$itemName]);
-        return $items;
-    }
-
-    /**
      * 过滤禁用目录
      * @param $items
      */
