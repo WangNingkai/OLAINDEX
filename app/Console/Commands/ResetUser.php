@@ -44,7 +44,7 @@ class ResetUser extends Command
             $data = [
                 'access_token' => '',
                 'refresh_token' => '',
-                'access_token_expires' => '',
+                'access_token_expires' => 0,
                 'root' => '/',
                 'image_hosting' => 0,
                 'image_hosting_path' => ''
