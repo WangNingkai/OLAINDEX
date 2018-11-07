@@ -167,7 +167,7 @@
                                                 class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
                                     @endif
                                     @if(session()->has('LogInfo') && \App\Helpers\Tool::canEdit($item) )
-                                        <a href="{{ route('file.update',$item['id']) }}"><i
+                                        <a href="{{ route('admin.file.update',$item['id']) }}"><i
                                                 class="fa fa-pencil"></i></a>&nbsp;&nbsp;
                                     @endif
                                     <a href="{{ route('download',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"><i

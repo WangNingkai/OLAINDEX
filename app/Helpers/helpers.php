@@ -43,7 +43,7 @@ if (!function_exists('refresh_token')) {
      */
     function refresh_token()
     {
-        $expires = Tool::config('access_token_expires');
+        $expires = Tool::config('access_token_expires', 0);
         $hasExpired = $expires - time() < 0 ? true : false;
         if ($hasExpired) {
             $oauth = new OauthController();
