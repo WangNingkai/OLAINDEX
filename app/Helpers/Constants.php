@@ -4,13 +4,16 @@ namespace App\Helpers;
 
 class Constants
 {
-
     const LATEST_VERSION = 'v3.0';
 
     const API_VERSION = 'v1.0';
     const REST_ENDPOINT = 'https://graph.microsoft.com/';
+    const AUTHORITY_URL = 'https://login.microsoftonline.com/common';
+    const AUTHORIZE_ENDPOINT = '/oauth2/v2.0/authorize';
+    const TOKEN_ENDPOINT = '=/oauth2/v2.0/token';
+    const SCOPES = 'openid profile offline_access files.readwrite.all ';
 
-    const EXT = [
+    const FILE_EXT = [
         'acx' => 'application/internet-property-stream',
         'ai' => 'application/postscript',
         'aif' => 'audio/x-aiff',
@@ -204,7 +207,7 @@ class Constants
         'z' => 'application/x-compress',
         'zip' => 'application/zip',];
 
-    const ICON = [
+    const FILE_ICON = [
         'stream' => ['fa-file-text-o', ['txt', 'log']],
         'image' => ['fa-file-image-o', ['bmp', 'jpg', 'jpeg', 'png', 'gif', 'ico', 'jpe']],
         'video' => ['fa-file-video-o', ['mkv', 'mp4', 'webm', 'avi', 'mpg', 'mpeg', 'rm', 'rmvb', 'mov', 'wmv', 'asf', 'ts', 'flv']],
@@ -217,7 +220,7 @@ class Constants
         'exe' => ['fa-windows', ['exe', 'msi']],
     ];
 
-    const THEME = [
+    const SITE_THEME = [
         'Cerulean' => 'cerulean',
         'Cosmo' => 'cosmo',
         'Cyborg' => 'cyborg',
@@ -240,5 +243,4 @@ class Constants
         'United' => 'united',
         'Yeti' => 'yeti',
     ];
-
 }

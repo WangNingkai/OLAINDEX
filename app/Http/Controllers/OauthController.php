@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Constants;
 use App\Helpers\Tool;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -30,10 +31,10 @@ class OauthController extends Controller
             'clientId' => Tool::config('client_id'),
             'clientSecret' => Tool::config('client_secret'),
             'redirectUri' => Tool::config('redirect_uri'),
-            'urlAuthorize' => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
-            'urlAccessToken' => 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
-            'urlResourceOwnerDetails' => 'https://outlook.office.com/api/v1.0/me',
-            'scopes' => 'offline_access files.readwrite.all'
+            'urlAuthorize' => Constants::AUTHORITY_URL . Constants::AUTHORIZE_ENDPOINT,
+            'urlAccessToken' => Constants::AUTHORITY_URL . Constants::TOKEN_ENDPOINT,
+            'urlResourceOwnerDetails' => '',
+            'scopes' => Constants::SCOPES
         ]);
     }
 

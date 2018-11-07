@@ -125,7 +125,7 @@ class Tool
      */
     public static function getExtIcon($ext = '')
     {
-        $patterns = Constants::ICON;
+        $patterns = Constants::FILE_ICON;
         $icon = '';
         foreach ($patterns as $key => $suffix) {
             if (in_array($ext, $suffix[1])) {
@@ -145,7 +145,7 @@ class Tool
      */
     public static function getExt($mimeType)
     {
-        $patterns = Constants::EXT;
+        $patterns = Constants::FILE_EXT;
         $suffix = '';
         foreach ($patterns as $ext => $mime) {
             if ($mimeType == $mime) {
