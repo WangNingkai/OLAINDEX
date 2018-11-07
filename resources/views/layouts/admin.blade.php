@@ -19,7 +19,10 @@
                 'upload_file': '{{ route('admin.file.upload') }}',
                 'copy': '{{ route('admin.copy') }}',
                 'move': '{{ route('admin.move') }}',
-                'path2id': '{{ route('admin.path2id') }}'
+                'path2id': '{{ route('admin.path2id') }}',
+                'share': '{{ route('admin.share') }}',
+                'delete_share': '{{ route('admin.share.delete') }}',
+                'upload_url': '{{ route('admin.url.upload') }}',
             },
             '_token': '{{ csrf_token() }}',
         };

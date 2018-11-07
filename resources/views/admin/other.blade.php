@@ -60,7 +60,6 @@
                         let source_id = $("#source_id").val();
                         let target_id = $("#target_id").val();
                         if (!source_id || !target_id) {
-                            swal('提示', '源地址或目标地址错误', 'warning');
                             return false;
                         }
                         move(source_id, target_id);
@@ -77,7 +76,6 @@
                         let source_id = $("#source_id").val();
                         let target_id = $("#target_id").val();
                         if (!source_id || !target_id) {
-                            swal('提示', '源地址或目标地址错误', 'warning');
                             return false;
                         }
                         copy(source_id, target_id);
@@ -87,15 +85,6 @@
                     return false;
                 }
             });
-            /*function getStatus(url) {
-                axios.get(url)
-                    .then(function (response) {
-                        console.log(response);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-            }*/
         });
 
         function fetchItemId(path, to) {
@@ -147,6 +136,55 @@
                 .catch(function (error) {
                     console.log(error);
                     swal('提示', '复制出现问题，请检查文件是否存在', 'warning');
+                });
+        }
+
+        function createShareLink($id) {
+            axios.post(Config.routes.share, {
+                id: id,
+                _token: Config._token
+            })
+                .then(function (response) {
+                    let res = response.data;
+                    console.log(res);
+                    setTimeout(window.location.reload(), 1000);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    swal('提示', '操作出现错误', 'warning');
+                });
+        }
+
+        function deleteShareLink($id) {
+            axios.post(Config.routes.delete_share, {
+                id: id,
+                _token: Config._token
+            })
+                .then(function (response) {
+                    let res = response.data;
+                    console.log(res);
+                    setTimeout(window.location.reload(), 1000);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    swal('提示', '操作出现问题', 'warning');
+                });
+        }
+
+        function uploadUrl(path, url) {
+            axios.post(Config.routes.upload_url, {
+                path: path,
+                url: url,
+                _token: Config._token
+            })
+                .then(function (response) {
+                    let res = response.data;
+                    console.log(res);
+                    setTimeout(window.location.reload(), 1000);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    swal('提示', '操作出现问题', 'warning');
                 });
         }
     </script>

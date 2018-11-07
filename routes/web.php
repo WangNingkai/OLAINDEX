@@ -41,16 +41,21 @@ Route::any('/admin/clear', 'AdminController@clear')->name('admin.clear');
 // 文件上传
 Route::get('/admin/file', 'ManageController@uploadFile')->name('admin.file');
 Route::post('/admin/file/upload', 'ManageController@uploadFile')->name('admin.file.upload')->middleware('throttle:10,2');
-Route::post('/admin/lock/folder', 'ManageController@lockFolder')->name('lock');
+Route::post('/admin/folder/lock', 'ManageController@lockFolder')->name('lock');
 // 文件管理
 Route::any('/admin/file/add', 'ManageController@createFile')->name('file.create');
 Route::any('/admin/file/edit/{id}', 'ManageController@updateFile')->name('file.update');
 Route::post('/admin/folder/create', 'ManageController@createFolder')->name('folder.create');
 // 复制移动
-Route::view('/admin/other', 'admin.other')->name('admin.other');
-Route::post('/admin/copy', 'ManageController@copyItem')->name('admin.copy');
-Route::post('/admin/move', 'ManageController@moveItem')->name('admin.move');
-Route::post('/admin/path2id', 'ManageController@pathToItemId')->name('admin.path2id');
+Route::view('/admin/file/other', 'admin.other')->name('admin.other');
+Route::post('/admin/file/copy', 'ManageController@copyItem')->name('admin.copy');
+Route::post('/admin/file/move', 'ManageController@moveItem')->name('admin.move');
+Route::post('/admin/file/path2id', 'ManageController@pathToItemId')->name('admin.path2id');
+
+Route::post('/admin/file/share', 'ManageController@createShareLink')->name('admin.share');
+Route::post('/admin/file/share/delete', 'ManageController@deleteShareLink')->name('admin.share.delete');
+Route::post('/admin/url/upload', 'ManageController@uploadUrl')->name('url.update');
+
 // 搜索
 Route::any('/search', 'IndexController@search')->name('search')->middleware('checkAuth');
 Route::any('/search/file/{id}', 'IndexController@searchShow')->name('search.show')->middleware('checkAuth');
