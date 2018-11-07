@@ -139,26 +139,6 @@ class Tool
     }
 
     /**
-     * 获取文件后缀
-     * @param $mimeType
-     * @return int|string
-     */
-    public static function getExt($mimeType)
-    {
-        $patterns = Constants::FILE_EXT;
-        $suffix = '';
-        foreach ($patterns as $ext => $mime) {
-            if ($mimeType == $mime) {
-                $suffix = $ext;
-                break;
-            } else {
-                $suffix = 'unknown';
-            }
-        }
-        return $suffix;
-    }
-
-    /**
      * 文件是否可编辑
      * @param $file
      * @return bool
@@ -186,7 +166,7 @@ class Tool
     {
         $file = storage_path('app/config.json');
         if (!is_writable($file)) {
-            self::showMessage('权限不足，无法写入配置文件');
+            self::showMessage('权限不足，无法写入配置文件', false);
             abort(403, '权限不足，无法写入配置文件');
         };
         $saved = file_put_contents($file, json_encode($config));
@@ -212,7 +192,7 @@ class Tool
                 copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
             };
             if (!is_readable($file)) {
-                self::showMessage('权限不足，无法预取配置文件');
+                self::showMessage('权限不足，无法预取配置文件', false);
                 abort(403, '权限不足，无法预取配置文件');
             };
             $config = file_get_contents($file);
@@ -321,35 +301,6 @@ class Tool
             });
         } else {
             return self::getFileContent($url);
-        }
-    }
-
-
-    /**
-     * 过滤文件夹
-     * @param $items
-     * @return mixed
-     */
-    public static function filterFolder($items)
-    {
-        $items = array_where($items, function ($value) {
-            return !isset($value['folder']);
-        });
-        return $items;
-    }
-
-    /**
-     * 过滤禁用目录
-     * @param $items
-     */
-    public static function hasForbidFolder($items)
-    {
-        // .deny目录无法访问
-        if (!empty($items['.deny'])) {
-            if (!Session::has('LogInfo')) {
-                self::showMessage('目录访问受限，仅管理员可以访问！', false);
-                abort(403);
-            }
         }
     }
 

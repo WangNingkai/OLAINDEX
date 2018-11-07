@@ -80,6 +80,7 @@ class IndexController extends Controller
     {
         $graphPath = Tool::convertPath($request->getPathInfo());
         $origin_path = rawurldecode(Tool::convertPath($request->getPathInfo(), false));
+        // 获取列表
         $origin_items = Cache::remember('one:list:' . $graphPath, $this->expires, function () use ($graphPath) {
             $result = $this->od->listChildrenByPath($graphPath);
             $response = Tool::handleResponse($result);
@@ -91,6 +92,7 @@ class IndexController extends Controller
             }
         });
         $hasImage = Tool::hasImages($origin_items);
+        // 过滤微软OneNote文件
         $origin_items = array_where($origin_items, function ($value) {
             return !array_has($value, 'package.type');
         });
@@ -110,8 +112,14 @@ class IndexController extends Controller
                 }
             } else return view('password', compact('origin_path', 'pass_id'));
         }
-        // 过滤目录&处理内容
-        Tool::hasForbidFolder($origin_items);
+        // 过滤受限隐藏目录
+        if (!empty($origin_items['.deny'])) {
+            if (!Session::has('LogInfo')) {
+                Tool::showMessage('目录访问受限，仅管理员可以访问！', false);
+                abort(403);
+            }
+        }
+        // 处理 head/readme
         $head = array_key_exists('HEAD.md', $origin_items) ? Tool::markdown2Html(Tool::getFileContent($origin_items['HEAD.md']['@microsoft.graph.downloadUrl'])) : '';
         $readme = array_key_exists('README.md', $origin_items) ? Tool::markdown2Html(Tool::getFileContent($origin_items['README.md']['@microsoft.graph.downloadUrl'])) : '';
         $path_array = $origin_path ? explode('/', $origin_path) : [];
@@ -131,6 +139,7 @@ class IndexController extends Controller
         $graphPath = Tool::convertPath($request->getPathInfo(), true, true);
         $origin_path = urldecode(Tool::convertPath($request->getPathInfo(), false));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
+        // 获取文件
         $file = Cache::remember('one:file:' . $graphPath, $this->expires, function () use ($graphPath) {
             $result = $this->od->getItemByPath($graphPath);
             $response = Tool::handleResponse($result);
@@ -141,18 +150,20 @@ class IndexController extends Controller
             }
         });
         if (!$file) abort(404);
+        // 过滤文件夹
         if (array_has($file, 'folder')) abort(403);
         $file['download'] = $file['@microsoft.graph.downloadUrl'];
-        $patterns = $this->show;
-        foreach ($patterns as $key => $suffix) {
+        foreach ($this->show as $key => $suffix) {
             if (in_array($file['ext'], $suffix)) {
                 $view = 'show.' . $key;
+                // 处理文本文件
                 if (in_array($key, ['stream', 'code'])) {
                     if ($file['size'] > 5 * 1024 * 1024) {
                         Tool::showMessage('文件过大，请下载查看', false);
                         return redirect()->back();
                     } else $file['content'] = Tool::getFileContent($file['@microsoft.graph.downloadUrl']);
                 }
+                // 处理缩略图
                 if (in_array($key, ['image', 'dash', 'video'])) {
                     $result = $this->od->thumbnails($file['id'], 'large');
                     $response = Tool::handleResponse($result);
@@ -160,10 +171,12 @@ class IndexController extends Controller
                         $file['thumb'] = $response['data']['url'];
                     } else $file['thumb'] = '';// todo:
                 }
+                // dash视频流
                 if ($key == 'dash') {
                     if (strpos($file['@microsoft.graph.downloadUrl'], "sharepoint.com") == false) return redirect()->away($file['download']);
                     $file['dash'] = str_replace("thumbnail", "videomanifest", $file['thumb']) . "&part=index&format=dash&useScf=True&pretranscode=0&transcodeahead=0";
                 }
+                // 处理微软文档
                 if ($key == 'doc') {
                     $url = "https://view.officeapps.live.com/op/view.aspx?src=" . urlencode($file['@microsoft.graph.downloadUrl']);
                     return redirect()->away($url);
@@ -247,7 +260,10 @@ class IndexController extends Controller
             $result = $this->od->search($this->root, $keywords);
             $response = Tool::handleResponse($result);
             if ($response['code'] == 200) {
-                $items = Tool::filterFolder($response['data']); // 过滤结果中的文件夹
+                // 过滤结果中的文件夹
+                $items = array_where($response['data'], function ($value) {
+                    return !array_has($value, 'folder');
+                });
             } else {
                 Tool::showMessage('搜索失败', true);
                 $items = [];

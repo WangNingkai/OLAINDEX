@@ -345,6 +345,7 @@ class ManageController extends Controller
     }
 
     /**
+     * 路径转id
      * @param Request $request
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
