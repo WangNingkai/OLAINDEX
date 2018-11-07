@@ -65,11 +65,11 @@
                     <span class="form-text text-danger">演示为本地地址，正确回调地址格式: https://you.domain/oauth 必须为 https</span>
                 </div>
                 <div class="form-group">
-                    <label class="form-control-label" for="client_id">client_id</label>
+                    <label class="form-control-label" for="client_id"><b>client_id</b></label>
                     <input type="text" class="form-control" id="client_id" name="client_id">
                 </div>
                 <div class="form-group">
-                    <label class="form-control-label" for="client_secret">client_secret</label>
+                    <label class="form-control-label" for="client_secret"><b>client_secret</b></label>
                     <input type="text" class="form-control" id="client_secret" name="client_secret">
                 </div>
                 <button type="submit" class="btn btn-primary">保存</button>

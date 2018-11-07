@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use App\Helpers\Tool;
 use Closure;
 
-class VerifyAccessToken
+class CheckAccessToken
 {
     /**
      * 处理access_token

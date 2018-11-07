@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Session;
 
-class VerifyAuth
+class CheckAuth
 {
     /**
      * 处理登陆

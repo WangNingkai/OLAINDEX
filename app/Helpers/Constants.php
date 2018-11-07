@@ -10,8 +10,8 @@ class Constants
     const REST_ENDPOINT = 'https://graph.microsoft.com/';
     const AUTHORITY_URL = 'https://login.microsoftonline.com/common';
     const AUTHORIZE_ENDPOINT = '/oauth2/v2.0/authorize';
-    const TOKEN_ENDPOINT = '=/oauth2/v2.0/token';
-    const SCOPES = 'openid profile offline_access files.readwrite.all ';
+    const TOKEN_ENDPOINT = '/oauth2/v2.0/token';
+    const SCOPES = 'offline_access files.readwrite.all';
 
     const FILE_EXT = [
         'acx' => 'application/internet-property-stream',

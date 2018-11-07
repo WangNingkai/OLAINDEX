@@ -39,7 +39,7 @@ class Test extends Command
             echo 'refresh token error';
         }
         $od = new OneDriveController();
-        $res = $od->request('get', '/me/drive');
+        $res = $od->request('get', '/me');
 //        $res = $od->handleResponse($res);
         dd(json_decode($res->getBody()->getContents(), true));
     }
