@@ -309,7 +309,7 @@ class Tool
     public static function getFileContentByUrl($url, $cache = true)
     {
         if ($cache) {
-            return Cache::remember('one:' . $url, self::config('expires'), function () use ($url) {
+            return Cache::remember('one:content:' . $url, self::config('expires'), function () use ($url) {
                 try {
                     $client = new Client();
                     $response = $client->request('get', $url);

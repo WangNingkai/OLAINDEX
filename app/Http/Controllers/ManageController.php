@@ -59,7 +59,7 @@ class ManageController extends Controller
         }
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
-            $content = fopen($path, 'r');
+            $content = file_get_contents($path);
             $image_hosting_path = trim(Tool::handleUrl(Tool::config('image_hosting_path')), '/');
             $filePath = trim($image_hosting_path . '/' . date('Y') . '/' . date('m') . '/' . date('d') . '/' . str_random(8) . '/' . $file->getClientOriginalName(), '/');
             $remoteFilePath = Tool::convertPath($filePath); // 远程图片保存地址
@@ -119,7 +119,7 @@ class ManageController extends Controller
         }
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
-            $content = fopen($path, 'r');
+            $content = file_get_contents($path);
             $storeFilePath = trim(Tool::handleUrl($target_directory), '/') . '/' . $file->getClientOriginalName(); // 远程保存地址
             $remoteFilePath = Tool::convertPath($storeFilePath); // 远程文件保存地址
             $result = $this->od->uploadByPath($remoteFilePath, $content);

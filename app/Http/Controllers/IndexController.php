@@ -80,7 +80,7 @@ class IndexController extends Controller
     {
         $graphPath = Tool::convertPath($request->getPathInfo());
         $origin_path = rawurldecode(Tool::convertPath($request->getPathInfo(), false));
-        $origin_items = Cache::remember('one:' . $graphPath, $this->expires, function () use ($graphPath) {
+        $origin_items = Cache::remember('one:list:' . $graphPath, $this->expires, function () use ($graphPath) {
             $result = $this->od->listChildrenByPath($graphPath);
             $response = Tool::handleResponse($result);
             if ($response['code'] == 200) {
@@ -131,7 +131,7 @@ class IndexController extends Controller
         $graphPath = Tool::convertPath($request->getPathInfo(), true, true);
         $origin_path = urldecode(Tool::convertPath($request->getPathInfo(), false));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
-        $file = Cache::remember('one:' . $graphPath, $this->expires, function () use ($graphPath) {
+        $file = Cache::remember('one:file:' . $graphPath, $this->expires, function () use ($graphPath) {
             $result = $this->od->getItemByPath($graphPath);
             $response = Tool::handleResponse($result);
             if ($response['code'] == 200) {
@@ -186,7 +186,7 @@ class IndexController extends Controller
     public function download(Request $request)
     {
         $graphPath = Tool::convertPath($request->getPathInfo(), true, true);
-        $file = Cache::remember('one:' . $graphPath, $this->expires, function () use ($graphPath) {
+        $file = Cache::remember('one:file:' . $graphPath, $this->expires, function () use ($graphPath) {
             $result = $this->od->getItemByPath($graphPath);
             $response = Tool::handleResponse($result);
             if ($response['code'] == 200) {
@@ -222,7 +222,7 @@ class IndexController extends Controller
     public function view(Request $request)
     {
         $graphPath = Tool::convertPath($request->getPathInfo(), true, true);
-        $file = Cache::remember('one:' . $graphPath, $this->expires, function () use ($graphPath) {
+        $file = Cache::remember('one:file:' . $graphPath, $this->expires, function () use ($graphPath) {
             $result = $this->od->getItemByPath($graphPath);
             $response = Tool::handleResponse($result);
             if ($response['code'] == 200) {

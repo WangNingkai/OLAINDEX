@@ -102,6 +102,7 @@
                 .catch(function (error) {
                     console.log(error);
                     swal('提示', '源地址无效', 'warning');
+                    return false;
                 });
         }
 

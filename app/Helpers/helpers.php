@@ -13,7 +13,7 @@ if (!function_exists('quota')) {
     function quota($key = '')
     {
         if (refresh_token()) {
-            $quota = Cache::remember('quota', Tool::config('expires'), function () {
+            $quota = Cache::remember('one:quota', Tool::config('expires'), function () {
                 $od = new \App\Http\Controllers\OneDriveController();
                 $drive = $od->getDrive();
                 $res = Tool::handleResponse($drive);
