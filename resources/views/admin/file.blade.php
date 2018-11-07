@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title','文件上传')
+@section('title','普通文件上传')
 @section('css')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dropzone@5/dist/min/dropzone.min.css">
     <style>
@@ -15,6 +15,7 @@
         <label class="form-control-label" for="target_directory">上传目录</label>
         <input type="text" class="form-control" id="target_directory" name="target_directory"
                placeholder="在此输入要上传的目录位置（默认 OneDrive 根目录）">
+        <span class="form-text text-danger">此上传方式仅支持小于4MB文件的上传</span>
     </div>
     <div class="form-group">
         <form class="dropzone" id="file-dropzone">
@@ -30,15 +31,16 @@
             maxFilesize: 4,
             paramName: 'olaindex_file',
             maxFiles: 10,
-            // acceptedFiles: 'image/*',
             addRemoveLinks: true,
             init: function () {
                 this.on('sending', function (file, xhr, formData) {
                     formData.append('_token', Config._token);
                     formData.append('root', $('#target_directory').val());
                 });
+                this.on('success', function () {
+                    swal('上传成功', '文件已上传至OneDrive', 'success');
+                });
             },
-
             dictDefaultMessage: '拖拽文件至此上传 (最大支持4M)',
             dictFallbackMessage: '浏览器不支持拖拽上传',
             dictFileTooBig: '文件过大(@{{filesize}}MiB)，请重试',

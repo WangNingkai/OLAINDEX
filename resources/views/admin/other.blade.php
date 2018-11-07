@@ -7,6 +7,9 @@
             <option value="">请选择操作</option>
             <option value="move">移动</option>
             <option value="copy">复制</option>
+            <option value="upload_url">离线上传</option>
+            <option value="create_share">创建分享</option>
+            <option value="delete_share">删除分享</option>
         </select>
     </div>
     <div class="form-group">
@@ -14,7 +17,7 @@
         <div class="form-group">
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <span class="input-group-text">od://</span>
+                    <span class="input-group-text">path://</span>
                 </div>
                 <input type="text" class="form-control" name="source" id="source">
                 <input type="hidden" name="source_id" id="source_id">
@@ -27,7 +30,7 @@
         <div class="form-group">
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <span class="input-group-text">od://</span>
+                    <span class="input-group-text">path://</span>
                 </div>
                 <input type="text" class="form-control" name="target" id="target">
                 <input type="hidden" name="target_id" id="target_id">
@@ -38,13 +41,13 @@
     <div class="form-group invisible">
         <p>已完成：<span class="text-danger" id="status">0</span></p>
     </div>
-    <button type="submit" id="submit_btn" class="btn btn-primary">提交</button>
+    <button type="submit" id="copy_move_btn" class="btn btn-primary">提交</button>
 @stop
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/axios@0.18.0/dist/axios.min.js"></script>
     <script>
         $(function () {
-            $("#submit_btn").on("click", function () {
+            $("#copy_move_btn").on("click", function () {
                 let action = $("#action").val();
                 let source = $("#source").val();
                 let target = $("#target").val();
@@ -81,7 +84,7 @@
                         copy(source_id, target_id);
                     }, 2000);
                 } else {
-                    swal('提示', '请确保提交内容完整', 'warning');
+                    swal('提示', '暂不支持', 'warning');
                     return false;
                 }
             });
@@ -112,7 +115,7 @@
                 .then(function (response) {
                     let res = response.data;
                     console.log(res);
-                    swal('移动成功');
+                    swal('操作成功', '文件已移动', 'success');
                     setTimeout(window.location.reload(), 1000);
                 })
                 .catch(function (error) {
@@ -130,61 +133,12 @@
                 .then(function (response) {
                     let res = response.data;
                     console.log(res);
-                    swal('复制成功');
+                    swal('操作成功', '文件已复制', 'success');
                     setTimeout(window.location.reload(), 1000);
                 })
                 .catch(function (error) {
                     console.log(error);
                     swal('提示', '复制出现问题，请检查文件是否存在', 'warning');
-                });
-        }
-
-        function createShareLink($id) {
-            axios.post(Config.routes.share, {
-                id: id,
-                _token: Config._token
-            })
-                .then(function (response) {
-                    let res = response.data;
-                    console.log(res);
-                    setTimeout(window.location.reload(), 1000);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                    swal('提示', '操作出现错误', 'warning');
-                });
-        }
-
-        function deleteShareLink($id) {
-            axios.post(Config.routes.delete_share, {
-                id: id,
-                _token: Config._token
-            })
-                .then(function (response) {
-                    let res = response.data;
-                    console.log(res);
-                    setTimeout(window.location.reload(), 1000);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                    swal('提示', '操作出现问题', 'warning');
-                });
-        }
-
-        function uploadUrl(path, url) {
-            axios.post(Config.routes.upload_url, {
-                path: path,
-                url: url,
-                _token: Config._token
-            })
-                .then(function (response) {
-                    let res = response.data;
-                    console.log(res);
-                    setTimeout(window.location.reload(), 1000);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                    swal('提示', '操作出现问题', 'warning');
                 });
         }
     </script>

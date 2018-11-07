@@ -54,10 +54,10 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                       aria-haspopup="true" aria-expanded="false"><i class="fa fa-cogs"></i> 其它</a>
+                       aria-haspopup="true" aria-expanded="false"><i class="fa fa-cogs"></i> 文件操作</a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{{ route('admin.file') }}">文件上传 </a>
-                        <a class="dropdown-item" href="{{ route('admin.other') }}">文件操作 </a>
+                        <a class="dropdown-item" href="{{ route('admin.file') }}">普通文件上传 </a>
+                        <a class="dropdown-item" href="{{ route('admin.other') }}">其它操作 </a>
                     </div>
                 </li>
                 <li class="nav-item">
