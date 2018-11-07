@@ -7,10 +7,11 @@
             <option value="">请选择操作</option>
             <option value="move">移动</option>
             <option value="copy">复制</option>
-            <option value="upload_url">离线上传</option>
+            <option value="upload_url" class="text-danger">离线下载(实验性)</option>
             <option value="create_share">创建分享</option>
             <option value="delete_share">删除分享</option>
         </select>
+        <span class="form-text text-danger">仅个人版支持离线下载</span>
     </div>
     <div class="form-group">
         <label class="control-label" for="source">源地址：</label>
@@ -35,7 +36,7 @@
                 <input type="text" class="form-control" name="target" id="target">
                 <input type="hidden" name="target_id" id="target_id">
             </div>
-            <span class="form-text text-danger">移动文件请填写完整文件地址</span>
+            <span class="form-text text-danger">移动文件和离线下载请填写完整文件地址</span>
         </div>
     </div>
     <div class="form-group invisible">
@@ -83,6 +84,8 @@
                         }
                         copy(source_id, target_id);
                     }, 2000);
+                } else if (action === 'upload_url') {
+                    upload_url(target, source);
                 } else {
                     swal('提示', '暂不支持', 'warning');
                     return false;
@@ -115,8 +118,19 @@
                 .then(function (response) {
                     let res = response.data;
                     console.log(res);
-                    swal('操作成功', '文件已移动', 'success');
-                    setTimeout(window.location.reload(), 1000);
+                    swal({
+                        title: "操作成功",
+                        text: "文件已移动",
+                        type: "success",
+                        showCancelButton: false,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "确定",
+                    }).then((result) => {
+                        if (result.value) {
+                            window.location.reload();
+                        }
+                    });
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -133,12 +147,58 @@
                 .then(function (response) {
                     let res = response.data;
                     console.log(res);
-                    swal('操作成功', '文件已复制', 'success');
-                    setTimeout(window.location.reload(), 1000);
+                    let redirect = res.data.redirect;
+                    swal({
+                        title: "操作成功",
+                        html:
+                            '文件在后台复制，查看进度点击' +
+                            '<a href="' + redirect + '" target="_blank">链接</a>',
+                        type: "success",
+                        showCancelButton: false,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "确定",
+                    }).then((result) => {
+                        if (result.value) {
+                            window.location.reload();
+                        }
+                    });
                 })
                 .catch(function (error) {
                     console.log(error);
                     swal('提示', '复制出现问题，请检查文件是否存在', 'warning');
+                });
+        }
+
+        function upload_url(path, url) {
+            axios.post(Config.routes.upload_url, {
+                path: path,
+                url: url,
+                _token: Config._token
+            })
+                .then(function (response) {
+                    let res = response.data;
+                    console.log(res);
+                    let redirect = res.data.redirect;
+                    swal({
+                        title: "操作成功",
+                        html:
+                            '文件在后台下载，查看进度点击' +
+                            '<a href="' + redirect + '" target="_blank">链接</a>',
+                        type: "success",
+                        showCancelButton: false,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "确定",
+                    }).then((result) => {
+                        if (result.value) {
+                            window.location.reload();
+                        }
+                    });
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    swal('提示', '出现问题，请检查文件链接是否有效', 'warning');
                 });
         }
     </script>
