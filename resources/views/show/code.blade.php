@@ -2,7 +2,7 @@
 @section('title',$file['name'])
 @section('css')
     <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/combine/npm/prismjs@1/themes/prism-okaidia.min.css,npm/prismjs@1/plugins/toolbar/prism-toolbar.min.css,npm/prismjs@1/plugins/previewers/prism-previewers.min.css,npm/prismjs@1/plugins/command-line/prism-command-line.min.css">
+          href="https://cdn.jsdelivr.net/combine/npm/prismjs@1/themes/prism-tomorrow.min.css,npm/prismjs@1/plugins/toolbar/prism-toolbar.min.css,npm/prismjs@1/plugins/previewers/prism-previewers.min.css,npm/prismjs@1/plugins/command-line/prism-command-line.min.css">
 @stop
 @section('content')
     @include('breadcrumb')

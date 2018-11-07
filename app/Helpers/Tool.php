@@ -40,7 +40,7 @@ class Tool
      * markdown转html
      *
      * @param string $markdown
-     * @return array
+     * @return string
      */
     public static function markdown2Html($markdown)
     {

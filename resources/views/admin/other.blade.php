@@ -59,6 +59,10 @@
                     setTimeout(function () {
                         let source_id = $("#source_id").val();
                         let target_id = $("#target_id").val();
+                        if (!source_id || !target_id) {
+                            swal('提示', '源地址或目标地址错误', 'warning');
+                            return false;
+                        }
                         move(source_id, target_id);
                     }, 2000);
                 } else if (action === 'copy') {
@@ -72,6 +76,10 @@
                     setTimeout(function () {
                         let source_id = $("#source_id").val();
                         let target_id = $("#target_id").val();
+                        if (!source_id || !target_id) {
+                            swal('提示', '源地址或目标地址错误', 'warning');
+                            return false;
+                        }
                         copy(source_id, target_id);
                     }, 2000);
                 } else {
