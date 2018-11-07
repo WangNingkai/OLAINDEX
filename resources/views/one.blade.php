@@ -34,22 +34,22 @@
                         <div class="dropdown-menu" aria-labelledby="actionDropdownLink">
                             @if (array_key_exists('README.md', $origin_items))
                                 <a class="dropdown-item"
-                                   href="{{ route('file.update',$origin_items['README.md']['id']) }}"><i
+                                   href="{{ route('admin.file.update',$origin_items['README.md']['id']) }}"><i
                                         class="fa fa-pencil-square-o"></i> 编辑 README</a>
                             @else
                                 <a class="dropdown-item"
-                                   href="{{ route('file.create',['name' => 'README', 'path' => encrypt($origin_path)]) }}"><i
+                                   href="{{ route('admin.file.create',['name' => 'README', 'path' => encrypt($origin_path)]) }}"><i
                                         class="fa fa-plus-circle"></i> 添加
                                     README</a>
                             @endif
                             @if (array_key_exists('HEAD.md', $origin_items))
                                 <a class="dropdown-item"
-                                   href="{{ route('file.update',$origin_items['HEAD.md']['id']) }}"><i
+                                   href="{{ route('admin.file.update',$origin_items['HEAD.md']['id']) }}"><i
                                         class="fa fa-pencil-square-o"></i> 编辑 HEAD</a>
 
                             @else
                                 <a class="dropdown-item"
-                                   href="{{ route('file.create',['name' => 'HEAD', 'path' => encrypt($origin_path)]) }}"><i
+                                   href="{{ route('admin.file.create',['name' => 'HEAD', 'path' => encrypt($origin_path)]) }}"><i
                                         class="fa fa-plus-circle"></i> 添加
                                     HEAD</a>
                             @endif
@@ -63,7 +63,7 @@
                         @if (!array_key_exists('.password', $origin_items))
                             <div class="modal fade" id="lockFolderModal" tabindex="-1" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
-                                    <form action="{{ route('lock') }}" method="post">
+                                    <form action="{{ route('admin.lock') }}" method="post">
                                         @csrf
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -95,7 +95,7 @@
                         @endif
                         <div class="modal fade" id="newFolderModal" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog" role="document">
-                                <form action="{{ route('folder.create') }}" method="post">
+                                <form action="{{ route('admin.folder.create') }}" method="post">
                                     @csrf
                                     <div class="modal-content">
                                         <div class="modal-header">
