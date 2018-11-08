@@ -44,6 +44,10 @@ class UploadFile extends Command
         }
         $local = $this->option('local');
         $remote = $this->option('remote');
+        if (!$local || !$remote) {
+            $this->error('路径参数缺少');
+            return;
+        }
         $file_size = Tool::readFileSize($local);
         $this->info('开始上传...');
         if ($file_size < 10485760) {
