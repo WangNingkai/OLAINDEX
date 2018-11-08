@@ -97,8 +97,6 @@ class UploadFile extends Command
         $done = false;
         $offset = 0;
         $length = 327680 * 10;
-        $begin_time = microtime(true);
-        set_time_limit(0);
         while (!$done) {
             $retry = 0;
             $res = $od->uploadToSession($url, $local, $offset, $length);
@@ -107,16 +105,11 @@ class UploadFile extends Command
                 $data = $response['data'];
                 if (!empty($data['nextExpectedRanges'])) {
                     // 分片上传
-                    $upload_time = microtime(true) - $begin_time;
-                    $speed = Tool::convertSize($length / $upload_time) . '/s';
-                    $length = intval($length / $upload_time / 32768 * 2) * 327680;
-                    $length = ($length > 104857600) ? 104857600 : $length;
                     $ranges = explode('-', $data['nextExpectedRanges'][0]);
                     $offset = intval($ranges[0]);
                     $status = @floor($offset / $file_size * 100) . '%';
-                    $this->info("分片上传成功 上传速度:{$speed} 上传进度:{$status}");
+                    $this->info("分片上传成功 上传进度:{$status}");
                     $done = false;
-
                 } elseif (!empty($data['@content.downloadUrl']) || !empty($data['id'])) {
                     // 上传完成
                     $this->info('文件上传成功');

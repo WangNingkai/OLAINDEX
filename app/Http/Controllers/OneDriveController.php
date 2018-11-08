@@ -585,7 +585,7 @@ class OneDriveController extends Controller
     {
         $file_size = Tool::readFileSize($file);
         $content_length = (($offset + $length) > $file_size) ? ($file_size - $offset) : $length;
-        $end = $offset + $content_length - 1;
+        $end = (($offset + $length) > $file_size) ? ($file_size - 1) : $offset + $content_length - 1;
         $content = Tool::readFileContent($file, $offset, $length);
         $headers = [
             'Content-Length' => $content_length,
