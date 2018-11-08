@@ -21,7 +21,7 @@ class UpdateInstall extends Command
      *
      * @var string
      */
-    protected $description = '更新安装';
+    protected $description = 'Update App';
 
     /**
      * Create a new command instance.
