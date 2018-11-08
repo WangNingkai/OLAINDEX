@@ -95,7 +95,7 @@ php artisan update:install
 ### 捐赠
 
 项目完全个人喜好开发，欢迎打赏。
-打赏作者可以获得技术指导。
+打赏作者可以获得一次安装服务。
 
 
 ##### [打赏](https://pay.ningkai.wang) ： https://pay.ningkai.wang
