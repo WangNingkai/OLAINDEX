@@ -183,7 +183,7 @@ class IndexController extends Controller
                 }
                 return view($view, compact('file', 'path_array', 'origin_path'));
             } else {
-                $last = end($patterns);
+                $last = end($this->show);
                 if ($last == $suffix) {
                     break;
                 }
