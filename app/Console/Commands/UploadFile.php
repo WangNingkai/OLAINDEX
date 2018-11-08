@@ -64,7 +64,6 @@ class UploadFile extends Command
         $content = file_get_contents($local);
         $path = Tool::convertPath($remote);
         $result = $od->uploadByPath($path, $content);
-        dump($result);
         $response = Tool::handleResponse($result);
         $response['code'] == 200 ? $this->info('上传成功') : $this->error('上传失败');
 
