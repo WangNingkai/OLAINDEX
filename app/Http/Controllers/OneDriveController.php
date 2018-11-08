@@ -29,14 +29,14 @@ class OneDriveController extends Controller
     }
 
     /**
-     * 发送请求
+     * 请求API
      * @param $method
      * @param $param
      * @param bool $stream
      * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function request($method, $param, $stream = true)
+    public function requestApi($method, $param, $stream = true)
     {
         if (is_array($param)) {
             @list($endpoint, $requestBody, $requestHeaders, $timeout) = $param;
@@ -81,6 +81,46 @@ class OneDriveController extends Controller
     }
 
     /**
+     * 请求URL
+     * @param $method
+     * @param $param
+     * @param bool $stream
+     * @return \Illuminate\Http\JsonResponse|mixed|\Psr\Http\Message\ResponseInterface
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function requestUrl($method, $param, $stream = true)
+    {
+        if (is_array($param)) {
+            @list($endpoint, $requestBody, $requestHeaders, $timeout) = $param;
+            $requestBody = $requestBody ?? '';
+            $headers = $requestHeaders ?? [];
+            $timeout = $timeout ?? 5;
+        } else {
+            $endpoint = $param;
+            $requestBody = '';
+            $headers = [];
+            $timeout = 5;
+        }
+        try {
+            $clientSettings = [
+                'headers' => $headers
+            ];
+            $client = new Client($clientSettings);
+            $response = $client->request($method, $endpoint, [
+                'body' => $requestBody,
+                'stream' => $stream,
+                'timeout' => $timeout,
+                'allow_redirects' => [
+                    'track_redirects' => true
+                ]
+            ]);
+            return $response;
+        } catch (ClientException $e) {
+            return $this->response('', $e->getCode(), $e->getMessage());
+        }
+    }
+
+    /**
      * 获取盘
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -88,7 +128,7 @@ class OneDriveController extends Controller
     public function getDrive()
     {
         $endpoint = '/me/drive';
-        $response = $this->request('get', $endpoint);
+        $response = $this->requestApi('get', $endpoint);
         return $this->handleResponse($response);
     }
 
@@ -101,7 +141,7 @@ class OneDriveController extends Controller
     public function listChildren($itemId = '')
     {
         $endpoint = $itemId ? "/me/drive/items/{$itemId}/children" : "/me/drive/root/children";
-        $response = $this->request('get', $endpoint);
+        $response = $this->requestApi('get', $endpoint);
         if ($response instanceof Response) {
             $response = json_decode($response->getBody()->getContents(), true);
             $data = $this->getNextLinkList($response);
@@ -121,7 +161,7 @@ class OneDriveController extends Controller
     public function listChildrenByPath($path = '/')
     {
         $endpoint = $path == '/' ? "/me/drive/root/children" : "/me/drive/root{$path}children";
-        $response = $this->request('get', $endpoint);
+        $response = $this->requestApi('get', $endpoint);
         if ($response instanceof Response) {
             $response = json_decode($response->getBody()->getContents(), true);
             $data = $this->getNextLinkList($response);
@@ -142,7 +182,7 @@ class OneDriveController extends Controller
     {
         if (array_has($list, '@odata.nextLink')) {
             $endpoint = str_after($list['@odata.nextLink'], Constants::REST_ENDPOINT . Constants::API_VERSION);
-            $response = $this->request('get', $endpoint);
+            $response = $this->requestApi('get', $endpoint);
             $data = json_decode($response->getBody()->getContents(), true);
             $result = array_merge($list['value'], $this->getNextLinkList($data, $result));
         } else {
@@ -160,7 +200,7 @@ class OneDriveController extends Controller
     public function getItem($itemId)
     {
         $endpoint = "/me/drive/items/{$itemId}";
-        $response = $this->request('get', $endpoint);
+        $response = $this->requestApi('get', $endpoint);
         if ($response instanceof Response) {
             $data = json_decode($response->getBody()->getContents(), true);
             $res = $this->formatArray($data, false);
@@ -179,7 +219,7 @@ class OneDriveController extends Controller
     public function getItemByPath($path)
     {
         $endpoint = "/me/drive/root{$path}";
-        $response = $this->request('get', $endpoint);
+        $response = $this->requestApi('get', $endpoint);
         if ($response instanceof Response) {
             $data = json_decode($response->getBody()->getContents(), true);
             $res = $this->formatArray($data, false);
@@ -208,7 +248,7 @@ class OneDriveController extends Controller
                     'id' => $parentItemId
                 ],
             ]);
-            $response = $this->request('post', [$endpoint, $body], false);
+            $response = $this->requestApi('post', [$endpoint, $body], false);
             if ($response instanceof Response) {
                 $data = [
                     'redirect' => $response->getHeaderLine('Location')
@@ -241,7 +281,7 @@ class OneDriveController extends Controller
         if ($itemName)
             $content = array_add($content, 'name', $itemName);
         $body = json_encode($content);
-        $response = $this->request('patch', [$endpoint, $body]);
+        $response = $this->requestApi('patch', [$endpoint, $body]);
         return $this->handleResponse($response);
     }
 
@@ -256,7 +296,7 @@ class OneDriveController extends Controller
     {
         $endpoint = "/me/drive/items/$parentItemId/children";
         $body = '{"name":"' . $itemName . '","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
-        $response = $this->request('post', [$endpoint, $body]);
+        $response = $this->requestApi('post', [$endpoint, $body]);
         return $this->handleResponse($response);
     }
 
@@ -275,7 +315,7 @@ class OneDriveController extends Controller
             $endpoint = "/me/drive/root{$path}children";
         }
         $body = '{"name":"' . $itemName . '","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
-        $response = $this->request('post', [$endpoint, $body]);
+        $response = $this->requestApi('post', [$endpoint, $body]);
         return $this->handleResponse($response);
     }
 
@@ -289,7 +329,7 @@ class OneDriveController extends Controller
     public function deleteItem($itemId, $eTag)
     {
         $endpoint = "/me/drive/items/{$itemId}";
-        $response = $this->request('delete', [$endpoint, '', ['if-match' => $eTag]]);
+        $response = $this->requestApi('delete', [$endpoint, '', ['if-match' => $eTag]]);
         if ($response instanceof Response) {
             $statusCode = $response->getStatusCode();
             if ($statusCode == 204) {
@@ -315,7 +355,7 @@ class OneDriveController extends Controller
             $endpoint = "/me/drive/root/search(q='{$query}')";
         else
             $endpoint = '/me/drive/root:/' . trim($path, '/') . ':/' . "search(q='{$query}')";
-        $response = $this->request('get', $endpoint);
+        $response = $this->requestApi('get', $endpoint);
         if ($response instanceof Response) {
             $response = json_decode($response->getBody()->getContents(), true);
             $data = $this->getNextLinkList($response);
@@ -336,7 +376,7 @@ class OneDriveController extends Controller
     public function thumbnails($itemId, $size)
     {
         $endpoint = "/me/drive/items/{$itemId}/thumbnails/0/{$size}";
-        $response = $this->request('get', $endpoint);
+        $response = $this->requestApi('get', $endpoint);
         return $this->handleResponse($response);
     }
 
@@ -350,7 +390,7 @@ class OneDriveController extends Controller
     {
         $endpoint = "/me/drive/items/{$itemId}/createLink";
         $body = '{"type": "view","scope": "anonymous"}';
-        $response = $this->request('post', [$endpoint, $body]);
+        $response = $this->requestApi('post', [$endpoint, $body]);
         return $this->handleResponse($response);
 
     }
@@ -386,7 +426,7 @@ class OneDriveController extends Controller
     public function listPermission($itemId)
     {
         $endpoint = "/me/drive/items/{$itemId}/permissions";
-        $response = $this->request('get', $endpoint);
+        $response = $this->requestApi('get', $endpoint);
         if ($response instanceof Response) {
             $data = json_decode($response->getBody()->getContents(), true);
             return $this->response($data['value']);
@@ -405,7 +445,7 @@ class OneDriveController extends Controller
     public function deletePermission($itemId, $permissionId)
     {
         $endpoint = "/me/drive/items/{$itemId}/permissions/{$permissionId}";
-        $response = $this->request('delete', $endpoint);
+        $response = $this->requestApi('delete', $endpoint);
         if ($response instanceof Response) {
             $statusCode = $response->getStatusCode();
             if ($statusCode == 204) {
@@ -426,7 +466,7 @@ class OneDriveController extends Controller
     public function getShareWithMe()
     {
         $endpoint = '/me/drive/sharedWithMe';
-        $response = $this->request('get', $endpoint);
+        $response = $this->requestApi('get', $endpoint);
         return $this->handleResponse($response);
     }
 
@@ -440,7 +480,7 @@ class OneDriveController extends Controller
     public function getShareWithMeDetail($driveId, $itemId)
     {
         $endpoint = "/drives/{$driveId}/items/{$itemId}";
-        $response = $this->request('get', $endpoint);
+        $response = $this->requestApi('get', $endpoint);
         return $this->handleResponse($response);
     }
 
@@ -456,7 +496,7 @@ class OneDriveController extends Controller
         $stream = \GuzzleHttp\Psr7\stream_for($content);
         $endpoint = "/me/drive/items/{$id}/content";
         $body = $stream;
-        $response = $this->request('put', [$endpoint, $body]);
+        $response = $this->requestApi('put', [$endpoint, $body]);
         return $this->handleResponse($response);
     }
 
@@ -472,7 +512,7 @@ class OneDriveController extends Controller
         $stream = \GuzzleHttp\Psr7\stream_for($content);
         $endpoint = "/me/drive/root{$path}content";
         $body = $stream;
-        $response = $this->request('put', [$endpoint, $body]);
+        $response = $this->requestApi('put', [$endpoint, $body]);
         return $this->handleResponse($response);
     }
 
@@ -498,7 +538,7 @@ class OneDriveController extends Controller
                 $endpoint = "/me/drive/root{$graphPath}children";
                 $headers = ['Prefer' => 'respond-async'];
                 $body = '{"@microsoft.graph.sourceUrl":"' . $url . '","name":"' . pathinfo($remote, PATHINFO_BASENAME) . '","file":{}}';
-                $response = $this->request('post', [$endpoint, $body, $headers]);
+                $response = $this->requestApi('post', [$endpoint, $body, $headers]);
                 if ($response instanceof Response) {
                     $data = [
                         'redirect' => $response->getHeaderLine('Location')
@@ -515,27 +555,20 @@ class OneDriveController extends Controller
 
     /**
      * 大文件上传创建session
-     * @param $path
-     * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
+     * @param $remote
+     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function createUploadSession($path)
+    public function createUploadSession($remote)
     {
-        $result = $this->pathToItemId($path);
-        $response = Tool::handleResponse($result);
-        if ($response['code'] == 200) {
-            $id = $response['data']['id'];
-            $endpoint = "/me/drive/items/{$id}/createUploadSession";
-            $body = json_encode([
-                'item' => [
-                    '@microsoft.graph.conflictBehavior' => 'rename',
-                ]
-            ]);
-            $response = $this->request('post', [$endpoint, $body]);
-            return $this->handleResponse($response);
-        } else {
-            return $result;
-        }
+        $endpoint = $remote == '/' ? "/me/drive/root/createUploadSession" : "/me/drive/root{$remote}createUploadSession";
+        $body = json_encode([
+            'item' => [
+                '@microsoft.graph.conflictBehavior' => 'fail',
+            ]
+        ]);
+        $response = $this->requestApi('post', [$endpoint, $body]);
+        return $this->handleResponse($response);
 
     }
 
@@ -556,10 +589,10 @@ class OneDriveController extends Controller
         $content = $this->readFileContent($file, $offset, $length);
         $headers = [
             'Content-Length' => $content_length,
-            'Content-Content-Range' => "bytes {$offset}-{$end}/{$file_size}",
+            'Content-Range' => "bytes {$offset}-{$end}/{$file_size}",
         ];
         $requestBody = $content;
-        $response = $this->request('put', [$url, $requestBody, $headers, 300]);
+        $response = $this->requestUrl('put', [$url, $requestBody, $headers, 360]);
         return $this->handleResponse($response);
     }
 
@@ -571,7 +604,7 @@ class OneDriveController extends Controller
      */
     public function uploadSessionStatus($url)
     {
-        $response = $this->request('get', $url);
+        $response = $this->requestUrl('get', [$url, '', ['Authorization' => 'Bearer ' . $this->access_token]]);
         return $this->handleResponse($response);
     }
 
@@ -583,7 +616,7 @@ class OneDriveController extends Controller
      */
     public function deleteUploadSession($url)
     {
-        $response = $this->request('delete', $url);
+        $response = $this->requestUrl('delete', [$url, '', ['Authorization' => 'Bearer ' . $this->access_token]]);
         return $this->handleResponse($response);
     }
 
@@ -636,7 +669,7 @@ class OneDriveController extends Controller
     public function pathToItemId($path)
     {
         $endpoint = $path == '/' ? '/me/drive/root' : '/me/drive/root' . $path;
-        $response = $this->request('get', $endpoint);
+        $response = $this->requestApi('get', $endpoint);
         if ($response instanceof Response) {
             $response = json_decode($response->getBody()->getContents(), true);
             return $this->response(['id' => $response['id']]);
@@ -652,7 +685,7 @@ class OneDriveController extends Controller
      */
     public function handleResponse($response)
     {
-        if ($response->getStatusCode() == 200 || $response->getStatusCode() == 201) {
+        if ($response->getStatusCode() == 200 || $response->getStatusCode() == 201 || $response->getStatusCode() == 202) {
             $data = json_decode($response->getBody()->getContents(), true);
             return $this->response($data);
         } else {
