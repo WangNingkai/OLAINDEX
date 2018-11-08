@@ -57,7 +57,4 @@ Route::post('/admin/url/upload', 'ManageController@uploadUrl')->name('admin.url.
 Route::any('/search', 'IndexController@search')->name('search')->middleware('checkAuth');
 Route::any('/search/file/{id}', 'IndexController@searchShow')->name('search.show')->middleware('checkAuth');
 
-// 测试路由
-Route::any('/t', function () {
-})->middleware('checkToken');
 
