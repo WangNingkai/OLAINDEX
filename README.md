@@ -1,7 +1,6 @@
-OLAINDEX
-===
+# OLAINDEX
 
-## Another OneDrive Directory Index
+✨ Another OneDrive Directory Index.
 
 ![OLAINDEX](https://i.loli.net/2018/10/11/5bbf40831f294.jpg)
 
@@ -10,6 +9,8 @@ OLAINDEX
 > 本项目受 Oneindex 启发，功能借鉴其思想，在这里感谢。 项目持续开发，会加入更多功能，欢迎大家提issue.
 
 ### 简介
+
+项目地址：[https://github.com/WangNingkai/OLAINDEX](https://github.com/WangNingkai/OLAINDEX)
 
 - 1.OneDrive 目录索引；
 - 2.基于最新 PHP 框架 laravel5 搭建而成；
@@ -30,6 +31,8 @@ OLAINDEX
 - 后台基本管理，支持主题，预览设置等等（清理缓存后及时生效）（需管理员）。
 - v2.0 全新路径显示（pathinfo）
 - 添加看图相册
+- 配置文件化，不再依赖数据库
+- 支持 Heroku 搭建，亲测（搭建地址：`http://imwnk-olaindex.herokuapp.com`）。
 
 ### 演示链接
 
@@ -39,7 +42,11 @@ OLAINDEX
 
 > 由于本项目基于Laravel 开发，新手建议查看 laravel 的环境搭建再进行部署。
 
+**再次强调：希望看完wiki以确保操作环境达到要求！如出现错误提示，建议提供完整截图或相关完整报错错代码**
+
 **帮助文档 ：**[Wiki](https://github.com/WangNingkai/OLAINDEX/wiki)
+
+**QQ讨论交流群：946906682**
 
 ### 更新升级
 
@@ -51,6 +58,8 @@ OLAINDEX
 支持dash视频流播放（理论支持大多数视频）
 - **2018.10.20 / v2.0**
 全新路径显示(原先模式的图床路径会失效，请谨慎升级)
+- **2018.10.28 / v3.0**
+抛弃数据库，数据json格式保存
 
 **从原先版本升级请自行执行以下代码：**
 
@@ -63,11 +72,11 @@ php artisan update:install
 
 #### 版本
 
-- release: 测试相对稳定代码
+- release: 稳定版
 
-- master: 开发最新代码
+- master: 开发版
 
-- dev: 开发测试代码（不稳定）
+- test: 测试版（不稳定）
 
 ### TODO
 
@@ -95,5 +104,4 @@ php artisan update:install
 
 ![image.png](https://i.loli.net/2018/10/27/5bd473a992fa6.png)
 ![image.png](https://i.loli.net/2018/10/27/5bd473a7c6716.png)
-
 

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Session;
 
 /**
  * 文件获取操作
- * Class FetchController2
+ * Class FetchController
  * @package App\Http\Controllers
  */
 class FetchController extends Controller
@@ -130,9 +130,13 @@ class FetchController extends Controller
     public function convertPath($path, $isQueryPath = true, $isFile = false, $isDownload = false)
     {
 
-        $origin_path = trim(urldecode($path), '/');
-        if (!$isDownload)
-            $query_path = mb_substr($origin_path, 5);
+        $origin_path = trim($path, '/');
+        if (!$isDownload) {
+            $base = mb_substr($origin_path, 0, 4);
+            if (in_array($base, ['home', 'view', 'show']))
+                $query_path = mb_substr($origin_path, 5);
+            else $query_path = $origin_path;
+        }
         else
             $query_path = mb_substr($origin_path, 9);
         if (!$isQueryPath) return $query_path;
@@ -161,7 +165,7 @@ class FetchController extends Controller
      */
     public function getFile(Request $request, $isDownload = false)
     {
-        $graphPath = $this->convertPath($request->getPathInfo(), true, true, $isDownload);
+        $graphPath = urldecode($this->convertPath($request->getPathInfo(), true, true, $isDownload));
         $endpoint = '/me/drive/root' . $graphPath;
         $response = $this->requestGraph($endpoint, true);
         return $this->formatArray($response, false);
@@ -316,10 +320,9 @@ class FetchController extends Controller
      */
     public function hasImage($items)
     {
-        $hasImage =false;
-        foreach($items as $item)
-        {
-            if(isset($item['image'])) {
+        $hasImage = false;
+        foreach ($items as $item) {
+            if (isset($item['image'])) {
                 $hasImage = true;
                 break;
             }

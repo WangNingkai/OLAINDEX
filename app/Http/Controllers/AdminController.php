@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
-use App\Models\Parameter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
@@ -31,6 +30,7 @@ class AdminController extends Controller
      */
     public function login(Request $request)
     {
+        if (Session::has('LogInfo')) return redirect()->route('admin.basic');
         if (!$request->isMethod('post')) return view('admin.login');
         $password = $request->get('password');
         if (md5($password) == Tool::config('password')) {
@@ -80,7 +80,7 @@ class AdminController extends Controller
      */
     public function show(Request $request)
     {
-        if (!request()->isMethod('post'))  return view('admin.show');
+        if (!request()->isMethod('post')) return view('admin.show');
         $data = $request->except('_token');
         $this->update($data);
         return redirect()->back();
@@ -128,17 +128,11 @@ class AdminController extends Controller
      */
     public function update($data)
     {
-        $editData = [];
-        foreach ($data as $k => $v) {
-            $editData[] = [
-                'name' => $k,
-                'value' => $v
-            ];
-        }
-        $config = new Parameter();
-        $response = $config->updateBatch($editData);
+        $config = Tool::config();
+        $config = array_merge($config, $data);
+        $saved = Tool::saveConfig($config);
         Cache::forget('config');
         Tool::showMessage('更新成功');
-        return $response;
+        return $saved;
     }
 }

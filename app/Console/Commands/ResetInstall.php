@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Helpers\Tool;
 use App\Models\Parameter;
 use Illuminate\Console\Command;
 
@@ -39,6 +40,7 @@ class ResetInstall extends Command
     public function handle()
     {
         $this->warn('========== 开始重置帐号信息 ==========');
+        $config = Tool::config();
         $data = [
             'access_token' => '',
             'refresh_token' => '',
@@ -47,15 +49,9 @@ class ResetInstall extends Command
             'image_hosting' => 0,
             'image_hosting_path' => ''
         ];
-        $editData = [];
-        foreach ($data as $k => $v) {
-            $editData[] = [
-                'name' => $k,
-                'value' => $v
-            ];
-        }
-        $update = new Parameter();
-        if ($update->updateBatch($editData)) {
+        $config = array_merge($config, $data);
+        $saved = Tool::saveConfig($config);
+        if ($saved) {
             $this->call('cache:clear');
             $this->warn('========== 重置成功，请重新登录 ==========');
         }

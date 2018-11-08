@@ -1,9 +1,18 @@
 {
-    "name": "laravel/laravel",
-    "description": "The Laravel Framework.",
+    "name": "wangningkai/olaindex",
+    "description": "✨ Another OneDrive Directory Index.",
     "keywords": [
-        "framework",
+        "OLAINDEX",
+        "OneDrive",
         "laravel"
+    ],
+    "authors": [
+        {
+            "name": "wangningkai",
+            "email": "ningkai.wang@live.com",
+            "homepage": "https://imwnk.cn",
+            "role": "PHP Developer"
+        }
     ],
     "license": "MIT",
     "type": "project",

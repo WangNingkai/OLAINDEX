@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
-use App\Models\Parameter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -25,7 +24,7 @@ class InitController extends Controller
         $client_id = Tool::config('client_id');
         $client_secret = Tool::config('client_secret');
         $redirect_uri = Tool::config('redirect_uri');
-        if ($client_id != '' && $client_secret != '' && $redirect_uri != '') return redirect()->route('list');
+        if ($client_id != '' && $client_secret != '' && $redirect_uri != '') return redirect()->route('home');
         //  显示基础信息的填写、申请或提交应用信息、返回
         if ($request->isMethod('get')) return view('install.init');
         $client_id = $request->get('client_id');
@@ -41,16 +40,10 @@ class InitController extends Controller
             'client_secret' => $client_secret,
             'redirect_uri' => $redirect_uri
         ];
+        $config = Tool::config();
+        $config = array_merge($config, $data);
+        Tool::saveConfig($config);
         Cache::forget('config');
-        $editData = [];
-        foreach ($data as $k => $v) {
-            $editData[] = [
-                'name' => $k,
-                'value' => $v
-            ];
-        }
-        $update = new Parameter();
-        $update->updateBatch($editData);
         return redirect()->route('home');
     }
 

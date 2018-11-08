@@ -2,12 +2,6 @@
 @section('title',$file['name'])
 @section('css')
     <link class="dplayer-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dplayer/dist/DPlayer.min.css">
-    <style>
-        .dplayer-video-wrap .dplayer-video {
-            width: 100%;
-            height: 640px;
-        }
-    </style>
 @stop
 @section('content')
     @include('breadcrumb')
@@ -15,7 +9,7 @@
         <div class="card-header">{{ $file['name'] }}</div>
         <div class="card-body">
             <div class="text-center">
-                <a href="{{ route('download',$origin_path) }}" class="btn btn-success">
+                <a href="{{ route('download',\App\Helpers\Tool::handleUrl($origin_path)) }}" class="btn btn-success">
                     <i class="fa fa-download"></i>下载</a>
             </div>
             <hr>
@@ -26,7 +20,7 @@
                 <div class="form-group">
                     <div class="input-group mb-3">
                         <input type="text" id="link1" class="form-control" aria-label="Amount (to the nearest dollar)"
-                               value="{{ route('download',$origin_path) }}">
+                               value="{{ route('download',\App\Helpers\Tool::handleUrl($origin_path)) }}">
                         <div class="input-group-append">
                             <a href="javascript:void(0)" style="text-decoration: none" data-toggle="tooltip"
                                data-placement="right" data-clipboard-target="#link1" class="clipboard">

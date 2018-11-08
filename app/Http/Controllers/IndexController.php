@@ -48,8 +48,8 @@ class IndexController extends Controller
      */
     public function list(Request $request)
     {
-        $graphPath = $this->fetch->convertPath($request->getPathInfo());
-        $origin_path = $this->fetch->convertPath($request->getPathInfo(), false);
+        $graphPath = urldecode($this->fetch->convertPath($request->getPathInfo()));
+        $origin_path = urldecode($this->fetch->convertPath($request->getPathInfo(), false));
         $query = 'children';
         $endpoint = '/me/drive/root' . $graphPath . $query;
         $response = $this->fetch->requestGraph($endpoint, true);
@@ -74,6 +74,7 @@ class IndexController extends Controller
         $head = Tool::markdown2Html($this->fetch->getContentByName('HEAD.md', $origin_items));
         $readme = Tool::markdown2Html($this->fetch->getContentByName('README.md', $origin_items));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
+//        dd($path_array);
         if (!session()->has('LogInfo')) $origin_items = $this->fetch->filterFiles($origin_items, ['README.md', 'HEAD.md', '.password', '.deny']);
         $items = Tool::paginate($origin_items, 20);
         return view('one', compact('items', 'origin_items', 'origin_path', 'path_array', 'head', 'readme', 'hasImage'));
@@ -87,7 +88,7 @@ class IndexController extends Controller
      */
     public function show(Request $request)
     {
-        $origin_path = $this->fetch->convertPath($request->getPathInfo(), false);
+        $origin_path = urldecode($this->fetch->convertPath($request->getPathInfo(), false));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
         $file = $this->fetch->getFile($request);
         if (isset($file['folder'])) abort(403);
@@ -202,7 +203,7 @@ class IndexController extends Controller
         Session::put('password:' . $origin_path, $data);
         $directory_password = $this->fetch->getContentById($pass_id);
         if ($password == $directory_password)
-            return redirect()->route('home', $origin_path);
+            return redirect()->route('home', Tool::handleUrl($origin_path));
         else {
             Tool::showMessage('密码错误', false);
             return view('password', compact('origin_path', 'pass_id'));

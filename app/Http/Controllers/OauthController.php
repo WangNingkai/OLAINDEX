@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
-use App\Models\Parameter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
@@ -75,7 +74,7 @@ class OauthController extends Controller
                     'refresh_token' => $refresh_token,
                     'access_token_expires' => $expires
                 ];
-                $this->updateCache($data);
+                $this->update($data);
                 // 保存授权跳转
                 return redirect()->route('home');
             } catch (IdentityProviderException $e) {
@@ -105,7 +104,7 @@ class OauthController extends Controller
                 'refresh_token' => $refresh_token,
                 'access_token_expires' => $expires
             ];
-            $this->updateCache($data);
+            $this->update($data);
             return redirect()->away($redirect);
         } catch (IdentityProviderException $e) {
             exit($e->getMessage());
@@ -117,20 +116,13 @@ class OauthController extends Controller
      * @param $data
      * @return bool|int
      */
-    public function updateCache($data)
+    public function update($data)
     {
-        // 清理缓存 & 更新数据库
         Cache::forget('config');
-        $editData = [];
-        foreach ($data as $k => $v) {
-            $editData[] = [
-                'name' => $k,
-                'value' => $v
-            ];
-        }
-        $update = new Parameter();
-        $res = $update->updateBatch($editData);
-        return $res;
+        $config = Tool::config();
+        $config = array_merge($config, $data);
+        $saved = Tool::saveConfig($config);
+        return $saved;
     }
 
 }

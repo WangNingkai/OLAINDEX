@@ -11,9 +11,11 @@
                         src="{{ $file['thumb'] }}" alt="{{ $file['name'] }}" class="img-fluid"></a></div>
             <br>
             <div class="text-center">
-                <a href="{{ route('download',$origin_path) }}" class="btn btn-success"><i class="fa fa-download"></i> 下载</a>
+                <a href="{{ route('download',\App\Helpers\Tool::handleUrl($origin_path)) }}" class="btn btn-success"><i
+                        class="fa fa-download"></i> 下载</a>
                 &nbsp;&nbsp;
-                <a href="{{ route('view',$origin_path) }}"  data-fancybox="image-list" class="btn btn-info"><i class="fa fa-eye"></i>
+                <a href="{{ route('view',\App\Helpers\Tool::handleUrl($origin_path)) }}" data-fancybox="image-list"
+                   class="btn btn-info"><i class="fa fa-eye"></i>
                     点击查看原图</a>
             </div>
             <hr>
@@ -21,7 +23,7 @@
             <div class="form-group">
                 <div class="input-group mb-3">
                     <input type="text" id="link1" class="form-control" aria-label="Amount (to the nearest dollar)"
-                           value="{{ route('view',$origin_path) }}">
+                           value="{{ route('view',\App\Helpers\Tool::handleUrl($origin_path)) }}">
                     <div class="input-group-append">
                         <a href="javascript:void(0)" style="text-decoration: none" data-toggle="tooltip"
                            data-placement="right" data-clipboard-target="#link1" class="clipboard"><span
@@ -33,7 +35,7 @@
             <div class="form-group">
                 <div class="input-group mb-3">
                     <input type="text" id="link2" class="form-control" aria-label="Amount (to the nearest dollar)"
-                           value="![]({{ route('view',$origin_path) }})">
+                           value="![]({{ route('view',\App\Helpers\Tool::handleUrl($origin_path)) }})">
                     <div class="input-group-append">
                         <a href="javascript:void(0)" style="text-decoration: none" data-toggle="tooltip"
                            data-placement="right" data-clipboard-target="#link2" class="clipboard"><span
@@ -45,7 +47,7 @@
             <div class="form-group">
                 <div class="input-group mb-3">
                     <input type="text" id="link3" class="form-control" aria-label="Amount (to the nearest dollar)"
-                           value="<img src='{{ route('view',$origin_path) }}' />">
+                           value="<img src='{{ route('view',\App\Helpers\Tool::handleUrl($origin_path)) }}' />">
                     <div class="input-group-append">
                         <a href="javascript:void(0)" style="text-decoration: none" data-toggle="tooltip"
                            data-placement="right" data-clipboard-target="#link3" class="clipboard"><span
