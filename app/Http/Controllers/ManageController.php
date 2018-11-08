@@ -305,6 +305,21 @@ class ManageController extends Controller
     }
 
     /**
+     * 离线下载（个人版）
+     * @param Request $request
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function uploadUrl(Request $request)
+    {
+        $remote = $request->get('path');
+        $url = $request->get('url');
+        $response = $this->od->uploadUrl($remote, $url);
+        return $response;
+    }
+
+
+    /**
      * 创建分享链接
      * @param Request $request
      * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
@@ -327,20 +342,6 @@ class ManageController extends Controller
     {
         $itemId = $request->get('id');
         $response = $this->od->deleteShareLink($itemId);
-        return $response;
-    }
-
-    /**
-     * 离线下载（个人版）
-     * @param Request $request
-     * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function uploadUrl(Request $request)
-    {
-        $remote = $request->get('path');
-        $url = $request->get('url');
-        $response = $this->od->uploadUrl($remote, $url);
         return $response;
     }
 

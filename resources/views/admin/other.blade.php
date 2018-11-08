@@ -18,12 +18,12 @@
         <div class="form-group">
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <span class="input-group-text">path://</span>
+                    <span class="input-group-text">路径://</span>
                 </div>
                 <input type="text" class="form-control" name="source" id="source">
                 <input type="hidden" name="source_id" id="source_id">
             </div>
-            <span class="form-text text-danger">填写完整地址（包括文件名）</span>
+            <span class="form-text text-danger">填写完整 OneDrive 地址</span>
         </div>
     </div>
     <div class="form-group">
@@ -31,24 +31,22 @@
         <div class="form-group">
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <span class="input-group-text">path://</span>
+                    <span class="input-group-text">路径://</span>
                 </div>
                 <input type="text" class="form-control" name="target" id="target">
                 <input type="hidden" name="target_id" id="target_id">
             </div>
-            <span class="form-text text-danger">移动文件和离线下载请填写完整文件地址</span>
+            <span class="form-text text-danger">移动文件和离线下载（包括文件名）请填写完整文件地址，创建、删除分享时可不填</span>
         </div>
     </div>
-    <div class="form-group invisible">
-        <p>已完成：<span class="text-danger" id="status">0</span></p>
-    </div>
-    <button type="submit" id="copy_move_btn" class="btn btn-primary">提交</button>
+    <button type="submit" id="submit_btn" class="btn btn-primary">提交</button>
 @stop
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/axios@0.18.0/dist/axios.min.js"></script>
     <script>
         $(function () {
-            $("#copy_move_btn").on("click", function () {
+            $("#submit_btn").on("click", function () {
+                swal('提示', '请稍等...', 'info');
                 let action = $("#action").val();
                 let source = $("#source").val();
                 let target = $("#target").val();
@@ -86,6 +84,24 @@
                     }, 2000);
                 } else if (action === 'upload_url') {
                     upload_url(target, source);
+                } else if (action === 'create_share') {
+                    fetchItemId(source, "source_id");
+                    setTimeout(function () {
+                        let source_id = $("#source_id").val();
+                        if (!source_id) {
+                            return false;
+                        }
+                        create_share(source_id);
+                    }, 2000);
+                } else if (action === 'delete_share') {
+                    fetchItemId(source, "source_id");
+                    setTimeout(function () {
+                        let source_id = $("#source_id").val();
+                        if (!source_id) {
+                            return false;
+                        }
+                        delete_share(source_id);
+                    }, 2000);
                 } else {
                     swal('提示', '暂不支持', 'warning');
                     return false;
@@ -199,6 +215,53 @@
                 .catch(function (error) {
                     console.log(error);
                     swal('提示', '出现问题，请检查文件链接是否有效', 'warning');
+                });
+        }
+
+        function create_share(id) {
+            axios.post(Config.routes.share, {
+                id: id,
+                _token: Config._token
+            })
+                .then(function (response) {
+                    let res = response.data;
+                    console.log(res);
+                    let url = res.data.link.webUrl;
+                    $("#target").val(url);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    swal('提示', '出现问题，请检查文件地址是否有效', 'warning');
+                    return false;
+                });
+        }
+
+        function delete_share(id) {
+            axios.post(Config.routes.delete_share, {
+                id: id,
+                _token: Config._token
+            })
+                .then(function (response) {
+                    let res = response.data;
+                    console.log(res);
+                    swal({
+                        title: "操作成功",
+                        text: "已删除",
+                        type: "success",
+                        showCancelButton: false,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "确定",
+                    }).then((result) => {
+                        if (result.value) {
+                            window.location.reload();
+                        }
+                    });
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    swal('提示', '出现问题，请检查操作是否有效', 'warning');
+                    return false;
                 });
         }
     </script>
