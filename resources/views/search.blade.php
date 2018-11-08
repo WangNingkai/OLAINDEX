@@ -12,16 +12,16 @@
             <div class="card-header">
                 <div class="row">
                     <div class="col">
-                        File
+                        文件
                     </div>
                     <div class="col d-none d-md-block d-md-none">
-                        <span class="pull-right">LastModifiedDateTime</span>
+                        <span class="pull-right">最后修改时间</span>
                     </div>
-                    <div class="col d-none d-md-block d-md-none">
-                        <span class="pull-right">Size</span>
+                    <div class="col">
+                        <span class="pull-right">大小</span>
                     </div>
-                    <div class="col d-none d-md-block d-md-none">
-                        <span class="pull-right">Action</span>
+                    <div class="col">
+                        <span class="pull-right">操作</span>
                     </div>
                 </div>
             </div>
@@ -29,30 +29,24 @@
                 @foreach($items as $item)
                     <li class="list-group-item list-group-item-action">
                         <div class="row">
-                            <div class="col">
-                                <a href="{{ route('show',\App\Helpers\Tool::handleUrl(id2path($item['id']))) }}"
+                            <div class="col" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
+                                <a href="{{ route('search.show',$item['id']) }}"
                                    title="{{ $item['name'] }}">
-                                    <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i> {{ \App\Helpers\Tool::subStr($item['name'],0,20) }}
+                                    <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i> {{ $item['name'] }}
                                 </a>
                             </div>
                             <div class="col d-none d-md-block d-md-none">
                                 <span
                                     class="pull-right">{{ date('Y-m-d H:i:s',strtotime($item['lastModifiedDateTime'])) }}</span>
                             </div>
-                            <div class="col d-none d-md-block d-md-none">
+                            <div class="col">
                                 <span class="pull-right">{{ \App\Helpers\Tool::convertSize($item['size']) }}</span>
                             </div>
-                            <div class="col d-none d-md-block d-md-none">
+                            <div class="col">
                                 <span class="pull-right">
-                                    <a href="{{ route('download',\App\Helpers\Tool::handleUrl(id2path($item['id']))) }}"><i
-                                            class="fa fa-download"
-                                            title="下载"></i></a>&nbsp;&nbsp;
-                                    <a href="javascript:void(0)"
-                                       data-clipboard-text="{{ route('download',\App\Helpers\Tool::handleUrl(id2path($item['id']))) }}"
-                                       data-clipboard-text="{{ route('download',\App\Helpers\Tool::handleUrl(id2path($item['id']))) }}"
-                                       class="clipboard"
-                                       title="已复制" data-toggle="tooltip"
-                                       data-placement="right"><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;
+                                    <a href="{{ route('search.show',$item['id']) }}"><i
+                                            class="fa fa-info-circle"
+                                            title="详情"></i></a>&nbsp;&nbsp;
                                 </span>
                             </div>
                         </div>

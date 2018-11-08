@@ -18,7 +18,7 @@ class InitInstall extends Command
      *
      * @var string
      */
-    protected $description = '初始化安装';
+    protected $description = 'Init Install';
 
     /**
      * Create a new command instance.

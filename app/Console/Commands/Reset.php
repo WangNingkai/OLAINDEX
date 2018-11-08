@@ -18,7 +18,7 @@ class Reset extends Command
      *
      * @var string
      */
-    protected $description = '重置应用';
+    protected $description = 'Reset App';
 
     /**
      * Create a new command instance.
@@ -37,7 +37,7 @@ class Reset extends Command
      */
     public function handle()
     {
-        if ($this->confirm('重置应用将会清空全部数据库数据，继续吗？')) {
+        if ($this->confirm('重置应用将会重置全部数据，继续吗？')) {
             $this->warn('========== 开始重置 ==========');
             $this->call('cache:clear');
             copy(storage_path('app/example.config.json'), storage_path('app/config.json'));

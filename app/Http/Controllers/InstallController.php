@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Cache;
 
 /**
  * 初始化安装操作
- * Class InitController
+ * Class InstallController
  * @package App\Http\Controllers
  */
-class InitController extends Controller
+class InstallController extends Controller
 {
     /**
      * 首次安装
@@ -34,7 +34,7 @@ class InitController extends Controller
             Tool::showMessage('参数请填写完整', false);
             return redirect()->back();
         }
-        // 写入数据库
+        // 写入配置
         $data = [
             'client_id' => $client_id,
             'client_secret' => $client_secret,
@@ -54,7 +54,7 @@ class InitController extends Controller
      */
     public function apply(Request $request)
     {
-        // 感谢donwa提供的方法
+        // 感谢 donwa 提供的方法
         $redirect_uri = $request->get('redirect_uri');
         $ru = "https://developer.microsoft.com/en-us/graph/quick-start?appID=_appId_&appName=_appName_&redirectUrl={$redirect_uri}&platform=option-php";
         $deepLink = "/quickstart/graphIO?publicClientSupport=false&appName=OLAINDEX&redirectUrl={$redirect_uri}&allowImplicitFlow=false&ru=" . urlencode($ru);

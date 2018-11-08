@@ -21,7 +21,7 @@ class ResetPassword extends Command
      *
      * @var string
      */
-    protected $description = '重置密码';
+    protected $description = 'Reset Password';
 
     /**
      * Create a new command instance.
