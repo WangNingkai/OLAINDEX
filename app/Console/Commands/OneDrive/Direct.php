@@ -54,8 +54,6 @@ class Direct extends Command
         }
         /* @var $result \Illuminate\Http\JsonResponse */
         $result = $od->createShareLink($_id);
-        /* @var $result \Illuminate\Http\JsonResponse */
-        $result = $od->createShareLink($_id);
         $response = Tool::handleResponse($result);
         $response['code'] == 200 ? $this->info("创建成功\n永久直链地址： {$response['data']['redirect']}") : $this->error("创建失败\n{$response['msg']} ");
     }
