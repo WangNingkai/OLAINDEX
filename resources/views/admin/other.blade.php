@@ -8,8 +8,8 @@
             <option value="move">移动</option>
             <option value="copy">复制</option>
             <option value="upload_url" class="text-danger">离线下载(实验性)</option>
-            <option value="create_share">创建分享</option>
-            <option value="delete_share">删除分享</option>
+            <option value="create_share">创建分享下载直链</option>
+            <option value="delete_share">删除分享下载直链</option>
         </select>
         <span class="form-text text-danger">仅个人版支持离线下载</span>
     </div>
