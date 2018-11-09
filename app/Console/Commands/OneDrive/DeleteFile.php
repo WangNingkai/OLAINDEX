@@ -55,6 +55,6 @@ class DeleteFile extends Command
         /* @var $result \Illuminate\Http\JsonResponse */
         $result = $od->deleteItem($_id);
         $response = Tool::handleResponse($result);
-        $response['code'] == 200 ? $this->info("删除成功") : $this->error("删除失败 \n {$response['msg']} ");
+        $response['code'] == 200 ? $this->info("删除成功") : $this->error("删除失败\n{$response['msg']} ");
     }
 }

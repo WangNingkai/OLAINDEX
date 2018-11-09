@@ -21,7 +21,7 @@ class Share extends Command
      *
      * @var string
      */
-    protected $description = 'Share File';
+    protected $description = 'ShareLink For File';
 
     /**
      * Create a new command instance.
@@ -55,6 +55,10 @@ class Share extends Command
         /* @var $result \Illuminate\Http\JsonResponse */
         $result = $od->createShareLink($_id);
         $response = Tool::handleResponse($result);
-        $response['code'] == 200 ? $this->info("创建成功 \n 分享链接： {$response['data']['link']['webUrl']}") : $this->error("创建失败 \n {$response['msg']} ");
+        if ($response['code'] == 200) {
+            $direct = str_replace('15/download.aspx', '15/guestaccess.aspx', $response['data']['redirect']);
+            $this->info("创建成功\n分享链接： {$direct}");
+        } else
+            $this->error("创建失败\n{$response['msg']} ");
     }
 }

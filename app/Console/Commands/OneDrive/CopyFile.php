@@ -66,6 +66,6 @@ class CopyFile extends Command
         /* @var $result \Illuminate\Http\JsonResponse */
         $result = $od->copy($item_id, $parent_id);
         $response = Tool::handleResponse($result);
-        $response['code'] == 200 ? $this->info("复制路径查看进度 \n {$response['data']['redirect']}") : $this->error("复制失败 \n {$response['msg']} ");
+        $response['code'] == 200 ? $this->info("复制路径查看进度\n{$response['data']['redirect']}") : $this->error("复制失败\n{$response['msg']} ");
     }
 }

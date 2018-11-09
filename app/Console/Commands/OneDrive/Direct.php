@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands\OneDrive;
 
+use App\Helpers\Tool;
+use App\Http\Controllers\OneDriveController;
 use Illuminate\Console\Command;
 
 class Direct extends Command
@@ -19,7 +21,7 @@ class Direct extends Command
      *
      * @var string
      */
-    protected $description = 'Direct For File';
+    protected $description = 'DirectDownloadLink For File';
 
     /**
      * Create a new command instance.
@@ -32,12 +34,29 @@ class Direct extends Command
     }
 
     /**
-     * Execute the console command.
-     *
-     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function handle()
     {
-        //
+        $this->info('请稍等...');
+        if (!refresh_token()) {
+            $this->error('refresh token error');
+        }
+        $target = $this->argument('path');
+        $od = new OneDriveController();
+        $target_path = trim(Tool::handleUrl($target), '/');
+        $id_request = Tool::handleResponse($od->pathToItemId(empty($target_path) ? '/' : ":/{$target_path}:/"));
+        if ($id_request['code'] == 200)
+            $_id = $id_request['data']['id'];
+        else {
+            $this->error('路径异常');
+            return;
+        }
+        /* @var $result \Illuminate\Http\JsonResponse */
+        $result = $od->createShareLink($_id);
+        /* @var $result \Illuminate\Http\JsonResponse */
+        $result = $od->createShareLink($_id);
+        $response = Tool::handleResponse($result);
+        $response['code'] == 200 ? $this->info("创建成功\n永久直链地址： {$response['data']['redirect']}") : $this->error("创建失败\n{$response['msg']} ");
     }
 }

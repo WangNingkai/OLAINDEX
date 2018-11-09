@@ -67,6 +67,6 @@ class MoveFile extends Command
         /* @var $result \Illuminate\Http\JsonResponse */
         $result = $od->move($item_id, $parent_id, $rename);
         $response = Tool::handleResponse($result);
-        $response['code'] == 200 ? $this->info("移动成功") : $this->error("移动失败 \n {$response['msg']} ");
+        $response['code'] == 200 ? $this->info("移动成功") : $this->error("移动失败\n{$response['msg']} ");
     }
 }

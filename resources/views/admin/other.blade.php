@@ -226,7 +226,7 @@
                 .then(function (response) {
                     let res = response.data;
                     console.log(res);
-                    let url = res.data.link.webUrl;
+                    let url = res.data.redirect;
                     $("#target").val(url);
                 })
                 .catch(function (error) {

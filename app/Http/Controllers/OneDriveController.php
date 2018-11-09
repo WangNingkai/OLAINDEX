@@ -382,7 +382,7 @@ class OneDriveController extends Controller
     }
 
     /**
-     * 创建分享链接
+     * 创建分享直链下载
      * @param $itemId
      * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -392,8 +392,34 @@ class OneDriveController extends Controller
         $endpoint = "/me/drive/items/{$itemId}/createLink";
         $body = '{"type": "view","scope": "anonymous"}';
         $response = $this->requestApi('post', [$endpoint, $body]);
-        return $this->handleResponse($response);
-
+        if ($response instanceof Response) {
+            $data = json_decode($response->getBody()->getContents(), true);
+            $web_url = array_get($data, 'link.webUrl');
+            if (str_contains($web_url, 'sharepoint.com')) {
+                $parse = parse_url($web_url);
+                $domain = "{$parse['scheme']}://{$parse['host']}/";
+                $param = str_after($parse['path'], 'personal/');
+                $info = explode('/', $param);
+                $res_id = $info[1];
+                $user_info = $info[0];
+                $direct_link = $domain . 'personal/' . $user_info . '/_layouts/15/download.aspx?share=' . $res_id;
+            } elseif (str_contains($web_url, '1drv.ms')) {
+                $client = new Client();
+                try {
+                    $request = $client->get($web_url, ['allow_redirects' => false]);
+                    $direct_link = str_replace('redir?', 'download?', $request->getHeaderLine('Location'));
+                } catch (ClientException $e) {
+                    return $this->response('', $e->getCode(), $e->getMessage());
+                }
+            } else {
+                $direct_link = '';
+            }
+            return $this->response([
+                'redirect' => $direct_link
+            ]);
+        } else {
+            return $response;
+        }
     }
 
     /**
