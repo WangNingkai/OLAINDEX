@@ -16,7 +16,7 @@ class UploadFile extends Command
     protected $signature = 'od:upload
                             {local : 本地文件地址}
                             {remote : 远程文件地址}
-                            {chuck=3276800 : 分块大小（320kib的倍数） }';
+                            {--chuck=3276800 : 分块大小(字节)（320kib的倍数） }';
 
     /**
      * The console command description.
