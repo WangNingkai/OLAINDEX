@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\Tool;
 use App\Http\Controllers\OneDriveController;
@@ -13,9 +13,10 @@ class UploadFile extends Command
      *
      * @var string
      */
-    protected $signature = 'upload:file
-                            {--local= : 本地文件地址}
-                            {--remote= : 远程文件地址}';
+    protected $signature = 'od:upload
+                            {local : 本地文件地址}
+                            {remote : 远程文件地址}
+                            {chuck=3276800 : 分块大小（320kib的倍数） }';
 
     /**
      * The console command description.
@@ -42,18 +43,15 @@ class UploadFile extends Command
         if (!refresh_token()) {
             $this->error('refresh token error');
         }
-        $local = $this->option('local');
-        $remote = $this->option('remote');
-        if (!$local || !$remote) {
-            $this->error('路径参数缺少');
-            return;
-        }
+        $local = $this->argument('local');
+        $remote = $this->argument('remote');
+        $chuck = $this->argument('chuck');
         $file_size = Tool::readFileSize($local);
         $this->info('开始上传...');
         if ($file_size < 10485760) {
             $this->upload($remote, $local);
         } else {
-            $this->uploadBySession($remote, $local);
+            $this->uploadBySession($remote, $local, $chuck);
         }
     }
 
@@ -77,9 +75,10 @@ class UploadFile extends Command
      * 大文件分片上传
      * @param string $remote 远程上传地址（包括文件名）
      * @param string $local 本地文件地址
+     * @param integer $chuck 分片大小
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function uploadBySession($remote, $local)
+    public function uploadBySession($remote, $local, $chuck = 3276800)
     {
         ini_set('memory_limit', '-1');
         $od = new OneDriveController();
@@ -96,7 +95,7 @@ class UploadFile extends Command
         $this->info('上传文件:' . $local);
         $done = false;
         $offset = 0;
-        $length = 327680 * 10;
+        $length = $chuck;
         while (!$done) {
             $retry = 0;
             $res = $od->uploadToSession($url, $local, $offset, $length);

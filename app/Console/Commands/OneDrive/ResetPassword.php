@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\Tool;
 use Illuminate\Console\Command;
@@ -14,7 +14,7 @@ class ResetPassword extends Command
      *
      * @var string
      */
-    protected $signature = 'reset:password';
+    protected $signature = 'od:password';
 
     /**
      * The console command description.

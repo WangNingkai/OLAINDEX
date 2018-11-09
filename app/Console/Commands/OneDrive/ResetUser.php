@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\Tool;
 use Illuminate\Console\Command;
@@ -12,7 +12,7 @@ class ResetUser extends Command
      *
      * @var string
      */
-    protected $signature = 'reset:user';
+    protected $signature = 'od:logout';
 
     /**
      * The console command description.

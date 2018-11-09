@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\OneDrive;
 
 use Illuminate\Console\Command;
 
@@ -11,7 +11,7 @@ class InitInstall extends Command
      *
      * @var string
      */
-    protected $signature = 'init:install';
+    protected $signature = 'od:install';
 
     /**
      * The console command description.

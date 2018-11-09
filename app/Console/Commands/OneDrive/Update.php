@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\Constants;
 use App\Helpers\Tool;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 
-class UpdateInstall extends Command
+class Update extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'update:install';
+    protected $signature = 'od:update';
 
     /**
      * The console command description.
