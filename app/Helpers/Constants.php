@@ -4,7 +4,7 @@ namespace App\Helpers;
 
 class Constants
 {
-    const LATEST_VERSION = 'v3.0';
+    const LATEST_VERSION = 'v3.1';
 
     const API_VERSION = 'v1.0';
     const REST_ENDPOINT = 'https://graph.microsoft.com/';

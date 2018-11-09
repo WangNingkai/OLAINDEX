@@ -64,32 +64,41 @@ class Update extends Command
                 $this->v_1_1();
                 $this->v_1_2();
                 $this->v_2_0();
-                $result = $this->v_3_0();
+                $this->v_3_0();
+                $result = $this->v_3_1();
                 break;
             case 'v1.0':
                 $this->v_1_1();
                 $this->v_1_2();
                 $this->v_2_0();
-                $result = $this->v_3_0();
+                $this->v_3_0();
+                $result = $this->v_3_1();
                 break;
             case 'v1.1':
                 $this->v_1_2();
                 $this->v_2_0();
-                $result = $this->v_3_0();
+                $this->v_3_0();
+                $result = $this->v_3_1();
                 break;
             case 'v1.2':
                 $this->v_2_0();
-                $result = $this->v_3_0();
+                $this->v_3_0();
+                $result = $this->v_3_1();
                 break;
             case 'v2.0':
-                $result = $this->v_3_0();
+                $this->v_3_0();
+                $result = $this->v_3_1();
+                break;
+            case 'v3.0':
+                $result = $this->v_3_1();
                 break;
             default:
                 $this->v_1_0();
                 $this->v_1_1();
                 $this->v_1_2();
                 $this->v_2_0();
-                $result = $this->v_3_0();
+                $this->v_3_0();
+                $result = $this->v_3_1();
         }
         Artisan::call('cache:clear');
         $this->info($result['status'] . ':' . $result['msg']);
@@ -195,7 +204,25 @@ class Update extends Command
             $this->info('创建完成！');
         };
         $saved = Tool::saveConfig($data);
-        return $saved ? $this->returnStatus('更新成功，version=v3.0，请手动执行chmod 777 storage/app/config.json '.PHP_EOL.' 并移除原数据库 rm -f database/database.sqlite') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
+        return $saved ? $this->returnStatus('更新成功，version=v3.0，请手动执行chmod 777 storage/app/config.json ' . PHP_EOL . ' 并移除原数据库 rm -f database/database.sqlite') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
+    }
+
+    /**
+     * @return array
+     */
+    public function v_3_1()
+    {
+        if (!file_exists(storage_path('app/config.json'))) {
+            $this->warn('未检测到配置文件！正在创建配置文件...');
+            copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
+            $this->info('创建完成！');
+            $config = Tool::config();
+        } else {
+            $config = Tool::config();
+            $config = array_merge($config, ['app_version' => 'v3.1']);
+        }
+        $saved = Tool::saveConfig($config);
+        return $saved ? $this->returnStatus('更新成功，version=v3.1') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
     }
 
     /**
