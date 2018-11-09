@@ -326,10 +326,11 @@ class OneDriveController extends Controller
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function deleteItem($itemId, $eTag)
+    public function deleteItem($itemId, $eTag = '')
     {
         $endpoint = "/me/drive/items/{$itemId}";
-        $response = $this->requestApi('delete', [$endpoint, '', ['if-match' => $eTag]]);
+        $headers = $eTag ? ['if-match' => $eTag] : [];
+        $response = $this->requestApi('delete', [$endpoint, '', $headers]);
         if ($response instanceof Response) {
             $statusCode = $response->getStatusCode();
             if ($statusCode == 204) {

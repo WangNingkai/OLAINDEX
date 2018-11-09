@@ -6,14 +6,14 @@ use App\Helpers\Tool;
 use App\Http\Controllers\OneDriveController;
 use Illuminate\Console\Command;
 
-class Download extends Command
+class Share extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'od:download
+    protected $signature = 'od:share
                             {path : 文件地址}';
 
     /**
@@ -21,7 +21,7 @@ class Download extends Command
      *
      * @var string
      */
-    protected $description = 'Download File';
+    protected $description = 'Share File';
 
     /**
      * Create a new command instance.
@@ -43,11 +43,18 @@ class Download extends Command
             $this->error('refresh token error');
         }
         $target = $this->argument('path');
-        $target_path = trim(Tool::handleUrl($target), '/');
-        $path = empty($target_path) ? '/' : ":/{$target_path}:/";
         $od = new OneDriveController();
-        $result = $od->getItemByPath($path);
+        $target_path = trim(Tool::handleUrl($target), '/');
+        $id_request = Tool::handleResponse($od->pathToItemId(empty($target_path) ? '/' : ":/{$target_path}:/"));
+        if ($id_request['code'] == 200)
+            $_id = $id_request['data']['id'];
+        else {
+            $this->error('路径异常');
+            return;
+        }
+        /* @var $result \Illuminate\Http\JsonResponse */
+        $result = $od->createShareLink($_id);
         $response = Tool::handleResponse($result);
-        $response['code'] == 200 ? $this->info("下载地址：{$response['data']['@microsoft.graph.downloadUrl']}") : $this->error("获取文件失败 \n {$response['msg']} ");
+        $response['code'] == 200 ? $this->info("创建成功 \n 分享链接： {$response['data']['link']['webUrl']}") : $this->error("创建失败 \n {$response['msg']} ");
     }
 }

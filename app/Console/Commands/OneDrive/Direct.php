@@ -4,21 +4,22 @@ namespace App\Console\Commands\OneDrive;
 
 use Illuminate\Console\Command;
 
-class Quota extends Command
+class Direct extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'od:info';
+    protected $signature = 'od:direct
+                            {path : 文件地址}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'OneDrive Info';
+    protected $description = 'Direct For File';
 
     /**
      * Create a new command instance.
@@ -37,8 +38,6 @@ class Quota extends Command
      */
     public function handle()
     {
-        $headers = array_keys(quota());
-        $quota[] = quota();
-        $this->table($headers, $quota);
+        //
     }
 }
