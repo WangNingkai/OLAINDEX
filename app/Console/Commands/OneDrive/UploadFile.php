@@ -41,7 +41,8 @@ class UploadFile extends Command
     public function handle()
     {
         if (!refresh_token()) {
-            $this->error('refresh token error');
+            $this->warn('请稍后重试...');
+            return;
         }
         $local = $this->argument('local');
         $remote = $this->argument('remote');

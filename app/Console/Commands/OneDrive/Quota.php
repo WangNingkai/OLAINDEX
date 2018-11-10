@@ -38,6 +38,10 @@ class Quota extends Command
     public function handle()
     {
         $headers = array_keys(quota());
+        if (!$headers) {
+            $this->warn('请稍后重试...');
+            return;
+        }
         $quota[] = quota();
         $this->table($headers, $quota);
     }

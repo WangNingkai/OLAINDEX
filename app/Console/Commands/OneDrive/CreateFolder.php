@@ -40,7 +40,8 @@ class CreateFolder extends Command
     public function handle()
     {
         if (!refresh_token()) {
-            $this->error('refresh token error');
+            $this->warn('请稍后重试...');
+            return;
         }
         $name = $this->argument('name');
         $target = $this->argument('target');
