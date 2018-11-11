@@ -49,7 +49,7 @@ class OneDriveController extends Controller
             $headers = [];
             $timeout = 5;
         }
-        $baseUrl = Constants::REST_ENDPOINT;
+        $baseUrl = Tool::config('app_type') == 'com' ? Constants::REST_ENDPOINT : Constants::REST_ENDPOINT_21V;
         $apiVersion = Constants::API_VERSION;
         if (stripos($endpoint, "http") === 0) {
             $requestUrl = $endpoint;
@@ -395,7 +395,7 @@ class OneDriveController extends Controller
         if ($response instanceof Response) {
             $data = json_decode($response->getBody()->getContents(), true);
             $web_url = array_get($data, 'link.webUrl');
-            if (str_contains($web_url, 'sharepoint.com')) {
+            if (str_contains($web_url, ['sharepoint.com', 'sharepoint.cn'])) {
                 $parse = parse_url($web_url);
                 $domain = "{$parse['scheme']}://{$parse['host']}/";
                 $param = str_after($parse['path'], 'personal/');
