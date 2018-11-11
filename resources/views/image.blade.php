@@ -10,11 +10,14 @@
         }
 
         .link-container {
-            margin-top: 20px;
+            margin-top: 15px;
             padding: 10px;
             border: solid 1px #dadada;
-            overflow-wrap: break-word;
+            word-wrap: break-word;
             background-color: #f7f7f7;
+        }
+        .link-container p{
+            margin: 5px 0;
         }
     </style>
 @stop
@@ -52,46 +55,22 @@
         </ul>
         <div id="navTabContent" class="tab-content">
             <div class="tab-pane fade in active show" id="urlPanel">
-                <div class="link-container"><a href="javascript:void(0)" style="text-decoration: none"
-                                               data-toggle="tooltip"
-                                               data-placement="left" data-clipboard-target="#urlCode"
-                                               class="clipboard"><i class="fa fa-copy"></i> 复制</a>&nbsp;&nbsp; <span
-                        id="urlCode"></span></div>
+                <div class="link-container" id="urlCode"></div>
             </div>
             <div class="tab-pane fade" id="htmlPanel">
-                <div class="link-container"><a href="javascript:void(0)" style="text-decoration: none"
-                                               data-toggle="tooltip"
-                                               data-placement="left" data-clipboard-target="#htmlCode"
-                                               class="clipboard"><i class="fa fa-copy"></i> 复制</a>&nbsp;&nbsp; <span
-                        id="htmlCode"></span></div>
+                <div class="link-container" id="htmlCode"></div>
             </div>
             <div class="tab-pane fade" id="bbPanel">
-                <div class="link-container"><a href="javascript:void(0)" style="text-decoration: none"
-                                               data-toggle="tooltip"
-                                               data-placement="left" data-clipboard-target="#bbCode"
-                                               class="clipboard"><i class="fa fa-copy"></i> 复制</a>&nbsp;&nbsp; <span
-                        id="bbCode"></span></div>
+                <div class="link-container" id="bbCode"></div>
             </div>
             <div class="tab-pane fade" id="markdownPanel">
-                <div class="link-container"><a href="javascript:void(0)" style="text-decoration: none"
-                                               data-toggle="tooltip"
-                                               data-placement="left" data-clipboard-target="#markdown"
-                                               class="clipboard"><i class="fa fa-copy"></i> 复制</a>&nbsp;&nbsp; <span
-                        id="markdown"></span></div>
+                <div class="link-container" id="markdown"></div>
             </div>
             <div class="tab-pane fade" id="markdownLinkPanel">
-                <div class="link-container"><a href="javascript:void(0)" style="text-decoration: none"
-                                               data-toggle="tooltip"
-                                               data-placement="left" data-clipboard-target="#markdownLinks"
-                                               class="clipboard"><i class="fa fa-copy"></i> 复制</a>&nbsp;&nbsp; <span
-                        id="markdownLinks"></span></div>
+                <div class="link-container" id="markdownLinks"></div>
             </div>
             <div class="tab-pane fade" id="deletePanel">
-                <div class="link-container"><a href="javascript:void(0)" style="text-decoration: none"
-                                               data-toggle="tooltip"
-                                               data-placement="left" data-clipboard-target="#deleteCode"
-                                               class="clipboard"><i class="fa fa-copy"></i> 复制</a>&nbsp;&nbsp; <span
-                        id="deleteCode"></span></div>
+                <div class="link-container" id="deleteCode"></div>
             </div>
         </div>
     </div>
@@ -113,12 +92,12 @@
                 });
                 this.on('success', function (file, response) {
                     $('#showUrl').removeClass('invisible');
-                    $('#urlCode').append(response.data.url + '\n');
-                    $('#htmlCode').append('&lt;img src=\'' + response.data.url + '\' alt=\'' + response.data.filename + '\' title=\'' + response.data.filename + '\' /&gt;' + '\n');
-                    $('#bbCode').append('[img]' + response.data.url + '[/img]' + '\n');
-                    $('#markdown').append('![' + response.data.filename + '](' + response.data.url + ')' + '\n');
-                    $('#markdownLinks').append('[![' + response.data.filename + '](' + response.data.url + ')]' + '(' + response.data.url + ')' + '\n');
-                    $('#deleteCode').append(response.data.delete + '\n')
+                    $('#urlCode').append('<p>' + response.data.url + '</p>');
+                    $('#htmlCode').append('<p>&lt;img src=\'' + response.data.url + '\' alt=\'' + response.data.filename + '\' title=\'' + response.data.filename + '\' /&gt;' + '</p>');
+                    $('#bbCode').append('<p>[img]' + response.data.url + '[/img]' + '</p>');
+                    $('#markdown').append('<p>![' + response.data.filename + '](' + response.data.url + ')' + '</p>');
+                    $('#markdownLinks').append('<p>[![' + response.data.filename + '](' + response.data.url + ')]' + '(' + response.data.url + ')' + '</p>');
+                    $('#deleteCode').append('<p>' + response.data.delete + '</p>')
                 });
             },
 
