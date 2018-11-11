@@ -118,6 +118,6 @@ php artisan update:install
 
 ## 预览
 
-![image.png](https://i.loli.net/2018/10/27/5bd473a992fa6.png)
-![image.png](https://i.loli.net/2018/10/27/5bd473a7c6716.png)
+![OLAINDEX.png](https://i.loli.net/2018/11/11/5be82800ce8b5.png)
+![IMAGE.png](https://i.loli.net/2018/11/11/5be8286501b5f.png)
 
