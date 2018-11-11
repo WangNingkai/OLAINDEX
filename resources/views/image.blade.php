@@ -8,6 +8,14 @@
             border-radius: 10px;
             background: white;
         }
+
+        .link-container {
+            margin-top: 20px;
+            padding: 10px;
+            border: solid 1px #dadada;
+            overflow-wrap: break-word;
+            background-color: #f7f7f7;
+        }
     </style>
 @stop
 @section('content')
@@ -44,22 +52,46 @@
         </ul>
         <div id="navTabContent" class="tab-content">
             <div class="tab-pane fade in active show" id="urlPanel">
-                <pre style="margin-top: 5px;"><code id="urlCode"></code></pre>
+                <div class="link-container"><a href="javascript:void(0)" style="text-decoration: none"
+                                               data-toggle="tooltip"
+                                               data-placement="left" data-clipboard-target="#urlCode"
+                                               class="clipboard"><i class="fa fa-copy"></i> 复制</a>&nbsp;&nbsp; <span
+                        id="urlCode"></span></div>
             </div>
             <div class="tab-pane fade" id="htmlPanel">
-                <pre style="margin-top: 5px;"><code id="htmlCode"></code></pre>
+                <div class="link-container"><a href="javascript:void(0)" style="text-decoration: none"
+                                               data-toggle="tooltip"
+                                               data-placement="left" data-clipboard-target="#htmlCode"
+                                               class="clipboard"><i class="fa fa-copy"></i> 复制</a>&nbsp;&nbsp; <span
+                        id="htmlCode"></span></div>
             </div>
             <div class="tab-pane fade" id="bbPanel">
-                <pre style="margin-top: 5px;"><code id="bbCode"></code></pre>
+                <div class="link-container"><a href="javascript:void(0)" style="text-decoration: none"
+                                               data-toggle="tooltip"
+                                               data-placement="left" data-clipboard-target="#bbCode"
+                                               class="clipboard"><i class="fa fa-copy"></i> 复制</a>&nbsp;&nbsp; <span
+                        id="bbCode"></span></div>
             </div>
             <div class="tab-pane fade" id="markdownPanel">
-                <pre style="margin-top: 5px;"><code id="markdown"></code></pre>
+                <div class="link-container"><a href="javascript:void(0)" style="text-decoration: none"
+                                               data-toggle="tooltip"
+                                               data-placement="left" data-clipboard-target="#markdown"
+                                               class="clipboard"><i class="fa fa-copy"></i> 复制</a>&nbsp;&nbsp; <span
+                        id="markdown"></span></div>
             </div>
             <div class="tab-pane fade" id="markdownLinkPanel">
-                <pre style="margin-top: 5px;"><code id="markdownLinks"></code></pre>
+                <div class="link-container"><a href="javascript:void(0)" style="text-decoration: none"
+                                               data-toggle="tooltip"
+                                               data-placement="left" data-clipboard-target="#markdownLinks"
+                                               class="clipboard"><i class="fa fa-copy"></i> 复制</a>&nbsp;&nbsp; <span
+                        id="markdownLinks"></span></div>
             </div>
             <div class="tab-pane fade" id="deletePanel">
-                <pre style="margin-top: 5px;"><code id="deleteCode"></code></pre>
+                <div class="link-container"><a href="javascript:void(0)" style="text-decoration: none"
+                                               data-toggle="tooltip"
+                                               data-placement="left" data-clipboard-target="#deleteCode"
+                                               class="clipboard"><i class="fa fa-copy"></i> 复制</a>&nbsp;&nbsp; <span
+                        id="deleteCode"></span></div>
             </div>
         </div>
     </div>
