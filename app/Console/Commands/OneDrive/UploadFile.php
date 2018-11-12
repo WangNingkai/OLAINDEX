@@ -45,7 +45,15 @@ class UploadFile extends Command
             return;
         }
         $local = $this->argument('local');
+        if (is_dir($local)) {
+            $this->warn('暂不支持文件夹上传!');
+            return;
+        }
         $remote = $this->argument('remote');
+        if (is_dir($remote)) {
+            $this->warn('请输入完整上传路径（包括文件名）!');
+            return;
+        }
         $chuck = $this->option('chuck');
         $file_size = Tool::readFileSize($local);
         $this->info('开始上传...');
@@ -118,7 +126,8 @@ class UploadFile extends Command
                     // 失败重试
                     $retry++;
                     if ($retry <= 3) {
-                        $this->warn("重试第{$retry}次");
+                        $this->warn("重试第{$retry}次，等待10秒重试");
+                        sleep(10);
                     } else {
                         $this->error('分片上传失败');
                         break;
