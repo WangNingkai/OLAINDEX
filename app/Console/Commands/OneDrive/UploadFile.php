@@ -45,12 +45,12 @@ class UploadFile extends Command
             return;
         }
         $local = $this->argument('local');
-        if (is_dir($local)) {
+        if (!is_file($local)) {
             $this->warn('暂不支持文件夹上传!');
             return;
         }
         $remote = $this->argument('remote');
-        if (is_dir($remote)) {
+        if (!is_file($remote)) {
             $this->warn('请输入完整上传路径（包括文件名）!');
             return;
         }
