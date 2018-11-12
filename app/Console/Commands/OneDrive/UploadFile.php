@@ -44,20 +44,17 @@ class UploadFile extends Command
             $this->warn('请稍后重试...');
             return;
         }
+        clearstatcache();
         $local = $this->argument('local');
         if (!is_file($local)) {
             $this->warn('暂不支持文件夹上传!');
             return;
         }
         $remote = $this->argument('remote');
-        if (!is_file($remote)) {
-            $this->warn('请输入完整上传路径（包括文件名）!');
-            return;
-        }
         $chuck = $this->option('chuck');
         $file_size = Tool::readFileSize($local);
         $this->info('开始上传...');
-        if ($file_size < 10485760) {
+        if ($file_size < 4194304) {
             $this->upload($remote, $local);
         } else {
             $this->uploadBySession($remote, $local, $chuck);
