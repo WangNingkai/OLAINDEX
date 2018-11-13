@@ -40,22 +40,21 @@ class ListCommand extends Command
         $this->warn('OLAINDEX Console Command');
         $header = ['command', 'description', 'params'];
         $list = [
-
+            ['od:install', '初始安装', ''],
+            ['od:switch', '切换版本（世纪互联）', ''],
+            ['od:logout', '登出账户', ''],
+            ['od:password', '重置密码', ''],
+            ['od:reset', '重置应用', ''],
+            ['od:update', '更新升级', ''],
             ['od:download', '下载文件', '{remote}'],
             ['od:mkdir', '新建目录', '{remote}'],
-            ['od:mv', '移动项目', '{local} {remote}'],
+            ['od:mv', '移动项目', '{source} {target}'],
             ['od:delete', '删除项目', '{remote}'],
             ['od:share', '分享直链', '{remote}'],
             ['od:direct', '永久直链', '{remote}'],
-            ['od:copy', '复制文件', '{local} {remote}'],
+            ['od:copy', '复制文件', '{source} {target}'],
             ['od:upload', '上传文件', '{local} {remote} {--chuck=}'],
-            ['od:info', '使用信息', ''],
-            ['od:reset', '重置应用', ''],
-            ['od:logout', '登出账户', ''],
-            ['od:password', '重置密码', ''],
-            ['od:update', '更新升级', ''],
-            ['od:install', '初始安装', ''],
-            ['od:switch', '转换版本', ''],
+            ['od:info', 'OneDrive信息', ''],
         ];
         $this->table($header, $list);
     }
