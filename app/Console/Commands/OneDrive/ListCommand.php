@@ -52,7 +52,7 @@ class ListCommand extends Command
             ['od:delete', '删除项目', '{remote}'],
             ['od:share', '分享直链', '{remote}'],
             ['od:direct', '永久直链', '{remote}'],
-            ['od:copy', '复制文件', '{source} {target}'],
+            ['od:cp', '复制文件', '{source} {target}'],
             ['od:upload', '上传文件', '{local} {remote} {--chuck=}'],
             ['od:info', 'OneDrive信息', ''],
         ];
