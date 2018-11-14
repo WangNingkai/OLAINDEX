@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
@@ -105,7 +106,7 @@ class IndexController extends Controller
                 $data = Session::get($key);
                 $expires = $data['expires'];
                 $password = Tool::getFileContent($pass_url);
-                if ($password != decrypt($data['password']) || time() > $expires) {
+                if (strcmp($password, decrypt($data['password']) !== 0) || time() > $expires) {
                     Session::forget($key);
                     Tool::showMessage('密码已过期', false);
                     return view('password', compact('origin_path', 'pass_id'));
@@ -283,6 +284,7 @@ class IndexController extends Controller
     public function searchShow($id)
     {
         $result = $this->od->itemIdToPath($id);
+        /* @var $result JsonResponse */
         $response = Tool::handleResponse($result);
         if ($response['code'] == 200) {
             $originPath = $response['data']['path'];
@@ -321,7 +323,7 @@ class IndexController extends Controller
             Tool::showMessage('获取文件夹密码失败', false);
             $directory_password = '';
         }
-        if ($password == $directory_password)
+        if (strcmp($password, $directory_password) === 0)
             return redirect()->route('home', Tool::handleUrl($origin_path));
         else {
             Tool::showMessage('密码错误', false);
