@@ -147,8 +147,8 @@ class Tool
     {
         $code = explode(' ', self::config('code'));
         $stream = explode(' ', self::config('stream'));
-        $exts = array_merge($code, $stream);
-        $isText = in_array($file['ext'], $exts);
+        $canEditExt = array_merge($code, $stream);
+        $isText = in_array($file['ext'], $canEditExt);
         $isBigFile = $file['size'] > 5 * 1024 * 1024 ?: false;
         if (!$isBigFile && $isText) {
             return true;
@@ -389,7 +389,6 @@ class Tool
                             $arr = array_merge($temp, $arr);
                         }
                     }
-
                 }
             }
         }

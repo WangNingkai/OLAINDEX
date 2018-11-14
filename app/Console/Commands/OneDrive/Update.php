@@ -112,6 +112,7 @@ class Update extends Command
         }
         Artisan::call('cache:clear');
         $this->info($result['status'] . ':' . $result['msg']);
+        clearstatcache(); // 清理文件缓存
         return;
     }
 
