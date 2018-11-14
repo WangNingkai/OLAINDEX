@@ -588,7 +588,7 @@ class OneDriveController extends Controller
      */
     public function createUploadSession($remote)
     {
-        $endpoint = $remote == '/' ? "/me/drive/root/createUploadSession" : "/me/drive/root{$remote}createUploadSession";
+        $endpoint = "/me/drive/root{$remote}createUploadSession";
         $body = json_encode([
             'item' => [
                 '@microsoft.graph.conflictBehavior' => 'fail',

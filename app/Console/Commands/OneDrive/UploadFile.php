@@ -92,7 +92,9 @@ class UploadFile extends Command
         ini_set('memory_limit', '-1');
         $od = new OneDriveController();
         $file_size = Tool::readFileSize($local);
-        $path = Tool::convertPath($remote);
+        $target_path = Tool::getAbsolutePath($remote);
+        $file_name = basename($local);
+        $path = trim($target_path, '/') == '' ? ":/{$file_name}:/" : Tool::convertPath($target_path . $file_name);
         $url_request = $od->createUploadSession($path);
         $url_response = Tool::handleResponse($url_request);
         if ($url_response['code'] == 200) {
