@@ -26,7 +26,7 @@
                 <div class="col">
                     <span class="pull-right">大小</span>
                 </div>
-                <div class="col">
+                <div class="col d-none d-md-block d-md-none">
                     @if (session()->has('LogInfo'))
                         <a class="pull-right dropdown-toggle btn btn-sm btn-primary" href="javascript:void(0)"
                            id="actionDropdownLink"
@@ -158,7 +158,7 @@
                             <span
                                 class="pull-right">{{ array_has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</span>
                         </div>
-                        <div class="col">
+                        <div class="col d-none d-md-block d-md-none">
                             <span class="pull-right">
                                 @if(!array_has($item,'folder'))
                                     @if(array_has($item,'image'))
