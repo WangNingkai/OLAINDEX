@@ -55,22 +55,25 @@ class UploadFile extends Command
         $file_size = Tool::readFileSize($local);
         $this->info('开始上传...');
         if ($file_size < 4194304) {
-            $this->upload($remote, $local);
+            $this->upload($local, $remote);
         } else {
-            $this->uploadBySession($remote, $local, $chuck);
+            $this->uploadBySession($local, $remote, $chuck);
         }
     }
 
     /**
-     * @param string $remote 远程上传地址（包括文件名）
+     * 普通文件上传
      * @param string $local 本地文件地址
+     * @param string $remote 远程上传地址（包括文件名）
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function upload($remote, $local)
+    public function upload($local, $remote)
     {
         $od = new OneDriveController();
         $content = file_get_contents($local);
-        $path = Tool::convertPath($remote);
+        $file_name = basename($local);
+        $target_path = Tool::getAbsolutePath($remote);
+        $path = Tool::convertPath($target_path . $file_name);
         $result = $od->uploadByPath($path, $content);
         $response = Tool::handleResponse($result);
         $response['code'] == 200 ? $this->info('上传成功') : $this->error('上传失败');
@@ -78,13 +81,13 @@ class UploadFile extends Command
     }
 
     /**
-     * 大文件分片上传
-     * @param string $remote 远程上传地址（包括文件名）
+     * 大文件上传
      * @param string $local 本地文件地址
+     * @param string $remote 远程上传地址（包括文件名）
      * @param integer $chuck 分片大小
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function uploadBySession($remote, $local, $chuck = 3276800)
+    public function uploadBySession($local, $remote, $chuck = 3276800)
     {
         ini_set('memory_limit', '-1');
         $od = new OneDriveController();
