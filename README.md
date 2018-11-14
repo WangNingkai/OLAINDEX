@@ -83,7 +83,7 @@
 ```
 git pull
 composer install -vvv
-php artisan update:install
+php artisan od:update
 ```
 
 
