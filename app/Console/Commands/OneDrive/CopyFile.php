@@ -42,7 +42,8 @@ class CopyFile extends Command
     {
         $this->info('开始复制...');
         if (!refresh_token()) {
-            $this->error('refresh token error');
+            $this->warn('请稍后重试...');
+            return;
         }
         $source = $this->argument('source');
         $target = $this->argument('target');

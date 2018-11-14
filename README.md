@@ -19,11 +19,12 @@
 ### 功能
 
 - OneDrive 目录查看索引，支持分页查看；
+- 支持世纪互联（一键切换）
 - 支持图床（国内不太稳低）；
 - 支持文件直链下载；
 - 支持图片列表栏展示；
 - 支持代码、图片、文本文件即时预览；
-- 支持音视频播放（兼容大部分格式），视频播放采用Dplayer，音乐播放采用Aplayer；
+- 支持音视频播放（兼容大部分格式），视频播放采用 Plyr.js，音乐播放采用 Aplayer；
 - 支持文件夹加密；（需登陆）
 - 支持文件上传；（需登陆）
 - 支持readme/head说明文件添加/编辑/删除；（需登陆）
@@ -71,6 +72,11 @@
   - 修改重置账户代码 查看命令行 `php artisan list od` 具体命令行操作帮助，例如： `php artisan od:upload -h`
   - 命令行上传文件，支持分片上传
   - 添加命令行操作支持
+  
+- **2018.11.11 / v3.1.1**
+ 
+ - 升级3.1.1 支持世纪互联账号
+ - 增强命令行 `php artisan od:command` 查看全部命令行命令
 
 **从原先版本升级请自行执行以下代码：**
 
@@ -114,6 +120,6 @@ php artisan update:install
 
 ## 预览
 
-![image.png](https://i.loli.net/2018/10/27/5bd473a992fa6.png)
-![image.png](https://i.loli.net/2018/10/27/5bd473a7c6716.png)
+![OLAINDEX.png](https://i.loli.net/2018/11/11/5be82800ce8b5.png)
+![IMAGE.png](https://i.loli.net/2018/11/11/5be8286501b5f.png)
 

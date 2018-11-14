@@ -57,8 +57,8 @@ class OauthController extends Controller
         $this->client_id = Tool::config('client_id');
         $this->client_secret = Tool::config('client_secret');
         $this->redirect_uri = Tool::config('redirect_uri');
-        $this->authorize_url = Constants::AUTHORITY_URL . Constants::AUTHORIZE_ENDPOINT;
-        $this->access_token_url = Constants::AUTHORITY_URL . Constants::TOKEN_ENDPOINT;
+        $this->authorize_url = Tool::config('app_type') == 'com' ? Constants::AUTHORITY_URL . Constants::AUTHORIZE_ENDPOINT : Constants::AUTHORITY_URL_21V . Constants::AUTHORIZE_ENDPOINT_21V;
+        $this->access_token_url = Tool::config('app_type') == 'com' ? Constants::AUTHORITY_URL . Constants::TOKEN_ENDPOINT : Constants::AUTHORITY_URL_21V . Constants::TOKEN_ENDPOINT_21V;
         $this->scopes = Constants::SCOPES;
     }
 
@@ -86,14 +86,16 @@ class OauthController extends Controller
                 $code = $request->get('code');
                 try {
                     $client = new Client();
+                    $form_params = [
+                        'client_id' => $this->client_id,
+                        'client_secret' => $this->client_secret,
+                        'redirect_uri' => $this->redirect_uri,
+                        'code' => $code,
+                        'grant_type' => 'authorization_code',
+                    ];
+                    if (Tool::config('app_type') == 'cn') $form_params = array_add($form_params, 'resource', Constants::REST_ENDPOINT_21V);
                     $response = $client->post($this->access_token_url, [
-                        'form_params' => [
-                            'client_id' => $this->client_id,
-                            'client_secret' => $this->client_secret,
-                            'redirect_uri' => $this->redirect_uri,
-                            'code' => $code,
-                            'grant_type' => 'authorization_code',
-                        ],
+                        'form_params' => $form_params
                     ]);
                     $token = json_decode($response->getBody()->getContents(), true);
                     $access_token = $token['access_token'];
@@ -149,14 +151,16 @@ class OauthController extends Controller
         $existingRefreshToken = Tool::config('refresh_token');
         try {
             $client = new Client();
+            $form_params = [
+                'client_id' => $this->client_id,
+                'client_secret' => $this->client_secret,
+                'redirect_uri' => $this->redirect_uri,
+                'refresh_token' => $existingRefreshToken,
+                'grant_type' => 'refresh_token',
+            ];
+            if (Tool::config('app_type') == 'cn') $form_params = array_add($form_params, 'resource', Constants::REST_ENDPOINT_21V);
             $response = $client->post($this->access_token_url, [
-                'form_params' => [
-                    'client_id' => $this->client_id,
-                    'client_secret' => $this->client_secret,
-                    'redirect_uri' => $this->redirect_uri,
-                    'refresh_token' => $existingRefreshToken,
-                    'grant_type' => 'refresh_token',
-                ],
+                'form_params' => $form_params,
             ]);
             $token = json_decode($response->getBody()->getContents(), true);
             $access_token = $token['access_token'];

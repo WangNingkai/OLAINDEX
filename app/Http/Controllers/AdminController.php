@@ -21,7 +21,6 @@ class AdminController extends Controller
     public function __construct()
     {
         $this->middleware('checkAuth')->except('login');
-        $this->middleware('checkToken');
     }
 
     /**

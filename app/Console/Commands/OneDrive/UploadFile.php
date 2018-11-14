@@ -41,14 +41,20 @@ class UploadFile extends Command
     public function handle()
     {
         if (!refresh_token()) {
-            $this->error('refresh token error');
+            $this->warn('请稍后重试...');
+            return;
         }
+        clearstatcache();
         $local = $this->argument('local');
+        if (!is_file($local)) {
+            $this->warn('暂不支持文件夹上传!');
+            return;
+        }
         $remote = $this->argument('remote');
         $chuck = $this->option('chuck');
         $file_size = Tool::readFileSize($local);
         $this->info('开始上传...');
-        if ($file_size < 10485760) {
+        if ($file_size < 4194304) {
             $this->upload($remote, $local);
         } else {
             $this->uploadBySession($remote, $local, $chuck);
@@ -117,7 +123,8 @@ class UploadFile extends Command
                     // 失败重试
                     $retry++;
                     if ($retry <= 3) {
-                        $this->warn("重试第{$retry}次");
+                        $this->warn("重试第{$retry}次，等待10秒重试");
+                        sleep(10);
                     } else {
                         $this->error('分片上传失败');
                         break;

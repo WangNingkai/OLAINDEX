@@ -369,4 +369,31 @@ class Tool
         }
     }
 
+    /**
+     * 获取指定目录下全部子目录和文件
+     * @param $path
+     * @return array
+     */
+    public static function fetchDir($path)
+    {
+        $arr = [];
+        $arr[] = $path;
+        if (!is_file($path)) {
+            if (is_dir($path)) {
+                $data = scandir($path);
+                if (!empty($data)) {
+                    foreach ($data as $value) {
+                        if ($value != '.' && $value != '..') {
+                            $sub_path = $path . "/" . $value;
+                            $temp = self::fetchDir($sub_path);
+                            $arr = array_merge($temp, $arr);
+                        }
+                    }
+
+                }
+            }
+        }
+        return $arr;
+    }
+
 }

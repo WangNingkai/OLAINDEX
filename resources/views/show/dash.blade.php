@@ -1,7 +1,7 @@
 @extends('layouts.main')
 @section('title',$file['name'])
 @section('css')
-    <link class="dplayer-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dplayer/dist/DPlayer.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.min.css">
 @stop
 @section('content')
     @include('breadcrumb')
@@ -14,7 +14,10 @@
             </div>
             <hr>
             <div class="text-center">
-                <div id="dplayer"></div>
+                <div id="dash-player">
+                    <video crossorigin playsinline controls poster="{!! $file['thumb'] !!}" id="player">
+                    </video>
+                </div>
                 <hr>
                 <label class="control-label">下载链接</label>
                 <div class="form-group">
@@ -34,25 +37,32 @@
     </div>
 @stop
 @section('js')
-    <script src="https://cdn.jsdelivr.net/npm/dashjs/dist/dash.all.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/dplayer/dist/DPlayer.min.js"></script>
+
     <script>
-        const dp = new DPlayer({
-            container: document.getElementById("dplayer"),  // 播放器容器元素
-            autoplay: false,                                // 视频自动播放
-            theme: "#b7daff",                              // 主题色
-            loop: true,                                     // 视频循环播放
-            lang: "zh-cn",                                  // 播放器语言设置
-            screenshot: false,                              // 开启截图
-            hotkey: true, 	                                // 开启热键
-            preload: "auto",                                // 开启预加载
-            volume: 0.7,                                  // 默认音量
-            // mutex: true,                                    // 互斥，阻止多个播放器同时播放
-            video: {
-                url: "{!! $file['dash'] !!}",                 // 视频地址
-                pic: "{!! $file['thumb'] !!}",                // 视频封面
-                type: "dash"
+        (function (d, p) {
+            var a = new XMLHttpRequest(),
+                b = d.body;
+            a.open("GET", p, true);
+            a.send();
+            a.onload = function () {
+                var c = d.createElement("div");
+                c.style.display = "none";
+                c.innerHTML = a.responseText;
+                b.insertBefore(c, b.childNodes[0]);
             }
-        });
+        })(document, "https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.svg");
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/dashjs/dist/dash.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.min.js"></script>
+    <script>
+        const source = '{!! $file["dash"] !!}';
+        const dash = dashjs.MediaPlayer().create();
+        const video = document.querySelector('video');
+        dash.getDebug().setLogToBrowserConsole(false);
+        dash.initialize(video, source, true);
+        const player = new Plyr(video, {captions: {active: true, update: true}});
+        window.player = player;
+        window.dash = dash;
+    </script>
+
 @stop
