@@ -102,9 +102,9 @@ php artisan od:update
 
 ### 捐赠
 
-项目完全个人喜好开发，欢迎打赏。
-打赏作者可以获得一次安装服务。
+项目完全个人喜好开发，不提供免费定制。
 
+打赏可以获得一次安装服务。
 
 ##### [打赏](https://pay.ningkai.wang) ： https://pay.ningkai.wang
 
