@@ -43,6 +43,7 @@ class IndexController extends Controller
      */
     public function __construct()
     {
+        $this->middleware('checkInstall');
         $this->middleware('checkToken');
         $this->middleware('handleIllegalFile');
         $od = new OneDriveController();

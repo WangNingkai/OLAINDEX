@@ -39,6 +39,7 @@ class ResetUser extends Command
     public function handle()
     {
         $this->warn('========== 开始重置帐号信息 ==========');
+        $this->call('cache:clear');
         if ($this->confirm('重置账号可能出现无法登录的错误，建议重置应用，确认继续吗')) {
             $config = Tool::config();
             $data = [
@@ -52,7 +53,6 @@ class ResetUser extends Command
             $config = array_merge($config, $data);
             $saved = Tool::saveConfig($config);
             if ($saved) {
-                $this->call('cache:clear');
                 $this->warn('========== 重置成功，请重新登录 ==========');
             }
         }

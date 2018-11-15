@@ -42,7 +42,7 @@ class ResetPassword extends Command
         $this->warn('========== 开始重置密码 ==========');
         $password = str_random(8);
         Tool::saveConfig(array_merge(Tool::config(), ['password' => md5($password)]));
-        Artisan::call('cache:clear');
+        $this->call('cache:clear');
         $this->info('重置密码成功，新密码：' . $password);
     }
 }

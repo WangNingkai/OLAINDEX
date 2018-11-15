@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>初始化安装</title>
+    <title>绑定帐号</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootswatch@4/dist/{{ \App\Helpers\Tool::config('theme','materia') }}/bootstrap.min.css">
@@ -38,40 +38,33 @@
         </div>
     @endif
     <div class="card border-light mb-3">
-        <div class="card-header">申请</div>
-        <div class="card-body">
-            <form action="{{ route('apply') }}" method="get" target="_blank">
-                <div class="form-group">
-                    <label class="form-control-label" for="redirect_uri">redirect_uri </label>
-                    <input type="text" class="form-control" id="redirect_uri" name="redirect_uri"
-                           value="{{ trim(config('app.url'),'/').'/oauth' }}">
-                    <span class="form-text text-danger">如已申请，请直接在下面配置中填写。<b>注：此申请仅支持国际通用版OneDrive，世纪互联版请联系作者。</b></span>
-                </div>
-                <button type="submit" class="btn btn-info">申请</button>
-            </form>
+        <div class="card-header">绑定帐号
+            <small class="text-danger">请确认以下信息</small>
         </div>
-    </div>
-    <div class="card border-light mb-3">
-        <div class="card-header">初始化配置</div>
         <div class="card-body">
-            <form action="" method="post">
+            <div class="form-group">
+                <label class="form-control-label" for="client_id">client_id </label>
+                <input type="text" class="form-control" id="client_id" name="client_id"
+                       value="{{ \App\Helpers\Tool::config('client_id') }}" disabled>
+            </div>
+            <div class="form-group">
+                <label class="form-control-label" for="client_secret">client_secret </label>
+                <input type="text" class="form-control" id="client_secret" name="client_secret"
+                       value="{{ \App\Helpers\Tool::config('client_secret') }}" disabled>
+
+            </div>
+            <div class="form-group">
+                <label class="form-control-label" for="redirect_uri">redirect_uri </label>
+                <input type="text" class="form-control" id="redirect_uri" name="redirect_uri"
+                       value="{{ \App\Helpers\Tool::config('redirect_uri') }}" disabled>
+            </div>
+            <form id="bind-form" action="{{ route('bind') }}" method="POST"
+                  class="invisible">
                 @csrf
-                <div class="form-group">
-                    <label class="form-control-label" for="redirect_uri">redirect_uri </label>
-                    <input type="text" class="form-control" id="redirect_uri" name="redirect_uri"
-                           value="{{ trim(config('app.url'),'/').'/oauth' }}">
-                    <span class="form-text text-danger">演示为本地地址，正确回调地址格式: https://you.domain/oauth 必须为 https</span>
-                </div>
-                <div class="form-group">
-                    <label class="form-control-label" for="client_id"><b>client_id</b></label>
-                    <input type="text" class="form-control" id="client_id" name="client_id">
-                </div>
-                <div class="form-group">
-                    <label class="form-control-label" for="client_secret"><b>client_secret</b></label>
-                    <input type="text" class="form-control" id="client_secret" name="client_secret">
-                </div>
-                <button type="submit" class="btn btn-primary">保存</button>
             </form>
+            <a href="javascript:void(0)" onclick="event.preventDefault();document.getElementById('bind-form').submit();"
+               class="btn btn-info">绑定</a>
+            <a href="{{ route('reset') }}" class="btn btn-danger">返回更改</a>
         </div>
     </div>
     <footer id="footer">
