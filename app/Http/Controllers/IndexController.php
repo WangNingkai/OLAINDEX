@@ -105,9 +105,8 @@ class IndexController extends Controller
             $key = 'password:' . $origin_path;
             if (Session::has($key)) {
                 $data = Session::get($key);
-                $expires = $data['expires'];
                 $password = Tool::getFileContent($pass_url);
-                if (strcmp($password, decrypt($data['password']) !== 0) || time() > $expires) {
+                if (strcmp($password, decrypt($data['password'])) !== 0 || time() > $data['expires']) {
                     Session::forget($key);
                     Tool::showMessage('密码已过期', false);
                     return view('password', compact('origin_path', 'pass_id'));
@@ -313,7 +312,7 @@ class IndexController extends Controller
         $pass_id = decrypt(request()->get('pass_id'));
         $data = [
             'password' => encrypt($password),
-            'expires' => time() + $this->expires * 60, // 目录密码过期时间
+            'expires' => time() + (int)$this->expires * 60, // 目录密码过期时间
         ];
         Session::put('password:' . $origin_path, $data);
         $result = $this->od->getItem($pass_id);
