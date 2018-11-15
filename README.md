@@ -53,12 +53,14 @@
 
 ## 更新升级
 
+更新日志：[CHANGELOG](https://raw.githubusercontent.com/WangNingkai/OLAINDEX/master/CHANGELOG.log)
+
 **版本升级：**
 
 ```
-git pull
-composer install -vvv
-php artisan od:update
+git pull 
+composer install -vvv # 无版本更新只需执行到此
+php artisan od:update # 跨版本更新
 ```
 
 
