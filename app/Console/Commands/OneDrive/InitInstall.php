@@ -36,6 +36,7 @@ class InitInstall extends Command
      */
     public function handle()
     {
+        $this->call('cache:clear');
         $this->warn('确保已经手动执行以下目录读写权限命令！');
         $this->info('chmod -R 755 storage/* && chown -R www:www *');
         if (!file_exists(storage_path('app/config.json'))) {
