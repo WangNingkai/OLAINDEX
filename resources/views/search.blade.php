@@ -17,7 +17,7 @@
                     <div class="col d-none d-md-block d-md-none">
                         <span class="pull-right">最后修改时间</span>
                     </div>
-                    <div class="col">
+                    <div class="col d-none d-md-block d-md-none">
                         <span class="pull-right">大小</span>
                     </div>
                     <div class="col">
@@ -39,7 +39,7 @@
                                 <span
                                     class="pull-right">{{ date('Y-m-d H:i:s',strtotime($item['lastModifiedDateTime'])) }}</span>
                             </div>
-                            <div class="col">
+                            <div class="col d-none d-md-block d-md-none">
                                 <span class="pull-right">{{ \App\Helpers\Tool::convertSize($item['size']) }}</span>
                             </div>
                             <div class="col">
