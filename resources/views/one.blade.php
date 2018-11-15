@@ -23,10 +23,10 @@
                 <div class="col d-none d-md-block d-md-none">
                     <span class="pull-right">修改日期</span>
                 </div>
-                <div class="col">
+                <div class="col d-none d-md-block d-md-none">
                     <span class="pull-right">大小</span>
                 </div>
-                <div class="col d-none d-md-block d-md-none">
+                <div class="col">
                     @if (session()->has('LogInfo'))
                         <a class="pull-right dropdown-toggle btn btn-sm btn-primary" href="javascript:void(0)"
                            id="actionDropdownLink"
@@ -154,11 +154,11 @@
                             <span
                                 class="pull-right">{{ date('Y-m-d H:i:s',strtotime($item['lastModifiedDateTime'])) }}</span>
                         </div>
-                        <div class="col">
+                        <div class="col d-none d-md-block d-md-none">
                             <span
                                 class="pull-right">{{ array_has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</span>
                         </div>
-                        <div class="col d-none d-md-block d-md-none">
+                        <div class="col">
                             <span class="pull-right">
                                 @if(!array_has($item,'folder'))
                                     @if(array_has($item,'image'))
