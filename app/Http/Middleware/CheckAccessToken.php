@@ -17,7 +17,8 @@ class CheckAccessToken
     public function handle($request, Closure $next)
     {
         if (Tool::config('refresh_token') == '' || Tool::config('access_token_expires') == '' || Tool::config('access_token') == '') {
-            return redirect()->route('oauth');
+            Tool::showMessage('请绑定帐号！', false);
+            return redirect()->route('bind');
         }
         if (!refresh_token()) {
             $current = url()->current();
