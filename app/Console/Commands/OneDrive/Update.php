@@ -110,7 +110,7 @@ class Update extends Command
                 $this->v_3_1();
                 $result = $this->v_3_1_1();
         }
-        Artisan::call('cache:clear');
+        $this->call('cache:clear');
         $this->info($result['status'] . ':' . $result['msg']);
         clearstatcache(); // 清理文件缓存
         return;

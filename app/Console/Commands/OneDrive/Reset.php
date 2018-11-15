@@ -38,8 +38,8 @@ class Reset extends Command
     public function handle()
     {
         if ($this->confirm('重置将会抹去全部数据，继续吗？')) {
-            $this->warn('========== 开始重置 ==========');
             $this->call('cache:clear');
+            $this->warn('========== 开始重置 ==========');
             copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
             $this->warn('========== 重置完成 ==========');
         } else
