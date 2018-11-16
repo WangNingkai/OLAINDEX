@@ -608,7 +608,7 @@ class OneDriveController extends Controller
      * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function uploadToSession($url, $file, $offset, $length = 10240)
+    public function uploadToSession($url, $file, $offset, $length = 5242880)
     {
         $file_size = Tool::readFileSize($file);
         $content_length = (($offset + $length) > $file_size) ? ($file_size - $offset) : $length;

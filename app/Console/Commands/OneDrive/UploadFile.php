@@ -16,7 +16,7 @@ class UploadFile extends Command
     protected $signature = 'od:upload
                             {local : 本地文件地址}
                             {remote : 远程文件地址}
-                            {--chuck=3276800 : 分块大小(字节)（320kib的倍数） }';
+                            {--chuck=5242880 : 分块大小(字节)（320kib的倍数） }';
 
     /**
      * The console command description.
@@ -115,11 +115,11 @@ class UploadFile extends Command
                 $data = $response['data'];
                 if (!empty($data['nextExpectedRanges'])) {
                     // 分片上传
-                    $this->info("分片进度:{$data['nextExpectedRanges'][0]}");
+                    $this->info("length: {$data['nextExpectedRanges'][0]}");
                     $ranges = explode('-', $data['nextExpectedRanges'][0]);
                     $offset = intval($ranges[0]);
                     $status = @floor($offset / $file_size * 100) . '%';
-                    $this->info("分片上传成功 上传进度:{$status}");
+                    $this->info("success. progress:{$status}");
                     $done = false;
                 } elseif (!empty($data['@content.downloadUrl']) || !empty($data['id'])) {
                     // 上传完成
