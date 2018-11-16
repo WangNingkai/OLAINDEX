@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 
 /**
  * 初始化安装操作
@@ -64,10 +63,7 @@ class InstallController extends Controller
             'client_secret' => $client_secret,
             'redirect_uri' => $redirect_uri
         ];
-        $config = Tool::config();
-        $config = array_merge($config, $data);
-        Tool::saveConfig($config);
-        Cache::forget('config');
+        Tool::updateConfig($data);
         return redirect()->route('bind');
     }
 
@@ -86,10 +82,7 @@ class InstallController extends Controller
             'client_secret' => '',
             'redirect_uri' => ''
         ];
-        $config = Tool::config();
-        $config = array_merge($config, $data);
-        Tool::saveConfig($config);
-        Cache::forget('config');
+        Tool::updateConfig($data);
         return redirect()->route('_1stInstall');
     }
 

@@ -7,7 +7,6 @@ use App\Helpers\Tool;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 
 /**
@@ -106,7 +105,7 @@ class OauthController extends Controller
                         'refresh_token' => $refresh_token,
                         'access_token_expires' => $expires
                     ];
-                    $this->update($data);
+                    Tool::updateConfig($data);
                     return redirect()->route('home');
                 } catch (ClientException $e) {
                     Tool::showMessage($e->getMessage(), false);
@@ -171,7 +170,7 @@ class OauthController extends Controller
                 'refresh_token' => $refresh_token,
                 'access_token_expires' => $expires
             ];
-            $this->update($data);
+            Tool::updateConfig($data);
             if ($redirect) {
                 $redirect = Session::get('refresh_redirect') ?? '/';
                 return redirect()->away($redirect);
@@ -182,19 +181,4 @@ class OauthController extends Controller
             return response()->json(['code' => $e->getCode(), 'msg' => $e->getMessage()]);
         }
     }
-
-    /**
-     * 更新授权信息并清理缓存
-     * @param $data
-     * @return bool|int
-     */
-    public function update($data)
-    {
-        Cache::forget('config');
-        $config = Tool::config();
-        $config = array_merge($config, $data);
-        $saved = Tool::saveConfig($config);
-        return $saved;
-    }
-
 }

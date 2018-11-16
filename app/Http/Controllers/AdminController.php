@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Helpers\Tool;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 
 /**
@@ -69,7 +68,7 @@ class AdminController extends Controller
     {
         if (!$request->isMethod('post')) return view('admin.basic');
         $data = $request->except('_token');
-        $this->update($data);
+        Tool::updateConfig($data);
         return redirect()->back();
     }
 
@@ -82,7 +81,7 @@ class AdminController extends Controller
     {
         if (!request()->isMethod('post')) return view('admin.show');
         $data = $request->except('_token');
-        $this->update($data);
+        Tool::updateConfig($data);
         return redirect()->back();
     }
 
@@ -106,7 +105,7 @@ class AdminController extends Controller
             return redirect()->back();
         }
         $data = ['password' => md5($password)];
-        $this->update($data);
+        Tool::updateConfig($data);
         return redirect()->back();
     }
 
@@ -119,20 +118,5 @@ class AdminController extends Controller
         Artisan::call('cache:clear');
         Tool::showMessage('清理成功');
         return redirect()->route('admin.basic');
-    }
-
-    /**
-     * 设置更新
-     * @param $data
-     * @return bool|int
-     */
-    public function update($data)
-    {
-        $config = Tool::config();
-        $config = array_merge($config, $data);
-        $saved = Tool::saveConfig($config);
-        Cache::forget('config');
-        Tool::showMessage('更新成功');
-        return $saved;
     }
 }
