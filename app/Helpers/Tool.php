@@ -188,7 +188,6 @@ class Tool
         $config = self::config();
         $config = array_merge($config, $data);
         $saved = self::saveConfig($config);
-        $saved ? self::showMessage('更新成功') : self::showMessage('更新失败', false);
         Cache::forget('config');
         return $saved;
     }
