@@ -19,7 +19,7 @@ class Constants
     const AUTHORIZE_ENDPOINT_21V = '/oauth2/authorize';
     const TOKEN_ENDPOINT_21V = '/oauth2/token';
 
-    const SCOPES = 'offline_access files.readwrite.all';
+    const SCOPES = 'offline_access user.read files.readwrite.all';
 
     const FILE_ICON = [
         'stream' => ['fa-file-text-o', ['txt', 'log']],

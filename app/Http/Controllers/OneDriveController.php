@@ -121,6 +121,18 @@ class OneDriveController extends Controller
     }
 
     /**
+     * 获取个人资料
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function getMe()
+    {
+        $endpoint = '/me';
+        $response = $this->requestApi('get', $endpoint);
+        return $this->handleResponse($response);
+    }
+
+    /**
      * 获取盘
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException

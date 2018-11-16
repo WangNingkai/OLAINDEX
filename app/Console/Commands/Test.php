@@ -40,5 +40,8 @@ class Test extends Command
             return is_file($value);
         });
         dd($files);*/
+        $od = new OneDriveController();
+        $info = Tool::handleResponse($od->getMe());
+        dd($info);
     }
 }

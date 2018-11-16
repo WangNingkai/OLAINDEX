@@ -66,10 +66,10 @@ if (!function_exists('bind_account')) {
         if (refresh_token()) {
             $account = Cache::remember('one:account', Tool::config('expires'), function () {
                 $od = new \App\Http\Controllers\OneDriveController();
-                $drive = $od->getDrive();
+                $drive = $od->getMe();
                 $res = Tool::handleResponse($drive);
                 if ($res['code'] == 200) {
-                    return array_get($res, 'data.owner.user.email');
+                    return array_get($res, 'data.userPrincipalName');
                 } else {
                     return '';
                 }
