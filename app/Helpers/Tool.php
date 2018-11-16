@@ -294,7 +294,7 @@ class Tool
     }
 
     /**
-     * url获取远程文件内容
+     * 获取url文件内容
      * @param $url
      * @param bool $cache
      * @return mixed
@@ -369,6 +369,7 @@ class Tool
     }
 
     /**
+     * 处理格式化响应
      * @param $response JsonResponse
      * @param bool $origin
      * @return array

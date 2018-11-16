@@ -2,3 +2,5 @@
 !public/
 !.gitignore
 !example.config.json
+!example.task.json
+

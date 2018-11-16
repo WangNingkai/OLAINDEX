@@ -39,6 +39,7 @@ if (!function_exists('quota')) {
 
 if (!function_exists('refresh_token')) {
     /**
+     * 刷新refresh_token
      * @return bool
      */
     function refresh_token()

@@ -62,6 +62,51 @@ class UploadFile extends Command
     }
 
     /**
+     * 记录任务
+     * @param $local
+     * @param $remote
+     * @param string $sesssion_url
+     * @return bool|int
+     */
+    public function createTask($local, $remote, $sesssion_url = '')
+    {
+        $task = [
+            'local' => $local,
+            'remote' => $remote,
+            'size' => Tool::readFileSize($local),
+            'session_url' => $sesssion_url,
+            'created_at' => time(),
+        ];
+        $file = storage_path('app/task.json');
+        if (!file_exists($file)) {
+            copy(storage_path('app/example.task.json'), storage_path('app/task.json'));
+        };
+        if (!is_readable($file) || !is_writable($file)) {
+            Tool::showMessage('权限不足，无法读写文件', false);
+            abort(403, '权限不足，无法读写文件');
+        };
+        $task_list = json_decode(file_get_contents($file), true);
+        $task_list[md5($remote)] = $task;
+        $saved = file_put_contents($file, json_encode($task_list));
+        return $saved;
+    }
+
+    /**
+     * 删除任务
+     * @param $remote
+     * @return bool|int
+     */
+    public function deleteTask($remote)
+    {
+        $file = storage_path('app/task.json');
+        $task_list = json_decode(file_get_contents($file), true);
+        unset($task_list[md5($remote)]);
+        $saved = file_put_contents($file, json_encode($task_list));
+        return $saved;
+    }
+
+
+    /**
      * 普通文件上传
      * @param string $local 本地文件地址
      * @param string $remote 远程上传地址（包括文件名）
@@ -74,6 +119,7 @@ class UploadFile extends Command
         $file_name = basename($local);
         $target_path = Tool::getAbsolutePath($remote);
         $path = Tool::convertPath($target_path . $file_name);
+        $this->createTask($local, $path);
         $result = $od->uploadByPath($path, $content);
         $response = Tool::handleResponse($result);
         $response['code'] == 200 ? $this->info('上传成功!') : $this->error('上传失败!');
@@ -104,6 +150,7 @@ class UploadFile extends Command
             return;
         }
         $this->info('上传文件:' . $local);
+        $this->createTask($local, $path, $url);
         $done = false;
         $offset = 0;
         $length = $chuck;
@@ -123,6 +170,7 @@ class UploadFile extends Command
                 } elseif (!empty($data['@content.downloadUrl']) || !empty($data['id'])) {
                     // 上传完成
                     $this->info('文件上传成功！');
+                    $this->deleteTask($remote);
                     $done = true;
                 } else {
                     // 失败重试
