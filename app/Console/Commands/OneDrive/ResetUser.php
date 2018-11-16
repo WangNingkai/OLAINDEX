@@ -41,7 +41,6 @@ class ResetUser extends Command
         $this->warn('开始重置帐号信息...');
         $this->call('cache:clear');
         if ($this->confirm('重置账号可能出现无法登录的错误，建议重置应用，确认继续吗?')) {
-            $config = Tool::config();
             $data = [
                 'access_token' => '',
                 'refresh_token' => '',
@@ -50,8 +49,7 @@ class ResetUser extends Command
                 'image_hosting' => 0,
                 'image_hosting_path' => ''
             ];
-            $config = array_merge($config, $data);
-            $saved = Tool::saveConfig($config);
+            $saved = Tool::updateConfig($data);
             if ($saved) {
                 $this->warn('重置成功，请重新登录!');
             }

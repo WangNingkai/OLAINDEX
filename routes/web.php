@@ -37,6 +37,7 @@ Route::get('/file/delete/{sign}', 'ManageController@deleteItem')->name('delete')
 Route::any('/login', 'AdminController@login')->name('login');
 Route::post('/logout', 'AdminController@logout')->name('logout');
 Route::any('/admin', 'AdminController@basic')->name('admin.basic');
+Route::any('/admin/bind', 'AdminController@bind')->name('admin.bind');
 Route::any('/admin/show', 'AdminController@show')->name('admin.show');
 Route::any('/admin/profile', 'AdminController@profile')->name('admin.profile');
 Route::any('/admin/clear', 'AdminController@clear')->name('admin.clear');

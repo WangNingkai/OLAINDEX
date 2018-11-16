@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 
@@ -171,7 +172,7 @@ class Tool
         };
         $saved = file_put_contents($file, json_encode($config));
         if ($saved) {
-            Cache::forget('config');
+            Artisan::call('cache:clear');
             return true;
         } else {
             return false;
@@ -188,7 +189,7 @@ class Tool
         $config = self::config();
         $config = array_merge($config, $data);
         $saved = self::saveConfig($config);
-        Cache::forget('config');
+        Artisan::call('cache:clear');
         return $saved;
     }
 

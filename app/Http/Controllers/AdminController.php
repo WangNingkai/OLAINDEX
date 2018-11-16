@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\Tool;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 
 /**
@@ -118,5 +119,32 @@ class AdminController extends Controller
         Artisan::call('cache:clear');
         Tool::showMessage('清理成功');
         return redirect()->route('admin.basic');
+    }
+
+    /**
+     * 账号绑定
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function bind(Request $request)
+    {
+        if (!$request->isMethod('post')) {
+            return view('admin.bind');
+        } else {
+            if (!has_bind()) {
+                return redirect()->route('bind');
+            }
+            $data = [
+                'access_token' => '',
+                'refresh_token' => '',
+                'access_token_expires' => 0,
+                'root' => '/',
+                'image_hosting' => 0,
+                'image_hosting_path' => ''
+            ];
+            Tool::updateConfig($data);
+            Cache::forget('one:account');
+            return redirect()->route('bind');
+        }
     }
 }
