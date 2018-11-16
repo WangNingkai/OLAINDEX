@@ -50,7 +50,7 @@ class Share extends Command
         if ($id_request['code'] == 200)
             $_id = $id_request['data']['id'];
         else {
-            $this->error('路径异常');
+            $this->error('路径异常！');
             return;
         }
         /* @var $result \Illuminate\Http\JsonResponse */
@@ -58,8 +58,8 @@ class Share extends Command
         $response = Tool::handleResponse($result);
         if ($response['code'] == 200) {
             $direct = str_replace('15/download.aspx', '15/guestaccess.aspx', $response['data']['redirect']);
-            $this->info("创建成功\n分享链接： {$direct}");
+            $this->info("创建成功！\n分享链接： {$direct}");
         } else
-            $this->error("创建失败\n{$response['msg']} ");
+            $this->error("创建失败！\n{$response['msg']} ");
     }
 }

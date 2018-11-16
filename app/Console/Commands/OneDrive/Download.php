@@ -49,6 +49,6 @@ class Download extends Command
         $od = new OneDriveController();
         $result = $od->getItemByPath($path);
         $response = Tool::handleResponse($result);
-        $response['code'] == 200 ? $this->info("下载地址：{$response['data']['@microsoft.graph.downloadUrl']}") : $this->error("获取文件失败\n{$response['msg']} ");
+        $response['code'] == 200 ? $this->info("下载地址：{$response['data']['@microsoft.graph.downloadUrl']}") : $this->error("获取文件失败!\n{$response['msg']} ");
     }
 }

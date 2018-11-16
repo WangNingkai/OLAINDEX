@@ -39,10 +39,10 @@ class ResetPassword extends Command
      */
     public function handle()
     {
-        $this->warn('========== 开始重置密码 ==========');
+        $this->warn('开始重置密码...');
         $password = str_random(8);
         Tool::saveConfig(array_merge(Tool::config(), ['password' => md5($password)]));
         $this->call('cache:clear');
-        $this->info('重置密码成功，新密码：' . $password);
+        $this->info("重置密码成功，新密码：【 {$password} 】");
     }
 }

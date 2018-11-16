@@ -53,7 +53,7 @@ class CopyFile extends Command
         if ($item_id_request['code'] == 200)
             $item_id = $item_id_request['data']['id'];
         else {
-            $this->error('源路径异常');
+            $this->error('源路径异常!');
             return;
         }
         $target_path = trim(Tool::handleUrl($target), '/');
@@ -61,7 +61,7 @@ class CopyFile extends Command
         if ($parent_id_request['code'] == 200)
             $parent_id = $parent_id_request['data']['id'];
         else {
-            $this->error('源路径异常');
+            $this->error('源路径异常!');
             return;
         }
         /* @var $result \Illuminate\Http\JsonResponse */

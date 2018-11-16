@@ -2,7 +2,7 @@
 @section('title','提醒')
 @section('content')
     <div class="jumbotron">
-        <h1 class="display-3">OLAINDEX</h1>
+        <h1 class="display-4">OLAINDEX</h1>
         <p class="lead">Another OneDrive Directory Index.</p>
         <hr class="my-4">
         <p class="lead">
