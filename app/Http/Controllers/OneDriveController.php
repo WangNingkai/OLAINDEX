@@ -631,7 +631,7 @@ class OneDriveController extends Controller
      */
     public function uploadSessionStatus($url)
     {
-        $response = $this->requestUrl('get', [$url, '', ['Authorization' => 'Bearer ' . $this->access_token, 'Content-Type' => 'application/json']]);
+        $response = $this->requestUrl('get', $url);
         return $this->handleResponse($response);
     }
 
@@ -643,7 +643,7 @@ class OneDriveController extends Controller
      */
     public function deleteUploadSession($url)
     {
-        $response = $this->requestUrl('delete', [$url, '', ['Authorization' => 'Bearer ' . $this->access_token, 'Content-Type' => 'application/json']]);
+        $response = $this->requestUrl('delete', $url);
         return $this->handleResponse($response);
     }
 
