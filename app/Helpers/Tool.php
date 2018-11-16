@@ -376,7 +376,9 @@ class Tool
      */
     public static function handleResponse($response, $origin = true)
     {
-        $data = json_encode($response->getData());
+        if ($response instanceof JsonResponse)
+            $data = json_encode($response->getData());
+        else $data = $response;
         if ($origin) {
             return json_decode($data, true);
         } else {

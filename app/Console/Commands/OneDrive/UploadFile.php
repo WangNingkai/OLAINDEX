@@ -115,6 +115,7 @@ class UploadFile extends Command
                 $data = $response['data'];
                 if (!empty($data['nextExpectedRanges'])) {
                     // 分片上传
+                    $this->info("分片进度:{$data['nextExpectedRanges'][0]}");
                     $ranges = explode('-', $data['nextExpectedRanges'][0]);
                     $offset = intval($ranges[0]);
                     $status = @floor($offset / $file_size * 100) . '%';
