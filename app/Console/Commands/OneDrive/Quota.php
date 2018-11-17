@@ -43,6 +43,7 @@ class Quota extends Command
             return;
         }
         $quota[] = quota();
+        $this->info('Account [' . bind_account() . ']');
         $this->table($headers, $quota);
     }
 }
