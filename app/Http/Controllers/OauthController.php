@@ -76,12 +76,12 @@ class OauthController extends Controller
             if (!$request->has('code')) {
                 return $this->authorizeLogin();
             } else {
-                if ($request->get('state') == '' || ($request->get('state') != Session::get('state'))) {
-                    if (Session::has('state'))
-                        Session::forget('state');
+                if ($request->get('state') == '' || !Session::has('state') || ($request->get('state') != Session::get('state'))) {
                     Tool::showMessage('Invalid state', false);
+                    Session::forget('state');
                     return view('message');
                 }
+                Session::forget('state'); // 兼容下次登陆
                 $code = $request->get('code');
                 try {
                     $client = new Client();
