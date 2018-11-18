@@ -50,8 +50,8 @@
             <div class="form-group">
                 <label class="form-control-label" for="client_secret">client_secret </label>
                 <input type="text" class="form-control" id="client_secret" name="client_secret"
-                       value="{{ \App\Helpers\Tool::config('client_secret') }}" disabled>
-
+                       value="{{ substr_replace(\App\Helpers\Tool::config('client_secret'),"*****",3,5)}}"
+                       disabled>
             </div>
             <div class="form-group">
                 <label class="form-control-label" for="redirect_uri">redirect_uri </label>
