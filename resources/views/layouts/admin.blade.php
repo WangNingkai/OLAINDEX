@@ -110,7 +110,10 @@
     <footer id="footer">
         <div class="row text-center">
             <div class="col-lg-12">
-                <p>Made by <a href="http://imwnk.cn">IMWNK</a>.</p>
+                <p class="text-muted">
+                    {!! \App\Helpers\Tool::markdown2Html(\App\Helpers\Tool::config('copyright',''),true) .' | ' !!}Made
+                    by <a href="https://imwnk.cn">IMWNK</a>.
+                </p>
             </div>
         </div>
     </footer>

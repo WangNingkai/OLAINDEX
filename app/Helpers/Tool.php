@@ -39,15 +39,19 @@ class Tool
 
     /**
      * markdown转html
-     *
-     * @param string $markdown
-     * @return string
+     * @param $markdown
+     * @param bool $line
+     * @return mixed|string
      */
-    public static function markdown2Html($markdown)
+    public static function markdown2Html($markdown, $line = false)
     {
         $parser = new \Parsedown();
-        $html = $parser->text($markdown);
-        $html = str_replace('<code class="', '<code class="lang-', $html);
+        if (!$line) {
+            $html = $parser->text($markdown);
+            $html = str_replace('<code class="', '<code class="lang-', $html);
+        } else {
+            $html = $parser->line($markdown);
+        }
         return $html;
     }
 
@@ -173,7 +177,6 @@ class Tool
         $saved = file_put_contents($file, json_encode($config));
         if ($saved) {
             Artisan::call('cache:clear');
-            self::showMessage('保存成功！');
             return true;
         } else {
             return false;
@@ -191,7 +194,6 @@ class Tool
         $config = array_merge($config, $data);
         $saved = self::saveConfig($config);
         Artisan::call('cache:clear');
-        self::showMessage('保存成功！');
         return $saved;
     }
 

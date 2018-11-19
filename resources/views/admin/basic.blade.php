@@ -60,6 +60,12 @@
                    value="{{ \App\Helpers\Tool::config('hotlink_protection') }}">
             <span class="form-text text-danger">留空则不开启。链接空格隔开</span>
         </div>
+        <div class="form-group">
+            <label class="form-control-label" for="copyright">页脚显示</label>
+            <input type="text" class="form-control" id="copyright" name="copyright"
+                   value="{{ \App\Helpers\Tool::config('copyright','') }}">
+            <span class="form-text text-danger">留空则不显示。markdown格式书写 如：Made by [xxx](https://xxx)</span>
+        </div>
         <button type="submit" class="btn btn-primary">提交</button>
     </form>
 @stop
