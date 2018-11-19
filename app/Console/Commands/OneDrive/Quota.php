@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\OneDrive;
 
+use App\Helpers\Tool;
 use Illuminate\Console\Command;
 
 class Quota extends Command
@@ -44,6 +45,7 @@ class Quota extends Command
         }
         $quota[] = quota();
         $this->info('Account [' . bind_account() . ']');
+        $this->info('App Version  [' . Tool::config('app_version') . ']');
         $this->table($headers, $quota);
     }
 }

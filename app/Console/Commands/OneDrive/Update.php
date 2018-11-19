@@ -40,6 +40,7 @@ class Update extends Command
      */
     public function handle()
     {
+        $this->info('Current Version  [' . Tool::config('app_version') . ']');
         // 获取当前版本,默认开发版
         $this->warn('========== 开始更新 ==========');
         if (file_exists(database_path('database.sqlite'))) {
