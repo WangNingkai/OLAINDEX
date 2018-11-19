@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\OneDrive;
 
+use App\Helpers\Constants;
 use Illuminate\Console\Command;
 
 class ListCommand extends Command
@@ -37,6 +38,7 @@ class ListCommand extends Command
      */
     public function handle()
     {
+        $this->info(Constants::LOGO);
         $this->warn('OLAINDEX Console Command');
         $header = ['command', 'description', 'params'];
         $list = [
