@@ -18,7 +18,7 @@ Route::any('/install', 'InstallController@_1stInstall')->name('_1stInstall');
 Route::any('/install/apply', 'InstallController@apply')->name('apply');
 Route::any('/install/reset', 'InstallController@reset')->name('reset');
 Route::any('/install/bind', 'InstallController@bind')->name('bind');
-// 授权、刷新Token
+// 授权Token
 Route::get('/oauth', 'OauthController@oauth')->name('oauth');
 // 索引
 Route::get('/', 'IndexController@home');
@@ -28,6 +28,7 @@ Route::get('/download/{query}', 'IndexController@download')->where('query', '.*'
 Route::get('/view/{query}', 'IndexController@view')->where('query', '.*')->name('view')->middleware('hotlinkProtection');
 Route::post('/password', 'IndexController@handlePassword')->name('password');
 Route::get('/thumb/{id}/size/{size}', 'IndexController@thumb')->name('thumb');
+Route::view('/message', 'message')->name('message');
 // 图床
 Route::get('/image', 'ManageController@uploadImage')->name('image')->middleware('checkImage');
 Route::post('/image/upload', 'ManageController@uploadImage')->name('image.upload')->middleware('throttle:10,2', 'checkImage');

@@ -22,9 +22,9 @@ class CheckAccessToken
             return redirect()->route('bind');
         }
         if (!refresh_token()) {
-            $current = url()->current();
             Artisan::call('od:refresh');
-            return redirect()->away($current);
+            Tool::showMessage('请稍后重试！', false);
+            return redirect()->route('message');
         }
         return $next($request);
     }
