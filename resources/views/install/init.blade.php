@@ -45,7 +45,7 @@
                     <label class="form-control-label" for="redirect_uri">redirect_uri </label>
                     <input type="text" class="form-control" id="redirect_uri" name="redirect_uri"
                            value="{{ trim(config('app.url'),'/').'/oauth' }}">
-                    <span class="form-text text-danger">如已申请，请直接在下面配置中填写；也可使用olaindex,ningkai.wang中转。<b>注：此申请仅支持国际通用版OneDrive，世纪互联版请联系作者。</b></span>
+                    <span class="form-text text-danger">如已申请，请直接在下面配置中填写；也可使用 https://olaindex.ningkai.wang 中转。<b>注：此申请仅支持国际通用版OneDrive，世纪互联版请联系作者。</b></span>
                 </div>
                 <button type="submit" class="btn btn-info">申请</button>
             </form>
