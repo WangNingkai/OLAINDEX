@@ -149,7 +149,7 @@ class OauthController extends Controller
     public function refreshToken($redirect = true)
     {
         $expires = Tool::config('access_token_expires', 0);
-        $hasExpired = $expires - time() < 0 ? true : false;
+        $hasExpired = $expires - time() <= 0;
         if (!$hasExpired) return response()->json(['code' => 400, 'msg' => 'Bad Request']);
         $existingRefreshToken = Tool::config('refresh_token');
         try {
