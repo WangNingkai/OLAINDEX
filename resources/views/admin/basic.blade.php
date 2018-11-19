@@ -61,10 +61,16 @@
             <span class="form-text text-danger">留空则不开启。链接空格隔开</span>
         </div>
         <div class="form-group">
-            <label class="form-control-label" for="copyright">页脚显示</label>
+            <label class="form-control-label" for="copyright">自定义版权显示</label>
             <input type="text" class="form-control" id="copyright" name="copyright"
                    value="{{ \App\Helpers\Tool::config('copyright','') }}">
             <span class="form-text text-danger">留空则不显示。markdown格式书写 如：Made by [xxx](https://xxx)</span>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="statistics">统计代码</label>
+            <input type="text" class="form-control" id="statistics" name="statistics"
+                   value="{{ \App\Helpers\Tool::config('statistics','') }}">
+            <span class="form-text text-danger">js统计代码</span>
         </div>
         <button type="submit" class="btn btn-primary">提交</button>
     </form>

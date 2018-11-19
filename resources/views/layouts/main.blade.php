@@ -95,6 +95,7 @@
 <script src="https://cdn.jsdelivr.net/npm/return-top@1/dist/x-return-top.min.js" left="85%" bottom="10%"
         text="返回顶部"></script>
 @yield('js')
+{!! \App\Helpers\Tool::config('statistics') !!}
 <script>
     $(function () {
         $('[data-fancybox="image-list"]').fancybox({
