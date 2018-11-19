@@ -126,7 +126,8 @@ class OauthController extends Controller
     public function authorizeLogin()
     {
         // 跳转授权登录
-        $state = str_random(32);
+//        $state = str_random(32);
+        $state = urlencode(config('app.url')); // 添加中转
         Session::put('state', $state);
         $values = [
             'client_id' => $this->client_id,
