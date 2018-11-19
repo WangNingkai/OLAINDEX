@@ -40,9 +40,10 @@ class Update extends Command
      */
     public function handle()
     {
+        $this->info(Constants::LOGO);
         $this->info('Current Version  [' . Tool::config('app_version') . ']');
         // 获取当前版本,默认开发版
-        $this->warn('========== 开始更新 ==========');
+        $this->warn('开始更新...');
         if (file_exists(database_path('database.sqlite'))) {
             $this->warn('如果您您已升级3.0，建议删除数据库文件再进行操作！');
             $this->warn('检测到数据库文件，即将从 database.sqlite 读取版本...');

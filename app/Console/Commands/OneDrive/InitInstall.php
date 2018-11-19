@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\OneDrive;
 
+use App\Helpers\Constants;
 use Illuminate\Console\Command;
 
 class InitInstall extends Command
@@ -36,6 +37,7 @@ class InitInstall extends Command
      */
     public function handle()
     {
+        $this->info(Constants::LOGO);
         $this->call('cache:clear');
         $this->warn('确保已经手动执行以下目录读写权限命令！');
         $this->info('chmod -R 755 storage/* && chown -R www:www *');
