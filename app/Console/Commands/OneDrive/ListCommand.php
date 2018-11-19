@@ -57,6 +57,7 @@ class ListCommand extends Command
             ['od:cp', '复制文件', '{source} {target}'],
             ['od:upload', '上传文件', '{local} {remote} {--chuck=}'],
             ['od:info', 'OneDrive信息', ''],
+            ['od:refresh', 'Refresh Token', ''],
         ];
         $this->table($header, $list);
     }

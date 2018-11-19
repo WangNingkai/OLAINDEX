@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Helpers\Tool;
 use Closure;
+use Illuminate\Support\Facades\Artisan;
 
 class CheckAccessToken
 {
@@ -22,7 +23,8 @@ class CheckAccessToken
         }
         if (!refresh_token()) {
             $current = url()->current();
-            return redirect()->route('refresh')->with('refresh_redirect', $current);
+            Artisan::call('od:refresh');
+            return redirect()->away($current);
         }
         return $next($request);
     }
