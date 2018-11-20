@@ -1,5 +1,6 @@
 {
-    "app_version": "v3.0",
+    "app_version": "v3.1.1",
+    "app_type": "com",
     "client_id": "",
     "client_secret": "",
     "redirect_uri": "",
@@ -7,7 +8,7 @@
     "access_token_expires": "",
     "name": "OLAINDEX",
     "theme": "flatly",
-    "root": "",
+    "root": "/",
     "expires": "10",
     "image_hosting": "1",
     "image_hosting_path": "Hosting",
@@ -19,5 +20,7 @@
     "code": "html htm css go java js json ts sh md php",
     "stream": "txt log",
     "password": "25d55ad283aa400af464c76d713c07ad",
-    "hotlink_protection": ""
+    "hotlink_protection": "",
+    "copyright": "",
+    "statistics": ""
 }

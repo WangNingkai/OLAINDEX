@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 
 /**
@@ -14,19 +16,49 @@ use Illuminate\Support\Facades\Session;
 class IndexController extends Controller
 {
     /**
-     * @var FetchController
+     * @var OneDriveController
      */
-    public $fetch;
+    public $od;
+
+    /**
+     * 缓存超时时间 建议10分钟以下，否则会导致资源失效
+     * @var int|mixed|string
+     */
+    public $expires = 10;
+
+    /**
+     * 根目录
+     * @var mixed|string
+     */
+    public $root = '/';
+
+    /**
+     * 展示文件数组
+     * @var array
+     */
+    public $show = [];
 
     /**
      * IndexController constructor.
      */
     public function __construct()
     {
+        $this->middleware('checkInstall');
         $this->middleware('checkToken');
         $this->middleware('handleIllegalFile');
-        $fetch = new FetchController();
-        $this->fetch = $fetch;
+        $od = new OneDriveController();
+        $this->od = $od;
+        $this->expires = Tool::config('expires', 10);
+        $this->root = Tool::config('root', '/');
+        $this->show = [
+            'stream' => explode(' ', Tool::config('stream')),
+            'image' => explode(' ', Tool::config('image')),
+            'video' => explode(' ', Tool::config('video')),
+            'dash' => explode(' ', Tool::config('dash')),
+            'audio' => explode(' ', Tool::config('audio')),
+            'code' => explode(' ', Tool::config('code')),
+            'doc' => explode(' ', Tool::config('doc')),
+        ];
     }
 
     /**
@@ -48,34 +80,51 @@ class IndexController extends Controller
      */
     public function list(Request $request)
     {
-        $graphPath = urldecode($this->fetch->convertPath($request->getPathInfo()));
-        $origin_path = urldecode($this->fetch->convertPath($request->getPathInfo(), false));
-        $query = 'children';
-        $endpoint = '/me/drive/root' . $graphPath . $query;
-        $response = $this->fetch->requestGraph($endpoint, true);
-        $response['value'] = $this->fetch->getNextLinkList($response, $response['value']);
-        $origin_items = $this->fetch->formatArray($response);
-        $hasImage = $this->fetch->hasImage($origin_items);
+        $graphPath = Tool::convertPath($request->getPathInfo());
+        $origin_path = rawurldecode(Tool::convertPath($request->getPathInfo(), false));
+        // 获取列表
+        $origin_items = Cache::remember('one:list:' . $graphPath, $this->expires, function () use ($graphPath) {
+            $result = $this->od->listChildrenByPath($graphPath);
+            $response = Tool::handleResponse($result);
+            if ($response['code'] == 200) {
+                return $response['data'];
+            } else {
+                Tool::showMessage($response['msg'], false);
+                return [];
+            }
+        });
+        $hasImage = Tool::hasImages($origin_items);
+        // 过滤微软OneNote文件
+        $origin_items = array_where($origin_items, function ($value) {
+            return !array_has($value, 'package.type');
+        });
+        // 处理加密目录
         if (!empty($origin_items['.password'])) {
             $pass_id = $origin_items['.password']['id'];
             $pass_url = $origin_items['.password']['@microsoft.graph.downloadUrl'];
-            if (Session::has('password:' . $origin_path)) {
-                $data = Session::get('password:' . $origin_path);
-                $expires = $data['expires'];
-                $password = $this->fetch->getContent($pass_url);
-                if ($password != decrypt($data['password']) || time() > $expires) {
-                    Session::forget('password:' . $origin_path);
+            $key = 'password:' . $origin_path;
+            if (Session::has($key)) {
+                $data = Session::get($key);
+                $password = Tool::getFileContent($pass_url);
+                if (strcmp($password, decrypt($data['password'])) !== 0 || time() > $data['expires']) {
+                    Session::forget($key);
                     Tool::showMessage('密码已过期', false);
                     return view('password', compact('origin_path', 'pass_id'));
                 }
             } else return view('password', compact('origin_path', 'pass_id'));
         }
-        $this->fetch->filterForbidFolder($origin_items);
-        $head = Tool::markdown2Html($this->fetch->getContentByName('HEAD.md', $origin_items));
-        $readme = Tool::markdown2Html($this->fetch->getContentByName('README.md', $origin_items));
+        // 过滤受限隐藏目录
+        if (!empty($origin_items['.deny'])) {
+            if (!Session::has('LogInfo')) {
+                Tool::showMessage('目录访问受限，仅管理员可以访问！', false);
+                abort(403);
+            }
+        }
+        // 处理 head/readme
+        $head = array_key_exists('HEAD.md', $origin_items) ? Tool::markdown2Html(Tool::getFileContent($origin_items['HEAD.md']['@microsoft.graph.downloadUrl'])) : '';
+        $readme = array_key_exists('README.md', $origin_items) ? Tool::markdown2Html(Tool::getFileContent($origin_items['README.md']['@microsoft.graph.downloadUrl'])) : '';
         $path_array = $origin_path ? explode('/', $origin_path) : [];
-//        dd($path_array);
-        if (!session()->has('LogInfo')) $origin_items = $this->fetch->filterFiles($origin_items, ['README.md', 'HEAD.md', '.password', '.deny']);
+        if (!session()->has('LogInfo')) $origin_items = array_except($origin_items, ['README.md', 'HEAD.md', '.password', '.deny']);
         $items = Tool::paginate($origin_items, 20);
         return view('one', compact('items', 'origin_items', 'origin_path', 'path_array', 'head', 'readme', 'hasImage'));
     }
@@ -88,35 +137,54 @@ class IndexController extends Controller
      */
     public function show(Request $request)
     {
-        $origin_path = urldecode($this->fetch->convertPath($request->getPathInfo(), false));
+        $graphPath = Tool::convertPath($request->getPathInfo(), true, true);
+        $origin_path = urldecode(Tool::convertPath($request->getPathInfo(), false));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
-        $file = $this->fetch->getFile($request);
-        if (isset($file['folder'])) abort(403);
+        // 获取文件
+        $file = Cache::remember('one:file:' . $graphPath, $this->expires, function () use ($graphPath) {
+            $result = $this->od->getItemByPath($graphPath);
+            $response = Tool::handleResponse($result);
+            if ($response['code'] == 200) {
+                return $response['data'];
+            } else {
+                return null;
+            }
+        });
+        if (!$file) abort(404);
+        // 过滤文件夹
+        if (array_has($file, 'folder')) abort(403);
         $file['download'] = $file['@microsoft.graph.downloadUrl'];
-        $patterns = $this->fetch->show;
-        foreach ($patterns as $key => $suffix) {
+        foreach ($this->show as $key => $suffix) {
             if (in_array($file['ext'], $suffix)) {
                 $view = 'show.' . $key;
+                // 处理文本文件
                 if (in_array($key, ['stream', 'code'])) {
                     if ($file['size'] > 5 * 1024 * 1024) {
                         Tool::showMessage('文件过大，请下载查看', false);
                         return redirect()->back();
-                    } else $file['content'] = $this->fetch->requestHttp('get', $file['@microsoft.graph.downloadUrl']);
+                    } else $file['content'] = Tool::getFileContent($file['@microsoft.graph.downloadUrl']);
                 }
+                // 处理缩略图
                 if (in_array($key, ['image', 'dash', 'video'])) {
-                    $file['thumb'] = $this->fetch->getThumbUrl($file['id'], 'large', false);
+                    $result = $this->od->thumbnails($file['id'], 'large');
+                    $response = Tool::handleResponse($result);
+                    if ($response['code'] == 200) {
+                        $file['thumb'] = $response['data']['url'];
+                    } else $file['thumb'] = '';// todo:
                 }
+                // dash视频流
                 if ($key == 'dash') {
                     if (strpos($file['@microsoft.graph.downloadUrl'], "sharepoint.com") == false) return redirect()->away($file['download']);
                     $file['dash'] = str_replace("thumbnail", "videomanifest", $file['thumb']) . "&part=index&format=dash&useScf=True&pretranscode=0&transcodeahead=0";
                 }
+                // 处理微软文档
                 if ($key == 'doc') {
                     $url = "https://view.officeapps.live.com/op/view.aspx?src=" . urlencode($file['@microsoft.graph.downloadUrl']);
                     return redirect()->away($url);
                 }
                 return view($view, compact('file', 'path_array', 'origin_path'));
             } else {
-                $last = end($patterns);
+                $last = end($this->show);
                 if ($last == $suffix) {
                     break;
                 }
@@ -126,59 +194,81 @@ class IndexController extends Controller
     }
 
     /**
-     * 下载
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function download(Request $request)
     {
-        $file = $this->fetch->getFile($request, true);
-        $download = $file['@microsoft.graph.downloadUrl'];
-        return redirect()->away($download);
-    }
-
-    /**
-     * 缩略图
-     * @param $id
-     * @param $size
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function thumb($id, $size)
-    {
-        $url = $this->fetch->getThumbUrl($id, $size, false);
+        $graphPath = Tool::convertPath($request->getPathInfo(), true, true);
+        $file = Cache::remember('one:file:' . $graphPath, $this->expires, function () use ($graphPath) {
+            $result = $this->od->getItemByPath($graphPath);
+            $response = Tool::handleResponse($result);
+            if ($response['code'] == 200) {
+                return $response['data'];
+            } else {
+                return null;
+            }
+        });
+        $url = $file['@microsoft.graph.downloadUrl'];
         return redirect()->away($url);
     }
 
     /**
-     * 图片预览
+     * @param $id
+     * @param $size
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function thumb($id, $size)
+    {
+        $result = $this->od->thumbnails($id, $size);
+        $response = Tool::handleResponse($result);
+        if ($response['code'] == 200) {
+            $url = $response['data']['url'];
+        } else $url = '';// todo:
+        return redirect()->away($url);
+    }
+
+    /**
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function view(Request $request)
     {
-        $file = $this->fetch->getFile($request, false);
+        $graphPath = Tool::convertPath($request->getPathInfo(), true, true);
+        $file = Cache::remember('one:file:' . $graphPath, $this->expires, function () use ($graphPath) {
+            $result = $this->od->getItemByPath($graphPath);
+            $response = Tool::handleResponse($result);
+            if ($response['code'] == 200) {
+                return $response['data'];
+            } else {
+                return null;
+            }
+        });
         $download = $file['@microsoft.graph.downloadUrl'];
         return redirect()->away($download);
     }
 
     /**
-     * 搜索
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function search(Request $request)
     {
         $keywords = $request->get('keywords');
         if ($keywords) {
-            $query = "search(q='{$keywords}')";
-            if ($this->fetch->root == '/')
-                $endpoint = '/me/drive/root/' . $query;
-            else
-                $endpoint = '/me/drive/root:/' . trim($this->fetch->root, '/') . ':/' . $query;
-            $response = $this->fetch->requestGraph($endpoint, true, false);
-            $response['value'] = $this->fetch->getNextLinkList($response, $response['value']);
-            $origin_items = $this->fetch->formatArray($response);
-            $items = $this->fetch->filterFolder($origin_items); // 过滤结果中的文件夹
+            $result = $this->od->search($this->root, $keywords);
+            $response = Tool::handleResponse($result);
+            if ($response['code'] == 200) {
+                // 过滤结果中的文件夹
+                $items = array_where($response['data'], function ($value) {
+                    return !array_has($value, 'folder');
+                });
+            } else {
+                Tool::showMessage('搜索失败', true);
+                $items = [];
+            }
         } else {
             $items = [];
         }
@@ -187,7 +277,31 @@ class IndexController extends Controller
     }
 
     /**
-     * 校验目录密码
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function searchShow($id)
+    {
+        $result = $this->od->itemIdToPath($id);
+        /* @var $result JsonResponse */
+        $response = Tool::handleResponse($result);
+        if ($response['code'] == 200) {
+            $originPath = $response['data']['path'];
+            if (trim($this->root, '/') != '') {
+                $path = str_after($originPath, $this->root);
+            } else {
+                $path = $originPath;
+            }
+        } else {
+            Tool::showMessage('获取连接失败', false);
+            $path = '/';
+        }
+        return redirect('/show/' . $path);
+    }
+
+    /**
+     * 处理加密目录
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -198,11 +312,18 @@ class IndexController extends Controller
         $pass_id = decrypt(request()->get('pass_id'));
         $data = [
             'password' => encrypt($password),
-            'expires' => time() + $this->fetch->expires * 60, // 目录密码过期时间
+            'expires' => time() + (int)$this->expires * 60, // 目录密码过期时间
         ];
         Session::put('password:' . $origin_path, $data);
-        $directory_password = $this->fetch->getContentById($pass_id);
-        if ($password == $directory_password)
+        $result = $this->od->getItem($pass_id);
+        $response = Tool::handleResponse($result);
+        if ($response['code'] == 200) {
+            $directory_password = Tool::getFileContent($response['data']['@microsoft.graph.downloadUrl']);
+        } else {
+            Tool::showMessage('获取文件夹密码失败', false);
+            $directory_password = '';
+        }
+        if (strcmp($password, $directory_password) === 0)
             return redirect()->route('home', Tool::handleUrl($origin_path));
         else {
             Tool::showMessage('密码错误', false);

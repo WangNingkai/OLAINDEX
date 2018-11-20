@@ -11,7 +11,7 @@
         <div class="form-group">
             <label class="form-control-label" for="theme">站点主题</label>
             <select class="custom-select" name="theme" id="theme">
-                @foreach( \App\Helpers\Constants::THEME as $name => $theme)
+                @foreach( \App\Helpers\Constants::SITE_THEME as $name => $theme)
                     <option value="{{ $theme }}"
                             @if(\App\Helpers\Tool::config('theme') == $theme) selected @endif>{{ $name }}</option>
                 @endforeach
@@ -28,7 +28,7 @@
             <label class="form-control-label" for="expires">缓存时间(分钟)</label>
             <input type="text" class="form-control" id="expires" name="expires"
                    value="{{ \App\Helpers\Tool::config('expires') }}">
-            <span class="form-text text-danger">建议小于10分钟，否则会导致超时</span>
+            <span class="form-text text-danger">建议小于60分钟，否则会导致响应失败</span>
         </div>
         <div class="form-group">
             <label class="form-control-label">开启图床</label>
@@ -59,6 +59,18 @@
             <input type="text" class="form-control" id="hotlink_protection" name="hotlink_protection"
                    value="{{ \App\Helpers\Tool::config('hotlink_protection') }}">
             <span class="form-text text-danger">留空则不开启。链接空格隔开</span>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="copyright">自定义版权显示</label>
+            <input type="text" class="form-control" id="copyright" name="copyright"
+                   value="{{ \App\Helpers\Tool::config('copyright','') }}">
+            <span class="form-text text-danger">留空则不显示。markdown格式书写 如：Made by [xxx](https://xxx)</span>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="statistics">统计代码</label>
+            <input type="text" class="form-control" id="statistics" name="statistics"
+                   value="{{ \App\Helpers\Tool::config('statistics','') }}">
+            <span class="form-text text-danger">js统计代码</span>
         </div>
         <button type="submit" class="btn btn-primary">提交</button>
     </form>

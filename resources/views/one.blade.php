@@ -28,27 +28,28 @@
                 </div>
                 <div class="col">
                     @if (session()->has('LogInfo'))
-                        <a class="pull-right dropdown-toggle" href="javascript:void(0)" id="actionDropdownLink"
+                        <a class="pull-right dropdown-toggle btn btn-sm btn-primary" href="javascript:void(0)"
+                           id="actionDropdownLink"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">操作</a>
                         <div class="dropdown-menu" aria-labelledby="actionDropdownLink">
                             @if (array_key_exists('README.md', $origin_items))
                                 <a class="dropdown-item"
-                                   href="{{ route('file.update',$origin_items['README.md']['id']) }}"><i
+                                   href="{{ route('admin.file.update',$origin_items['README.md']['id']) }}"><i
                                         class="fa fa-pencil-square-o"></i> 编辑 README</a>
                             @else
                                 <a class="dropdown-item"
-                                   href="{{ route('file.create',['name' => 'README', 'path' => encrypt($origin_path)]) }}"><i
+                                   href="{{ route('admin.file.create',['name' => 'README', 'path' => encrypt($origin_path)]) }}"><i
                                         class="fa fa-plus-circle"></i> 添加
                                     README</a>
                             @endif
                             @if (array_key_exists('HEAD.md', $origin_items))
                                 <a class="dropdown-item"
-                                   href="{{ route('file.update',$origin_items['HEAD.md']['id']) }}"><i
+                                   href="{{ route('admin.file.update',$origin_items['HEAD.md']['id']) }}"><i
                                         class="fa fa-pencil-square-o"></i> 编辑 HEAD</a>
 
                             @else
                                 <a class="dropdown-item"
-                                   href="{{ route('file.create',['name' => 'HEAD', 'path' => encrypt($origin_path)]) }}"><i
+                                   href="{{ route('admin.file.create',['name' => 'HEAD', 'path' => encrypt($origin_path)]) }}"><i
                                         class="fa fa-plus-circle"></i> 添加
                                     HEAD</a>
                             @endif
@@ -62,7 +63,7 @@
                         @if (!array_key_exists('.password', $origin_items))
                             <div class="modal fade" id="lockFolderModal" tabindex="-1" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
-                                    <form action="{{ route('lock') }}" method="post">
+                                    <form action="{{ route('admin.lock') }}" method="post">
                                         @csrf
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -94,7 +95,7 @@
                         @endif
                         <div class="modal fade" id="newFolderModal" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog" role="document">
-                                <form action="{{ route('folder.create') }}" method="post">
+                                <form action="{{ route('admin.folder.create') }}" method="post">
                                     @csrf
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -131,21 +132,21 @@
             @if(!blank($path_array))
                 <li class="list-group-item list-group-item-action"><a
                         href="{{ route('home',\App\Helpers\Tool::handleUrl(\App\Helpers\Tool::getParentUrl($path_array))) }}"><i
-                            class="fa fa-arrow-left"></i> 返回上一层</a></li>
+                            class="fa fa-level-up"></i> 返回上一层</a></li>
             @endif
             @foreach($items as $item)
                 <li class="list-group-item list-group-item-action">
                     <div class="row">
-                        <div class="col">
-                            @if(isset($item['folder']))
+                        <div class="col" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
+                            @if(array_has($item,'folder'))
                                 <a href="{{ route('home',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                    title="{{ $item['name'] }}">
-                                    <i class="fa fa-folder"></i> {{ \App\Helpers\Tool::subStr($item['name'],0,20) }}
+                                    <i class="fa fa-folder"></i> {{ $item['name'] }}
                                 </a>
                             @else
                                 <a href="{{ route('show',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                    title="{{ $item['name'] }}">
-                                    <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i> {{ \App\Helpers\Tool::subStr($item['name'],0,20) }}
+                                    <i class="fa {{ \App\Helpers\Tool::getExtIcon($item['ext'] ?? '') }}"></i> {{ $item['name'] }}
                                 </a>
                             @endif
                         </div>
@@ -154,33 +155,27 @@
                                 class="pull-right">{{ date('Y-m-d H:i:s',strtotime($item['lastModifiedDateTime'])) }}</span>
                         </div>
                         <div class="col d-none d-md-block d-md-none">
-                            <span class="pull-right">{{ \App\Helpers\Tool::convertSize($item['size']) }}</span>
+                            <span
+                                class="pull-right">{{ array_has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</span>
                         </div>
                         <div class="col">
                             <span class="pull-right">
-                                @if(isset($item['folder']))
-                                    <a href="javascript:void(0)"
-                                       data-clipboard-text="{{ route('home',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
-                                       class="clipboard" title="已复制" data-toggle="tooltip"
-                                       data-placement="right"><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;
-                                @else
-                                    @if(isset($item['image']))
+                                @if(!array_has($item,'folder'))
+                                    @if(array_has($item,'image'))
                                         <a href="{{ route('view',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                            data-fancybox="image-list"><i
                                                 class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
                                     @endif
-                                    @if(session()->has('LogInfo') && \App\Helpers\Tool::isEdited($item) )
-                                        <a href="{{ route('file.update',$item['id']) }}"><i
+                                    @if(session()->has('LogInfo') && \App\Helpers\Tool::canEdit($item) )
+                                        <a href="{{ route('admin.file.update',$item['id']) }}"><i
                                                 class="fa fa-pencil"></i></a>&nbsp;&nbsp;
                                     @endif
                                     <a href="{{ route('download',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"><i
                                             class="fa fa-download"
                                             title="下载"></i></a>&nbsp;&nbsp;
-                                    <a href="javascript:void(0)"
-                                       data-clipboard-text="{{ route('download',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
-                                       class="clipboard"
-                                       title="已复制" data-toggle="tooltip"
-                                       data-placement="right"><i class="fa fa-clipboard"></i></a>&nbsp;&nbsp;
+                                @else
+                                    <a href="{{ route('home',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
+                                       title="{{ $item['name'] }}"><i class="fa fa-folder-open"></i></a>&nbsp;&nbsp;
                                 @endif
                                 @if (session()->has('LogInfo'))
                                     <a onclick="deleteItem('{{ encrypt($item['id'] . '.' . encrypt($item['eTag'])) }}')"
@@ -206,7 +201,7 @@
             <div class="card-body">
                 <div id="links">
                     @foreach($items as $item)
-                        @if(isset($item['image']))
+                        @if(array_has($item,'image'))
                             <a href="{{ route('view',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
                                title="{{ $item['name'] }}" data-gallery="image-list">
                                 <img src="{{ route('thumb',['id'=>$item['id'],'size'=>'small']) }}"
@@ -253,15 +248,9 @@
                     reverseButtons: true
                 }).then((result) => {
                     if (result.value) {
-                        window.open('/item/delete/' + $sign, '_blank');
-                    } else if (
-                        result.dismiss === swal.DismissReason.cancel
-                    ) {
-                        swal(
-                            '已取消',
-                            '文件安全 :)',
-                            'error'
-                        )
+                        window.open('/file/delete/' + $sign, '_blank');
+                    } else if (result.dismiss === swal.DismissReason.cancel) {
+                        swal('已取消', '文件安全 :)', 'error');
                     }
                 })
             }

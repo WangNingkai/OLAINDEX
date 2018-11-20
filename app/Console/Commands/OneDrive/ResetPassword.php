@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\Tool;
 use Illuminate\Console\Command;
@@ -14,14 +14,14 @@ class ResetPassword extends Command
      *
      * @var string
      */
-    protected $signature = 'reset:password';
+    protected $signature = 'od:password';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = '重置密码';
+    protected $description = 'Reset Password';
 
     /**
      * Create a new command instance.
@@ -39,10 +39,10 @@ class ResetPassword extends Command
      */
     public function handle()
     {
-        $this->warn('========== 开始重置密码 ==========');
+        $this->warn('开始重置密码...');
         $password = str_random(8);
         Tool::saveConfig(array_merge(Tool::config(), ['password' => md5($password)]));
-        Artisan::call('cache:clear');
-        $this->info('重置密码成功，新密码：' . $password);
+        $this->call('cache:clear');
+        $this->info("重置密码成功，新密码：【 {$password} 】");
     }
 }

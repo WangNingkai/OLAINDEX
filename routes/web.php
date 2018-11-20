@@ -14,11 +14,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 // 安装
-Route::any('/install', 'InitController@_1stInstall')->name('_1stInstall');
-Route::any('/install/apply', 'InitController@apply')->name('apply');
-// 授权、刷新Token
+Route::any('/install', 'InstallController@_1stInstall')->name('_1stInstall');
+Route::any('/install/apply', 'InstallController@apply')->name('apply');
+Route::any('/install/reset', 'InstallController@reset')->name('reset');
+Route::any('/install/bind', 'InstallController@bind')->name('bind');
+// 授权Token
 Route::get('/oauth', 'OauthController@oauth')->name('oauth');
-Route::get('/refresh', 'OauthController@refreshToken')->name('refresh');
 // 索引
 Route::get('/', 'IndexController@home');
 Route::get('/home/{query?}', 'IndexController@list')->where('query', '.*')->name('home');
@@ -27,26 +28,36 @@ Route::get('/download/{query}', 'IndexController@download')->where('query', '.*'
 Route::get('/view/{query}', 'IndexController@view')->where('query', '.*')->name('view')->middleware('hotlinkProtection');
 Route::post('/password', 'IndexController@handlePassword')->name('password');
 Route::get('/thumb/{id}/size/{size}', 'IndexController@thumb')->name('thumb');
+Route::view('/message', 'message')->name('message');
 // 图床
 Route::get('/image', 'ManageController@uploadImage')->name('image')->middleware('checkImage');
 Route::post('/image/upload', 'ManageController@uploadImage')->name('image.upload')->middleware('throttle:10,2', 'checkImage');
-Route::get('/item/delete/{sign}', 'ManageController@deleteItem')->name('delete');
-
-// 管理
+Route::get('/file/delete/{sign}', 'ManageController@deleteItem')->name('delete');
+// 后台设置管理
 Route::any('/login', 'AdminController@login')->name('login');
 Route::post('/logout', 'AdminController@logout')->name('logout');
 Route::any('/admin', 'AdminController@basic')->name('admin.basic');
+Route::any('/admin/bind', 'AdminController@bind')->name('admin.bind');
 Route::any('/admin/show', 'AdminController@show')->name('admin.show');
 Route::any('/admin/profile', 'AdminController@profile')->name('admin.profile');
 Route::any('/admin/clear', 'AdminController@clear')->name('admin.clear');
-
-// 文件上传
+// 文件操作
+Route::post('/admin/folder/lock', 'ManageController@lockFolder')->name('admin.lock');
+Route::post('/admin/folder/create', 'ManageController@createFolder')->name('admin.folder.create');
 Route::get('/admin/file', 'ManageController@uploadFile')->name('admin.file');
 Route::post('/admin/file/upload', 'ManageController@uploadFile')->name('admin.file.upload')->middleware('throttle:10,2');
-Route::post('/admin/lock/folder', 'ManageController@lockFolder')->name('lock');
-// 文件管理
-Route::any('/admin/file/add', 'ManageController@createFile')->name('file.create');
-Route::any('/admin/file/edit/{id}', 'ManageController@updateFile')->name('file.update');
-Route::post('/admin/folder/create', 'ManageController@createFolder')->name('folder.create');
+Route::any('/admin/file/add', 'ManageController@createFile')->name('admin.file.create');
+Route::any('/admin/file/edit/{id}', 'ManageController@updateFile')->name('admin.file.update');
+Route::view('/admin/file/other', 'admin.other')->name('admin.other');
+Route::post('/admin/file/copy', 'ManageController@copyItem')->name('admin.copy');
+Route::post('/admin/file/move', 'ManageController@moveItem')->name('admin.move');
+Route::post('/admin/file/path2id', 'ManageController@pathToItemId')->name('admin.path2id');
+Route::post('/admin/file/share', 'ManageController@createShareLink')->name('admin.share');
+Route::post('/admin/file/share/delete', 'ManageController@deleteShareLink')->name('admin.share.delete');
+Route::post('/admin/url/upload', 'ManageController@uploadUrl')->name('admin.url.upload');
+
 // 搜索
 Route::any('/search', 'IndexController@search')->name('search')->middleware('checkAuth');
+Route::any('/search/file/{id}', 'IndexController@searchShow')->name('search.show')->middleware('checkAuth');
+
+

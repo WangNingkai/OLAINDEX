@@ -1,48 +1,96 @@
 <?php
 
-use App\Http\Controllers\FetchController;
+use Illuminate\Support\Facades\Cache;
+use App\Http\Controllers\OauthController;
 use App\Helpers\Tool;
 
-if (!function_exists('id2path')) {
+if (!function_exists('quota')) {
     /**
-     * @param $id
-     * @return string
+     * 获取磁盘信息
+     * @param string $key
+     * @return array|mixed
      */
-    function id2path($id)
+    function quota($key = '')
     {
-        $fetch = new FetchController();
-        $file = $fetch->getFileById($id);
-        $path = $file['parentReference']['path'];
-        $root = Tool::config('root', '/');
-        if ($root == '/') {
-            $key = mb_strpos($path, ':');
-            $path = mb_substr($path, $key + 1);
-            $pathArr = explode('/', $path);
-            unset($pathArr[0]);
+        if (refresh_token()) {
+            $quota = Cache::remember('one:quota', Tool::config('expires'), function () {
+                $od = new \App\Http\Controllers\OneDriveController();
+                $drive = $od->getDrive();
+                $res = Tool::handleResponse($drive);
+                if ($res['code'] == 200) {
+                    $quota = $res['data']['quota'];
+                    foreach ($quota as $k => $item) {
+                        if (!is_string($item)) {
+                            $quota[$k] = Tool::convertSize($item);
+                        }
+                    }
+                    return $quota;
+                } else {
+                    return [];
+                }
+            });
+            return $key ? $quota[$key] ?? '' : $quota ?? '';
         } else {
-            $path = mb_strstr($path, $root, false, 'utf8');
-            $start = mb_strlen($root, 'utf8');
-            $rest = mb_substr($path, $start, null, 'utf8');
-            $pathArr = explode('/', $rest);
+            return '';
         }
-        array_push($pathArr, $file['name']);
-        return trim(implode('/', $pathArr), '/');
     }
 }
 
-if (!function_exists('path2id')) {
+
+if (!function_exists('refresh_token')) {
     /**
-     * @param $path
-     * @param bool $root
-     * @return mixed
+     * 刷新refresh_token
+     * @return bool
      */
-    function path2id($path, $root = false)
+    function refresh_token()
     {
-        if ($root) {
-            $path = Tool::config('root') . '/' . trim($path, '/');
+        $expires = Tool::config('access_token_expires', 0);
+        $hasExpired = $expires - time() <= 0 ? true : false;
+        if ($hasExpired) {
+            $oauth = new OauthController();
+            $res = json_decode($oauth->refreshToken(false), true);
+            return $res['code'] === 200;
+        } else {
+            return true;
         }
-        $fetch = new FetchController();
-        $item = $fetch->requestGraph('/me/drive/root:/' . trim($path, '/'));
-        return $item['id'];
+    }
+}
+
+if (!function_exists('bind_account')) {
+    /**
+     * 绑定账户
+     * @return mixed|string
+     */
+    function bind_account()
+    {
+        if (refresh_token()) {
+            $account = Cache::remember('one:account', Tool::config('expires'), function () {
+                $od = new \App\Http\Controllers\OneDriveController();
+                $drive = $od->getMe();
+                $res = Tool::handleResponse($drive);
+                if ($res['code'] == 200) {
+                    return array_get($res, 'data.userPrincipalName');
+                } else {
+                    return '';
+                }
+            });
+            return $account;
+        } else {
+            return '';
+        }
+    }
+}
+
+if (!function_exists('has_bind')) {
+
+    /**
+     * 判断账号绑定
+     * @return bool
+     */
+    function has_bind()
+    {
+        if (Tool::config('access_token') != '' && Tool::config('refresh_token') != '' && Tool::config('access_token_expires') != '') {
+            return true;
+        } else return false;
     }
 }

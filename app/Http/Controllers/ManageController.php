@@ -15,18 +15,27 @@ use Illuminate\Support\Facades\Artisan;
 class ManageController extends Controller
 {
     /**
+     * @var OneDriveController
+     */
+    public $od;
+
+    /**
      * GraphController constructor.
      */
     public function __construct()
     {
         $this->middleware('checkAuth')->except(['uploadImage', 'deleteItem']);
         $this->middleware('checkToken');
+        $od = new OneDriveController();
+        $this->od = $od;
+
     }
 
     /**
      * 图片上传
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function uploadImage(Request $request)
     {
@@ -50,32 +59,31 @@ class ManageController extends Controller
         }
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
-            $content = fopen($path, 'r');
-            $stream = \GuzzleHttp\Psr7\stream_for($content);
-            $root = trim(Tool::config('root'), '/');
-            $image_hosting_path = trim(Tool::config('image_hosting_path'), '/');
+            $content = file_get_contents($path);
+            $image_hosting_path = trim(Tool::handleUrl(Tool::config('image_hosting_path')), '/');
             $filePath = trim($image_hosting_path . '/' . date('Y') . '/' . date('m') . '/' . date('d') . '/' . str_random(8) . '/' . $file->getClientOriginalName(), '/');
-            $storeFilePath = $root . '/' . $filePath; // 远程图片保存地址
-            $remoteFilePath = trim($storeFilePath, '/');
-            $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
-            $requestBody = $stream;
-            $graph = new RequestController();
-            $response = $graph->requestGraph('put', [$endpoint, $requestBody, []], true);
-            $sign = $response['id'] . '.' . encrypt($response['eTag']);
-            $fileIdentifier = encrypt($sign);
-            $data = [
-                'code' => 200,
-                'data' => [
-                    'id' => $response['id'],
-                    'filename' => $response['name'],
-                    'size' => $response['size'],
-                    'time' => $response['lastModifiedDateTime'],
-                    'url' => route('view', $filePath),
-                    'delete' => route('delete', $fileIdentifier)
-                ]
-            ];
-            @unlink($path);
-            return response()->json($data);
+            $remoteFilePath = Tool::convertPath($filePath); // 远程图片保存地址
+            $result = $this->od->uploadByPath($remoteFilePath, $content);
+            $response = Tool::handleResponse($result);
+            if ($response['code'] == 200) {
+                $sign = $response['data']['id'] . '.' . encrypt($response['data']['eTag']);
+                $fileIdentifier = encrypt($sign);
+                $data = [
+                    'code' => 200,
+                    'data' => [
+                        'id' => $response['data']['id'],
+                        'filename' => $response['data']['name'],
+                        'size' => $response['data']['size'],
+                        'time' => $response['data']['lastModifiedDateTime'],
+                        'url' => route('view', $filePath),
+                        'delete' => route('delete', $fileIdentifier)
+                    ]
+                ];
+                @unlink($path);
+                return response()->json($data);
+            } else {
+                return $result;
+            }
         } else {
             $data = ['code' => 500, 'message' => '无法获取文件内容'];
             return response()->json($data);
@@ -87,6 +95,7 @@ class ManageController extends Controller
      * 文件上传
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function uploadFile(Request $request)
     {
@@ -110,25 +119,25 @@ class ManageController extends Controller
         }
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
-            $content = fopen($path, 'r');
-            $stream = \GuzzleHttp\Psr7\stream_for($content);
-            $storeFilePath = trim($target_directory, '/') . '/' . $file->getClientOriginalName(); // 远程保存地址
-            $remoteFilePath = trim($storeFilePath, '/');
-            $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
-            $requestBody = $stream;
-            $graph = new RequestController();
-            $response = $graph->requestGraph('put', [$endpoint, $requestBody, []], true);
-            $data = [
-                'code' => 200,
-                'data' => [
-                    'id' => $response['id'],
-                    'filename' => $response['name'],
-                    'size' => $response['size'],
-                    'time' => $response['lastModifiedDateTime'],
-                ]
-            ];
-            @unlink($path);
-            return response()->json($data);
+            $content = file_get_contents($path);
+            $storeFilePath = trim(Tool::handleUrl($target_directory), '/') . '/' . $file->getClientOriginalName(); // 远程保存地址
+            $remoteFilePath = Tool::convertPath($storeFilePath); // 远程文件保存地址
+            $result = $this->od->uploadByPath($remoteFilePath, $content);
+            $response = Tool::handleResponse($result);
+            if ($response['code'] = 200) {
+                $data = [
+                    'code' => 200,
+                    'data' => [
+                        'id' => $response['data']['id'],
+                        'filename' => $response['data']['name'],
+                        'size' => $response['data']['size'],
+                        'time' => $response['data']['lastModifiedDateTime'],
+                    ]
+                ];
+                @unlink($path);
+                return response()->json($data);
+            } else return $result;
+
         } else {
             $data = ['code' => 500, 'message' => '无法获取文件内容'];
             return response()->json($data);
@@ -139,44 +148,48 @@ class ManageController extends Controller
      * 加密目录
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function lockFolder(Request $request)
     {
-        $path = decrypt($request->get('path'));
+        try {
+            $path = decrypt($request->get('path'));
+        } catch (DecryptException $e) {
+            Tool::showMessage($e->getMessage(), false);
+            return view('message');
+        }
         $password = $request->get('password', '12345678');
-        $stream = \GuzzleHttp\Psr7\stream_for($password);
-        $root = trim(Tool::config('root'), '/');
         $storeFilePath = trim($path, '/') . '/.password';
-        $remoteFilePath = trim($root . '/' . trim($storeFilePath, '/'), '/'); // 远程保存地址
-        $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
-        $requestBody = $stream;
-        $graph = new RequestController();
-        $response = $graph->requestGraph('put', [$endpoint, $requestBody, []], true);
-        $response ? Tool::showMessage('操作成功，请牢记密码！') : Tool::showMessage('加密失败！', false);
+        $remoteFilePath = Tool::convertPath($storeFilePath); // 远程password保存地址
+        $result = $this->od->uploadByPath($remoteFilePath, $password);
+        $response = Tool::handleResponse($result);
+        $response['code'] == 200 ? Tool::showMessage('操作成功，请牢记密码！') : Tool::showMessage('加密失败！', false);
         Artisan::call('cache:clear');
         return redirect()->back();
     }
 
     /**
-     * 新建文件
+     * 新建 head/readme.md 文件
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function createFile(Request $request)
     {
         if (!$request->isMethod('post')) return view('admin.add');
         $name = $request->get('name');
-        $path = decrypt($request->get('path'));
+        try {
+            $path = decrypt($request->get('path'));
+        } catch (DecryptException $e) {
+            Tool::showMessage($e->getMessage(), false);
+            return view('message');
+        }
         $content = $request->get('content');
-        $stream = \GuzzleHttp\Psr7\stream_for($content);
-        $root = trim(Tool::config('root'), '/');
-        $storeFilePath = $root . '/' . trim($path, '/') . '/' . $name . '.md';
-        $remoteFilePath = trim($storeFilePath, '/');
-        $endpoint = "/me/drive/root:/{$remoteFilePath}:/content";
-        $requestBody = $stream;
-        $graph = new RequestController();
-        $response = $graph->requestGraph('put', [$endpoint, $requestBody, []], true);
-        $response ? Tool::showMessage('添加成功！') : Tool::showMessage('添加失败！', false);
+        $storeFilePath = trim($path, '/') . '/' . $name . '.md';
+        $remoteFilePath = Tool::convertPath($storeFilePath); // 远程md保存地址
+        $result = $this->od->uploadByPath($remoteFilePath, $content);
+        $response = Tool::handleResponse($result);
+        $response['code'] == 200 ? Tool::showMessage('添加成功！') : Tool::showMessage('添加失败！', false);
         Artisan::call('cache:clear');
         return redirect()->route('home', Tool::handleUrl($path));
 
@@ -191,20 +204,22 @@ class ManageController extends Controller
      */
     public function updateFile(Request $request, $id)
     {
-
         if (!$request->isMethod('post')) {
-            $fetch = new FetchController();
-            $file = $fetch->getFileById($id);
-            $file['content'] = $fetch->getContentById($id);
+            $result = $this->od->getItem($id);
+            $response = Tool::handleResponse($result);
+            if ($response['code'] == 200) {
+                $file = $response['data'];
+                $file['content'] = Tool::getFileContent($file['@microsoft.graph.downloadUrl']);
+            } else {
+                Tool::showMessage('获取文件失败', false);
+                $file = '';
+            }
             return view('admin.edit', compact('file'));
         }
         $content = $request->get('content');
-        $stream = \GuzzleHttp\Psr7\stream_for($content);
-        $endpoint = "/me/drive/items/{$id}/content";
-        $requestBody = $stream;
-        $graph = new RequestController();
-        $response = $graph->requestGraph('put', [$endpoint, $requestBody, []], true);
-        $response ? Tool::showMessage('修改成功！') : Tool::showMessage('修改失败！', false);
+        $result = $this->od->upload($id, $content);
+        $response = Tool::handleResponse($result);
+        $response['code'] == 200 ? Tool::showMessage('修改成功！') : Tool::showMessage('修改失败！', false);
         Artisan::call('cache:clear');
         return redirect()->back();
     }
@@ -213,25 +228,21 @@ class ManageController extends Controller
      * 创建目录
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function createFolder(Request $request)
     {
-        $path = decrypt($request->get('path'));
-        $name = $request->get('name');
-        $fetch = new FetchController();
-        $graphPath = $fetch->convertPath($path);
-        $req = new RequestController();
-        if ($graphPath == '/')
-            $endpoint = "/me/drive/root/children";
-        else {
-            $params = ['/me/drive/root' . $graphPath, '', []];
-            $re = $req->requestGraph('get', $params, true);
-            $itemId = $re['id'];
-            $endpoint = "/me/drive/items/{$itemId}/children";
+        try {
+            $path = decrypt($request->get('path'));
+        } catch (DecryptException $e) {
+            Tool::showMessage($e->getMessage(), false);
+            return view('message');
         }
-        $requestBody = '{"name":"' . $name . '","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
-        $response = $req->requestGraph('post', [$endpoint, $requestBody, []], true);
-        $response ? Tool::showMessage('新建目录成功！') : Tool::showMessage('新建目录失败！', false);
+        $name = $request->get('name');
+        $graphPath = Tool::convertPath($path);
+        $result = $this->od->mkdirByPath($name, $graphPath);
+        $response = Tool::handleResponse($result);
+        $response['code'] == 200 ? Tool::showMessage('新建目录成功！') : Tool::showMessage('新建目录失败！', false);
         Artisan::call('cache:clear');
         return redirect()->back();
     }
@@ -240,6 +251,7 @@ class ManageController extends Controller
      * 删除文件
      * @param $sign
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function deleteItem($sign)
     {
@@ -257,10 +269,91 @@ class ManageController extends Controller
             Tool::showMessage($e->getMessage(), false);
             return view('message');
         }
-        $endpoint = '/me/drive/items/' . $id;
-        $graph = new RequestController();
-        $graph->requestGraph('delete', [$endpoint, '', ['if-match' => $eTag]], true);
-        Tool::showMessage('文件已删除');
+        $result = $this->od->deleteItem($id, $eTag);
+        $response = Tool::handleResponse($result);
+        $response['code'] == 200 ? Tool::showMessage('文件已删除') : Tool::showMessage('文件删除失败', false);
+        Artisan::call('cache:clear');
         return view('message');
+    }
+
+    /**
+     * 复制文件
+     * @param Request $request
+     * @return string
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function copyItem(Request $request)
+    {
+        $itemId = $request->get('source_id');
+        $parentItemId = $request->get('target_id');
+        $response = $this->od->copy($itemId, $parentItemId);
+        return $response; // 返回复制进度链接
+    }
+
+    /**
+     * 移动文件
+     * @param Request $request
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function moveItem(Request $request)
+    {
+        $itemId = $request->get('source_id');
+        $parentItemId = $request->get('target_id');
+        $response = $this->od->move($itemId, $parentItemId);
+        return $response;
+    }
+
+    /**
+     * 离线下载（个人版）
+     * @param Request $request
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function uploadUrl(Request $request)
+    {
+        $remote = $request->get('path');
+        $url = $request->get('url');
+        $response = $this->od->uploadUrl($remote, $url);
+        return $response;
+    }
+
+
+    /**
+     * 创建分享链接
+     * @param Request $request
+     * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function createShareLink(Request $request)
+    {
+        $itemId = $request->get('id');
+        $response = $this->od->createShareLink($itemId);
+        return $response; // 返回分享链接
+    }
+
+    /**
+     * 删除分享链接
+     * @param Request $request
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function deleteShareLink(Request $request)
+    {
+        $itemId = $request->get('id');
+        $response = $this->od->deleteShareLink($itemId);
+        return $response;
+    }
+
+    /**
+     * 路径转id
+     * @param Request $request
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function pathToItemId(Request $request)
+    {
+        $graphPath = Tool::convertPath($request->get('path'));
+        return $this->od->pathToItemId($graphPath);
     }
 }

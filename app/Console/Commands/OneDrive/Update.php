@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\Constants;
 use App\Helpers\Tool;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 
-class UpdateInstall extends Command
+class Update extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'update:install';
+    protected $signature = 'od:update';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = '更新安装';
+    protected $description = 'Update App';
 
     /**
      * Create a new command instance.
@@ -40,11 +40,13 @@ class UpdateInstall extends Command
      */
     public function handle()
     {
+        $this->info(Constants::LOGO);
+        $this->info('Current Version  [' . Tool::config('app_version') . ']');
         // 获取当前版本,默认开发版
-        $this->warn('========== 开始更新 ==========');
+        $this->warn('开始更新...');
         if (file_exists(database_path('database.sqlite'))) {
-            $this->warn('如果您您已升级3.0，建议删除数据库文件再进行操作');
-            $this->warn('检测到数据库文件，即将从 database.sqlite 读取版本');
+            $this->warn('如果您您已升级3.0，建议删除数据库文件再进行操作！');
+            $this->warn('检测到数据库文件，即将从 database.sqlite 读取版本...');
             if ($this->confirm('继续从数据库获取版本吗？')) {
                 $version = \Illuminate\Support\Facades\DB::table('parameters')
                     ->where('name', 'app_version')->value('value');
@@ -55,7 +57,7 @@ class UpdateInstall extends Command
             $version = Tool::config('app_version', 'dev');
         }
         if ($version == Constants::LATEST_VERSION) {
-            $this->info('已是最新版本, 无需更新');
+            $this->info('已是最新版本, 无需更新！');
             return;
         }
         switch ($version) {
@@ -64,35 +66,55 @@ class UpdateInstall extends Command
                 $this->v_1_1();
                 $this->v_1_2();
                 $this->v_2_0();
-                $result = $this->v_3_0();
+                $this->v_3_0();
+                $this->v_3_1();
+                $result = $this->v_3_1_1();
                 break;
             case 'v1.0':
                 $this->v_1_1();
                 $this->v_1_2();
                 $this->v_2_0();
-                $result = $this->v_3_0();
+                $this->v_3_0();
+                $this->v_3_1();
+                $result = $this->v_3_1_1();
                 break;
             case 'v1.1':
                 $this->v_1_2();
                 $this->v_2_0();
-                $result = $this->v_3_0();
+                $this->v_3_0();
+                $this->v_3_1();
+                $result = $this->v_3_1_1();
                 break;
             case 'v1.2':
                 $this->v_2_0();
-                $result = $this->v_3_0();
+                $this->v_3_0();
+                $this->v_3_1();
+                $result = $this->v_3_1_1();
                 break;
             case 'v2.0':
-                $result = $this->v_3_0();
+                $this->v_3_0();
+                $this->v_3_1();
+                $result = $this->v_3_1_1();
+                break;
+            case 'v3.0':
+                $this->v_3_1();
+                $result = $this->v_3_1_1();
+                break;
+            case 'v3.1':
+                $result = $this->v_3_1_1();
                 break;
             default:
                 $this->v_1_0();
                 $this->v_1_1();
                 $this->v_1_2();
                 $this->v_2_0();
-                $result = $this->v_3_0();
+                $this->v_3_0();
+                $this->v_3_1();
+                $result = $this->v_3_1_1();
         }
-        Artisan::call('cache:clear');
+        $this->call('cache:clear');
         $this->info($result['status'] . ':' . $result['msg']);
+        clearstatcache(); // 清理文件缓存
         return;
     }
 
@@ -196,6 +218,42 @@ class UpdateInstall extends Command
         };
         $saved = Tool::saveConfig($data);
         return $saved ? $this->returnStatus('更新成功，version=v3.0，请手动执行chmod 777 storage/app/config.json ' . PHP_EOL . ' 并移除原数据库 rm -f database/database.sqlite') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
+    }
+
+    /**
+     * @return array
+     */
+    public function v_3_1()
+    {
+        if (!file_exists(storage_path('app/config.json'))) {
+            $this->warn('未检测到配置文件！正在创建配置文件...');
+            copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
+            $this->info('创建完成！');
+            $config = Tool::config();
+        } else {
+            $config = Tool::config();
+            $config = array_merge($config, ['app_version' => 'v3.1']);
+        }
+        $saved = Tool::saveConfig($config);
+        return $saved ? $this->returnStatus('更新成功，version=v3.1') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
+    }
+
+    /**
+     * @return array
+     */
+    public function v_3_1_1()
+    {
+        if (!file_exists(storage_path('app/config.json'))) {
+            $this->warn('未检测到配置文件！正在创建配置文件...');
+            copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
+            $this->info('创建完成！');
+            $config = Tool::config();
+        } else {
+            $config = Tool::config();
+            $config = array_merge($config, ['app_version' => 'v3.1.1', 'app_type' => 'com']);
+        }
+        $saved = Tool::saveConfig($config);
+        return $saved ? $this->returnStatus('更新成功，version=v3.1.1') : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
     }
 
     /**

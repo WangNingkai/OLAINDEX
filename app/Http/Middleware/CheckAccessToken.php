@@ -3,9 +3,11 @@
 namespace App\Http\Middleware;
 
 use App\Helpers\Tool;
+use App\Http\Controllers\OauthController;
 use Closure;
+use Illuminate\Support\Facades\Session;
 
-class VerifyAccessToken
+class CheckAccessToken
 {
     /**
      * 处理access_token
@@ -17,14 +19,16 @@ class VerifyAccessToken
     public function handle($request, Closure $next)
     {
         if (Tool::config('refresh_token') == '' || Tool::config('access_token_expires') == '' || Tool::config('access_token') == '') {
-            return redirect()->route('oauth');
+            Tool::showMessage('请绑定帐号！', false);
+            return redirect()->route('bind');
         }
-        $now = time();
-        $expires = Tool::config('access_token_expires');
-        $hasExpired = $expires - $now < 0 ? true : false;
+        $expires = Tool::config('access_token_expires', 0);
+        $hasExpired = $expires - time() <= 0 ? true : false;
         if ($hasExpired) {
             $current = url()->current();
-            return redirect()->route('refresh')->with('refresh_redirect', $current);
+            Session::put('refresh_redirect', $current);
+            $oauth = new OauthController();
+            return $oauth->refreshToken();
         }
         return $next($request);
     }

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\OneDrive;
 
+use App\Helpers\Constants;
 use Illuminate\Console\Command;
 
 class InitInstall extends Command
@@ -11,14 +12,14 @@ class InitInstall extends Command
      *
      * @var string
      */
-    protected $signature = 'init:install';
+    protected $signature = 'od:install';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = '初始化安装';
+    protected $description = 'Init Install';
 
     /**
      * Create a new command instance.
@@ -36,6 +37,8 @@ class InitInstall extends Command
      */
     public function handle()
     {
+        $this->info(Constants::LOGO);
+        $this->call('cache:clear');
         $this->warn('确保已经手动执行以下目录读写权限命令！');
         $this->info('chmod -R 755 storage/* && chown -R www:www *');
         if (!file_exists(storage_path('app/config.json'))) {
@@ -48,7 +51,7 @@ class InitInstall extends Command
             $this->warn('目录不存在 .env.example 文件，请确保拉取仓库完整！');
             return false;
         }
-        $app_url = $this->ask('请输入应用域名');
+        $app_url = $this->ask('请输入本机绑定域名');
         $envExample = file_get_contents(base_path('.env.example'));
         $search_db = [
             'APP_KEY=',
@@ -67,10 +70,10 @@ class InitInstall extends Command
         } else {
             file_put_contents(base_path('.env'), $env);
         }
-        $this->info('应用回调地址请填写：' . trim($app_url, '/') . '/oauth ');
+        $this->info('应用回调地址请填写：【 ' . trim($app_url, '/') . '/oauth 】');
         $this->call('config:cache'); // 生成配置缓存否则报错
-        $this->warn('后台登录原始密码：12345678');
-        $this->info('请手动执行 chmod 777 storage/app/config.json 确保配置文件权限，否则会出现403错误');
-        $this->warn('========== 预安装完成，请继续下面的操作 ==========');
+        $this->warn('后台登录原始密码：【 12345678 】');
+        $this->info('请手动执行 【 chmod 777 storage/app/config.json 】 确保配置文件权限，否则会出现403错误');
+        $this->warn('预安装完成，请继续下面的操作！');
     }
 }

@@ -8,6 +8,17 @@
             border-radius: 10px;
             background: white;
         }
+
+        .link-container {
+            margin-top: 15px;
+            padding: 10px;
+            border: solid 1px #dadada;
+            word-wrap: break-word;
+            background-color: #f7f7f7;
+        }
+        .link-container p{
+            margin: 5px 0;
+        }
     </style>
 @stop
 @section('content')
@@ -21,7 +32,7 @@
             </div>
         </div>
     </div>
-    <div id="showUrl" style="display: none;">
+    <div id="showUrl" class="invisible">
         <ul id="navTab" class="nav nav-tabs">
             <li class="nav-item active">
                 <a class="nav-link" data-toggle="tab" href="#urlPanel">URL</a>
@@ -44,22 +55,22 @@
         </ul>
         <div id="navTabContent" class="tab-content">
             <div class="tab-pane fade in active show" id="urlPanel">
-                <pre style="margin-top: 5px;"><code id="urlCode"></code></pre>
+                <div class="link-container" id="urlCode"></div>
             </div>
             <div class="tab-pane fade" id="htmlPanel">
-                <pre style="margin-top: 5px;"><code id="htmlCode"></code></pre>
+                <div class="link-container" id="htmlCode"></div>
             </div>
             <div class="tab-pane fade" id="bbPanel">
-                <pre style="margin-top: 5px;"><code id="bbCode"></code></pre>
+                <div class="link-container" id="bbCode"></div>
             </div>
             <div class="tab-pane fade" id="markdownPanel">
-                <pre style="margin-top: 5px;"><code id="markdown"></code></pre>
+                <div class="link-container" id="markdown"></div>
             </div>
             <div class="tab-pane fade" id="markdownLinkPanel">
-                <pre style="margin-top: 5px;"><code id="markdownLinks"></code></pre>
+                <div class="link-container" id="markdownLinks"></div>
             </div>
             <div class="tab-pane fade" id="deletePanel">
-                <pre style="margin-top: 5px;"><code id="deleteCode"></code></pre>
+                <div class="link-container" id="deleteCode"></div>
             </div>
         </div>
     </div>
@@ -80,13 +91,13 @@
                     formData.append('_token', Config._token);
                 });
                 this.on('success', function (file, response) {
-                    $('#showUrl').show();
-                    $('#urlCode').append(response.data.url + '\n');
-                    $('#htmlCode').append('&lt;img src=\'' + response.data.url + '\' alt=\'' + response.data.filename + '\' title=\'' + response.data.filename + '\' /&gt;' + '\n');
-                    $('#bbCode').append('[img]' + response.data.url + '[/img]' + '\n');
-                    $('#markdown').append('![' + response.data.filename + '](' + response.data.url + ')' + '\n');
-                    $('#markdownLinks').append('[![' + response.data.filename + '](' + response.data.url + ')]' + '(' + response.data.url + ')' + '\n');
-                    $('#deleteCode').append(response.data.delete + '\n')
+                    $('#showUrl').removeClass('invisible');
+                    $('#urlCode').append('<p>' + response.data.url + '</p>');
+                    $('#htmlCode').append('<p>&lt;img src=\'' + response.data.url + '\' alt=\'' + response.data.filename + '\' title=\'' + response.data.filename + '\' /&gt;' + '</p>');
+                    $('#bbCode').append('<p>[img]' + response.data.url + '[/img]' + '</p>');
+                    $('#markdown').append('<p>![' + response.data.filename + '](' + response.data.url + ')' + '</p>');
+                    $('#markdownLinks').append('<p>[![' + response.data.filename + '](' + response.data.url + ')]' + '(' + response.data.url + ')' + '</p>');
+                    $('#deleteCode').append('<p>' + response.data.delete + '</p>')
                 });
             },
 

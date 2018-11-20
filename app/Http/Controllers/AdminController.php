@@ -69,7 +69,8 @@ class AdminController extends Controller
     {
         if (!$request->isMethod('post')) return view('admin.basic');
         $data = $request->except('_token');
-        $this->update($data);
+        Tool::updateConfig($data);
+        Tool::showMessage('保存成功！');
         return redirect()->back();
     }
 
@@ -82,7 +83,8 @@ class AdminController extends Controller
     {
         if (!request()->isMethod('post')) return view('admin.show');
         $data = $request->except('_token');
-        $this->update($data);
+        Tool::updateConfig($data);
+        Tool::showMessage('保存成功！');
         return redirect()->back();
     }
 
@@ -106,7 +108,8 @@ class AdminController extends Controller
             return redirect()->back();
         }
         $data = ['password' => md5($password)];
-        $this->update($data);
+        Tool::updateConfig($data);
+        Tool::showMessage('保存成功！');
         return redirect()->back();
     }
 
@@ -122,17 +125,30 @@ class AdminController extends Controller
     }
 
     /**
-     * 设置更新
-     * @param $data
-     * @return bool|int
+     * 账号绑定
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
-    public function update($data)
+    public function bind(Request $request)
     {
-        $config = Tool::config();
-        $config = array_merge($config, $data);
-        $saved = Tool::saveConfig($config);
-        Cache::forget('config');
-        Tool::showMessage('更新成功');
-        return $saved;
+        if (!$request->isMethod('post')) {
+            return view('admin.bind');
+        } else {
+            if (!has_bind()) {
+                return redirect()->route('bind');
+            }
+            $data = [
+                'access_token' => '',
+                'refresh_token' => '',
+                'access_token_expires' => 0,
+                'root' => '/',
+                'image_hosting' => 0,
+                'image_hosting_path' => ''
+            ];
+            Tool::updateConfig($data);
+            Tool::showMessage('保存成功！');
+            Cache::forget('one:account');
+            return redirect()->route('bind');
+        }
     }
 }
