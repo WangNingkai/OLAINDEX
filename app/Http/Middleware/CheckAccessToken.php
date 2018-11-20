@@ -3,8 +3,9 @@
 namespace App\Http\Middleware;
 
 use App\Helpers\Tool;
+use App\Http\Controllers\OauthController;
 use Closure;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Session;
 
 class CheckAccessToken
 {
@@ -21,10 +22,13 @@ class CheckAccessToken
             Tool::showMessage('请绑定帐号！', false);
             return redirect()->route('bind');
         }
-        if (!refresh_token()) {
-            Artisan::call('od:refresh');
-            Tool::showMessage('请稍后重试！', false);
-            return redirect()->route('message');
+        $expires = Tool::config('access_token_expires', 0);
+        $hasExpired = $expires - time() <= 0 ? true : false;
+        if ($hasExpired) {
+            $current = url()->current();
+            Session::put('refresh_redirect', $current);
+            $oauth = new OauthController();
+            return $oauth->refreshToken();
         }
         return $next($request);
     }

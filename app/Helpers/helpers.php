@@ -48,7 +48,7 @@ if (!function_exists('refresh_token')) {
         $hasExpired = $expires - time() <= 0 ? true : false;
         if ($hasExpired) {
             $oauth = new OauthController();
-            $res = json_decode($oauth->refreshToken(), true);
+            $res = json_decode($oauth->refreshToken(false), true);
             return $res['code'] === 200;
         } else {
             return true;

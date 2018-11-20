@@ -143,9 +143,10 @@ class OauthController extends Controller
 
     /**
      * 刷新授权
-     * @return array|\Illuminate\Http\JsonResponse
+     * @param bool $redirect
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function refreshToken()
+    public function refreshToken($redirect = true)
     {
         $expires = Tool::config('access_token_expires', 0);
         $hasExpired = $expires - time() <= 0;
@@ -174,7 +175,12 @@ class OauthController extends Controller
                 'access_token_expires' => $expires
             ];
             Tool::updateConfig($data);
-            return json_encode(['code' => 200, 'msg' => 'ok']);
+            if ($redirect) {
+                $redirect = Session::get('refresh_redirect') ?? '/';
+                return redirect()->away($redirect);
+            } else {
+                return json_encode(['code' => 200, 'msg' => 'ok']);
+            }
         } catch (ClientException $e) {
             return json_encode(['code' => $e->getCode(), 'msg' => $e->getMessage()]);
         }

@@ -43,7 +43,7 @@ class RefreshToken extends Command
         $hasExpired = $expires - time() <= 0 ? true : false;
         if ($hasExpired) {
             $oauth = new OauthController();
-            $res = json_decode($oauth->refreshToken(), true);
+            $res = json_decode($oauth->refreshToken(false), true);
             $res['code'] === 200 ? $this->info('refresh ok') : $this->error('refresh error');
         } else {
             $this->info('refresh ok');
