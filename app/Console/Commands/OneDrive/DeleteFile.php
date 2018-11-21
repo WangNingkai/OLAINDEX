@@ -50,12 +50,12 @@ class DeleteFile extends Command
         if ($id_request['code'] == 200)
             $_id = $id_request['data']['id'];
         else {
-            $this->error('路径异常!');
+            $this->warn('路径异常!');
             return;
         }
         /* @var $result \Illuminate\Http\JsonResponse */
         $result = $od->deleteItem($_id);
         $response = Tool::handleResponse($result);
-        $response['code'] == 200 ? $this->info("删除成功!") : $this->error("删除失败!\n{$response['msg']} ");
+        $response['code'] == 200 ? $this->info("删除成功!") : $this->warn("删除失败!\n{$response['msg']} ");
     }
 }

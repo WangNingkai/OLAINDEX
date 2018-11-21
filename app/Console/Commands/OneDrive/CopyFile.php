@@ -53,7 +53,7 @@ class CopyFile extends Command
         if ($item_id_request['code'] == 200)
             $item_id = $item_id_request['data']['id'];
         else {
-            $this->error('源路径异常!');
+            $this->warn('源路径异常!');
             return;
         }
         $target_path = trim(Tool::handleUrl($target), '/');
@@ -61,12 +61,12 @@ class CopyFile extends Command
         if ($parent_id_request['code'] == 200)
             $parent_id = $parent_id_request['data']['id'];
         else {
-            $this->error('源路径异常!');
+            $this->warn('源路径异常!');
             return;
         }
         /* @var $result \Illuminate\Http\JsonResponse */
         $result = $od->copy($item_id, $parent_id);
         $response = Tool::handleResponse($result);
-        $response['code'] == 200 ? $this->info("复制路径查看进度\n{$response['data']['redirect']}") : $this->error("复制失败\n{$response['msg']} ");
+        $response['code'] == 200 ? $this->info("复制路径查看进度\n{$response['data']['redirect']}") : $this->warn("复制失败\n{$response['msg']} ");
     }
 }

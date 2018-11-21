@@ -44,6 +44,7 @@ class ListCommand extends Command
         $list = [
             ['od:install', '初始安装', ''],
             ['od:switch', '切换版本（世纪互联）', ''],
+            ['od:login', '登入账户', ''],
             ['od:logout', '登出账户', ''],
             ['od:password', '重置密码', ''],
             ['od:reset', '重置应用', ''],

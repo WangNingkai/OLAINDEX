@@ -40,7 +40,7 @@ class SwitchType extends Command
         $config = Tool::config();
         $data = ['app_type' => $type];
         $saved = Tool::saveConfig(array_merge($config, $data));
-        $saved ? $this->info('切换成功！') : $this->error('切换失败！');
+        $saved ? $this->info('切换成功！') : $this->warn('切换失败！');
 
     }
 }

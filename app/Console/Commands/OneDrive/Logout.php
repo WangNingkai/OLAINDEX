@@ -5,7 +5,7 @@ namespace App\Console\Commands\OneDrive;
 use App\Helpers\Tool;
 use Illuminate\Console\Command;
 
-class ResetUser extends Command
+class Logout extends Command
 {
     /**
      * The name and signature of the console command.
@@ -19,7 +19,7 @@ class ResetUser extends Command
      *
      * @var string
      */
-    protected $description = 'Reset User';
+    protected $description = 'Account Logout';
 
     /**
      * Create a new command instance.

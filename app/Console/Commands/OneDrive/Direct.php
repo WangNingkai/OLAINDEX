@@ -50,12 +50,12 @@ class Direct extends Command
         if ($id_request['code'] == 200)
             $_id = $id_request['data']['id'];
         else {
-            $this->error('路径异常!');
+            $this->warn('路径异常!');
             return;
         }
         /* @var $result \Illuminate\Http\JsonResponse */
         $result = $od->createShareLink($_id);
         $response = Tool::handleResponse($result);
-        $response['code'] == 200 ? $this->info("创建成功!\n永久直链地址： {$response['data']['redirect']}") : $this->error("创建失败!\n{$response['msg']} ");
+        $response['code'] == 200 ? $this->info("创建成功!\n永久直链地址： {$response['data']['redirect']}") : $this->warn("创建失败!\n{$response['msg']} ");
     }
 }

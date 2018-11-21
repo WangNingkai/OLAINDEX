@@ -54,7 +54,7 @@ class MoveFile extends Command
         if ($item_id_request['code'] == 200)
             $item_id = $item_id_request['data']['id'];
         else {
-            $this->error('源路径异常！');
+            $this->warn('源路径异常！');
             return;
         }
         $target_path = trim(Tool::handleUrl($target), '/');
@@ -62,12 +62,12 @@ class MoveFile extends Command
         if ($parent_id_request['code'] == 200)
             $parent_id = $parent_id_request['data']['id'];
         else {
-            $this->error('源路径异常！');
+            $this->warn('源路径异常！');
             return;
         }
         /* @var $result \Illuminate\Http\JsonResponse */
         $result = $od->move($item_id, $parent_id, $rename);
         $response = Tool::handleResponse($result);
-        $response['code'] == 200 ? $this->info("移动成功！") : $this->error("移动失败！\n{$response['msg']} ");
+        $response['code'] == 200 ? $this->info("移动成功！") : $this->warn("移动失败！\n{$response['msg']} ");
     }
 }

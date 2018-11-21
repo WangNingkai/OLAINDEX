@@ -15,6 +15,8 @@ EOS;
 
     const API_VERSION = 'v1.0';
 
+    const REDIRECT_URI = 'https://olaindex.ningkai.wang';
+
     const REST_ENDPOINT = 'https://graph.microsoft.com/';
     const AUTHORITY_URL = 'https://login.microsoftonline.com/common';
     const AUTHORIZE_ENDPOINT = '/oauth2/v2.0/authorize';

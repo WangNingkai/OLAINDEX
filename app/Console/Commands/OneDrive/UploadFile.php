@@ -76,7 +76,7 @@ class UploadFile extends Command
         $path = Tool::convertPath($target_path . $file_name);
         $result = $od->uploadByPath($path, $content);
         $response = Tool::handleResponse($result);
-        $response['code'] == 200 ? $this->info('上传成功!') : $this->error('上传失败!');
+        $response['code'] == 200 ? $this->info('上传成功!') : $this->warn('上传失败!');
     }
 
     /**
@@ -99,7 +99,7 @@ class UploadFile extends Command
         if ($url_response['code'] == 200) {
             $url = $url_response['data']['uploadUrl'];
         } else {
-            $this->error('创建上传任务失败，检查文件是否已经存在！');
+            $this->warn('创建上传任务失败，检查文件是否已经存在！');
             return;
         }
         $this->info("上传文件：{$local}");
@@ -132,13 +132,13 @@ class UploadFile extends Command
                         $this->warn("重试第{$retry}次，等待10秒重试...");
                         sleep(10);
                     } else {
-                        $this->error('分片上传失败！');
+                        $this->warn('分片上传失败！');
                         $od->deleteUploadSession($url); // 失败删除任务
                         break;
                     }
                 }
             } else {
-                $this->error('分片上传失败！');
+                $this->warn('分片上传失败！');
                 $od->deleteUploadSession($url); // 失败删除任务
                 break;
             }

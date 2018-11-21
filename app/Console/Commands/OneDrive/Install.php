@@ -5,7 +5,7 @@ namespace App\Console\Commands\OneDrive;
 use App\Helpers\Constants;
 use Illuminate\Console\Command;
 
-class InitInstall extends Command
+class Install extends Command
 {
     /**
      * The name and signature of the console command.
@@ -19,7 +19,7 @@ class InitInstall extends Command
      *
      * @var string
      */
-    protected $description = 'Init Install';
+    protected $description = 'Install App';
 
     /**
      * Create a new command instance.

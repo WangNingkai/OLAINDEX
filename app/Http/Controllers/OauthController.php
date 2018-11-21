@@ -20,32 +20,32 @@ class OauthController extends Controller
     /**
      * @var string
      */
-    public $client_id;
+    protected $client_id;
 
     /**
      * @var string
      */
-    public $client_secret;
+    protected $client_secret;
 
     /**
      * @var string
      */
-    public $redirect_uri;
+    protected $redirect_uri;
 
     /**
      * @var string
      */
-    public $authorize_url;
+    protected $authorize_url;
 
     /**
      * @var string
      */
-    public $access_token_url;
+    protected $access_token_url;
 
     /**
      * @var string
      */
-    public $scopes;
+    protected $scopes;
 
     /**
      * OauthController constructor.
