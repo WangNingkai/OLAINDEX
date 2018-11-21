@@ -217,7 +217,7 @@ class Tool
             $config = file_get_contents($file);
             return json_decode($config, true);
         });
-        return $key ? (array_key_exists($key, $config) ? ($config[$key] ?: $default) : $default) : $config;
+        return $key ? (array_has($config, $key) ? (array_get($config, $key) ?: $default) : $default) : $config;
     }
 
     /**
