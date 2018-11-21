@@ -43,11 +43,11 @@ class ListCommand extends Command
         $header = ['command', 'description', 'params'];
         $list = [
             ['od:install', '初始安装', ''],
-            ['od:switch', '切换版本（世纪互联）', ''],
+            ['od:switch', '切换版本（世纪互联）', '{--type=}'],
             ['od:login', '登入账户', ''],
-            ['od:logout', '登出账户', ''],
+            ['od:logout', '登出账户', '{--y}'],
             ['od:password', '重置密码', ''],
-            ['od:reset', '重置应用', ''],
+            ['od:reset', '重置应用', '{--y}'],
             ['od:update', '更新升级', ''],
             ['od:upload', '上传文件', '{local} {remote} {--chuck=}'],
             ['od:download', '下载文件', '{remote}'],

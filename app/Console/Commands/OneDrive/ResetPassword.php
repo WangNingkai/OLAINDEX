@@ -39,7 +39,6 @@ class ResetPassword extends Command
      */
     public function handle()
     {
-        $this->warn('开始重置密码...');
         $password = str_random(8);
         Tool::saveConfig(array_merge(Tool::config(), ['password' => md5($password)]));
         $this->call('cache:clear');

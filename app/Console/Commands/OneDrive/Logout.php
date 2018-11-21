@@ -12,7 +12,7 @@ class Logout extends Command
      *
      * @var string
      */
-    protected $signature = 'od:logout';
+    protected $signature = 'od:logout {--y}';
 
     /**
      * The console command description.
@@ -34,25 +34,32 @@ class Logout extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
      */
     public function handle()
     {
-        $this->warn('开始重置帐号信息...');
+        if ($this->option('y')) return $this->reset();
         $this->call('cache:clear');
         if ($this->confirm('重置账号可能出现无法登录的错误，建议重置应用，确认继续吗?')) {
-            $data = [
-                'access_token' => '',
-                'refresh_token' => '',
-                'access_token_expires' => 0,
-                'root' => '/',
-                'image_hosting' => 0,
-                'image_hosting_path' => ''
-            ];
-            $saved = Tool::updateConfig($data);
-            if ($saved) {
-                $this->warn('重置成功，请重新登录!');
-            }
+            return $this->reset();
+        }
+    }
+
+    /**
+     * Execute Reset Command
+     */
+    public function reset()
+    {
+        $data = [
+            'access_token' => '',
+            'refresh_token' => '',
+            'access_token_expires' => 0,
+            'root' => '/',
+            'image_hosting' => 0,
+            'image_hosting_path' => ''
+        ];
+        $saved = Tool::updateConfig($data);
+        if ($saved) {
+            $this->warn('重置成功，请重新登录!');
         }
     }
 }

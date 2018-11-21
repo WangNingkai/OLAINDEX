@@ -46,7 +46,6 @@ class Install extends Command
             copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
             $this->info('创建完成！');
         };
-        $this->warn('开始初始化配置 ...');
         if (!file_exists(base_path('.env.example'))) {
             $this->warn('目录不存在 .env.example 文件，请确保拉取仓库完整！');
             return false;
