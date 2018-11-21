@@ -62,6 +62,6 @@ class ListCommand extends Command
             ['od:info', 'OneDrive信息', ''],
             ['od:refresh', 'Refresh Token', ''],
         ];
-        $this->table($header, $list);
+        $this->table($header, $list, 'borderless');
     }
 }

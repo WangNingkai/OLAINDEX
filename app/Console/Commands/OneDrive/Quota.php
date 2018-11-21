@@ -48,6 +48,6 @@ class Quota extends Command
         $this->info(Constants::LOGO);
         $this->info('Account [' . bind_account() . ']');
         $this->info('App Version  [' . Tool::config('app_version') . ']');
-        $this->table($headers, $quota);
+        $this->table($headers, $quota, 'default');
     }
 }
