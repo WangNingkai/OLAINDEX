@@ -364,7 +364,7 @@ class OneDriveController extends Controller
      */
     public function search($path, $query)
     {
-        if ($path == '/')
+        if (trim($path, '/') == '')
             $endpoint = "/me/drive/root/search(q='{$query}')";
         else
             $endpoint = '/me/drive/root:/' . trim($path, '/') . ':/' . "search(q='{$query}')";
