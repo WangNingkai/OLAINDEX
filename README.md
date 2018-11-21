@@ -54,7 +54,7 @@
 
 ## 更新升级
 
-**更新日志：** [CHANGELOG](https://raw.githubusercontent.com/WangNingkai/OLAINDEX/master/CHANGELOG.log)
+**更新日志：** [CHANGELOG](https://github.com/WangNingkai/OLAINDEX/blob/master/CHANGELOG.md)
 
 **版本升级：**
 
@@ -62,6 +62,7 @@
 git pull 
 composer install -vvv # 无版本更新只需执行到此
 php artisan od:update # 跨版本更新
+chmod 755 storage/* # 补充，保证缓存的写入权限，否则500
 ```
 
 ## 分支说明
