@@ -13,8 +13,9 @@ class DeleteFile extends Command
      *
      * @var string
      */
-    protected $signature = 'od:delete
-                            {path : 文件地址}';
+    protected $signature = 'od:rm
+                            {path : 文件地址}
+                            {--f|force}';
 
     /**
      * The console command description.
@@ -34,6 +35,7 @@ class DeleteFile extends Command
     }
 
     /**
+     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function handle()
@@ -41,8 +43,20 @@ class DeleteFile extends Command
         $this->info('请稍等...');
         if (!refresh_token()) {
             $this->warn('请稍后重试...');
-            return;
+            return false;
         }
+        if ($this->option('force')) return $this->delete();
+        $this->call('cache:clear');
+        if ($this->confirm('删除后仅能通过OneDrive回收站找回，确认继续吗?')) {
+            return $this->delete();
+        }
+    }
+
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function delete()
+    {
         $target = $this->argument('path');
         $od = new OneDriveController();
         $target_path = trim(Tool::handleUrl($target), '/');

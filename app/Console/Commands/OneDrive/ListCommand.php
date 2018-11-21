@@ -57,7 +57,6 @@ Available commands:
 
   od:command   List Command
   od:cp        Copy File
-  od:delete    Delete File
   od:direct    DirectDownloadLink For File
   od:download  Download File
   od:info      OneDrive Info
@@ -70,6 +69,7 @@ Available commands:
   od:password  Reset Password
   od:refresh   Refresh Token
   od:reset     Reset App
+  od:rm        Delete File
   od:search    Search Items
   od:share     ShareLink For File
   od:switch    Switch Type
