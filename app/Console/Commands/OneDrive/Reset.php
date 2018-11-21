@@ -11,7 +11,7 @@ class Reset extends Command
      *
      * @var string
      */
-    protected $signature = 'od:reset {--y}';
+    protected $signature = 'od:reset {--y|yes}';
 
     /**
      * The console command description.
@@ -37,7 +37,7 @@ class Reset extends Command
      */
     public function handle()
     {
-        if ($this->option('y')) {
+        if ($this->option('yes')) {
             $this->call('cache:clear');
             copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
             $this->warn('重置完成！');

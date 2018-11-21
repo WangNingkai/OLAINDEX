@@ -39,29 +39,43 @@ class ListCommand extends Command
     public function handle()
     {
         $this->info(Constants::LOGO);
-        $this->warn('OLAINDEX Console Command');
-        $header = ['command', 'description', 'params'];
-        $list = [
-            ['od:install', '初始安装', ''],
-            ['od:switch', '切换版本（世纪互联）', '{--type=}'],
-            ['od:login', '登入账户', ''],
-            ['od:logout', '登出账户', '{--y}'],
-            ['od:password', '重置密码', ''],
-            ['od:reset', '重置应用', '{--y}'],
-            ['od:update', '更新升级', ''],
-            ['od:upload', '上传文件', '{local} {remote} {--chuck=}'],
-            ['od:download', '下载文件', '{remote}'],
-            ['od:ls', '文件列表', '{path} {--offset=} {--limit=}'],
-            ['od:search', '搜索文件', '{keyword} {--id=} {--path=} {--offset=} {--limit=}'],
-            ['od:mkdir', '新建目录', '{remote}'],
-            ['od:mv', '移动项目', '{source} {target}'],
-            ['od:cp', '复制文件', '{source} {target}'],
-            ['od:delete', '删除项目', '{remote}'],
-            ['od:share', '分享直链', '{remote}'],
-            ['od:direct', '永久直链', '{remote}'],
-            ['od:info', 'OneDrive信息', ''],
-            ['od:refresh', 'Refresh Token', ''],
-        ];
-        $this->table($header, $list, 'borderless');
+        $output = <<<'EOF'
+OLAINDEX Console Tool
+
+Usage:
+  command [options] [arguments]
+
+Options:
+  -h, --help            Display this help message
+  -q, --quiet           Do not output any message
+      --ansi            Force ANSI output
+      --no-ansi         Disable ANSI output
+  -n, --no-interaction  Do not ask any interactive question
+  -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+
+Available commands:
+  od:command   List Command
+  od:cp        Copy File
+  od:delete    Delete File
+  od:direct    DirectDownloadLink For File
+  od:download  Download File
+  od:info      OneDrive Info
+  od:install   Install App
+  od:login     Account Login
+  od:logout    Account Logout
+  od:ls        List Items
+  od:mkdir     Create New Folder
+  od:mv        Move File
+  od:password  Reset Password
+  od:refresh   Refresh Token
+  od:reset     Reset App
+  od:search    Search Items
+  od:share     ShareLink For File
+  od:switch    Switch Type
+  od:update    Update App
+  od:upload    UploadFile File
+EOF;
+
+        $this->info($output);
     }
 }
