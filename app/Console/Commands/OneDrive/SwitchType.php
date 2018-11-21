@@ -12,7 +12,7 @@ class SwitchType extends Command
      *
      * @var string
      */
-    protected $signature = 'od:switch {--type=}';
+    protected $signature = 'od:switch {--type= : 转换类型}';
 
     /**
      * The console command description.

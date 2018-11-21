@@ -16,8 +16,8 @@ class ListItem extends Command
      */
     protected $signature = 'od:ls
                             {path? : 文件地址}
-                            {--offset=0 : 开始}
-                            {--limit=10 : 长度}';
+                            {--offset=0 : 起始位置}
+                            {--limit=10 : 限制数量}';
 
     /**
      * The console command description.

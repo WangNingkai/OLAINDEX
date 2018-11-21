@@ -16,9 +16,9 @@ class Search extends Command
     protected $signature = 'od:search
                             {keyword : 关键词}
                             {--id= : id}
-                            {--path=/ : 路径}
-                            {--offset=0 : 开始}
-                            {--limit=10 : 长度}';
+                            {--path=/ : 查询路径}
+                            {--offset=0 : 起始位置}
+                            {--limit=10 : 限制数量}';
 
     /**
      * The console command description.
