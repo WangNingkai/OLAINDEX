@@ -41,7 +41,7 @@ class CreateFolder extends Command
     {
         if (!refresh_token()) {
             $this->warn('请稍后重试...');
-            return;
+            exit;
         }
         $name = $this->argument('name');
         $target = $this->argument('target');

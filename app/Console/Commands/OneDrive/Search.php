@@ -45,7 +45,7 @@ class Search extends Command
         $this->info('请稍等...');
         if (!refresh_token()) {
             $this->warn('请稍后重试...');
-            return;
+            exit;
         }
         $keyword = $this->argument('keyword');
         $target = $this->option('path');
@@ -63,7 +63,7 @@ class Search extends Command
         $data = $response['code'] == 200 ? $response['data'] : [];
         if (!$data) {
             $this->warn('出错了，请稍后重试...');
-            return;
+            exit;
         }
         if ($id = $this->option('id')) {
             $data = [$data];

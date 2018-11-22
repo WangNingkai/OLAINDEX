@@ -42,13 +42,13 @@ class UploadFile extends Command
     {
         if (!refresh_token()) {
             $this->warn('请稍后重试...');
-            return;
+            exit;
         }
         clearstatcache();
         $local = $this->argument('local');
         if (!is_file($local)) {
             $this->warn('暂不支持文件夹上传!');
-            return;
+            exit;
         }
         $remote = $this->argument('remote');
         $chuck = $this->option('chuck');
@@ -100,7 +100,7 @@ class UploadFile extends Command
             $url = $url_response['data']['uploadUrl'];
         } else {
             $this->warn('创建上传任务失败，检查文件是否已经存在！');
-            return;
+            exit;
         }
         $this->info("上传文件：{$local}");
         $this->info("上传链接：{$url}");

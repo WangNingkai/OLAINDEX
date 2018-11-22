@@ -115,7 +115,7 @@ class Update extends Command
         $this->call('cache:clear');
         $this->info($result['status'] . ':' . $result['msg']);
         clearstatcache(); // 清理文件缓存
-        return;
+        exit;
     }
 
     /**

@@ -41,7 +41,7 @@ class SwitchType extends Command
             if ($this->confirm('切换版本将会删除全部数据确定吗？')) {
                 $this->call('od:reset', ['--yes' => true]);
                 $type = $this->choice('请选择切换的版本(com:国际通用 cn:世纪互联)', ['com', 'cn'], 'com');
-            } else return;
+            } else exit;
         }
         $data = ['app_type' => $type];
         $saved = Tool::updateConfig($data);

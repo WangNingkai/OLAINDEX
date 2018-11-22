@@ -37,17 +37,17 @@ class Logout extends Command
      */
     public function handle()
     {
-        if ($this->option('yes')) return $this->reset();
+        if ($this->option('yes')) return $this->logout();
         $this->call('cache:clear');
         if ($this->confirm('重置账号可能出现无法登录的错误，建议重置应用，确认继续吗?')) {
-            return $this->reset();
+            return $this->logout();
         }
     }
 
     /**
      * Execute Reset Command
      */
-    public function reset()
+    public function logout()
     {
         $data = [
             'access_token' => '',

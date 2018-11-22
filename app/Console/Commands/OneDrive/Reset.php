@@ -38,15 +38,21 @@ class Reset extends Command
     public function handle()
     {
         if ($this->option('yes')) {
-            $this->call('cache:clear');
-            copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
-            $this->warn('重置完成！');
+            return $this->reset();
         } else {
             if ($this->confirm('重置将会抹去全部数据，继续吗？')) {
-                $this->call('cache:clear');
-                copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
-                $this->warn('重置完成！');
+                return $this->reset();
             }
         }
+    }
+
+    /**
+     * Execute the console command.
+     */
+    public function reset()
+    {
+        $this->call('cache:clear');
+        copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
+        $this->warn('重置完成！');
     }
 }

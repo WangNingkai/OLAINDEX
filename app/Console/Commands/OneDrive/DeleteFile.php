@@ -43,10 +43,9 @@ class DeleteFile extends Command
         $this->info('请稍等...');
         if (!refresh_token()) {
             $this->warn('请稍后重试...');
-            return false;
+            exit;
         }
         if ($this->option('force')) return $this->delete();
-        $this->call('cache:clear');
         if ($this->confirm('删除后仅能通过OneDrive回收站找回，确认继续吗?')) {
             return $this->delete();
         }
@@ -65,11 +64,12 @@ class DeleteFile extends Command
             $_id = $id_request['data']['id'];
         else {
             $this->warn('路径异常!');
-            return;
+            exit;
         }
         /* @var $result \Illuminate\Http\JsonResponse */
         $result = $od->deleteItem($_id);
         $response = Tool::handleResponse($result);
+        $this->call('cache:clear');
         $response['code'] == 200 ? $this->info("删除成功!") : $this->warn("删除失败!\n{$response['msg']} ");
     }
 }

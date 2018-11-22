@@ -41,7 +41,7 @@ class Download extends Command
         $this->info('请稍等...');
         if (!refresh_token()) {
             $this->warn('请稍后重试...');
-            return;
+            exit;
         }
         $target = $this->argument('path');
         $target_path = trim(Tool::handleUrl($target), '/');

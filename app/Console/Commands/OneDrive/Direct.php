@@ -41,7 +41,7 @@ class Direct extends Command
         $this->info('请稍等...');
         if (!refresh_token()) {
             $this->warn('请稍后重试...');
-            return;
+            exit;
         }
         $target = $this->argument('path');
         $od = new OneDriveController();
@@ -51,7 +51,7 @@ class Direct extends Command
             $_id = $id_request['data']['id'];
         else {
             $this->warn('路径异常!');
-            return;
+            exit;
         }
         /* @var $result \Illuminate\Http\JsonResponse */
         $result = $od->createShareLink($_id);

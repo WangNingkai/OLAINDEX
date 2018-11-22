@@ -42,7 +42,7 @@ class Quota extends Command
         $headers = array_keys(is_array(quota()) ? quota() : []);
         if (!$headers) {
             $this->warn('请稍后重试...');
-            return;
+            exit;
         }
         $quota[] = quota();
         $this->info(Constants::LOGO);
