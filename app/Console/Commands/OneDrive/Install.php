@@ -48,7 +48,7 @@ class Install extends Command
         };
         if (!file_exists(base_path('.env.example'))) {
             $this->warn('目录不存在 .env.example 文件，请确保拉取仓库完整！');
-            return false;
+            exit;
         }
         $app_url = $this->ask('请输入本机绑定域名');
         $envExample = file_get_contents(base_path('.env.example'));

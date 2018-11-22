@@ -138,7 +138,7 @@ class Login extends Command
             $this->info('Account [' . bind_account() . ']');
         } catch (ClientException $e) {
             $this->warn($e->getMessage());
-            return;
+            exit;
         }
     }
 }

@@ -41,7 +41,7 @@ class ListItem extends Command
 //        $this->info('请稍等...');
         if (!refresh_token()) {
             $this->warn('请稍后重试...');
-            return;
+            exit;
         }
         $target = $this->argument('path');
         $offset = $this->option('offset');
@@ -56,7 +56,7 @@ class ListItem extends Command
         });
         if (!$data) {
             $this->warn('出错了，请稍后重试...');
-            return;
+            exit;
         }
         $data = $this->format($data);
         $items = array_slice($data, $offset, $length);

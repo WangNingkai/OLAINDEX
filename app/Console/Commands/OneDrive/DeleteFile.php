@@ -43,7 +43,7 @@ class DeleteFile extends Command
         $this->info('请稍等...');
         if (!refresh_token()) {
             $this->warn('请稍后重试...');
-            return false;
+            exit;
         }
         if ($this->option('force')) return $this->delete();
         $this->call('cache:clear');
@@ -65,7 +65,7 @@ class DeleteFile extends Command
             $_id = $id_request['data']['id'];
         else {
             $this->warn('路径异常!');
-            return;
+            exit;
         }
         /* @var $result \Illuminate\Http\JsonResponse */
         $result = $od->deleteItem($_id);

@@ -43,7 +43,7 @@ class CopyFile extends Command
         $this->info('开始复制...');
         if (!refresh_token()) {
             $this->warn('请稍后重试...');
-            return;
+            exit;
         }
         $source = $this->argument('source');
         $target = $this->argument('target');
@@ -54,7 +54,7 @@ class CopyFile extends Command
             $item_id = $item_id_request['data']['id'];
         else {
             $this->warn('源路径异常!');
-            return;
+            exit;
         }
         $target_path = trim(Tool::handleUrl($target), '/');
         $parent_id_request = Tool::handleResponse($od->pathToItemId(empty($target_path) ? '/' : ":/{$target_path}:/"));
@@ -62,7 +62,7 @@ class CopyFile extends Command
             $parent_id = $parent_id_request['data']['id'];
         else {
             $this->warn('源路径异常!');
-            return;
+            exit;
         }
         /* @var $result \Illuminate\Http\JsonResponse */
         $result = $od->copy($item_id, $parent_id);
