@@ -17,6 +17,8 @@
 
 项目地址：[https://github.com/WangNingkai/OLAINDEX](https://github.com/WangNingkai/OLAINDEX)
 
+OLAINDEX-CMD [https://github.com/WangNingkai/OLAINDEX-CMD](https://github.com/WangNingkai/OLAINDEX-CMD)
+
 - 1.`OneDrive` 目录索引；
 - 2.后端采用最新 `PHP` 框架 `laravel5` ；
 - 3.前端采用 `bootswatch` 主题，支持PC、平板、手机自适应；

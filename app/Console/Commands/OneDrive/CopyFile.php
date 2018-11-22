@@ -61,7 +61,7 @@ class CopyFile extends Command
         if ($parent_id_request['code'] == 200)
             $parent_id = $parent_id_request['data']['id'];
         else {
-            $this->warn('源路径异常!');
+            $this->warn('目标路径异常!');
             exit;
         }
         /* @var $result \Illuminate\Http\JsonResponse */
