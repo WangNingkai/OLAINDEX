@@ -46,7 +46,6 @@ class DeleteFile extends Command
             exit;
         }
         if ($this->option('force')) return $this->delete();
-        $this->call('cache:clear');
         if ($this->confirm('删除后仅能通过OneDrive回收站找回，确认继续吗?')) {
             return $this->delete();
         }
@@ -70,6 +69,7 @@ class DeleteFile extends Command
         /* @var $result \Illuminate\Http\JsonResponse */
         $result = $od->deleteItem($_id);
         $response = Tool::handleResponse($result);
+        $this->call('cache:clear');
         $response['code'] == 200 ? $this->info("删除成功!") : $this->warn("删除失败!\n{$response['msg']} ");
     }
 }
