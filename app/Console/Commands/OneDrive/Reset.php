@@ -38,7 +38,7 @@ class Reset extends Command
     public function handle()
     {
         if ($this->option('yes')) {
-            return $this->reset();
+           return $this->reset();
         } else {
             if ($this->confirm('重置将会抹去全部数据，继续吗？')) {
                 return $this->reset();
