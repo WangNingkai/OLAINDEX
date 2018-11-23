@@ -284,7 +284,7 @@ class IndexController extends Controller
      */
     public function searchShow($id)
     {
-        $result = $this->od->itemIdToPath($id);
+        $result = $this->od->itemIdToPath($id, Tool::config('root'));
         /* @var $result JsonResponse */
         $response = Tool::handleResponse($result);
         if ($response['code'] == 200) {

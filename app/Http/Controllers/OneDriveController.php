@@ -655,10 +655,11 @@ class OneDriveController extends Controller
     /**
      * id转path
      * @param $itemId
-     * @return string
+     * @param bool $start
+     * @return \Illuminate\Http\JsonResponse|mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function itemIdToPath($itemId)
+    public function itemIdToPath($itemId, $start = false)
     {
         $result = $this->getItem($itemId);
         $response = Tool::handleResponse($result);
@@ -673,13 +674,17 @@ class OneDriveController extends Controller
             if (starts_with($path, '/drive/root:')) {
                 $path = str_after($path, '/drive/root:');
             }
-            // 兼容根目录
-            if ($path == '') {
-                $pathArr = [];
+            if (!$start) {
+                $pathArr = $path === '' ? [] : explode('/', $path);
             } else {
-                $pathArr = explode('/', $path);
-                if (trim(Tool::config('root'), '/') != '') {
-                    $pathArr = array_slice($pathArr, 1);
+                // 兼容根目录
+                if ($path === '') {
+                    $pathArr = [];
+                } else {
+                    $pathArr = explode('/', $path);
+                    if (trim($start, '/') !== '') {
+                        $pathArr = array_slice($pathArr, 1);
+                    }
                 }
             }
             array_push($pathArr, $item['name']);
