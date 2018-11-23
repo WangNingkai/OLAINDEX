@@ -258,7 +258,8 @@ class IndexController extends Controller
     {
         $keywords = $request->get('keywords');
         if ($keywords) {
-            $result = $this->od->search($this->root, $keywords);
+            $path = Tool::handleUrl($this->root);
+            $result = $this->od->search(empty($path) ? '/' : ":/{$path}:/", $keywords);
             $response = Tool::handleResponse($result);
             if ($response['code'] == 200) {
                 // 过滤结果中的文件夹

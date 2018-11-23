@@ -48,7 +48,7 @@ class Search extends Command
         $target = $this->option('remote');
         $offset = $this->option('offset');
         $length = $this->option('limit');
-        $target_path = trim(Tool::handleUrl($target), '/');
+        $target_path = empty(Tool::handleUrl($target)) ? '/' : ':/' . Tool::handleUrl($target) . ':/';
         $od = new OneDriveController();
         if ($id = $this->option('id')) {
             $result = $od->getItem($id);
