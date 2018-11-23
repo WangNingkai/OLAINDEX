@@ -14,7 +14,7 @@ Info="${Green_font_prefix}[Info]${Font_color_suffix}"
 Error="${Red_font_prefix}[Error]${Font_color_suffix}"
 Tip="${Green_font_prefix}[Tip]${Font_color_suffix}"
 Ok="${Green_font_prefix} ok ${Font_color_suffix}"
-Failed="${Green_font_prefix} failed ${Font_color_suffix}"
+Failed="${Red_font_prefix} failed ${Font_color_suffix}"
 
 [[ $(id -u) != '0' ]] && { echo "${Error} You must be root to run this script"; exit 1; }
 
@@ -39,9 +39,9 @@ function git_check(){
 function nginx_check(){
     which nginx > /dev/null 2>&1
     if [[ $? == 0 ]]; then
-        echo -e "nginx_ : ${Ok}"
+        echo -e "nginx : ${Ok}"
     else
-        echo -e  "nginx_ : ${Failed} " && exit 1
+        echo -e  "nginx : ${Failed} " && exit 1
     fi
 }
 
