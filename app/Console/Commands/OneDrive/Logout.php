@@ -12,7 +12,7 @@ class Logout extends Command
      *
      * @var string
      */
-    protected $signature = 'od:logout {--y|yes}';
+    protected $signature = 'od:logout {--f|force}';
 
     /**
      * The console command description.
@@ -37,7 +37,7 @@ class Logout extends Command
      */
     public function handle()
     {
-        if ($this->option('yes')) return $this->logout();
+        if ($this->option('force')) return $this->logout();
         $this->call('cache:clear');
         if ($this->confirm('重置账号可能出现无法登录的错误，建议重置应用，确认继续吗?')) {
             return $this->logout();

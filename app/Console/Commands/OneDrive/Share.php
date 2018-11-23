@@ -14,7 +14,7 @@ class Share extends Command
      * @var string
      */
     protected $signature = 'od:share
-                            {path : 文件地址}';
+                            {remote : 文件地址}';
 
     /**
      * The console command description.
@@ -43,7 +43,7 @@ class Share extends Command
             $this->warn('请稍后重试...');
             exit;
         }
-        $target = $this->argument('path');
+        $target = $this->argument('remote');
         $od = new OneDriveController();
         $target_path = trim(Tool::handleUrl($target), '/');
         $id_request = Tool::handleResponse($od->pathToItemId(empty($target_path) ? '/' : ":/{$target_path}:/"));

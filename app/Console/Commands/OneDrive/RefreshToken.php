@@ -48,7 +48,7 @@ class RefreshToken extends Command
             $res = json_decode($oauth->refreshToken(false), true);
             $res['code'] === 200 ? $this->info('Refresh Token Ok!') : $this->warn('Refresh Token Error!');
         } else {
-            $this->info('Refresh Token Ok!');
+            return;
         }
     }
 }

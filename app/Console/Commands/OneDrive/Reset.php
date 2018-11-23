@@ -11,7 +11,7 @@ class Reset extends Command
      *
      * @var string
      */
-    protected $signature = 'od:reset {--y|yes}';
+    protected $signature = 'od:reset {--f|force}';
 
     /**
      * The console command description.
@@ -37,7 +37,7 @@ class Reset extends Command
      */
     public function handle()
     {
-        if ($this->option('yes')) {
+        if ($this->option('force')) {
            return $this->reset();
         } else {
             if ($this->confirm('重置将会抹去全部数据，继续吗？')) {

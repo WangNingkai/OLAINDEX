@@ -15,7 +15,7 @@ class ListItem extends Command
      * @var string
      */
     protected $signature = 'od:ls
-                            {path? : 文件地址}
+                            {remote? : 文件地址}
                             {--offset=0 : 起始位置}
                             {--limit=10 : 限制数量}';
 
@@ -43,7 +43,7 @@ class ListItem extends Command
             $this->warn('请稍后重试...');
             exit;
         }
-        $target = $this->argument('path');
+        $target = $this->argument('remote');
         $offset = $this->option('offset');
         $length = $this->option('limit');
         $target_path = trim(Tool::handleUrl($target), '/');

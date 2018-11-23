@@ -14,7 +14,7 @@ class DeleteFile extends Command
      * @var string
      */
     protected $signature = 'od:rm
-                            {path : 文件地址}
+                            {remote : 文件地址}
                             {--f|force}';
 
     /**
@@ -56,7 +56,7 @@ class DeleteFile extends Command
      */
     public function delete()
     {
-        $target = $this->argument('path');
+        $target = $this->argument('remote');
         $od = new OneDriveController();
         $target_path = trim(Tool::handleUrl($target), '/');
         $id_request = Tool::handleResponse($od->pathToItemId(empty($target_path) ? '/' : ":/{$target_path}:/"));

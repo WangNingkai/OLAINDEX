@@ -14,7 +14,7 @@ class Download extends Command
      * @var string
      */
     protected $signature = 'od:download
-                            {path : 文件地址}';
+                            {remote : 文件地址}';
 
     /**
      * The console command description.
@@ -43,7 +43,7 @@ class Download extends Command
             $this->warn('请稍后重试...');
             exit;
         }
-        $target = $this->argument('path');
+        $target = $this->argument('remote');
         $target_path = trim(Tool::handleUrl($target), '/');
         $path = empty($target_path) ? '/' : ":/{$target_path}:/";
         $od = new OneDriveController();

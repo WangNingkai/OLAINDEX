@@ -33,7 +33,7 @@ class Install extends Command
 
 
     /**
-     * @return bool
+     * Execute Command
      */
     public function handle()
     {
