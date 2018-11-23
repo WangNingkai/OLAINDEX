@@ -41,10 +41,7 @@ class DeleteFile extends Command
     public function handle()
     {
         $this->info('请稍等...');
-        if (!refresh_token()) {
-            $this->warn('请稍后重试...');
-            exit;
-        }
+        $this->call('od:refresh');
         if ($this->option('force')) return $this->delete();
         if ($this->confirm('删除后仅能通过OneDrive回收站找回，确认继续吗?')) {
             return $this->delete();

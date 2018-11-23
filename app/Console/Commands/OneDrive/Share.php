@@ -39,10 +39,7 @@ class Share extends Command
     public function handle()
     {
         $this->info('请稍等...');
-        if (!refresh_token()) {
-            $this->warn('请稍后重试...');
-            exit;
-        }
+        $this->call('od:refresh');
         $target = $this->argument('remote');
         $od = new OneDriveController();
         $target_path = trim(Tool::handleUrl($target), '/');

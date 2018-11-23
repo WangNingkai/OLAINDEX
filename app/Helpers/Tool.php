@@ -229,6 +229,7 @@ class Tool
      */
     public static function convertPath($path, $isQuery = true, $isFile = false)
     {
+        $path = self::getAbsolutePath($path);
         $origin_path = trim($path, '/');
         $path_array = explode('/', $origin_path);
         $base = ['home', 'view', 'show', 'download'];

@@ -41,10 +41,7 @@ class MoveFile extends Command
     public function handle()
     {
         $this->info('开始移动...');
-        if (!refresh_token()) {
-            $this->warn('请稍后重试...');
-            exit;
-        }
+        $this->call('od:refresh');
         $source = $this->argument('source');
         $target = $this->argument('target');
         $rename = $this->argument('rename');

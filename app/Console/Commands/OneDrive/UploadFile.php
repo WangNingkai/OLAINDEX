@@ -40,10 +40,7 @@ class UploadFile extends Command
      */
     public function handle()
     {
-        if (!refresh_token()) {
-            $this->warn('请稍后重试...');
-            exit;
-        }
+        $this->call('od:refresh');
         clearstatcache();
         $local = $this->argument('local');
         if (!is_file($local)) {

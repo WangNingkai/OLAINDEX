@@ -39,6 +39,7 @@ class Quota extends Command
      */
     public function handle()
     {
+        $this->call('od:refresh');
         $headers = array_keys(is_array(quota()) ? quota() : []);
         if (!$headers) {
             $this->warn('请稍后重试...');

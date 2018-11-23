@@ -39,10 +39,7 @@ class CreateFolder extends Command
      */
     public function handle()
     {
-        if (!refresh_token()) {
-            $this->warn('请稍后重试...');
-            exit;
-        }
+        $this->call('od:refresh');
         $name = $this->argument('name');
         $target = $this->argument('target');
         $od = new OneDriveController();

@@ -41,16 +41,13 @@ class CopyFile extends Command
     public function handle()
     {
         $this->info('开始复制...');
-        if (!refresh_token()) {
-            $this->warn('请稍后重试...');
-            exit;
-        }
+        $this->call('od:refresh');
         $source = $this->argument('source');
         $target = $this->argument('target');
         $od = new OneDriveController();
         $source_path = trim(Tool::handleUrl($source), '/');
         $item_id_request = Tool::handleResponse($od->pathToItemId(empty($source_path) ? '/' : ":/{$source_path}:/"));
-        if ($item_id_request['code'] == 200)
+        if ($item_id_request['code'] === 200)
             $item_id = $item_id_request['data']['id'];
         else {
             $this->warn('源路径异常!');
@@ -58,7 +55,7 @@ class CopyFile extends Command
         }
         $target_path = trim(Tool::handleUrl($target), '/');
         $parent_id_request = Tool::handleResponse($od->pathToItemId(empty($target_path) ? '/' : ":/{$target_path}:/"));
-        if ($parent_id_request['code'] == 200)
+        if ($parent_id_request['code'] === 200)
             $parent_id = $parent_id_request['data']['id'];
         else {
             $this->warn('目标路径异常!');

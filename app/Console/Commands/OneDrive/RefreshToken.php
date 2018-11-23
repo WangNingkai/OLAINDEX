@@ -40,15 +40,14 @@ class RefreshToken extends Command
      */
     public function handle()
     {
-        $this->info(Constants::LOGO);
         $expires = Tool::config('access_token_expires', 0);
         $hasExpired = $expires - time() <= 0 ? true : false;
-        if ($hasExpired) {
+        if (!$hasExpired) {
+            return;
+        } else {
             $oauth = new OauthController();
             $res = json_decode($oauth->refreshToken(false), true);
-            $res['code'] === 200 ? $this->info('Refresh Token Ok!') : $this->warn('Refresh Token Error!');
-        } else {
-            return;
+            $res['code'] === 200 or exit('Refresh Token Error!');
         }
     }
 }

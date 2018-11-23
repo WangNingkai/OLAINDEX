@@ -35,7 +35,7 @@ class SwitchType extends Command
     public function handle()
     {
         if ($this->option('type')) {
-            $this->call('od:reset', ['--yes' => true]);
+            $this->call('od:reset', ['--force' => true]);
             $type = $this->option('type');
         } else {
             if ($this->confirm('切换版本将会删除全部数据确定吗？')) {

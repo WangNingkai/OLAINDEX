@@ -39,16 +39,13 @@ class Download extends Command
     public function handle()
     {
         $this->info('请稍等...');
-        if (!refresh_token()) {
-            $this->warn('请稍后重试...');
-            exit;
-        }
+        $this->call('od:refresh');
         $target = $this->argument('remote');
         $target_path = trim(Tool::handleUrl($target), '/');
         $path = empty($target_path) ? '/' : ":/{$target_path}:/";
         $od = new OneDriveController();
         $result = $od->getItemByPath($path);
         $response = Tool::handleResponse($result);
-        $response['code'] == 200 ? $this->info("下载地址：{$response['data']['@microsoft.graph.downloadUrl']}") : $this->warn("获取文件失败!\n{$response['msg']} ");
+        $response['code'] === 200 ? $this->info("下载地址：{$response['data']['@microsoft.graph.downloadUrl']}") : $this->warn("获取文件失败!\n{$response['msg']} ");
     }
 }
