@@ -150,7 +150,7 @@ class OneDriveController extends Controller
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function listChildren($itemId = '')
+    public function getChildren($itemId = '')
     {
         $endpoint = $itemId ? "/me/drive/items/{$itemId}/children" : "/me/drive/root/children";
         $response = $this->requestApi('get', $endpoint);
@@ -170,7 +170,7 @@ class OneDriveController extends Controller
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function listChildrenByPath($path = '/')
+    public function getChildrenByPath($path = '/')
     {
         $endpoint = $path === '/' ? "/me/drive/root/children" : "/me/drive/root{$path}children";
         $response = $this->requestApi('get', $endpoint);

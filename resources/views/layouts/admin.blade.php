@@ -30,7 +30,7 @@
 </head>
 
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-primary">
     <div class="container">
         <a class="navbar-brand" href="{{ route('home') }}">{{ \App\Helpers\Tool::config('name','OLAINDEX') }}</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01"
@@ -111,8 +111,7 @@
         <div class="row text-center">
             <div class="col-lg-12">
                 <p class="text-muted">
-                    {!! \App\Helpers\Tool::markdown2Html(\App\Helpers\Tool::config('copyright',''),true) .' | ' !!}Made
-                    by <a href="https://imwnk.cn">IMWNK</a>.
+                    Made by <a href="https://imwnk.cn">IMWNK</a>.
                 </p>
             </div>
         </div>
@@ -122,8 +121,6 @@
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7/dist/sweetalert2.all.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/return-top@1/dist/x-return-top.min.js" left="85%" bottom="10%"
-        text="返回顶部"></script>
 @yield('js')
 </body>
 

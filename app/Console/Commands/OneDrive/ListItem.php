@@ -46,7 +46,7 @@ class ListItem extends Command
         $graphPath = empty($target_path) ? '/' : ":/{$target_path}:/";
         $data = Cache::remember('one:list:' . $graphPath, Tool::config('expires'), function () use ($graphPath) {
             $od = new OneDriveController();
-            $result = $od->listChildrenByPath($graphPath);
+            $result = $od->getChildrenByPath($graphPath);
             $response = Tool::handleResponse($result);
             return $response['code'] == 200 ? $response['data'] : [];
         });

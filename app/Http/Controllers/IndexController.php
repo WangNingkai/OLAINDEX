@@ -84,7 +84,7 @@ class IndexController extends Controller
         $origin_path = rawurldecode(Tool::convertPath($request->getPathInfo(), false));
         // 获取列表
         $origin_items = Cache::remember('one:list:' . $graphPath, $this->expires, function () use ($graphPath) {
-            $result = $this->od->listChildrenByPath($graphPath);
+            $result = $this->od->getChildrenByPath($graphPath);
             $response = Tool::handleResponse($result);
             if ($response['code'] == 200) {
                 return $response['data'];
