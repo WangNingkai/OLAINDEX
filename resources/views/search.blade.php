@@ -11,16 +11,16 @@
         <div class="card border-light mb-3">
             <div class="card-header">
                 <div class="row">
-                    <div class="col">
+                    <div class="col-8 col-sm-6">
                         文件
                     </div>
-                    <div class="col d-none d-md-block d-md-none">
-                        <span class="pull-right">最后修改时间</span>
+                    <div class="col-sm-2 d-none d-md-block d-md-none">
+                        <span class="pull-right">修改日期</span>
                     </div>
-                    <div class="col d-none d-md-block d-md-none">
+                    <div class="col-sm-2 d-none d-md-block d-md-none">
                         <span class="pull-right">大小</span>
                     </div>
-                    <div class="col">
+                    <div class="col-4 col-sm-2">
                         <span class="pull-right">操作</span>
                     </div>
                 </div>
@@ -29,20 +29,20 @@
                 @foreach($items as $item)
                     <li class="list-group-item list-group-item-action">
                         <div class="row">
-                            <div class="col" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
+                            <div class="col-8 col-sm-6" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
                                 <a href="{{ route('search.show',$item['id']) }}"
                                    title="{{ $item['name'] }}">
                                     <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i> {{ $item['name'] }}
                                 </a>
                             </div>
-                            <div class="col d-none d-md-block d-md-none">
+                            <div class="col-sm-2 d-none d-md-block d-md-none">
                                 <span
-                                    class="pull-right">{{ date('Y-m-d H:i:s',strtotime($item['lastModifiedDateTime'])) }}</span>
+                                    class="pull-right">{{ date('M m H:i',strtotime($item['lastModifiedDateTime'])) }}</span>
                             </div>
-                            <div class="col d-none d-md-block d-md-none">
+                            <div class="col-sm-2 d-none d-md-block d-md-none">
                                 <span class="pull-right">{{ \App\Helpers\Tool::convertSize($item['size']) }}</span>
                             </div>
-                            <div class="col">
+                            <div class="col-4 col-sm-2">
                                 <span class="pull-right">
                                     <a href="{{ route('search.show',$item['id']) }}"><i
                                             class="fa fa-info-circle"

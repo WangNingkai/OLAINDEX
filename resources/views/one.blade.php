@@ -8,7 +8,7 @@
     @include('breadcrumb')
     @if (!blank($head))
         <div class="card border-light mb-3">
-            <div class="card-header"><i class="fa fa-hashtag"></i> HEAD</div>
+            <div class="card-header"><i class="fa fa-leaf"></i> HEAD</div>
             <div class="card-body markdown-body">
                 {!! $head !!}
             </div>
@@ -224,7 +224,7 @@
     @endif
     @if (!blank($readme))
         <div class="card border-light mb-3">
-            <div class="card-header"><i class="fa fa-book"></i> README</div>
+            <div class="card-header"><i class="fa fa-bookmark"></i> README</div>
             <div class="card-body markdown-body">
                 {!! $readme !!}
             </div>
