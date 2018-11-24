@@ -17,16 +17,16 @@
     <div class="card border-light mb-3">
         <div class="card-header">
             <div class="row">
-                <div class="col">
+                <div class="col-8 col-sm-6">
                     文件
                 </div>
-                <div class="col d-none d-md-block d-md-none">
+                <div class="col-sm-2 d-none d-md-block d-md-none">
                     <span class="pull-right">修改日期</span>
                 </div>
-                <div class="col d-none d-md-block d-md-none">
+                <div class="col-sm-2 d-none d-md-block d-md-none">
                     <span class="pull-right">大小</span>
                 </div>
-                <div class="col">
+                <div class="col-4 col-sm-2">
                     @if (session()->has('LogInfo'))
                         <a class="pull-right dropdown-toggle btn btn-sm btn-primary" href="javascript:void(0)"
                            id="actionDropdownLink"
@@ -137,7 +137,7 @@
             @foreach($items as $item)
                 <li class="list-group-item list-group-item-action">
                     <div class="row">
-                        <div class="col" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
+                        <div class="col-8 col-sm-6" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
                             @if(array_has($item,'folder'))
                                 <a href="{{ route('home',\App\Helpers\Tool::handleUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                    title="{{ $item['name'] }}">
@@ -150,15 +150,15 @@
                                 </a>
                             @endif
                         </div>
-                        <div class="col d-none d-md-block d-md-none">
+                        <div class="col-sm-2 d-none d-md-block d-md-none">
                             <span
                                 class="pull-right">{{ date('Y-m-d H:i:s',strtotime($item['lastModifiedDateTime'])) }}</span>
                         </div>
-                        <div class="col d-none d-md-block d-md-none">
+                        <div class="col-sm-2 d-none d-md-block d-md-none">
                             <span
                                 class="pull-right">{{ array_has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</span>
                         </div>
-                        <div class="col">
+                        <div class="col-4 col-sm-2">
                             <span class="pull-right">
                                 @if(!array_has($item,'folder'))
                                     @if(array_has($item,'image'))
