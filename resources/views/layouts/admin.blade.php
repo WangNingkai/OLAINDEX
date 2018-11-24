@@ -92,7 +92,8 @@
         </div>
     @endif
     <div class="bg-white">
-        <p>
+        <p class="text-center text-muted">{{ bind_account() }}</p>
+        <p class="text-center">
             <span class="text-info">状态: {{ quota('state') }} &nbsp;&nbsp;</span>
             <span class="text-danger">已使用: {{ quota('used') }} &nbsp;&nbsp;</span>
             <span class="text-warning">剩余: {{ quota('remaining') }} &nbsp;&nbsp;</span>
