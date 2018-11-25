@@ -746,11 +746,11 @@ class OneDrive
      */
     public static function response($data, $code = 200, $msg = '')
     {
-        return json_encode([
+        return response()->json([
             'code' => $code,
             'msg' => $msg,
             'data' => $data
-        ]);
+        ], $code);
     }
 
     /**
