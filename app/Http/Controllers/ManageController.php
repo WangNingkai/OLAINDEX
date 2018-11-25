@@ -26,8 +26,7 @@ class ManageController extends Controller
     {
         $this->middleware('checkAuth')->except(['uploadImage', 'deleteItem']);
         $this->middleware('checkToken');
-        $od = new OneDriveController();
-        $this->od = $od;
+        $this->od = new OneDriveController();
 
     }
 

@@ -7,6 +7,7 @@ use App\Helpers\Tool;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Http\JsonResponse;
 
 /**
  * OneDrive Graph
@@ -53,12 +54,12 @@ class OneDriveController extends Controller
     {
         if (is_array($param)) {
             @list($endpoint, $requestBody, $requestHeaders, $timeout) = $param;
-            $requestBody = $requestBody ?? '';
+            $body = $requestBody ?? '';
             $headers = $requestHeaders ?? [];
             $timeout = $timeout ?? 5;
         } else {
             $endpoint = $param;
-            $requestBody = '';
+            $body = '';
             $headers = [];
             $timeout = 5;
         }
@@ -78,7 +79,7 @@ class OneDriveController extends Controller
             ];
             $client = new Client($clientSettings);
             $response = $client->request($method, $requestUrl, [
-                'body' => $requestBody,
+                'body' => $body,
                 'stream' => $stream,
                 'timeout' => $timeout,
                 'allow_redirects' => [
@@ -103,12 +104,12 @@ class OneDriveController extends Controller
     {
         if (is_array($param)) {
             @list($endpoint, $requestBody, $requestHeaders, $timeout) = $param;
-            $requestBody = $requestBody ?? '';
+            $body = $requestBody ?? '';
             $headers = $requestHeaders ?? [];
             $timeout = $timeout ?? 5;
         } else {
             $endpoint = $param;
-            $requestBody = '';
+            $body = '';
             $headers = [];
             $timeout = 5;
         }
@@ -118,7 +119,7 @@ class OneDriveController extends Controller
             ];
             $client = new Client($clientSettings);
             $response = $client->request($method, $endpoint, [
-                'body' => $requestBody,
+                'body' => $body,
                 'stream' => $stream,
                 'timeout' => $timeout,
                 'allow_redirects' => [
@@ -264,7 +265,7 @@ class OneDriveController extends Controller
      */
     public function copy($itemId, $parentItemId)
     {
-        $drive = Tool::handleResponse($this->getDrive());
+        $drive = $this->responseToArray($this->getDrive());
         if ($drive['code'] === 200) {
             $driveId = array_get($drive, 'data.id');
             $endpoint = "/me/drive/items/{$itemId}/copy";
@@ -450,7 +451,7 @@ class OneDriveController extends Controller
     public function deleteShareLink($itemId)
     {
         $result = $this->getPermission($itemId);
-        $response = Tool::handleResponse($result);
+        $response = $this->responseToArray($result);
         if ($response['code'] === 200) {
             $data = $response['data'];
             $permission = array_first($data, function ($value) {
@@ -571,15 +572,15 @@ class OneDriveController extends Controller
      */
     public function uploadUrl($remote, $url)
     {
-        $drive = Tool::handleResponse($this->getDrive());
+        $drive = $this->responseToArray($this->getDrive());
         if ($drive['code'] === 200) {
             if ($drive['data']['driveType'] == 'business') {
                 return $this->response(['driveType' => $drive['data']['driveType']], 400, '企业账号无法使用离线下载');
             } else {
-                $path = Tool::getAbsolutePath(dirname($remote));
+                $path = $this->getAbsolutePath(dirname($remote));
                 // $pathId = $this->pathToItemId($path);
                 // $endpoint = "/me/drive/items/{$pathId}/children"; // by id
-                $handledPath = Tool::handleUrl(trim($path, '/'));
+                $handledPath = $this->handleUrl(trim($path, '/'));
                 $graphPath = empty($handledPath) ? '/' : ":/{$handledPath}:/";
                 $endpoint = "/me/drive/root{$graphPath}children";
                 $headers = ['Prefer' => 'respond-async'];
@@ -629,10 +630,10 @@ class OneDriveController extends Controller
      */
     public function uploadToSession($url, $file, $offset, $length = 5242880)
     {
-        $file_size = Tool::readFileSize($file);
+        $file_size = $this->readFileSize($file);
         $content_length = (($offset + $length) > $file_size) ? ($file_size - $offset) : $length;
         $end = (($offset + $length) > $file_size) ? ($file_size - 1) : $offset + $content_length - 1;
-        $content = Tool::readFileContent($file, $offset, $length);
+        $content = $this->readFileContent($file, $offset, $length);
         $headers = [
             'Content-Length' => $content_length,
             'Content-Range' => "bytes {$offset}-{$end}/{$file_size}",
@@ -676,7 +677,7 @@ class OneDriveController extends Controller
     public function itemIdToPath($itemId, $start = false)
     {
         $result = $this->getItem($itemId);
-        $response = Tool::handleResponse($result);
+        $response = $this->responseToArray($result);
         if ($response['code'] === 200) {
             $item = $response['data'];
             if (!array_key_exists('path', $item['parentReference']) && $item['name'] == 'root') {
@@ -730,22 +731,6 @@ class OneDriveController extends Controller
     }
 
     /**
-     * 处理响应
-     * @param $response Response|\Illuminate\Http\JsonResponse
-     * @return mixed
-     */
-    public function handleResponse($response)
-    {
-
-        if (in_array($response->getStatusCode(), [200, 201, 202, 204])) {
-            $data = json_decode($response->getBody()->getContents(), true);
-            return $this->response($data);
-        } else {
-            return $response;
-        }
-    }
-
-    /**
      * 文件信息格式化
      * @param $response
      * @param bool $isList
@@ -768,6 +753,21 @@ class OneDriveController extends Controller
     }
 
     /**
+     * 处理响应
+     * @param $response Response|\Illuminate\Http\JsonResponse
+     * @return mixed
+     */
+    public function handleResponse($response)
+    {
+        if (in_array($response->getStatusCode(), [200, 201, 202, 204])) {
+            $data = json_decode($response->getBody()->getContents(), true);
+            return $this->response($data);
+        } else {
+            return $response;
+        }
+    }
+
+    /**
      * 返回
      * @param $data
      * @param string $msg
@@ -781,5 +781,111 @@ class OneDriveController extends Controller
             'msg' => $msg,
             'data' => $data
         ], $code);
+    }
+
+    /**
+     * 格式化响应
+     * @param $response JsonResponse
+     * @param bool $origin
+     * @return array
+     */
+    public function responseToArray($response, $origin = true)
+    {
+        if ($response instanceof JsonResponse)
+            $data = json_encode($response->getData());
+        else $data = $response;
+        if ($origin) {
+            return json_decode($data, true);
+        } else {
+            return json_decode($data, true)['data'];
+        }
+    }
+
+    /**
+     * Transfer Path
+     * @param $path
+     * @return mixed
+     */
+    public function getAbsolutePath($path)
+    {
+        $path = str_replace(['/', '\\', '//'], '/', $path);
+
+        $parts = array_filter(explode('/', $path), 'strlen');
+        $absolutes = [];
+        foreach ($parts as $part) {
+            if ('.' == $part) continue;
+            if ('..' == $part) {
+                array_pop($absolutes);
+            } else {
+                $absolutes[] = $part;
+            }
+        }
+        return str_replace('//', '/', '/' . implode('/', $absolutes) . '/');
+    }
+
+    /**
+     * Handle Url
+     * @param $path
+     * @return string
+     */
+    public function handleUrl($path)
+    {
+        $url = [];
+        foreach (explode('/', $path) as $key => $value) {
+            if (empty(!$value)) {
+                $url[] = rawurlencode($value);
+            }
+        }
+        return @implode('/', $url);
+    }
+
+    /**
+     * Read File Size
+     * @param $path
+     * @return bool|int|string
+     */
+    public function readFileSize($path)
+    {
+        if (!file_exists($path))
+            return false;
+        $size = filesize($path);
+        if (!($file = fopen($path, 'rb')))
+            return false;
+        if ($size >= 0) { //Check if it really is a small file (< 2 GB)
+            if (fseek($file, 0, SEEK_END) === 0) { //It really is a small file
+                fclose($file);
+                return $size;
+            }
+        }
+        //Quickly jump the first 2 GB with fseek. After that fseek is not working on 32 bit php (it uses int internally)
+        $size = PHP_INT_MAX - 1;
+        if (fseek($file, PHP_INT_MAX - 1) !== 0) {
+            fclose($file);
+            return false;
+        }
+        $length = 1024 * 1024;
+        $read = '';
+        while (!feof($file)) { //Read the file until end
+            $read = fread($file, $length);
+            $size = bcadd($size, $length);
+        }
+        $size = bcsub($size, $length);
+        $size = bcadd($size, strlen($read));
+        fclose($file);
+        return $size;
+    }
+
+    /**
+     * Read File Content
+     * @param $file
+     * @param $offset
+     * @param $length
+     * @return bool|string
+     */
+    public function readFileContent($file, $offset, $length)
+    {
+        $handler = fopen($file, "rb") ?? die('Failed Get Content');
+        fseek($handler, $offset);
+        return fread($handler, $length);
     }
 }

@@ -46,8 +46,7 @@ class IndexController extends Controller
         $this->middleware('checkInstall');
         $this->middleware('checkToken');
         $this->middleware('handleIllegalFile');
-        $od = new OneDriveController();
-        $this->od = $od;
+        $this->od = new OneDriveController();
         $this->expires = Tool::config('expires', 10);
         $this->root = Tool::config('root', '/');
         $this->show = [
