@@ -49,6 +49,7 @@ class OneDrive
      */
     public static function requestApi($method, $param, $stream = true)
     {
+        $od = new self();
         if (is_array($param)) {
             @list($endpoint, $requestBody, $requestHeaders, $timeout) = $param;
             $body = $requestBody ?? '';
@@ -63,15 +64,15 @@ class OneDrive
         if (stripos($endpoint, "http") === 0) {
             $requestUrl = $endpoint;
         } else {
-            $requestUrl = (new self())->api_version . $endpoint;
+            $requestUrl = $od->api_version . $endpoint;
         }
         try {
             $clientSettings = [
-                'base_uri' => (new self())->base_url,
+                'base_uri' => $od->base_url,
                 'headers' => array_merge([
-                    'Host' => (new self())->base_url,
+                    'Host' => $od->base_url,
                     'Content-Type' => 'application/json',
-                    'Authorization' => 'Bearer ' . (new self())->access_token
+                    'Authorization' => 'Bearer ' . $od->access_token
                 ], $headers)
             ];
             $client = new Client($clientSettings);
