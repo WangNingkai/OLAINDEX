@@ -21,11 +21,24 @@ class OneDriveController extends Controller
     public $access_token;
 
     /**
+     * @var $base_url
+     */
+    public $base_url;
+
+    /**
+     * @var $api_version
+     */
+    public $api_version;
+
+
+    /**
      * OneDriveController constructor.
      */
     public function __construct()
     {
         $this->access_token = Tool::config('access_token');
+        $this->base_url = Tool::config('app_type') == 'com' ? Constants::REST_ENDPOINT : Constants::REST_ENDPOINT_21V;
+        $this->api_version = Constants::API_VERSION;
     }
 
     /**
@@ -49,18 +62,16 @@ class OneDriveController extends Controller
             $headers = [];
             $timeout = 5;
         }
-        $baseUrl = Tool::config('app_type') == 'com' ? Constants::REST_ENDPOINT : Constants::REST_ENDPOINT_21V;
-        $apiVersion = Constants::API_VERSION;
         if (stripos($endpoint, "http") === 0) {
             $requestUrl = $endpoint;
         } else {
-            $requestUrl = $apiVersion . $endpoint;
+            $requestUrl = $this->api_version . $endpoint;
         }
         try {
             $clientSettings = [
-                'base_uri' => $baseUrl,
+                'base_uri' => $this->base_url,
                 'headers' => array_merge([
-                    'Host' => $baseUrl,
+                    'Host' => $this->base_url,
                     'Content-Type' => 'application/json',
                     'Authorization' => 'Bearer ' . $this->access_token
                 ], $headers)
@@ -146,13 +157,14 @@ class OneDriveController extends Controller
 
     /**
      * 获取文件目录列表
-     * @param $itemId
-     * @return mixed
+     * @param string $itemId
+     * @param string $query
+     * @return false|\Illuminate\Http\JsonResponse|mixed|\Psr\Http\Message\ResponseInterface|string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getChildren($itemId = '')
+    public function getChildren($itemId = '', $query = '')
     {
-        $endpoint = $itemId ? "/me/drive/items/{$itemId}/children" : "/me/drive/root/children";
+        $endpoint = $itemId ? "/me/drive/items/{$itemId}/children{$query}" : "/me/drive/root/children{$query}";
         $response = $this->requestApi('get', $endpoint);
         if ($response instanceof Response) {
             $response = json_decode($response->getBody()->getContents(), true);
@@ -166,13 +178,14 @@ class OneDriveController extends Controller
 
     /**
      * 获取文件目录列表
-     * @param $path
-     * @return mixed
+     * @param string $path
+     * @param string $query
+     * @return false|\Illuminate\Http\JsonResponse|mixed|\Psr\Http\Message\ResponseInterface|string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getChildrenByPath($path = '/')
+    public function getChildrenByPath($path = '/', $query = '')
     {
-        $endpoint = $path === '/' ? "/me/drive/root/children" : "/me/drive/root{$path}children";
+        $endpoint = $path === '/' ? "/me/drive/root/children{$query}" : "/me/drive/root{$path}children{$query}";
         $response = $this->requestApi('get', $endpoint);
         if ($response instanceof Response) {
             $response = json_decode($response->getBody()->getContents(), true);
@@ -193,7 +206,8 @@ class OneDriveController extends Controller
     public function getNextLinkList($list, &$result = [])
     {
         if (array_has($list, '@odata.nextLink')) {
-            $endpoint = str_after($list['@odata.nextLink'], Constants::REST_ENDPOINT . Constants::API_VERSION);
+            $baseLength = strlen($this->base_url) + strlen($this->api_version);
+            $endpoint = substr($list['@odata.nextLink'], $baseLength);
             $response = $this->requestApi('get', $endpoint);
             $data = json_decode($response->getBody()->getContents(), true);
             $result = array_merge($list['value'], $this->getNextLinkList($data, $result));
@@ -334,7 +348,7 @@ class OneDriveController extends Controller
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function deleteItem($itemId, $eTag = '')
+    public function delete($itemId, $eTag = '')
     {
         $endpoint = "/me/drive/items/{$itemId}";
         $headers = $eTag ? ['if-match' => $eTag] : [];
@@ -435,7 +449,7 @@ class OneDriveController extends Controller
      */
     public function deleteShareLink($itemId)
     {
-        $result = $this->listPermission($itemId);
+        $result = $this->getPermission($itemId);
         $response = Tool::handleResponse($result);
         if ($response['code'] === 200) {
             $data = $response['data'];
@@ -455,7 +469,7 @@ class OneDriveController extends Controller
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function listPermission($itemId)
+    public function getPermission($itemId)
     {
         $endpoint = "/me/drive/items/{$itemId}/permissions";
         $response = $this->requestApi('get', $endpoint);

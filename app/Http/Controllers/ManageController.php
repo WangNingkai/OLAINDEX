@@ -269,7 +269,7 @@ class ManageController extends Controller
             Tool::showMessage($e->getMessage(), false);
             return view('message');
         }
-        $result = $this->od->deleteItem($id, $eTag);
+        $result = $this->od->delete($id, $eTag);
         $response = Tool::handleResponse($result);
         $response['code'] == 200 ? Tool::showMessage('文件已删除') : Tool::showMessage('文件删除失败', false);
         Artisan::call('cache:clear');

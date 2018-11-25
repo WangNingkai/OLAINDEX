@@ -64,7 +64,7 @@ class DeleteFile extends Command
             exit;
         }
         /* @var $result \Illuminate\Http\JsonResponse */
-        $result = $od->deleteItem($_id);
+        $result = $od->delete($_id);
         $response = Tool::handleResponse($result);
         $this->call('cache:clear');
         $response['code'] == 200 ? $this->info("删除成功!") : $this->warn("删除失败!\n{$response['msg']} ");
