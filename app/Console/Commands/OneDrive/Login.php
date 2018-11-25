@@ -78,7 +78,7 @@ class Login extends Command
     public function handle()
     {
         $defined_redirect = Constants::REDIRECT_URI;
-        if (has_bind()) {
+        if (Tool::hasBind()) {
             $this->warn('已登录绑定');
             return;
         }
@@ -135,7 +135,7 @@ class Login extends Command
             ];
             Tool::updateConfig($data);
             $this->info('登陆成功');
-            $this->info('Account [' . bind_account() . ']');
+            $this->info('Account [' . Tool::bindAccount() . ']');
         } catch (ClientException $e) {
             $this->warn($e->getMessage());
             exit;

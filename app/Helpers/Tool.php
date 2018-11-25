@@ -2,9 +2,9 @@
 
 namespace App\Helpers;
 
+use App\Http\Controllers\OauthController;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Artisan;
@@ -13,6 +13,34 @@ use Illuminate\Support\Facades\Session;
 
 class Tool
 {
+    /**
+     * 判断账号绑定
+     * @return bool
+     */
+    public static function hasBind()
+    {
+        if (self::config('access_token') != '' && self::config('refresh_token') != '' && self::config('access_token_expires') != '') {
+            return true;
+        } else return false;
+    }
+
+    /**
+     * 判断列表是否含有图片
+     * @param $items
+     * @return bool
+     */
+    public static function hasImages($items)
+    {
+        $hasImage = false;
+        foreach ($items as $item) {
+            if (isset($item['image'])) {
+                $hasImage = true;
+                break;
+            }
+        }
+        return $hasImage;
+    }
+
     /**
      * 操作成功或者失败的提示
      * @param string $message
@@ -229,7 +257,7 @@ class Tool
      */
     public static function convertPath($path, $isQuery = true, $isFile = false)
     {
-        $path = self::getAbsolutePath($path);
+        $path = OneDrive::getAbsolutePath($path);
         $origin_path = trim($path, '/');
         $path_array = explode('/', $origin_path);
         $base = ['home', 'view', 'show', 'download'];
@@ -272,23 +300,6 @@ class Tool
     }
 
     /**
-     * 判断列表是否含有图片
-     * @param $items
-     * @return bool
-     */
-    public static function hasImages($items)
-    {
-        $hasImage = false;
-        foreach ($items as $item) {
-            if (isset($item['image'])) {
-                $hasImage = true;
-                break;
-            }
-        }
-        return $hasImage;
-    }
-
-    /**
      * 获取远程文件内容
      * @param $url
      * @return mixed
@@ -325,97 +336,70 @@ class Tool
     }
 
     /**
-     * 读取文件大小
-     * @param $path
-     * @return bool|int|string
+     * 获取磁盘信息
+     * @param string $key
+     * @return array|mixed
      */
-    public static function readFileSize($path)
+    public static function quota($key = '')
     {
-        if (!file_exists($path))
-            return false;
-        $size = filesize($path);
-        if (!($file = fopen($path, 'rb')))
-            return false;
-        if ($size >= 0) { //Check if it really is a small file (< 2 GB)
-            if (fseek($file, 0, SEEK_END) === 0) { //It really is a small file
-                fclose($file);
-                return $size;
-            }
-        }
-        //Quickly jump the first 2 GB with fseek. After that fseek is not working on 32 bit php (it uses int internally)
-        $size = PHP_INT_MAX - 1;
-        if (fseek($file, PHP_INT_MAX - 1) !== 0) {
-            fclose($file);
-            return false;
-        }
-        $length = 1024 * 1024;
-        $read = '';
-        while (!feof($file)) { //Read the file until end
-            $read = fread($file, $length);
-            $size = bcadd($size, $length);
-        }
-        $size = bcsub($size, $length);
-        $size = bcadd($size, strlen($read));
-        fclose($file);
-        return $size;
-    }
-
-    /**
-     * 读取文件内容
-     * @param $file
-     * @param $offset
-     * @param $length
-     * @return bool|string
-     */
-    public static function readFileContent($file, $offset, $length)
-    {
-        $handler = fopen($file, "rb") ?? die('获取文件内容失败');
-        fseek($handler, $offset);
-        return fread($handler, $length);
-    }
-
-    /**
-     * 处理格式化响应
-     * @param $response JsonResponse
-     * @param bool $origin
-     * @return array
-     */
-    public static function handleResponse($response, $origin = true)
-    {
-        if ($response instanceof JsonResponse)
-            $data = json_encode($response->getData());
-        else $data = $response;
-        if ($origin) {
-            return json_decode($data, true);
-        } else {
-            return json_decode($data, true)['data'];
-        }
-    }
-
-    /**
-     * 获取指定目录下全部子目录和文件
-     * @param $path
-     * @return array
-     */
-    public static function fetchDir($path)
-    {
-        $arr = [];
-        $arr[] = $path;
-        if (!is_file($path)) {
-            if (is_dir($path)) {
-                $data = scandir($path);
-                if (!empty($data)) {
-                    foreach ($data as $value) {
-                        if ($value != '.' && $value != '..') {
-                            $sub_path = $path . "/" . $value;
-                            $temp = self::fetchDir($sub_path);
-                            $arr = array_merge($temp, $arr);
+        if (self::refreshToken()) {
+            $quota = Cache::remember('one:quota', self::config('expires'), function () {
+                $drive = OneDrive::getDrive();
+                $res = OneDrive::responseToArray($drive);
+                if ($res['code'] == 200) {
+                    $quota = $res['data']['quota'];
+                    foreach ($quota as $k => $item) {
+                        if (!is_string($item)) {
+                            $quota[$k] = Tool::convertSize($item);
                         }
                     }
+                    return $quota;
+                } else {
+                    return [];
                 }
-            }
+            });
+            return $key ? $quota[$key] ?? '' : $quota ?? '';
+        } else {
+            return '';
         }
-        return $arr;
+    }
+
+    /**
+     * 刷新refresh_token
+     * @return bool
+     */
+    public static function refreshToken()
+    {
+        $expires = Tool::config('access_token_expires', 0);
+        $hasExpired = $expires - time() <= 0 ? true : false;
+        if ($hasExpired) {
+            $oauth = new OauthController();
+            $res = json_decode($oauth->refreshToken(false), true);
+            return $res['code'] === 200;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public static function bindAccount()
+    {
+        if (self::refreshToken()) {
+            $account = Cache::remember('one:account', Tool::config('expires'), function () {
+                $drive = OneDrive::getMe();
+                $res = OneDrive::responseToArray($drive);
+                if ($res['code'] == 200) {
+                    return array_get($res, 'data.userPrincipalName');
+                } else {
+                    return '';
+                }
+            });
+            return $account;
+        } else {
+            return '';
+        }
     }
 
 }

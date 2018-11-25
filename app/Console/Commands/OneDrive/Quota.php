@@ -40,14 +40,14 @@ class Quota extends Command
     public function handle()
     {
         $this->call('od:refresh');
-        $headers = array_keys(is_array(quota()) ? quota() : []);
+        $headers = array_keys(is_array(Tool::quota()) ? Tool::quota() : []);
         if (!$headers) {
             $this->warn('请稍后重试...');
             exit;
         }
-        $quota[] = quota();
+        $quota[] = Tool::quota();
         $this->info(Constants::LOGO);
-        $this->info('Account [' . bind_account() . ']');
+        $this->info('Account [' . Tool::bindAccount() . ']');
         $this->info('App Version  [' . Tool::config('app_version') . ']');
         $this->table($headers, $quota, 'default');
     }

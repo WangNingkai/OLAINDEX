@@ -6,7 +6,7 @@
         <div class="form-group">
             <label class="form-control-label" for="email">已绑定账户</label>
             <input type="text" class="form-control" id="email" name="email"
-                   value="{{ bind_account() }}" disabled>
+                   value="{{ \App\Helpers\Tool::bindAccount() }}" disabled>
         </div>
         <button type="submit" class="btn btn-primary">解绑/绑定</button>
     </form>

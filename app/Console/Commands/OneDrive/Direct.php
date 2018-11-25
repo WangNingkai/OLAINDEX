@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\OneDrive;
 
+use App\Helpers\OneDrive;
 use App\Helpers\Tool;
-use App\Http\Controllers\OneDriveController;
 use Illuminate\Console\Command;
 
 class Direct extends Command
@@ -41,9 +41,8 @@ class Direct extends Command
         $this->info('请稍等...');
         $this->call('od:refresh');
         $target = $this->argument('remote');
-        $od = new OneDriveController();
         $target_path = trim(Tool::handleUrl($target), '/');
-        $id_request = Tool::handleResponse($od->pathToItemId(empty($target_path) ? '/' : ":/{$target_path}:/"));
+        $id_request = OneDrive::responseToArray(OneDrive::pathToItemId(empty($target_path) ? '/' : ":/{$target_path}:/"));
         if ($id_request['code'] === 200)
             $_id = $id_request['data']['id'];
         else {
@@ -51,8 +50,8 @@ class Direct extends Command
             exit;
         }
         /* @var $result \Illuminate\Http\JsonResponse */
-        $result = $od->createShareLink($_id);
-        $response = Tool::handleResponse($result);
+        $result = OneDrive::createShareLink($_id);
+        $response = OneDrive::responseToArray($result);
         $response['code'] === 200 ? $this->info("创建成功!\n永久直链地址： {$response['data']['redirect']}") : $this->warn("创建失败!\n{$response['msg']} ");
     }
 }

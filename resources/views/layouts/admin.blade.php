@@ -92,12 +92,12 @@
         </div>
     @endif
     <div class="bg-white">
-        <p class="text-center text-muted">{{ bind_account() }}</p>
+        <p class="text-center text-muted">{{ \App\Helpers\Tool::bindAccount() }}</p>
         <p class="text-center">
-            <span class="text-info">状态: {{ quota('state') }} &nbsp;&nbsp;</span>
-            <span class="text-danger">已使用: {{ quota('used') }} &nbsp;&nbsp;</span>
-            <span class="text-warning">剩余: {{ quota('remaining') }} &nbsp;&nbsp;</span>
-            <span class="text-success">全部: {{ quota('total') }} &nbsp;&nbsp;</span>
+            <span class="text-info">状态: {{ \App\Helpers\Tool::quota('state') }} &nbsp;&nbsp;</span>
+            <span class="text-danger">已使用: {{ \App\Helpers\Tool::quota('used') }} &nbsp;&nbsp;</span>
+            <span class="text-warning">剩余: {{ \App\Helpers\Tool::quota('remaining') }} &nbsp;&nbsp;</span>
+            <span class="text-success">全部: {{ \App\Helpers\Tool::quota('total') }} &nbsp;&nbsp;</span>
         </p>
     </div>
     <div class="card border-light mb-3">

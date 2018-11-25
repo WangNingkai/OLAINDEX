@@ -3,7 +3,7 @@
 namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\Tool;
-use App\Http\Controllers\OneDriveController;
+use App\Helpers\OneDrive;
 use Illuminate\Console\Command;
 
 class Share extends Command
@@ -41,9 +41,8 @@ class Share extends Command
         $this->info('请稍等...');
         $this->call('od:refresh');
         $target = $this->argument('remote');
-        $od = new OneDriveController();
         $target_path = trim(Tool::handleUrl($target), '/');
-        $id_request = Tool::handleResponse($od->pathToItemId(empty($target_path) ? '/' : ":/{$target_path}:/"));
+        $id_request = OneDrive::responseToArray(OneDrive::pathToItemId(empty($target_path) ? '/' : ":/{$target_path}:/"));
         if ($id_request['code'] == 200)
             $_id = $id_request['data']['id'];
         else {
@@ -51,8 +50,8 @@ class Share extends Command
             exit;
         }
         /* @var $result \Illuminate\Http\JsonResponse */
-        $result = $od->createShareLink($_id);
-        $response = Tool::handleResponse($result);
+        $result = OneDrive::createShareLink($_id);
+        $response = OneDrive::responseToArray($result);
         if ($response['code'] == 200) {
             $direct = str_replace('15/download.aspx', '15/guestaccess.aspx', $response['data']['redirect']);
             $this->info("创建成功！\n分享链接： {$direct}");

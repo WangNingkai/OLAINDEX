@@ -134,7 +134,7 @@ class AdminController extends Controller
         if (!$request->isMethod('post')) {
             return view('admin.bind');
         } else {
-            if (!has_bind()) {
+            if (!Tool::hasBind()) {
                 return redirect()->route('bind');
             }
             $data = [

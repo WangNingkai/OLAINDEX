@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\OneDrive;
 
+use App\Helpers\OneDrive;
 use App\Helpers\Tool;
-use App\Http\Controllers\OneDriveController;
 use Illuminate\Console\Command;
 
 class Download extends Command
@@ -43,9 +43,8 @@ class Download extends Command
         $target = $this->argument('remote');
         $target_path = trim(Tool::handleUrl($target), '/');
         $path = empty($target_path) ? '/' : ":/{$target_path}:/";
-        $od = new OneDriveController();
-        $result = $od->getItemByPath($path);
-        $response = Tool::handleResponse($result);
+        $result = OneDrive::getItemByPath($path);
+        $response = OneDrive::responseToArray($result);
         $response['code'] === 200 ? $this->info("下载地址：{$response['data']['@microsoft.graph.downloadUrl']}") : $this->warn("获取文件失败!\n{$response['msg']} ");
     }
 }

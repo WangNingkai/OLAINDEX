@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\OneDrive;
 
+use App\Helpers\OneDrive;
 use App\Helpers\Tool;
-use App\Http\Controllers\OneDriveController;
 use Illuminate\Console\Command;
 
 class DeleteFile extends Command
@@ -54,9 +54,8 @@ class DeleteFile extends Command
     public function delete()
     {
         $target = $this->argument('remote');
-        $od = new OneDriveController();
         $target_path = trim(Tool::handleUrl($target), '/');
-        $id_request = Tool::handleResponse($od->pathToItemId(empty($target_path) ? '/' : ":/{$target_path}:/"));
+        $id_request = OneDrive::responseToArray(OneDrive::pathToItemId(empty($target_path) ? '/' : ":/{$target_path}:/"));
         if ($id_request['code'] == 200)
             $_id = $id_request['data']['id'];
         else {
@@ -64,8 +63,8 @@ class DeleteFile extends Command
             exit;
         }
         /* @var $result \Illuminate\Http\JsonResponse */
-        $result = $od->delete($_id);
-        $response = Tool::handleResponse($result);
+        $result = OneDrive::delete($_id);
+        $response = OneDrive::responseToArray($result);
         $this->call('cache:clear');
         $response['code'] == 200 ? $this->info("删除成功!") : $this->warn("删除失败!\n{$response['msg']} ");
     }

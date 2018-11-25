@@ -3,7 +3,7 @@
 namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\Tool;
-use App\Http\Controllers\OneDriveController;
+use App\Helpers\OneDrive;
 use Illuminate\Console\Command;
 
 class Search extends Command
@@ -49,14 +49,13 @@ class Search extends Command
         $offset = $this->option('offset');
         $length = $this->option('limit');
         $target_path = empty(Tool::handleUrl($target)) ? '/' : ':/' . Tool::handleUrl($target) . ':/';
-        $od = new OneDriveController();
         if ($id = $this->option('id')) {
-            $result = $od->getItem($id);
+            $result = OneDrive::getItem($id);
         } else {
-            $result = $od->search($target_path, $keyword);
+            $result = OneDrive::search($target_path, $keyword);
         }
         /* @var $result \Illuminate\Http\JsonResponse */
-        $response = Tool::handleResponse($result);
+        $response = OneDrive::responseToArray($result);
         $data = $response['code'] == 200 ? $response['data'] : [];
         if (!$data) {
             $this->warn('出错了，请稍后重试...');
@@ -87,10 +86,9 @@ class Search extends Command
             $folder = array_has($item, 'folder') ? array_get($item, 'folder.childCount') : '1';
             $owner = array_get($item, 'createdBy.user.displayName');
             if ($id = $this->option('id')) {
-                $od = new OneDriveController();
-                $result = $od->itemIdToPath($item['id']);
+                $result = OneDrive::itemIdToPath($item['id']);
                 /* @var $result \Illuminate\Http\JsonResponse */
-                $response = Tool::handleResponse($result);
+                $response = OneDrive::responseToArray($result);
                 $path = $response['code'] == 200 ? $response['data']['path'] : '获取目录失败';
                 $content = [$type, $path, $folder, $owner, $size, $time, $item['name']];
             } else {

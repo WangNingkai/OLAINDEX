@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\OneDrive;
 
+use App\Helpers\OneDrive;
 use App\Helpers\Tool;
-use App\Http\Controllers\OneDriveController;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 
@@ -45,9 +45,8 @@ class ListItem extends Command
         $target_path = trim(Tool::handleUrl($target), '/');
         $graphPath = empty($target_path) ? '/' : ":/{$target_path}:/";
         $data = Cache::remember('one:list:' . $graphPath, Tool::config('expires'), function () use ($graphPath) {
-            $od = new OneDriveController();
-            $result = $od->getChildrenByPath($graphPath);
-            $response = Tool::handleResponse($result);
+            $result = OneDrive::getChildrenByPath($graphPath);
+            $response = OneDrive::responseToArray($result);
             return $response['code'] == 200 ? $response['data'] : [];
         });
         if (!$data) {

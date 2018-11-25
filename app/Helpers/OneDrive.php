@@ -1,20 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Helpers;
 
-use App\Helpers\Constants;
-use App\Helpers\Tool;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 /**
- * OneDrive Graph
- * Class OneDriveController
- * @package App\Http\Controllers
+ * Class OneDrive
+ * @package App\Helpers
  */
-class OneDriveController extends Controller
+class OneDrive
 {
     /**
      * @var $access_token
@@ -31,9 +29,8 @@ class OneDriveController extends Controller
      */
     public $api_version;
 
-
     /**
-     * OneDriveController constructor.
+     * OneDrive constructor.
      */
     public function __construct()
     {
@@ -43,14 +40,14 @@ class OneDriveController extends Controller
     }
 
     /**
-     * 请求API
+     * Request API
      * @param $method
      * @param $param
      * @param bool $stream
      * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function requestApi($method, $param, $stream = true)
+    public static function requestApi($method, $param, $stream = true)
     {
         if (is_array($param)) {
             @list($endpoint, $requestBody, $requestHeaders, $timeout) = $param;
@@ -66,15 +63,15 @@ class OneDriveController extends Controller
         if (stripos($endpoint, "http") === 0) {
             $requestUrl = $endpoint;
         } else {
-            $requestUrl = $this->api_version . $endpoint;
+            $requestUrl = (new self())->api_version . $endpoint;
         }
         try {
             $clientSettings = [
-                'base_uri' => $this->base_url,
+                'base_uri' => (new self())->base_url,
                 'headers' => array_merge([
-                    'Host' => $this->base_url,
+                    'Host' => (new self())->base_url,
                     'Content-Type' => 'application/json',
-                    'Authorization' => 'Bearer ' . $this->access_token
+                    'Authorization' => 'Bearer ' . (new self())->access_token
                 ], $headers)
             ];
             $client = new Client($clientSettings);
@@ -88,19 +85,20 @@ class OneDriveController extends Controller
             ]);
             return $response;
         } catch (ClientException $e) {
-            return $this->response('', $e->getCode(), $e->getMessage());
+            Log::error('OneDrive API', ['code' => $e->getCode(), 'msg' => $e->getMessage()]);
+            return self::response('', $e->getCode(), $e->getMessage());
         }
     }
 
     /**
-     * 请求URL
+     * Request URL
      * @param $method
      * @param $param
      * @param bool $stream
-     * @return \Illuminate\Http\JsonResponse|mixed|\Psr\Http\Message\ResponseInterface
+     * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function requestUrl($method, $param, $stream = true)
+    public static function requestUrl($method, $param, $stream = true)
     {
         if (is_array($param)) {
             @list($endpoint, $requestBody, $requestHeaders, $timeout) = $param;
@@ -128,90 +126,90 @@ class OneDriveController extends Controller
             ]);
             return $response;
         } catch (ClientException $e) {
-            return $this->response('', $e->getCode(), $e->getMessage());
+            Log::error('OneDrive HTTP', ['code' => $e->getCode(), 'msg' => $e->getMessage()]);
+            return self::response('', $e->getCode(), $e->getMessage());
         }
     }
 
     /**
-     * 获取个人资料
+     * Get Account Info
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getMe()
+    public static function getMe()
     {
         $endpoint = '/me';
-        $response = $this->requestApi('get', $endpoint);
-        return $this->handleResponse($response);
+        $response = self::requestApi('get', $endpoint);
+        return self::handleResponse($response);
     }
 
     /**
-     * 获取盘
+     * Get Drive Info
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getDrive()
+    public static function getDrive()
     {
         $endpoint = '/me/drive';
-        $response = $this->requestApi('get', $endpoint);
-        return $this->handleResponse($response);
+        $response = self::requestApi('get', $endpoint);
+        return self::handleResponse($response);
     }
 
     /**
-     * 获取文件目录列表
-     * @param string $itemId
-     * @param string $query
-     * @return false|\Illuminate\Http\JsonResponse|mixed|\Psr\Http\Message\ResponseInterface|string
+     * Get Drive Item Children
+     * @param $itemId
+     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getChildren($itemId = '', $query = '')
+    public static function getChildren($itemId = '')
     {
-        $endpoint = $itemId ? "/me/drive/items/{$itemId}/children{$query}" : "/me/drive/root/children{$query}";
-        $response = $this->requestApi('get', $endpoint);
+        $endpoint = $itemId ? "/me/drive/items/{$itemId}/children" : "/me/drive/root/children";
+        $response = self::requestApi('get', $endpoint);
         if ($response instanceof Response) {
             $response = json_decode($response->getBody()->getContents(), true);
-            $data = $this->getNextLinkList($response);
-            $res = $this->formatArray($data);
-            return $this->response($res);
+            $data = self::getNextLinkList($response);
+            $res = self::formatArray($data);
+            return self::response($res);
         } else {
             return $response;
         }
     }
 
     /**
-     * 获取文件目录列表
-     * @param string $path
-     * @param string $query
-     * @return false|\Illuminate\Http\JsonResponse|mixed|\Psr\Http\Message\ResponseInterface|string
+     * Get Drive Item Children by Path
+     * @param $path
+     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getChildrenByPath($path = '/', $query = '')
+    public static function getChildrenByPath($path = '/')
     {
-        $endpoint = $path === '/' ? "/me/drive/root/children{$query}" : "/me/drive/root{$path}children{$query}";
-        $response = $this->requestApi('get', $endpoint);
+        $endpoint = $path === '/' ? "/me/drive/root/children" : "/me/drive/root{$path}children";
+        $response = self::requestApi('get', $endpoint);
         if ($response instanceof Response) {
             $response = json_decode($response->getBody()->getContents(), true);
-            $data = $this->getNextLinkList($response);
-            $res = $this->formatArray($data);
-            return $this->response($res);
+            $data = self::getNextLinkList($response);
+            $res = self::formatArray($data);
+            return self::response($res);
         } else {
             return $response;
         }
     }
 
     /**
+     * Get Drive Item Children Next Page
      * @param $list
      * @param array $result
      * @return array|false|mixed|\Psr\Http\Message\ResponseInterface|string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getNextLinkList($list, &$result = [])
+    public static function getNextLinkList($list, &$result = [])
     {
         if (array_has($list, '@odata.nextLink')) {
-            $baseLength = strlen($this->base_url) + strlen($this->api_version);
+            $baseLength = strlen((new self())->base_url) + strlen((new self())->api_version);
             $endpoint = substr($list['@odata.nextLink'], $baseLength);
-            $response = $this->requestApi('get', $endpoint);
+            $response = self::requestApi('get', $endpoint);
             $data = json_decode($response->getBody()->getContents(), true);
-            $result = array_merge($list['value'], $this->getNextLinkList($data, $result));
+            $result = array_merge($list['value'], self::getNextLinkList($data, $result));
         } else {
             $result = array_merge($list['value'], $result);
         }
@@ -219,53 +217,53 @@ class OneDriveController extends Controller
     }
 
     /**
-     * 获取文件
+     * Get Item
      * @param $itemId
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getItem($itemId)
+    public static function getItem($itemId)
     {
         $endpoint = "/me/drive/items/{$itemId}";
-        $response = $this->requestApi('get', $endpoint);
+        $response = self::requestApi('get', $endpoint);
         if ($response instanceof Response) {
             $data = json_decode($response->getBody()->getContents(), true);
-            $res = $this->formatArray($data, false);
-            return $this->response($res);
+            $res = self::formatArray($data, false);
+            return self::response($res);
         } else {
             return $response;
         }
     }
 
     /**
-     * 获取文件
+     * Get Item By Path
      * @param $path
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getItemByPath($path)
+    public static function getItemByPath($path)
     {
         $endpoint = "/me/drive/root{$path}";
-        $response = $this->requestApi('get', $endpoint);
+        $response = self::requestApi('get', $endpoint);
         if ($response instanceof Response) {
             $data = json_decode($response->getBody()->getContents(), true);
-            $res = $this->formatArray($data, false);
-            return $this->response($res);
+            $res = self::formatArray($data, false);
+            return self::response($res);
         } else {
             return $response;
         }
     }
 
     /**
-     * 复制文件返回进度
+     * Copy Item
      * @param $itemId
      * @param $parentItemId
      * @return string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function copy($itemId, $parentItemId)
+    public static function copy($itemId, $parentItemId)
     {
-        $drive = $this->responseToArray($this->getDrive());
+        $drive = self::responseToArray(self::getDrive());
         if ($drive['code'] === 200) {
             $driveId = array_get($drive, 'data.id');
             $endpoint = "/me/drive/items/{$itemId}/copy";
@@ -275,29 +273,29 @@ class OneDriveController extends Controller
                     'id' => $parentItemId
                 ],
             ]);
-            $response = $this->requestApi('post', [$endpoint, $body], false);
+            $response = self::requestApi('post', [$endpoint, $body], false);
             if ($response instanceof Response) {
                 $data = [
                     'redirect' => $response->getHeaderLine('Location')
                 ];
-                return $this->response($data);
+                return self::response($data);
             } else {
                 return $response;
             }
         } else {
-            return $this->response('', 400, '获取磁盘信息错误');
+            return self::response('', 400, 'Error');
         }
     }
 
     /**
-     * 移动文件
+     * Move Item
      * @param $itemId
      * @param $parentItemId
      * @param string $itemName
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function move($itemId, $parentItemId, $itemName = '')
+    public static function move($itemId, $parentItemId, $itemName = '')
     {
         $endpoint = "/me/drive/items/{$itemId}";
         $content = [
@@ -308,58 +306,58 @@ class OneDriveController extends Controller
         if ($itemName)
             $content = array_add($content, 'name', $itemName);
         $body = json_encode($content);
-        $response = $this->requestApi('patch', [$endpoint, $body]);
-        return $this->handleResponse($response);
+        $response = self::requestApi('patch', [$endpoint, $body]);
+        return self::handleResponse($response);
     }
 
     /**
-     * 创建文件夹
+     * Create Folder
      * @param $itemName
      * @param $parentItemId
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function mkdir($itemName, $parentItemId)
+    public static function mkdir($itemName, $parentItemId)
     {
         $endpoint = "/me/drive/items/$parentItemId/children";
         $body = '{"name":"' . $itemName . '","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
-        $response = $this->requestApi('post', [$endpoint, $body]);
-        return $this->handleResponse($response);
+        $response = self::requestApi('post', [$endpoint, $body]);
+        return self::handleResponse($response);
     }
 
     /**
-     * 创建文件夹
+     * Create Folder By Path
      * @param $itemName
      * @param $path
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function mkdirByPath($itemName, $path)
+    public static function mkdirByPath($itemName, $path)
     {
         $endpoint = $path === '/' ? "/me/drive/root/children" : "/me/drive/root{$path}children";
         $body = '{"name":"' . $itemName . '","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
-        $response = $this->requestApi('post', [$endpoint, $body]);
-        return $this->handleResponse($response);
+        $response = self::requestApi('post', [$endpoint, $body]);
+        return self::handleResponse($response);
     }
 
     /**
-     * 删除
+     * Remove Item
      * @param $itemId
      * @param $eTag
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function delete($itemId, $eTag = '')
+    public static function delete($itemId, $eTag = '')
     {
         $endpoint = "/me/drive/items/{$itemId}";
         $headers = $eTag ? ['if-match' => $eTag] : [];
-        $response = $this->requestApi('delete', [$endpoint, '', $headers]);
+        $response = self::requestApi('delete', [$endpoint, '', $headers]);
         if ($response instanceof Response) {
             $statusCode = $response->getStatusCode();
             if ($statusCode === 204) {
-                return $this->response(['deleted' => true]);
+                return self::response(['deleted' => true]);
             } else {
-                return $this->handleResponse($response);
+                return self::handleResponse($response);
             }
         } else {
             return $response;
@@ -367,51 +365,51 @@ class OneDriveController extends Controller
     }
 
     /**
-     * 搜索
+     * Search
      * @param $path
      * @param $query
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function search($path, $query)
+    public static function search($path, $query)
     {
         $endpoint = $path === '/' ? "/me/drive/root/search(q='{$query}')" : "/me/drive/root{$path}search(q='{$query}')";
-        $response = $this->requestApi('get', $endpoint);
+        $response = self::requestApi('get', $endpoint);
         if ($response instanceof Response) {
             $response = json_decode($response->getBody()->getContents(), true);
-            $data = $this->getNextLinkList($response);
-            $res = $this->formatArray($data);
-            return $this->response($res);
+            $data = self::getNextLinkList($response);
+            $res = self::formatArray($data);
+            return self::response($res);
         } else {
             return $response;
         }
     }
 
     /**
-     * 获取缩略图
+     * Get Thumbnails
      * @param $itemId
      * @param $size
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function thumbnails($itemId, $size)
+    public static function thumbnails($itemId, $size)
     {
         $endpoint = "/me/drive/items/{$itemId}/thumbnails/0/{$size}";
-        $response = $this->requestApi('get', $endpoint);
-        return $this->handleResponse($response);
+        $response = self::requestApi('get', $endpoint);
+        return self::handleResponse($response);
     }
 
     /**
-     * 创建分享直链下载
+     * Create Share Link
      * @param $itemId
      * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function createShareLink($itemId)
+    public static function createShareLink($itemId)
     {
         $endpoint = "/me/drive/items/{$itemId}/createLink";
         $body = '{"type": "view","scope": "anonymous"}';
-        $response = $this->requestApi('post', [$endpoint, $body]);
+        $response = self::requestApi('post', [$endpoint, $body]);
         if ($response instanceof Response) {
             $data = json_decode($response->getBody()->getContents(), true);
             $web_url = array_get($data, 'link.webUrl');
@@ -429,12 +427,12 @@ class OneDriveController extends Controller
                     $request = $client->get($web_url, ['allow_redirects' => false]);
                     $direct_link = str_replace('redir?', 'download?', $request->getHeaderLine('Location'));
                 } catch (ClientException $e) {
-                    return $this->response('', $e->getCode(), $e->getMessage());
+                    return self::response('', $e->getCode(), $e->getMessage());
                 }
             } else {
                 $direct_link = '';
             }
-            return $this->response([
+            return self::response([
                 'redirect' => $direct_link
             ]);
         } else {
@@ -443,62 +441,62 @@ class OneDriveController extends Controller
     }
 
     /**
-     * 删除分享链接
+     * Delete Share Link
      * @param $itemId
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function deleteShareLink($itemId)
+    public static function deleteShareLink($itemId)
     {
-        $result = $this->getPermission($itemId);
-        $response = $this->responseToArray($result);
+        $result = self::getPermission($itemId);
+        $response = self::responseToArray($result);
         if ($response['code'] === 200) {
             $data = $response['data'];
             $permission = array_first($data, function ($value) {
                 return $value['roles'][0] === 'read';
             });
             $permissionId = array_get($permission, 'id');
-            return $this->deletePermission($itemId, $permissionId);
+            return self::deletePermission($itemId, $permissionId);
         } else {
             return $result;
         }
     }
 
     /**
-     * 列举文件权限
+     * List Item permission
      * @param $itemId
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getPermission($itemId)
+    public static function getPermission($itemId)
     {
         $endpoint = "/me/drive/items/{$itemId}/permissions";
-        $response = $this->requestApi('get', $endpoint);
+        $response = self::requestApi('get', $endpoint);
         if ($response instanceof Response) {
             $data = json_decode($response->getBody()->getContents(), true);
-            return $this->response($data['value']);
+            return self::response($data['value']);
         } else {
             return $response;
         }
     }
 
     /**
-     * 删除指定权限
+     * Delete Item permission
      * @param $itemId
      * @param $permissionId
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function deletePermission($itemId, $permissionId)
+    public static function deletePermission($itemId, $permissionId)
     {
         $endpoint = "/me/drive/items/{$itemId}/permissions/{$permissionId}";
-        $response = $this->requestApi('delete', $endpoint);
+        $response = self::requestApi('delete', $endpoint);
         if ($response instanceof Response) {
             $statusCode = $response->getStatusCode();
-            if ($statusCode === 204) {
-                return $this->response(['deleted' => true]);
+            if ($statusCode == 204) {
+                return self::response(['deleted' => true]);
             } else {
-                return $this->handleResponse($response);
+                return self::handleResponse($response);
             }
         } else {
             return $response;
@@ -506,91 +504,91 @@ class OneDriveController extends Controller
     }
 
     /**
-     * 获取分享文件列表
+     * Get Shared Item
      * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getShareWithMe()
+    public static function getShareWithMe()
     {
         $endpoint = '/me/drive/sharedWithMe';
-        $response = $this->requestApi('get', $endpoint);
-        return $this->handleResponse($response);
+        $response = self::requestApi('get', $endpoint);
+        return self::handleResponse($response);
     }
 
     /**
-     * 获取分享文件详情
+     *  Get Shared Item Detail
      * @param $driveId
      * @param $itemId
      * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getShareWithMeDetail($driveId, $itemId)
+    public static function getShareWithMeDetail($driveId, $itemId)
     {
         $endpoint = "/drives/{$driveId}/items/{$itemId}";
-        $response = $this->requestApi('get', $endpoint);
-        return $this->handleResponse($response);
+        $response = self::requestApi('get', $endpoint);
+        return self::handleResponse($response);
     }
 
     /**
-     * 更新文件内容上传（4m及以下）
+     * Upload File(less 4MB)
      * @param $id
      * @param $content
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function upload($id, $content)
+    public static function upload($id, $content)
     {
         $stream = \GuzzleHttp\Psr7\stream_for($content);
         $endpoint = "/me/drive/items/{$id}/content";
         $body = $stream;
-        $response = $this->requestApi('put', [$endpoint, $body]);
-        return $this->handleResponse($response);
+        $response = self::requestApi('put', [$endpoint, $body]);
+        return self::handleResponse($response);
     }
 
     /**
-     * 上传文件（4m及以下）
+     * Upload File(less 4MB) by path
      * @param $path
      * @param $content
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function uploadByPath($path, $content)
+    public static function uploadByPath($path, $content)
     {
         $stream = \GuzzleHttp\Psr7\stream_for($content);
         $endpoint = "/me/drive/root{$path}content";
         $body = $stream;
-        $response = $this->requestApi('put', [$endpoint, $body]);
-        return $this->handleResponse($response);
+        $response = self::requestApi('put', [$endpoint, $body]);
+        return self::handleResponse($response);
     }
 
     /**
-     * 个人版离线下载 (实验性)
-     * @param string $remote 带文件名的远程路径
-     * @param string $url 链接
+     * Download via Url
+     * @param string $remote remote uri with filename
+     * @param string $url
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function uploadUrl($remote, $url)
+    public static function uploadUrl($remote, $url)
     {
-        $drive = $this->responseToArray($this->getDrive());
-        if ($drive['code'] === 200) {
+        $drive = self::responseToArray(self::getDrive());
+        if ($drive['code'] == 200) {
             if ($drive['data']['driveType'] == 'business') {
-                return $this->response(['driveType' => $drive['data']['driveType']], 400, '企业账号无法使用离线下载');
+                return self::response(['driveType' => $drive['data']['driveType']], 400, 'Account Not Support');
             } else {
-                $path = $this->getAbsolutePath(dirname($remote));
+                $path = self::getAbsolutePath(dirname($remote));
                 // $pathId = $this->pathToItemId($path);
                 // $endpoint = "/me/drive/items/{$pathId}/children"; // by id
-                $handledPath = $this->handleUrl(trim($path, '/'));
+                $handledPath = self::handleUrl(trim($path, '/'));
                 $graphPath = empty($handledPath) ? '/' : ":/{$handledPath}:/";
                 $endpoint = "/me/drive/root{$graphPath}children";
                 $headers = ['Prefer' => 'respond-async'];
                 $body = '{"@microsoft.graph.sourceUrl":"' . $url . '","name":"' . pathinfo($remote, PATHINFO_BASENAME) . '","file":{}}';
-                $response = $this->requestApi('post', [$endpoint, $body, $headers]);
+                $response = self::requestApi('post', [$endpoint, $body, $headers]);
                 if ($response instanceof Response) {
                     $data = [
                         'redirect' => $response->getHeaderLine('Location')
                     ];
-                    return $this->response($data);
+                    return self::response($data);
                 } else {
                     return $response;
                 }
@@ -601,12 +599,12 @@ class OneDriveController extends Controller
     }
 
     /**
-     * 大文件上传创建session
+     * Create Upload Session
      * @param $remote
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function createUploadSession($remote)
+    public static function createUploadSession($remote)
     {
         $endpoint = "/me/drive/root{$remote}createUploadSession";
         $body = json_encode([
@@ -614,13 +612,13 @@ class OneDriveController extends Controller
                 '@microsoft.graph.conflictBehavior' => 'fail',
             ]
         ]);
-        $response = $this->requestApi('post', [$endpoint, $body]);
-        return $this->handleResponse($response);
+        $response = self::requestApi('post', [$endpoint, $body]);
+        return self::handleResponse($response);
 
     }
 
     /**
-     * 分片上传
+     * Upload Partly
      * @param $url
      * @param $file
      * @param $offset
@@ -628,60 +626,59 @@ class OneDriveController extends Controller
      * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function uploadToSession($url, $file, $offset, $length = 5242880)
+    public static function uploadToSession($url, $file, $offset, $length = 5242880)
     {
-        $file_size = $this->readFileSize($file);
+        $file_size = self::readFileSize($file);
         $content_length = (($offset + $length) > $file_size) ? ($file_size - $offset) : $length;
         $end = (($offset + $length) > $file_size) ? ($file_size - 1) : $offset + $content_length - 1;
-        $content = $this->readFileContent($file, $offset, $length);
+        $content = self::readFileContent($file, $offset, $length);
         $headers = [
             'Content-Length' => $content_length,
             'Content-Range' => "bytes {$offset}-{$end}/{$file_size}",
         ];
         $requestBody = $content;
-        $response = $this->requestUrl('put', [$url, $requestBody, $headers, 360]);
-        return $this->handleResponse($response);
+        $response = self::requestUrl('put', [$url, $requestBody, $headers, 360]);
+        return self::handleResponse($response);
     }
 
     /**
-     * 分片上传状态
+     * Get Upload Status
      * @param $url
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function uploadSessionStatus($url)
+    public static function uploadSessionStatus($url)
     {
-        $response = $this->requestUrl('get', $url);
-        return $this->handleResponse($response);
+        $response = self::requestUrl('get', $url);
+        return self::handleResponse($response);
     }
 
     /**
-     * 删除分片上传任务
+     * Delete Upload Session
      * @param $url
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function deleteUploadSession($url)
+    public static function deleteUploadSession($url)
     {
-        $response = $this->requestUrl('delete', $url);
-        return $this->handleResponse($response);
+        $response = self::requestUrl('delete', $url);
+        return self::handleResponse($response);
     }
 
     /**
-     * id转path
+     * Transfer Item ID To Path
      * @param $itemId
-     * @param bool $start
-     * @return \Illuminate\Http\JsonResponse|mixed
+     * @return string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function itemIdToPath($itemId, $start = false)
+    public static function itemIdToPath($itemId)
     {
-        $result = $this->getItem($itemId);
-        $response = $this->responseToArray($result);
+        $result = self::getItem($itemId);
+        $response = self::responseToArray($result);
         if ($response['code'] === 200) {
             $item = $response['data'];
             if (!array_key_exists('path', $item['parentReference']) && $item['name'] == 'root') {
-                return $this->response([
+                return self::response([
                     'path' => '/'
                 ]);
             }
@@ -689,22 +686,10 @@ class OneDriveController extends Controller
             if (starts_with($path, '/drive/root:')) {
                 $path = str_after($path, '/drive/root:');
             }
-            if (!$start) {
-                $pathArr = $path === '' ? [] : explode('/', $path);
-            } else {
-                // 兼容根目录
-                if ($path === '') {
-                    $pathArr = [];
-                } else {
-                    $pathArr = explode('/', $path);
-                    if (trim($start, '/') !== '') {
-                        $pathArr = array_slice($pathArr, 1);
-                    }
-                }
-            }
+            $pathArr = $path === '' ? [] : explode('/', $path);
             array_push($pathArr, $item['name']);
-            $path = trim(implode('/', $pathArr), '/');
-            return $this->response([
+            $path = self::getAbsolutePath(implode('/', $pathArr));
+            return self::response([
                 'path' => $path
             ]);
         } else {
@@ -713,30 +698,30 @@ class OneDriveController extends Controller
     }
 
     /**
-     * path转id
+     * Transfer Item Path To ID
      * @param $path
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function pathToItemId($path)
+    public static function pathToItemId($path)
     {
         $endpoint = $path === '/' ? '/me/drive/root' : '/me/drive/root' . $path;
-        $response = $this->requestApi('get', $endpoint);
+        $response = self::requestApi('get', $endpoint);
         if ($response instanceof Response) {
             $response = json_decode($response->getBody()->getContents(), true);
-            return $this->response(['id' => $response['id']]);
+            return self::response(['id' => $response['id']]);
         } else {
             return $response;
         }
     }
 
     /**
-     * 文件信息格式化
+     * Format Response Data
      * @param $response
      * @param bool $isList
      * @return array
      */
-    public function formatArray($response, $isList = true)
+    public static function formatArray($response, $isList = true)
     {
         if ($isList) {
             $items = [];
@@ -746,50 +731,53 @@ class OneDriveController extends Controller
             }
             return $items;
         } else {
-            // 兼容文件信息
             $response['ext'] = strtolower(pathinfo($response['name'], PATHINFO_EXTENSION));
             return $response;
         }
     }
 
     /**
-     * 处理响应
-     * @param $response Response|\Illuminate\Http\JsonResponse
-     * @return mixed
+     * Return Response
+     * @param $data
+     * @param int $code
+     * @param string $msg
+     * @return false|string
      */
-    public function handleResponse($response)
+    public static function response($data, $code = 200, $msg = '')
     {
-        if (in_array($response->getStatusCode(), [200, 201, 202, 204])) {
-            $data = json_decode($response->getBody()->getContents(), true);
-            return $this->response($data);
+        return json_encode([
+            'code' => $code,
+            'msg' => $msg,
+            'data' => $data
+        ]);
+    }
+
+    /**
+     * Handle Response
+     * @param $response Response
+     * @return false|string
+     */
+    public static function handleResponse($response)
+    {
+        if ($response instanceof Response) {
+            if (in_array($response->getStatusCode(), [200, 201, 202, 204])) {
+                $data = json_decode($response->getBody()->getContents(), true);
+                return self::response($data);
+            } else {
+                return $response;
+            }
         } else {
             return $response;
         }
     }
 
     /**
-     * 返回
-     * @param $data
-     * @param string $msg
-     * @param int $code
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function response($data, $code = 200, $msg = 'ok')
-    {
-        return response()->json([
-            'code' => $code,
-            'msg' => $msg,
-            'data' => $data
-        ], $code);
-    }
-
-    /**
-     * 格式化响应
-     * @param $response JsonResponse
+     * Response To Array
+     * @param $response Response|JsonResponse
      * @param bool $origin
      * @return array
      */
-    public function responseToArray($response, $origin = true)
+    public static function responseToArray($response, $origin = true)
     {
         if ($response instanceof JsonResponse)
             $data = json_encode($response->getData());
@@ -806,7 +794,7 @@ class OneDriveController extends Controller
      * @param $path
      * @return mixed
      */
-    public function getAbsolutePath($path)
+    public static function getAbsolutePath($path)
     {
         $path = str_replace(['/', '\\', '//'], '/', $path);
 
@@ -828,7 +816,7 @@ class OneDriveController extends Controller
      * @param $path
      * @return string
      */
-    public function handleUrl($path)
+    public static function handleUrl($path)
     {
         $url = [];
         foreach (explode('/', $path) as $key => $value) {
@@ -844,7 +832,7 @@ class OneDriveController extends Controller
      * @param $path
      * @return bool|int|string
      */
-    public function readFileSize($path)
+    public static function readFileSize($path)
     {
         if (!file_exists($path))
             return false;
@@ -882,7 +870,7 @@ class OneDriveController extends Controller
      * @param $length
      * @return bool|string
      */
-    public function readFileContent($file, $offset, $length)
+    public static function readFileContent($file, $offset, $length)
     {
         $handler = fopen($file, "rb") ?? die('Failed Get Content');
         fseek($handler, $offset);

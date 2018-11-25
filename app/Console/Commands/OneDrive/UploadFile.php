@@ -3,7 +3,7 @@
 namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\Tool;
-use App\Http\Controllers\OneDriveController;
+use App\Helpers\OneDrive;
 use Illuminate\Console\Command;
 
 class UploadFile extends Command
@@ -49,7 +49,7 @@ class UploadFile extends Command
         }
         $remote = $this->argument('remote');
         $chuck = $this->option('chuck');
-        $file_size = Tool::readFileSize($local);
+        $file_size = OneDrive::readFileSize($local);
         $this->info('开始上传...');
         if ($file_size < 4194304) {
             $this->upload($local, $remote);
@@ -66,13 +66,12 @@ class UploadFile extends Command
      */
     public function upload($local, $remote)
     {
-        $od = new OneDriveController();
         $content = file_get_contents($local);
         $file_name = basename($local);
         $target_path = Tool::getAbsolutePath($remote);
         $path = Tool::convertPath($target_path . $file_name);
-        $result = $od->uploadByPath($path, $content);
-        $response = Tool::handleResponse($result);
+        $result = OneDrive::uploadByPath($path, $content);
+        $response = OneDrive::responseToArray($result);
         $response['code'] == 200 ? $this->info('上传成功!') : $this->warn('上传失败!');
     }
 
@@ -86,13 +85,12 @@ class UploadFile extends Command
     public function uploadBySession($local, $remote, $chuck = 3276800)
     {
         ini_set('memory_limit', '-1');
-        $od = new OneDriveController();
-        $file_size = Tool::readFileSize($local);
+        $file_size = OneDrive::readFileSize($local);
         $target_path = Tool::getAbsolutePath($remote);
         $file_name = basename($local);
         $path = trim($target_path, '/') == '' ? ":/{$file_name}:/" : Tool::convertPath($target_path . $file_name);
-        $url_request = $od->createUploadSession($path);
-        $url_response = Tool::handleResponse($url_request);
+        $url_request = OneDrive::createUploadSession($path);
+        $url_response = OneDrive::responseToArray($url_request);
         if ($url_response['code'] == 200) {
             $url = $url_response['data']['uploadUrl'];
         } else {
@@ -106,8 +104,8 @@ class UploadFile extends Command
         $length = $chuck;
         while (!$done) {
             $retry = 0;
-            $res = $od->uploadToSession($url, $local, $offset, $length);
-            $response = Tool::handleResponse($res);
+            $res = OneDrive::uploadToSession($url, $local, $offset, $length);
+            $response = OneDrive::responseToArray($res);
             if ($response['code'] == 200) {
                 $data = $response['data'];
                 if (!empty($data['nextExpectedRanges'])) {
@@ -130,13 +128,13 @@ class UploadFile extends Command
                         sleep(10);
                     } else {
                         $this->warn('分片上传失败！');
-                        $od->deleteUploadSession($url); // 失败删除任务
+                        OneDrive::deleteUploadSession($url); // 失败删除任务
                         break;
                     }
                 }
             } else {
                 $this->warn('分片上传失败！');
-                $od->deleteUploadSession($url); // 失败删除任务
+                OneDrive::deleteUploadSession($url); // 失败删除任务
                 break;
             }
         }

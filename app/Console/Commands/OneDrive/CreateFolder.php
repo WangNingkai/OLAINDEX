@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\OneDrive;
 
+use App\Helpers\OneDrive;
 use App\Helpers\Tool;
-use App\Http\Controllers\OneDriveController;
 use Illuminate\Console\Command;
 
 class CreateFolder extends Command
@@ -42,11 +42,10 @@ class CreateFolder extends Command
         $this->call('od:refresh');
         $name = $this->argument('name');
         $target = $this->argument('target');
-        $od = new OneDriveController();
         $target_path = trim(Tool::handleUrl($target), '/');
         $path = empty($target_path) ? '/' : ":/{$target_path}:/";
-        $result = $od->mkdirByPath($name, $path);
-        $response = Tool::handleResponse($result);
+        $result = OneDrive::mkdirByPath($name, $path);
+        $response = OneDrive::responseToArray($result);
         $response['code'] == 200 ? $this->info("创建目录成功!") : $this->warn("创建目录失败!\n{$response['msg']} ");
     }
 }
