@@ -669,10 +669,11 @@ class OneDrive
     /**
      * Transfer Item ID To Path
      * @param $itemId
-     * @return string
+     * @param bool $start
+     * @return false|mixed|string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public static function itemIdToPath($itemId)
+    public static function itemIdToPath($itemId, $start = false)
     {
         $result = self::getItem($itemId);
         $response = self::responseToArray($result);
@@ -687,7 +688,19 @@ class OneDrive
             if (starts_with($path, '/drive/root:')) {
                 $path = str_after($path, '/drive/root:');
             }
-            $pathArr = $path === '' ? [] : explode('/', $path);
+            if (!$start) {
+                $pathArr = $path === '' ? [] : explode('/', $path);
+            } else {
+                // 兼容根目录
+                if ($path === '') {
+                    $pathArr = [];
+                } else {
+                    $pathArr = explode('/', $path);
+                    if (trim($start, '/') !== '') {
+                        $pathArr = array_slice($pathArr, 1);
+                    }
+                }
+            }
             array_push($pathArr, $item['name']);
             $path = self::getAbsolutePath(implode('/', $pathArr));
             return self::response([
