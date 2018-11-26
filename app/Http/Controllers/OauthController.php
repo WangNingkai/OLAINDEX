@@ -161,7 +161,7 @@ class OauthController extends Controller
                 'refresh_token' => $existingRefreshToken,
                 'grant_type' => 'refresh_token',
             ];
-            if (Tool::config('app_type') == 'cn') $form_params = array_add($form_params, 'resource', Constants::REST_ENDPOINT_21V);
+            if (Tool::config('account_type') == 'cn') $form_params = array_add($form_params, 'resource', Constants::REST_ENDPOINT_21V);
             $response = $client->post($this->access_token_url, [
                 'form_params' => $form_params,
             ]);

@@ -198,16 +198,16 @@ class Tool
     public static function saveConfig($config)
     {
         $file = storage_path('app/config.json');
-        if (!is_writable($file)) {
-            self::showMessage('权限不足，无法写入配置文件', false);
-            abort(403, '权限不足，无法写入配置文件');
-        };
-        $saved = file_put_contents($file, json_encode($config));
-        if ($saved) {
-            Artisan::call('cache:clear');
-            return true;
-        } else {
-            return false;
+        try {
+            $saved = file_put_contents($file, json_encode($config));
+            if ($saved) {
+                Cache::forget('config');
+                return true;
+            } else {
+                return false;
+            }
+        } catch (\Exception $e) {
+            return abort(403, $e->getMessage());
         }
     }
 
@@ -221,7 +221,7 @@ class Tool
         $config = self::config();
         $config = array_merge($config, $data);
         $saved = self::saveConfig($config);
-        Artisan::call('cache:clear');
+        Cache::forget('config');
         return $saved;
     }
 
@@ -229,7 +229,7 @@ class Tool
      * 从json文件读取配置
      * @param string $key
      * @param string $default
-     * @return mixed|string
+     * @return string|array
      */
     public static function config($key = '', $default = '')
     {
@@ -238,12 +238,12 @@ class Tool
             if (!file_exists($file)) {
                 copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
             };
-            if (!is_readable($file)) {
-                self::showMessage('权限不足，无法预取配置文件', false);
-                abort(403, '权限不足，无法预取配置文件');
-            };
-            $config = file_get_contents($file);
-            return json_decode($config, true);
+            try {
+                $config = file_get_contents($file);
+                return json_decode($config, true);
+            } catch (\Exception $e) {
+                return abort(403, $e->getMessage());
+            }
         });
         return $key ? (array_has($config, $key) ? (array_get($config, $key) ?: $default) : $default) : $config;
     }

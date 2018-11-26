@@ -43,7 +43,7 @@ class SwitchType extends Command
                 $type = $this->choice('请选择切换的版本(com:国际通用 cn:世纪互联)', ['com', 'cn'], 'com');
             } else exit;
         }
-        $data = ['app_type' => $type];
+        $data = ['account_type' => $type];
         $saved = Tool::updateConfig($data);
         $saved ? $this->info('切换成功！') : $this->warn('切换失败！');
 

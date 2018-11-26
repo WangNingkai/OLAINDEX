@@ -2,10 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Helpers\Tool;
 use Illuminate\Console\Command;
-use Matomo\Ini\IniReader;
-use Matomo\Ini\IniWriter;
-use Noodlehaus\Config;
 
 class Test extends Command
 {
@@ -21,7 +19,7 @@ class Test extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Test Command';
 
     /**
      * Create a new command instance.
@@ -33,23 +31,9 @@ class Test extends Command
         parent::__construct();
     }
 
-    /**
-     * @throws \Matomo\Ini\IniReadingException
-     * @throws \Matomo\Ini\IniWritingException
-     */
     public function handle()
     {
-//        $conf = Config::load(storage_path('app/example.config.json'));
-////        dump($conf->all());
-////        $conf->set('app_type','cn');
-////        dump($conf->all());
-//        dd($conf->get('app_type'));
-        $reader = new IniReader();
-        $array = $reader->readFile(storage_path('app/example.account.ini'));
-//        dd($array);
-        $array['user1']['name'] = 123;
-        $writer = new IniWriter();
-        $writer->writeToFile(storage_path('app/example.account.ini'), $array);
-
+        $conf = Tool::config();
+        dd($conf);
     }
 }

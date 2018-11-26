@@ -35,7 +35,7 @@ class OneDrive
     public function __construct()
     {
         $this->access_token = Tool::config('access_token');
-        $this->base_url = Tool::config('app_type') == 'com' ? Constants::REST_ENDPOINT : Constants::REST_ENDPOINT_21V;
+        $this->base_url = Tool::config('account_type') == 'com' ? Constants::REST_ENDPOINT : Constants::REST_ENDPOINT_21V;
         $this->api_version = Constants::API_VERSION;
     }
 
