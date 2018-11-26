@@ -7,7 +7,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 
@@ -198,17 +197,7 @@ class Tool
     public static function saveConfig($config)
     {
         $file = storage_path('app/config.json');
-        try {
-            $saved = file_put_contents($file, json_encode($config));
-            if ($saved) {
-                Cache::forget('config');
-                return true;
-            } else {
-                return false;
-            }
-        } catch (\Exception $e) {
-            return abort(403, $e->getMessage());
-        }
+        return self::writeJson($file, $config);
     }
 
     /**
@@ -238,14 +227,37 @@ class Tool
             if (!file_exists($file)) {
                 copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
             };
-            try {
-                $config = file_get_contents($file);
-                return json_decode($config, true);
-            } catch (\Exception $e) {
-                return abort(403, $e->getMessage());
-            }
+            return self::readJson($file);
         });
         return $key ? (array_has($config, $key) ? (array_get($config, $key) ?: $default) : $default) : $config;
+    }
+
+    /**
+     * @param string $file
+     * @return array|bool
+     */
+    public static function readJson(string $file)
+    {
+        try {
+            $config = file_get_contents($file);
+            return json_decode($config, true);
+        } catch (\Exception $e) {
+            return abort(403, $e->getMessage());
+        }
+    }
+
+    /**
+     * @param string $file
+     * @param array $array
+     * @return bool|int
+     */
+    public static function writeJson(string $file, array $array)
+    {
+        try {
+            return file_put_contents($file, json_encode($array));
+        } catch (\Exception $e) {
+            return abort(403, $e->getMessage());
+        }
     }
 
     /**

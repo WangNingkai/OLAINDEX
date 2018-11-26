@@ -11,7 +11,7 @@ class Constants
 / /_/ / /___/ ___ |_/ // /|  / /_/ / /___ /   |  
 \____/_____/_/  |_/___/_/ |_/_____/_____//_/|_|
 EOS;
-    const LATEST_VERSION = 'v3.1.1';
+    const LATEST_VERSION = 'v3.2';
 
     const API_VERSION = 'v1.0';
 
@@ -29,6 +29,16 @@ EOS;
     const TOKEN_ENDPOINT_21V = '/oauth2/token';
 
     const SCOPES = 'offline_access user.read files.readwrite.all';
+
+    const ACCOUNT = [
+        "account_type" => "com",
+        "client_id" => "",
+        "client_secret" => "",
+        "redirect_uri" => "",
+        "access_token" => "",
+        "access_token_expires" => "",
+        "refresh_token" => ""
+    ];
 
     const FILE_ICON = [
         'stream' => ['fa-file-text-o', ['txt', 'log']],

@@ -33,7 +33,8 @@ class Test extends Command
 
     public function handle()
     {
-        $conf = Tool::config();
-        dd($conf);
+        $file = storage_path('app/config.json');
+        $res = Tool::readJson($file);
+        dd($res);
     }
 }

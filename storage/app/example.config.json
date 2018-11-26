@@ -1,6 +1,5 @@
 {
     "app_version": "v3.1.1",
-    "account": "default",
     "account_type": "com",
     "client_id": "",
     "client_secret": "",
@@ -12,7 +11,7 @@
     "theme": "flatly",
     "root": "\/",
     "expires": "10",
-    "image_hosting": "1",
+    "image_hosting": 0,
     "image_hosting_path": "Hosting",
     "image": "bmp jpg jpeg png gif",
     "video": "mkv mp4 webm",
