@@ -86,11 +86,13 @@ class Login extends Command
             if ($this->confirm('未配置client_id、client_secret，现在配置吗？')) {
                 $client_id = $this->ask('请输入 client_id');
                 $client_secret = $this->ask('请输入 client_secret');
+                $account_type = $type = $this->choice('请选择账户类型(com:国际通用 cn:世纪互联)', ['com', 'cn'], 'com');
                 $redirect_uri = $defined_redirect;
                 $data = [
                     'client_id' => $client_id,
                     'client_secret' => $client_secret,
-                    'redirect_uri' => $redirect_uri
+                    'redirect_uri' => $redirect_uri,
+                    'account_type' => $account_type
                 ];
                 Tool::updateConfig($data);
                 $this->warn('请重新运行此命令登录');

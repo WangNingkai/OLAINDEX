@@ -58,6 +58,11 @@
                 <input type="text" class="form-control" id="redirect_uri" name="redirect_uri"
                        value="{{ \App\Helpers\Tool::config('redirect_uri') }}" disabled>
             </div>
+            <div class="form-group">
+                <label class="form-control-label" for="account_type">账号类型 </label>
+                <input type="text" class="form-control" id="account_type" name="account_type"
+                       value="{{ \App\Helpers\Tool::config('account_type') }}" disabled>
+            </div>
             <form id="bind-form" action="{{ route('bind') }}" method="POST"
                   class="invisible">
                 @csrf

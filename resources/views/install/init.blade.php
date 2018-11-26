@@ -70,6 +70,14 @@
                     <label class="form-control-label" for="client_secret"><b>client_secret</b></label>
                     <input type="text" class="form-control" id="client_secret" name="client_secret">
                 </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="account_type">账户类型</label>
+                    <select class="custom-select" name="account_type" id="account_type">
+                        <option value="">选择账户类型</option>
+                        <option value="com" selected>国际版</option>
+                        <option value="cn">国内版（世纪互联）</option>
+                    </select>
+                </div>
                 <button type="submit" class="btn btn-primary">保存</button>
             </form>
         </div>

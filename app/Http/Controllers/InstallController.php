@@ -53,6 +53,7 @@ class InstallController extends Controller
         $client_id = $request->get('client_id');
         $client_secret = $request->get('client_secret');
         $redirect_uri = $request->get('redirect_uri');
+        $account_type = $request->get('account_type');
         if ($client_id == '' || $client_secret == '' || $redirect_uri == '') {
             Tool::showMessage('参数请填写完整', false);
             return redirect()->back();
@@ -61,7 +62,8 @@ class InstallController extends Controller
         $data = [
             'client_id' => $client_id,
             'client_secret' => $client_secret,
-            'redirect_uri' => $redirect_uri
+            'redirect_uri' => $redirect_uri,
+            'account_type' => $account_type
         ];
         Tool::updateConfig($data);
         return redirect()->route('bind');
@@ -80,7 +82,8 @@ class InstallController extends Controller
         $data = [
             'client_id' => '',
             'client_secret' => '',
-            'redirect_uri' => ''
+            'redirect_uri' => '',
+            'account_type' => ''
         ];
         Tool::updateConfig($data);
         return redirect()->route('_1stInstall');
