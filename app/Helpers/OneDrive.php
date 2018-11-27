@@ -159,12 +159,13 @@ class OneDrive
     /**
      * Get Drive Item Children
      * @param $itemId
+     * @param $query
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public static function getChildren($itemId = '')
+    public static function getChildren($itemId = '', $query = '')
     {
-        $endpoint = $itemId ? "/me/drive/items/{$itemId}/children" : "/me/drive/root/children";
+        $endpoint = $itemId ? "/me/drive/items/{$itemId}/children{$query}" : "/me/drive/root/children{$query}";
         $response = self::requestApi('get', $endpoint);
         if ($response instanceof Response) {
             $response = json_decode($response->getBody()->getContents(), true);
@@ -179,12 +180,13 @@ class OneDrive
     /**
      * Get Drive Item Children by Path
      * @param $path
+     * @param $query
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public static function getChildrenByPath($path = '/')
+    public static function getChildrenByPath($path = '/', $query = '')
     {
-        $endpoint = $path === '/' ? "/me/drive/root/children" : "/me/drive/root{$path}children";
+        $endpoint = $path === '/' ? "/me/drive/root/children{$query}" : "/me/drive/root{$path}children{$query}";
         $response = self::requestApi('get', $endpoint);
         if ($response instanceof Response) {
             $response = json_decode($response->getBody()->getContents(), true);
