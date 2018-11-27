@@ -51,7 +51,7 @@ class InstallController extends Controller
         $client_secret = $request->get('client_secret');
         $redirect_uri = $request->get('redirect_uri');
         $account_type = $request->get('account_type');
-        if ($client_id === '' || $client_secret === '' || $redirect_uri === '') {
+        if (empty($client_id) || empty($client_secret) || empty($redirect_uri)) {
             Tool::showMessage('参数请填写完整', false);
             return redirect()->back();
         }

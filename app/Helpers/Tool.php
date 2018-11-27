@@ -18,7 +18,7 @@ class Tool
      */
     public static function hasConfig()
     {
-        if (self::config('client_id') !== '' && self::config('client_secret') !== '' && self::config('redirect_uri') !== '') {
+        if (!empty(self::config('client_id')) && !empty(self::config('client_secret')) && !empty(self::config('redirect_uri'))) {
             return true;
         } else return false;
     }
@@ -29,7 +29,7 @@ class Tool
      */
     public static function hasBind()
     {
-        if (self::config('access_token') !== '' && self::config('refresh_token') !== '' && self::config('access_token_expires') !== '') {
+        if (!empty(self::config('access_token')) && !empty(self::config('refresh_token')) && !empty(self::config('access_token_expires'))) {
             return true;
         } else return false;
     }

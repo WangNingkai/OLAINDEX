@@ -40,9 +40,7 @@ class IndexController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('checkInstall');
-        $this->middleware('checkToken');
-        $this->middleware('handleIllegalFile');
+        $this->middleware(['checkInstall', 'checkToken', 'handleIllegalFile']);
         $this->expires = Tool::config('expires', 10);
         $this->root = Tool::config('root', '/');
         $this->show = [
@@ -135,7 +133,7 @@ class IndexController extends Controller
     {
         $realPath = $request->route()->parameter('query') ?? '/';
         $graphPath = Tool::convertPath($realPath, true, true);
-        $origin_path = urldecode(Tool::convertPath($realPath, false));
+        $origin_path = rawurldecode(Tool::convertPath($realPath, false));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
         // 获取文件
         $file = Cache::remember('one:file:' . $graphPath, $this->expires, function () use ($graphPath) {
@@ -167,7 +165,7 @@ class IndexController extends Controller
                     $response = OneDrive::responseToArray($result);
                     if ($response['code'] === 200) {
                         $file['thumb'] = $response['data']['url'];
-                    } else $file['thumb'] = '';// todo:
+                    } else $file['thumb'] = 'https://i.loli.net/2018/11/27/5bfcdf9f16a6c.jpg';
                 }
                 // dash视频流
                 if ($key === 'dash') {
@@ -223,7 +221,7 @@ class IndexController extends Controller
         $response = OneDrive::responseToArray($result);
         if ($response['code'] === 200) {
             $url = $response['data']['url'];
-        } else $url = '';// todo:
+        } else $url = 'https://i.loli.net/2018/11/27/5bfcdf9f16a6c.jpg';
         return redirect()->away($url);
     }
 
@@ -261,9 +259,9 @@ class IndexController extends Controller
             $result = OneDrive::search(empty($path) ? '/' : ":/{$path}:/", $keywords);
             $response = OneDrive::responseToArray($result);
             if ($response['code'] === 200) {
-                // 过滤结果中的文件夹
+                // 过滤结果中的文件夹\过滤微软OneNote文件
                 $items = array_where($response['data'], function ($value) {
-                    return !array_has($value, 'folder');
+                    return !array_has($value, 'folder') && !array_has($value, 'package.type');
                 });
             } else {
                 Tool::showMessage('搜索失败', true);
@@ -297,7 +295,7 @@ class IndexController extends Controller
             Tool::showMessage('获取连接失败', false);
             $path = '/';
         }
-        return redirect('/show/' . $path);
+        return redirect()->route('show', $path);
     }
 
     /**

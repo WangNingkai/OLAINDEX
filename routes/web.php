@@ -70,7 +70,7 @@ Route::prefix('admin')->group(function () {
     Route::post('url/upload', 'ManageController@uploadUrl')->name('admin.url.upload');
 });
 // 搜索
-Route::any('search', 'IndexController@search')->name('search')->middleware('checkAuth');
+Route::any('search', 'IndexController@search')->name('search')->middleware('checkAuth', 'throttle:10,2');
 Route::any('search/file/{id}', 'IndexController@searchShow')->name('search.show')->middleware('checkAuth');
 
 

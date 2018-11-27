@@ -81,7 +81,7 @@ class AdminController extends Controller
      */
     public function show(Request $request)
     {
-        if (!request()->isMethod('post')) return view('admin.show');
+        if (!$request->isMethod('post')) return view('admin.show');
         $data = $request->except('_token');
         Tool::updateConfig($data);
         Tool::showMessage('保存成功！');
@@ -146,8 +146,8 @@ class AdminController extends Controller
                 'image_hosting_path' => ''
             ];
             Tool::updateConfig($data);
-            Tool::showMessage('保存成功！');
             Cache::forget('one:account');
+            Tool::showMessage('保存成功！');
             return redirect()->route('bind');
         }
     }
