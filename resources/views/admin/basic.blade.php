@@ -13,7 +13,7 @@
             <select class="custom-select" name="theme" id="theme">
                 @foreach( \App\Helpers\Constants::SITE_THEME as $name => $theme)
                     <option value="{{ $theme }}"
-                            @if(\App\Helpers\Tool::config('theme') == $theme) selected @endif>{{ $name }}</option>
+                            @if(\App\Helpers\Tool::config('theme') === $theme) selected @endif>{{ $name }}</option>
                 @endforeach
             </select>
         </div>

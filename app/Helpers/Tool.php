@@ -13,12 +13,23 @@ use Illuminate\Support\Facades\Session;
 class Tool
 {
     /**
+     * 判断密钥配置
+     * @return bool
+     */
+    public static function hasConfig()
+    {
+        if (self::config('client_id') !== '' && self::config('client_secret') !== '' && self::config('redirect_uri') !== '') {
+            return true;
+        } else return false;
+    }
+
+    /**
      * 判断账号绑定
      * @return bool
      */
     public static function hasBind()
     {
-        if (self::config('access_token') != '' && self::config('refresh_token') != '' && self::config('access_token_expires') != '') {
+        if (self::config('access_token') !== '' && self::config('refresh_token') !== '' && self::config('access_token_expires') !== '') {
             return true;
         } else return false;
     }
@@ -124,7 +135,7 @@ class Tool
     public static function getParentUrl($pathArr)
     {
         array_pop($pathArr);
-        if (count($pathArr) == 0) {
+        if (count($pathArr) === 0) {
             return '';
         }
         $url = '';
@@ -269,16 +280,16 @@ class Tool
      */
     public static function convertPath($path, $isQuery = true, $isFile = false)
     {
-        $path = OneDrive::getAbsolutePath($path);
+        $path = self::getAbsolutePath($path);
         $origin_path = trim($path, '/');
         $path_array = explode('/', $origin_path);
-        $base = ['home', 'view', 'show', 'download'];
+        $base = ['home', 'view', 'show', 'down'];
         if (in_array($path_array[0], $base)) {
             unset($path_array[0]);
             $query_path = implode('/', $path_array);
         } else $query_path = $origin_path;
         if (!$isQuery) return $query_path;
-        $query_path = Tool::handleUrl(rawurldecode($query_path));
+        $query_path = self::handleUrl(rawurldecode($query_path));
         $root = trim(self::handleUrl(self::config('root')), '/');
         if ($query_path)
             $request_path = empty($root) ? ":/{$query_path}:/" : ":/{$root}/{$query_path}:/";
@@ -297,12 +308,11 @@ class Tool
     public static function getAbsolutePath($path)
     {
         $path = str_replace(['/', '\\', '//'], '/', $path);
-
         $parts = array_filter(explode('/', $path), 'strlen');
         $absolutes = [];
         foreach ($parts as $part) {
-            if ('.' == $part) continue;
-            if ('..' == $part) {
+            if ('.' === $part) continue;
+            if ('..' === $part) {
                 array_pop($absolutes);
             } else {
                 $absolutes[] = $part;
@@ -358,7 +368,7 @@ class Tool
             $quota = Cache::remember('one:quota', self::config('expires'), function () {
                 $drive = OneDrive::getDrive();
                 $res = OneDrive::responseToArray($drive);
-                if ($res['code'] == 200) {
+                if ($res['code'] === 200) {
                     $quota = $res['data']['quota'];
                     foreach ($quota as $k => $item) {
                         if (!is_string($item)) {
@@ -413,5 +423,4 @@ class Tool
             return '';
         }
     }
-
 }

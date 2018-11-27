@@ -46,7 +46,7 @@
                     <a class="nav-link" href="{{ route('home') }}"><i class="fa fa-home"></i> 首页</a>
                 </li>
                 @if (\App\Helpers\Tool::config('image_hosting',0))
-                    @if(\App\Helpers\Tool::config('image_hosting') == 2 && session()->has('LogInfo') || \App\Helpers\Tool::config('image_hosting') == 1)
+                    @if( (int)\App\Helpers\Tool::config('image_hosting') === 2 && session()->has('LogInfo') || (int)\App\Helpers\Tool::config('image_hosting') === 1)
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('image') }}"><i class="fa fa-cloud-upload"></i> 图床</a>
                         </li>

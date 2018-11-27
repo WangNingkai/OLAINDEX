@@ -56,7 +56,7 @@ class Search extends Command
         }
         /* @var $result \Illuminate\Http\JsonResponse */
         $response = OneDrive::responseToArray($result);
-        $data = $response['code'] == 200 ? $response['data'] : [];
+        $data = $response['code'] === 200 ? $response['data'] : [];
         if (!$data) {
             $this->warn('出错了，请稍后重试...');
             exit;
@@ -89,7 +89,7 @@ class Search extends Command
                 $result = OneDrive::itemIdToPath($item['id']);
                 /* @var $result \Illuminate\Http\JsonResponse */
                 $response = OneDrive::responseToArray($result);
-                $path = $response['code'] == 200 ? $response['data']['path'] : '获取目录失败';
+                $path = $response['code'] === 200 ? $response['data']['path'] : '获取目录失败';
                 $content = [$type, $path, $folder, $owner, $size, $time, $item['name']];
             } else {
                 $content = [$type, $item['id'], $folder, $owner, $size, $time, $item['name']];

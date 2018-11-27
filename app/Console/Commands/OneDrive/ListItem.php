@@ -47,7 +47,7 @@ class ListItem extends Command
         $data = Cache::remember('one:list:' . $graphPath, Tool::config('expires'), function () use ($graphPath) {
             $result = OneDrive::getChildrenByPath($graphPath);
             $response = OneDrive::responseToArray($result);
-            return $response['code'] == 200 ? $response['data'] : [];
+            return $response['code'] === 200 ? $response['data'] : [];
         });
         if (!$data) {
             $this->warn('出错了，请稍后重试...');

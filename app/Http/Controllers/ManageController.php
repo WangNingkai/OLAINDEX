@@ -58,7 +58,7 @@ class ManageController extends Controller
             $remoteFilePath = Tool::convertPath($filePath); // 远程图片保存地址
             $result = OneDrive::uploadByPath($remoteFilePath, $content);
             $response = OneDrive::responseToArray($result);
-            if ($response['code'] == 200) {
+            if ($response['code'] === 200) {
                 $sign = $response['data']['id'] . '.' . encrypt($response['data']['eTag']);
                 $fileIdentifier = encrypt($sign);
                 $data = [
@@ -156,7 +156,7 @@ class ManageController extends Controller
         $remoteFilePath = Tool::convertPath($storeFilePath); // 远程password保存地址
         $result = OneDrive::uploadByPath($remoteFilePath, $password);
         $response = OneDrive::responseToArray($result);
-        $response['code'] == 200 ? Tool::showMessage('操作成功，请牢记密码！') : Tool::showMessage('加密失败！', false);
+        $response['code'] === 200 ? Tool::showMessage('操作成功，请牢记密码！') : Tool::showMessage('加密失败！', false);
         Artisan::call('cache:clear');
         return redirect()->back();
     }
@@ -182,7 +182,7 @@ class ManageController extends Controller
         $remoteFilePath = Tool::convertPath($storeFilePath); // 远程md保存地址
         $result = OneDrive::uploadByPath($remoteFilePath, $content);
         $response = OneDrive::responseToArray($result);
-        $response['code'] == 200 ? Tool::showMessage('添加成功！') : Tool::showMessage('添加失败！', false);
+        $response['code'] === 200 ? Tool::showMessage('添加成功！') : Tool::showMessage('添加失败！', false);
         Artisan::call('cache:clear');
         return redirect()->route('home', Tool::handleUrl($path));
 
@@ -200,7 +200,7 @@ class ManageController extends Controller
         if (!$request->isMethod('post')) {
             $result = OneDrive::getItem($id);
             $response = OneDrive::responseToArray($result);
-            if ($response['code'] == 200) {
+            if ($response['code'] === 200) {
                 $file = $response['data'];
                 $file['content'] = Tool::getFileContent($file['@microsoft.graph.downloadUrl']);
             } else {
@@ -212,7 +212,7 @@ class ManageController extends Controller
         $content = $request->get('content');
         $result = OneDrive::upload($id, $content);
         $response = OneDrive::responseToArray($result);
-        $response['code'] == 200 ? Tool::showMessage('修改成功！') : Tool::showMessage('修改失败！', false);
+        $response['code'] === 200 ? Tool::showMessage('修改成功！') : Tool::showMessage('修改失败！', false);
         Artisan::call('cache:clear');
         return redirect()->back();
     }
@@ -235,7 +235,7 @@ class ManageController extends Controller
         $graphPath = Tool::convertPath($path);
         $result = OneDrive::mkdirByPath($name, $graphPath);
         $response = OneDrive::responseToArray($result);
-        $response['code'] == 200 ? Tool::showMessage('新建目录成功！') : Tool::showMessage('新建目录失败！', false);
+        $response['code'] === 200 ? Tool::showMessage('新建目录成功！') : Tool::showMessage('新建目录失败！', false);
         Artisan::call('cache:clear');
         return redirect()->back();
     }
@@ -264,7 +264,7 @@ class ManageController extends Controller
         }
         $result = OneDrive::delete($id, $eTag);
         $response = OneDrive::responseToArray($result);
-        $response['code'] == 200 ? Tool::showMessage('文件已删除') : Tool::showMessage('文件删除失败', false);
+        $response['code'] === 200 ? Tool::showMessage('文件已删除') : Tool::showMessage('文件删除失败', false);
         Artisan::call('cache:clear');
         return view('message');
     }

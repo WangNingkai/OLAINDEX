@@ -56,8 +56,8 @@ class OauthController extends Controller
         $this->client_id = Tool::config('client_id');
         $this->client_secret = Tool::config('client_secret');
         $this->redirect_uri = Tool::config('redirect_uri');
-        $this->authorize_url = Tool::config('account_type') == 'com' ? Constants::AUTHORITY_URL . Constants::AUTHORIZE_ENDPOINT : Constants::AUTHORITY_URL_21V . Constants::AUTHORIZE_ENDPOINT_21V;
-        $this->access_token_url = Tool::config('account_type') == 'com' ? Constants::AUTHORITY_URL . Constants::TOKEN_ENDPOINT : Constants::AUTHORITY_URL_21V . Constants::TOKEN_ENDPOINT_21V;
+        $this->authorize_url = Tool::config('account_type') === 'com' ? Constants::AUTHORITY_URL . Constants::AUTHORIZE_ENDPOINT : Constants::AUTHORITY_URL_21V . Constants::AUTHORIZE_ENDPOINT_21V;
+        $this->access_token_url = Tool::config('account_type') === 'com' ? Constants::AUTHORITY_URL . Constants::TOKEN_ENDPOINT : Constants::AUTHORITY_URL_21V . Constants::TOKEN_ENDPOINT_21V;
         $this->scopes = Constants::SCOPES;
     }
 
@@ -69,14 +69,14 @@ class OauthController extends Controller
     public function oauth(Request $request)
     {
         // 检测是否已授权
-        if (Tool::config('access_token') != '' && Tool::config('refresh_token') != '' && Tool::config('access_token_expires') != '') {
+        if (Tool::hasBind()) {
             return redirect()->route('home');
         }
         if ($request->isMethod('get')) {
             if (!$request->has('code')) {
                 return $this->authorizeLogin();
             } else {
-                if ($request->get('state') == '' || !Session::has('state') || ($request->get('state') != Session::get('state'))) {
+                if ($request->get('state') === '' || !Session::has('state') || ($request->get('state') != Session::get('state'))) {
                     Tool::showMessage('Invalid state', false);
                     Session::forget('state');
                     return view('message');
@@ -92,7 +92,7 @@ class OauthController extends Controller
                         'code' => $code,
                         'grant_type' => 'authorization_code',
                     ];
-                    if (Tool::config('account_type') == 'cn') $form_params = array_add($form_params, 'resource', Constants::REST_ENDPOINT_21V);
+                    if (Tool::config('account_type') === 'cn') $form_params = array_add($form_params, 'resource', Constants::REST_ENDPOINT_21V);
                     $response = $client->post($this->access_token_url, [
                         'form_params' => $form_params
                     ]);
@@ -161,7 +161,7 @@ class OauthController extends Controller
                 'refresh_token' => $existingRefreshToken,
                 'grant_type' => 'refresh_token',
             ];
-            if (Tool::config('account_type') == 'cn') $form_params = array_add($form_params, 'resource', Constants::REST_ENDPOINT_21V);
+            if (Tool::config('account_type') === 'cn') $form_params = array_add($form_params, 'resource', Constants::REST_ENDPOINT_21V);
             $response = $client->post($this->access_token_url, [
                 'form_params' => $form_params,
             ]);

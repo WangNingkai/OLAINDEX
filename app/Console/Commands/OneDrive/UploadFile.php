@@ -72,7 +72,7 @@ class UploadFile extends Command
         $path = Tool::convertPath($target_path . $file_name);
         $result = OneDrive::uploadByPath($path, $content);
         $response = OneDrive::responseToArray($result);
-        $response['code'] == 200 ? $this->info('上传成功!') : $this->warn('上传失败!');
+        $response['code'] === 200 ? $this->info('上传成功!') : $this->warn('上传失败!');
     }
 
     /**
@@ -88,10 +88,10 @@ class UploadFile extends Command
         $file_size = OneDrive::readFileSize($local);
         $target_path = Tool::getAbsolutePath($remote);
         $file_name = basename($local);
-        $path = trim($target_path, '/') == '' ? ":/{$file_name}:/" : Tool::convertPath($target_path . $file_name);
+        $path = trim($target_path, '/') === '' ? ":/{$file_name}:/" : Tool::convertPath($target_path . $file_name);
         $url_request = OneDrive::createUploadSession($path);
         $url_response = OneDrive::responseToArray($url_request);
-        if ($url_response['code'] == 200) {
+        if ($url_response['code'] === 200) {
             $url = $url_response['data']['uploadUrl'];
         } else {
             $this->warn('创建上传任务失败，检查文件是否已经存在！');
@@ -106,7 +106,7 @@ class UploadFile extends Command
             $retry = 0;
             $res = OneDrive::uploadToSession($url, $local, $offset, $length);
             $response = OneDrive::responseToArray($res);
-            if ($response['code'] == 200) {
+            if ($response['code'] === 200) {
                 $data = $response['data'];
                 if (!empty($data['nextExpectedRanges'])) {
                     // 分片上传

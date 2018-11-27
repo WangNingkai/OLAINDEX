@@ -43,7 +43,7 @@ class Share extends Command
         $target = $this->argument('remote');
         $target_path = trim(Tool::handleUrl($target), '/');
         $id_request = OneDrive::responseToArray(OneDrive::pathToItemId(empty($target_path) ? '/' : ":/{$target_path}:/"));
-        if ($id_request['code'] == 200)
+        if ($id_request['code'] === 200)
             $_id = $id_request['data']['id'];
         else {
             $this->warn('路径异常！');
@@ -52,7 +52,7 @@ class Share extends Command
         /* @var $result \Illuminate\Http\JsonResponse */
         $result = OneDrive::createShareLink($_id);
         $response = OneDrive::responseToArray($result);
-        if ($response['code'] == 200) {
+        if ($response['code'] === 200) {
             $direct = str_replace('15/download.aspx', '15/guestaccess.aspx', $response['data']['redirect']);
             $this->info("创建成功！\n分享链接： {$direct}");
         } else

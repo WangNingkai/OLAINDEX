@@ -81,7 +81,7 @@ class IndexController extends Controller
         $origin_items = Cache::remember('one:list:' . $graphPath, $this->expires, function () use ($graphPath) {
             $result = OneDrive::getChildrenByPath($graphPath);
             $response = OneDrive::responseToArray($result);
-            if ($response['code'] == 200) {
+            if ($response['code'] === 200) {
                 return $response['data'];
             } else {
                 Tool::showMessage($response['msg'], false);
@@ -139,7 +139,7 @@ class IndexController extends Controller
         $file = Cache::remember('one:file:' . $graphPath, $this->expires, function () use ($graphPath) {
             $result = OneDrive::getItemByPath($graphPath);
             $response = OneDrive::responseToArray($result);
-            if ($response['code'] == 200) {
+            if ($response['code'] === 200) {
                 return $response['data'];
             } else {
                 return null;
@@ -163,24 +163,24 @@ class IndexController extends Controller
                 if (in_array($key, ['image', 'dash', 'video'])) {
                     $result = OneDrive::thumbnails($file['id'], 'large');
                     $response = OneDrive::responseToArray($result);
-                    if ($response['code'] == 200) {
+                    if ($response['code'] === 200) {
                         $file['thumb'] = $response['data']['url'];
                     } else $file['thumb'] = '';// todo:
                 }
                 // dash视频流
-                if ($key == 'dash') {
-                    if (strpos($file['@microsoft.graph.downloadUrl'], "sharepoint.com") == false) return redirect()->away($file['download']);
+                if ($key === 'dash') {
+                    if (!strpos($file['@microsoft.graph.downloadUrl'], "sharepoint.com")) return redirect()->away($file['download']);
                     $file['dash'] = str_replace("thumbnail", "videomanifest", $file['thumb']) . "&part=index&format=dash&useScf=True&pretranscode=0&transcodeahead=0";
                 }
                 // 处理微软文档
-                if ($key == 'doc') {
+                if ($key === 'doc') {
                     $url = "https://view.officeapps.live.com/op/view.aspx?src=" . urlencode($file['@microsoft.graph.downloadUrl']);
                     return redirect()->away($url);
                 }
                 return view($view, compact('file', 'path_array', 'origin_path'));
             } else {
                 $last = end($this->show);
-                if ($last == $suffix) {
+                if ($last === $suffix) {
                     break;
                 }
             }
@@ -198,7 +198,7 @@ class IndexController extends Controller
         $file = Cache::remember('one:file:' . $graphPath, $this->expires, function () use ($graphPath) {
             $result = OneDrive::getItemByPath($graphPath);
             $response = OneDrive::responseToArray($result);
-            if ($response['code'] == 200) {
+            if ($response['code'] === 200) {
                 return $response['data'];
             } else {
                 return null;
@@ -218,7 +218,7 @@ class IndexController extends Controller
     {
         $result = OneDrive::thumbnails($id, $size);
         $response = OneDrive::responseToArray($result);
-        if ($response['code'] == 200) {
+        if ($response['code'] === 200) {
             $url = $response['data']['url'];
         } else $url = '';// todo:
         return redirect()->away($url);
@@ -234,7 +234,7 @@ class IndexController extends Controller
         $file = Cache::remember('one:file:' . $graphPath, $this->expires, function () use ($graphPath) {
             $result = OneDrive::getItemByPath($graphPath);
             $response = OneDrive::responseToArray($result);
-            if ($response['code'] == 200) {
+            if ($response['code'] === 200) {
                 return $response['data'];
             } else {
                 return null;
@@ -256,7 +256,7 @@ class IndexController extends Controller
             $path = Tool::handleUrl($this->root);
             $result = OneDrive::search(empty($path) ? '/' : ":/{$path}:/", $keywords);
             $response = OneDrive::responseToArray($result);
-            if ($response['code'] == 200) {
+            if ($response['code'] === 200) {
                 // 过滤结果中的文件夹
                 $items = array_where($response['data'], function ($value) {
                     return !array_has($value, 'folder');
@@ -282,7 +282,7 @@ class IndexController extends Controller
         $result = OneDrive::itemIdToPath($id, Tool::config('root'));
         /* @var $result JsonResponse */
         $response = OneDrive::responseToArray($result);
-        if ($response['code'] == 200) {
+        if ($response['code'] === 200) {
             $originPath = $response['data']['path'];
             if (trim($this->root, '/') != '') {
                 $path = str_after($originPath, $this->root);
@@ -313,7 +313,7 @@ class IndexController extends Controller
         Session::put('password:' . $origin_path, $data);
         $result = OneDrive::getItem($pass_id);
         $response = OneDrive::responseToArray($result);
-        if ($response['code'] == 200) {
+        if ($response['code'] === 200) {
             $directory_password = Tool::getFileContent($response['data']['@microsoft.graph.downloadUrl']);
         } else {
             Tool::showMessage('获取文件夹密码失败', false);

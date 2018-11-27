@@ -17,7 +17,7 @@
             <div class="text-center">
                 <pre>
                     <code
-                        class="language-{{ $file['ext'] == 'sh' ? 'bash' : $file['ext']}}">{{ $file['content'] }}</code>
+                        class="language-{{ $file['ext'] === 'sh' ? 'bash' : $file['ext']}}">{{ $file['content'] }}</code>
                 </pre>
             </div>
         </div>

@@ -46,6 +46,6 @@ class CreateFolder extends Command
         $path = empty($target_path) ? '/' : ":/{$target_path}:/";
         $result = OneDrive::mkdirByPath($name, $path);
         $response = OneDrive::responseToArray($result);
-        $response['code'] == 200 ? $this->info("创建目录成功!") : $this->warn("创建目录失败!\n{$response['msg']} ");
+        $response['code'] === 200 ? $this->info("创建目录成功!") : $this->warn("创建目录失败!\n{$response['msg']} ");
     }
 }

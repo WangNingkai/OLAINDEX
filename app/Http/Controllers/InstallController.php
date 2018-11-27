@@ -20,7 +20,7 @@ class InstallController extends Controller
     public function apply(Request $request)
     {
         // 感谢 donwa 提供的方法
-        if (Tool::config('client_id') != '' || Tool::config('client_secret') != '' || Tool::config('redirect_uri') != '') {
+        if (Tool::hasConfig()) {
             Tool::showMessage('已配置相关信息', false);
             return view('message');
         }
@@ -43,10 +43,7 @@ class InstallController extends Controller
     public function _1stInstall(Request $request)
     {
         // 检测是否已经配置client_id等信息
-        $client_id = Tool::config('client_id');
-        $client_secret = Tool::config('client_secret');
-        $redirect_uri = Tool::config('redirect_uri');
-        if ($client_id != '' && $client_secret != '' && $redirect_uri != '')
+        if (Tool::hasConfig())
             return redirect()->route('bind');
         //  显示基础信息的填写、申请或提交应用信息、返回
         if ($request->isMethod('get')) return view('install.init');
@@ -54,7 +51,7 @@ class InstallController extends Controller
         $client_secret = $request->get('client_secret');
         $redirect_uri = $request->get('redirect_uri');
         $account_type = $request->get('account_type');
-        if ($client_id == '' || $client_secret == '' || $redirect_uri == '') {
+        if ($client_id === '' || $client_secret === '' || $redirect_uri === '') {
             Tool::showMessage('参数请填写完整', false);
             return redirect()->back();
         }
@@ -75,7 +72,7 @@ class InstallController extends Controller
      */
     public function reset()
     {
-        if (Tool::config('access_token') != '' && Tool::config('refresh_token') != '' && Tool::config('access_token_expires') != '') {
+        if (Tool::hasBind()) {
             Tool::showMessage('您已绑定帐号，无法重置', false);
             return view('message');
         }
@@ -96,12 +93,12 @@ class InstallController extends Controller
      */
     public function bind(Request $request)
     {
-        if (Tool::config('access_token') != '' && Tool::config('refresh_token') != '' && Tool::config('access_token_expires') != '') {
+        if (Tool::hasBind()) {
             Tool::showMessage('您已绑定帐号', false);
             return view('message');
         }
         if ($request->isMethod('post')) {
-            if (Tool::config('access_token') != '' && Tool::config('refresh_token') != '' && Tool::config('access_token_expires') != '') {
+            if (Tool::hasBind()) {
                 Tool::showMessage('您已绑定帐号，无法重置', false);
                 return view('message');
             } else {

@@ -27,7 +27,7 @@ class HotlinkProtection
         }
         //判断 $_SERVER['HTTP_REFERER'] 是不是处于白名单
         foreach ($whiteList as $item) {
-            if (strpos($request->server('HTTP_REFERER'), $item) == 0) {
+            if (strpos($request->server('HTTP_REFERER'), $item) === 0) {
                 return $next($request);
             } else {
                 abort(403);

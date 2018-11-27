@@ -33,7 +33,7 @@ class AdminController extends Controller
         if (Session::has('LogInfo')) return redirect()->route('admin.basic');
         if (!$request->isMethod('post')) return view('admin.login');
         $password = $request->get('password');
-        if (md5($password) == Tool::config('password')) {
+        if (md5($password) === Tool::config('password')) {
             $logInfo = [
                 'LastLoginTime' => time(),
                 'LastLoginIP' => $request->getClientIp(),
@@ -99,11 +99,11 @@ class AdminController extends Controller
         $old_password = $request->get('old_password');
         $password = $request->get('password');
         $password_confirm = $request->get('password_confirm');
-        if (md5($old_password) != Tool::config('password') || $old_password == '') {
+        if (md5($old_password) != Tool::config('password') || $old_password === '') {
             Tool::showMessage('请确保原密码的准确性！', false);
             return redirect()->back();
         }
-        if ($password != $password_confirm || $old_password == '' || $old_password == '') {
+        if ($password != $password_confirm || $old_password === '' || $old_password === '') {
             Tool::showMessage('两次密码不一致', false);
             return redirect()->back();
         }

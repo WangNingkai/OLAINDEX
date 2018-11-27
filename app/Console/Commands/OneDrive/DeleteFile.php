@@ -56,7 +56,7 @@ class DeleteFile extends Command
         $target = $this->argument('remote');
         $target_path = trim(Tool::handleUrl($target), '/');
         $id_request = OneDrive::responseToArray(OneDrive::pathToItemId(empty($target_path) ? '/' : ":/{$target_path}:/"));
-        if ($id_request['code'] == 200)
+        if ($id_request['code'] === 200)
             $_id = $id_request['data']['id'];
         else {
             $this->warn('路径异常!');
@@ -66,6 +66,6 @@ class DeleteFile extends Command
         $result = OneDrive::delete($_id);
         $response = OneDrive::responseToArray($result);
         $this->call('cache:clear');
-        $response['code'] == 200 ? $this->info("删除成功!") : $this->warn("删除失败!\n{$response['msg']} ");
+        $response['code'] === 200 ? $this->info("删除成功!") : $this->warn("删除失败!\n{$response['msg']} ");
     }
 }
