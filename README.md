@@ -2,10 +2,6 @@
 
 ✨ Another OneDrive Directory Index.
 
-[![Latest Stable Version](https://poser.pugx.org/wangningkai/olaindex/v/stable)](https://packagist.org/packages/wangningkai/olaindex)
-[![GitHub stars](https://img.shields.io/github/stars/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/network)
-[![GitHub license](https://img.shields.io/github/license/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/blob/master/LICENSE)
 
 ![OLAINDEX](https://i.loli.net/2018/10/11/5bbf40831f294.jpg)
 
@@ -50,9 +46,13 @@ OLAINDEX-CMD [https://github.com/WangNingkai/OLAINDEX-CMD](https://github.com/Wa
 
 > 本项目基于 Laravel 开发，新手建议查看 laravel 的环境要求再进行部署。
 
-**再次强调：请参考 wiki 说明，确保操作环境达到要求！如出现错误提示，建议提供完整截图或相关完整报错代码**
+**强调：请参考 wiki 说明，确保操作环境达到要求！如出现错误提示，建议提供完整截图或相关完整报错代码**
 
-**帮助文档 ：** [Wiki](https://github.com/WangNingkai/OLAINDEX/wiki)
+
+**帮助文档 ：**
+
+* [Github](https://github.com/WangNingkai/OLAINDEX/wiki)
+* [看云](https://github.com/WangNingkai/OLAINDEX/wiki)
 
 ## 更新升级
 
