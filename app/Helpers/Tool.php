@@ -281,13 +281,7 @@ class Tool
     public static function convertPath($path, $isQuery = true, $isFile = false)
     {
         $path = self::getAbsolutePath($path);
-        $origin_path = trim($path, '/');
-        $path_array = explode('/', $origin_path);
-        $base = ['home', 'view', 'show', 'down'];
-        if (in_array($path_array[0], $base)) {
-            unset($path_array[0]);
-            $query_path = implode('/', $path_array);
-        } else $query_path = $origin_path;
+        $query_path = trim($path, '/');
         if (!$isQuery) return $query_path;
         $query_path = self::handleUrl(rawurldecode($query_path));
         $root = trim(self::handleUrl(self::config('root')), '/');

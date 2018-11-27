@@ -75,8 +75,10 @@ class IndexController extends Controller
      */
     public function list(Request $request)
     {
-        $graphPath = Tool::convertPath($request->getPathInfo());
-        $origin_path = rawurldecode(Tool::convertPath($request->getPathInfo(), false));
+        $realPath = $request->route()->parameter('query') ?? '/';
+        $graphPath = Tool::convertPath($realPath);
+        $origin_path = rawurldecode(Tool::convertPath($realPath, false));
+        $path_array = $origin_path ? explode('/', $origin_path) : [];
         // 获取列表
         $origin_items = Cache::remember('one:list:' . $graphPath, $this->expires, function () use ($graphPath) {
             $result = OneDrive::getChildrenByPath($graphPath);
@@ -118,7 +120,6 @@ class IndexController extends Controller
         // 处理 head/readme
         $head = array_key_exists('HEAD.md', $origin_items) ? Tool::markdown2Html(Tool::getFileContent($origin_items['HEAD.md']['@microsoft.graph.downloadUrl'])) : '';
         $readme = array_key_exists('README.md', $origin_items) ? Tool::markdown2Html(Tool::getFileContent($origin_items['README.md']['@microsoft.graph.downloadUrl'])) : '';
-        $path_array = $origin_path ? explode('/', $origin_path) : [];
         if (!session()->has('LogInfo')) $origin_items = array_except($origin_items, ['README.md', 'HEAD.md', '.password', '.deny']);
         $items = Tool::paginate($origin_items, 20);
         return view('one', compact('items', 'origin_items', 'origin_path', 'path_array', 'head', 'readme', 'hasImage'));
@@ -132,8 +133,9 @@ class IndexController extends Controller
      */
     public function show(Request $request)
     {
-        $graphPath = Tool::convertPath($request->getPathInfo(), true, true);
-        $origin_path = urldecode(Tool::convertPath($request->getPathInfo(), false));
+        $realPath = $request->route()->parameter('query') ?? '/';
+        $graphPath = Tool::convertPath($realPath, true, true);
+        $origin_path = urldecode(Tool::convertPath($realPath, false));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
         // 获取文件
         $file = Cache::remember('one:file:' . $graphPath, $this->expires, function () use ($graphPath) {
@@ -194,7 +196,8 @@ class IndexController extends Controller
      */
     public function download(Request $request)
     {
-        $graphPath = Tool::convertPath($request->getPathInfo(), true, true);
+        $realPath = $request->route()->parameter('query') ?? '/';
+        $graphPath = Tool::convertPath($realPath, true, true);
         $file = Cache::remember('one:file:' . $graphPath, $this->expires, function () use ($graphPath) {
             $result = OneDrive::getItemByPath($graphPath);
             $response = OneDrive::responseToArray($result);
@@ -230,7 +233,8 @@ class IndexController extends Controller
      */
     public function view(Request $request)
     {
-        $graphPath = Tool::convertPath($request->getPathInfo(), true, true);
+        $realPath = $request->route()->parameter('query') ?? '/';
+        $graphPath = Tool::convertPath($realPath, true, true);
         $file = Cache::remember('one:file:' . $graphPath, $this->expires, function () use ($graphPath) {
             $result = OneDrive::getItemByPath($graphPath);
             $response = OneDrive::responseToArray($result);
