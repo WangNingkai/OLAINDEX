@@ -100,7 +100,7 @@ function init_install(){
     composer install
     chmod -R 755 storage
     chown -R www:www *
-    cp storage/app/config.sample.json storage/app/config.json
+    cp storage/app/example.config.json storage/app/config.json
     chmod 777 storage/app/config.json
     php artisan od:install
 }
