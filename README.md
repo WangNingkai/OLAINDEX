@@ -51,8 +51,7 @@ OLAINDEX-CMD [https://github.com/WangNingkai/OLAINDEX-CMD](https://github.com/Wa
 
 **帮助文档 ：**
 
-* [Github](https://github.com/WangNingkai/OLAINDEX/wiki)
-* [看云](https://github.com/WangNingkai/OLAINDEX/wiki)
+* [Github Wiki](https://github.com/WangNingkai/OLAINDEX/wiki)
 
 ## 更新升级
 
