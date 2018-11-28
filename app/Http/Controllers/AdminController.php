@@ -146,8 +146,8 @@ class AdminController extends Controller
                 'image_hosting_path' => ''
             ];
             Tool::updateConfig($data);
-            Tool::showMessage('保存成功！');
             Cache::forget('one:account');
+            Tool::showMessage('保存成功！');
             return redirect()->route('bind');
         }
     }
