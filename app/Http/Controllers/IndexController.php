@@ -77,6 +77,17 @@ class IndexController extends Controller
         $graphPath = Tool::convertPath($realPath);
         $origin_path = rawurldecode(Tool::convertPath($realPath, false));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
+        $result = OneDrive::getItemByPath($graphPath);
+        $response = OneDrive::responseToArray($result);
+        if ($response['code'] !== 200) {
+            Tool::showMessage($response['msg'], false);
+            return redirect()->route('message');
+        }
+        $item = $response['data'];
+        if (array_has($item, 'file')) {
+            Cache::put('one:file:' . $graphPath, $item, $this->expires);
+            return redirect()->away($item['@microsoft.graph.downloadUrl']);
+        }
         // 获取列表
         $origin_items = Cache::remember('one:list:' . $graphPath, $this->expires, function () use ($graphPath) {
             $result = OneDrive::getChildrenByPath($graphPath);
@@ -205,6 +216,7 @@ class IndexController extends Controller
                 return null;
             }
         });
+        if (array_has($file, 'folder')) abort(403);
         $url = $file['@microsoft.graph.downloadUrl'];
         return redirect()->away($url);
     }
@@ -242,6 +254,7 @@ class IndexController extends Controller
                 return null;
             }
         });
+        if (array_has($file, 'folder')) abort(403);
         $download = $file['@microsoft.graph.downloadUrl'];
         return redirect()->away($download);
     }

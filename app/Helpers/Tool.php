@@ -86,7 +86,6 @@ class Tool
         $parser = new \Parsedown();
         if (!$line) {
             $html = $parser->text($markdown);
-            $html = str_replace('<code class="', '<code class="lang-', $html);
         } else {
             $html = $parser->line($markdown);
         }
