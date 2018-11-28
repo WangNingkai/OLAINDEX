@@ -76,7 +76,7 @@ class OauthController extends Controller
             if (!$request->has('code')) {
                 return $this->authorizeLogin();
             } else {
-                if ($request->get('state') === '' || !Session::has('state') || ($request->get('state') != Session::get('state'))) {
+                if (empty($request->get('state')) || !Session::has('state') || ($request->get('state') !== Session::get('state'))) {
                     Tool::showMessage('Invalid state', false);
                     Session::forget('state');
                     return view('message');
@@ -99,7 +99,7 @@ class OauthController extends Controller
                     $token = json_decode($response->getBody()->getContents(), true);
                     $access_token = $token['access_token'];
                     $refresh_token = $token['refresh_token'];
-                    $expires = $token['expires_in'] != 0 ? time() + $token['expires_in'] : 0;
+                    $expires = (int)$token['expires_in'] !== 0 ? time() + $token['expires_in'] : 0;
                     $data = [
                         'access_token' => $access_token,
                         'refresh_token' => $refresh_token,
@@ -116,7 +116,6 @@ class OauthController extends Controller
             Tool::showMessage('Invalid Request', false);
             return view('message');
         }
-
     }
 
     /**

@@ -18,7 +18,7 @@ class Tool
      */
     public static function hasConfig()
     {
-        if (self::config('client_id') !== '' && self::config('client_secret') !== '' && self::config('redirect_uri') !== '') {
+        if (!empty(self::config('client_id')) && !empty(self::config('client_secret')) && !empty(self::config('redirect_uri'))) {
             return true;
         } else return false;
     }
@@ -29,7 +29,7 @@ class Tool
      */
     public static function hasBind()
     {
-        if (self::config('access_token') !== '' && self::config('refresh_token') !== '' && self::config('access_token_expires') !== '') {
+        if (!empty(self::config('access_token')) && !empty(self::config('refresh_token')) && !empty(self::config('access_token_expires'))) {
             return true;
         } else return false;
     }
@@ -86,7 +86,6 @@ class Tool
         $parser = new \Parsedown();
         if (!$line) {
             $html = $parser->text($markdown);
-            $html = str_replace('<code class="', '<code class="lang-', $html);
         } else {
             $html = $parser->line($markdown);
         }
@@ -281,13 +280,7 @@ class Tool
     public static function convertPath($path, $isQuery = true, $isFile = false)
     {
         $path = self::getAbsolutePath($path);
-        $origin_path = trim($path, '/');
-        $path_array = explode('/', $origin_path);
-        $base = ['home', 'view', 'show', 'down'];
-        if (in_array($path_array[0], $base)) {
-            unset($path_array[0]);
-            $query_path = implode('/', $path_array);
-        } else $query_path = $origin_path;
+        $query_path = trim($path, '/');
         if (!$isQuery) return $query_path;
         $query_path = self::handleUrl(rawurldecode($query_path));
         $root = trim(self::handleUrl(self::config('root')), '/');

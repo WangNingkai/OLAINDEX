@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Helpers\OneDrive;
 use App\Helpers\Tool;
 use Illuminate\Console\Command;
 
@@ -33,8 +34,6 @@ class Test extends Command
 
     public function handle()
     {
-        $file = storage_path('app/config.json');
-        $res = Tool::readJson($file);
-        dd($res);
+        Tool::refreshToken();
     }
 }
