@@ -77,7 +77,7 @@ class Login extends Command
      */
     public function handle()
     {
-        $defined_redirect = Constants::REDIRECT_URI;
+        $default_redirect = Constants::DEFAULT_REDIRECT_URI;
         if (Tool::hasBind()) {
             $this->warn('已登录绑定');
             return;
@@ -87,7 +87,7 @@ class Login extends Command
                 $client_id = $this->ask('请输入 client_id');
                 $client_secret = $this->ask('请输入 client_secret');
                 $account_type = $type = $this->choice('请选择账户类型(com:国际通用 cn:世纪互联)', ['com', 'cn'], 'com');
-                $redirect_uri = $defined_redirect;
+                $redirect_uri = $default_redirect;
                 $data = [
                     'client_id' => $client_id,
                     'client_secret' => $client_secret,
@@ -99,8 +99,8 @@ class Login extends Command
             }
             return;
         }
-        if ($this->redirect_uri !== $defined_redirect) {
-            $this->warn("此方法仅适用于以 {$defined_redirect} 作中转的应用");
+        if ($this->redirect_uri !== $default_redirect) {
+            $this->warn("此方法仅适用于以 {$default_redirect} 作中转的应用");
             return;
         };
         $values = [
