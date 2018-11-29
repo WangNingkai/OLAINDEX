@@ -56,8 +56,8 @@ class OauthController extends Controller
         $this->client_id = Tool::config('client_id');
         $this->client_secret = Tool::config('client_secret');
         $this->redirect_uri = Tool::config('redirect_uri');
-        $this->authorize_url = Tool::config('account_type') === 'com' ? Constants::AUTHORITY_URL . Constants::AUTHORIZE_ENDPOINT : Constants::AUTHORITY_URL_21V . Constants::AUTHORIZE_ENDPOINT_21V;
-        $this->access_token_url = Tool::config('account_type') === 'com' ? Constants::AUTHORITY_URL . Constants::TOKEN_ENDPOINT : Constants::AUTHORITY_URL_21V . Constants::TOKEN_ENDPOINT_21V;
+        $this->authorize_url = Tool::config('account_type', 'com') === 'com' ? Constants::AUTHORITY_URL . Constants::AUTHORIZE_ENDPOINT : Constants::AUTHORITY_URL_21V . Constants::AUTHORIZE_ENDPOINT_21V;
+        $this->access_token_url = Tool::config('account_type', 'com') === 'com' ? Constants::AUTHORITY_URL . Constants::TOKEN_ENDPOINT : Constants::AUTHORITY_URL_21V . Constants::TOKEN_ENDPOINT_21V;
         $this->scopes = Constants::SCOPES;
     }
 
@@ -92,7 +92,7 @@ class OauthController extends Controller
                         'code' => $code,
                         'grant_type' => 'authorization_code',
                     ];
-                    if (Tool::config('account_type') === 'cn') $form_params = array_add($form_params, 'resource', Constants::REST_ENDPOINT_21V);
+                    if (Tool::config('account_type', 'com') === 'cn') $form_params = array_add($form_params, 'resource', Constants::REST_ENDPOINT_21V);
                     $response = $client->post($this->access_token_url, [
                         'form_params' => $form_params
                     ]);
@@ -160,7 +160,7 @@ class OauthController extends Controller
                 'refresh_token' => $existingRefreshToken,
                 'grant_type' => 'refresh_token',
             ];
-            if (Tool::config('account_type') === 'cn') $form_params = array_add($form_params, 'resource', Constants::REST_ENDPOINT_21V);
+            if (Tool::config('account_type', 'com') === 'cn') $form_params = array_add($form_params, 'resource', Constants::REST_ENDPOINT_21V);
             $response = $client->post($this->access_token_url, [
                 'form_params' => $form_params,
             ]);
