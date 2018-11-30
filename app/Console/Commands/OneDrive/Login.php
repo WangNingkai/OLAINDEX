@@ -82,12 +82,12 @@ class Login extends Command
             $this->warn('已登录绑定');
             return;
         }
-        if ($this->client_id === '' || $this->client_secret === '' || $this->redirect_uri === '') {
+        if (!Tool::hasConfig()) {
             if ($this->confirm('未配置client_id、client_secret，现在配置吗？')) {
                 $client_id = $this->ask('请输入 client_id');
                 $client_secret = $this->ask('请输入 client_secret');
+                $redirect_uri = $this->ask('请输入 redirect_uri', $default_redirect);
                 $account_type = $type = $this->choice('请选择账户类型(com:国际通用 cn:世纪互联)', ['com', 'cn'], 'com');
-                $redirect_uri = $default_redirect;
                 $data = [
                     'client_id' => $client_id,
                     'client_secret' => $client_secret,
