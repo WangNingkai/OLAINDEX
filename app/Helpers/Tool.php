@@ -324,7 +324,7 @@ class Tool
     public static function getFileContent($url, $cache = true)
     {
         if ($cache) {
-            return Cache::remember('one:content:' . $url, self::config('cache_expires'), function () use ($url) {
+            return Cache::remember('one:content:' . $url, self::config('expires'), function () use ($url) {
                 try {
                     $client = new Client();
                     $resp = $client->request('get', $url, ['stream' => true]);
