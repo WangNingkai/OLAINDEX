@@ -50,8 +50,7 @@ class Install extends Command
             $this->warn('目录不存在 .env.example 文件，请确保拉取仓库完整！');
             exit;
         }
-        $app_url = $this->ask('请输入本机绑定域名');
-        $envExample = file_get_contents(base_path('.env.example'));
+        $app_url = $this->ask('请输入本机绑定域名(绑定登录需要)');
         $search_db = [
             'APP_KEY=',
             'APP_URL=http://localhost:8000',
@@ -60,6 +59,7 @@ class Install extends Command
             'APP_KEY=' . str_random(32),
             'APP_URL=' . $app_url,
         ];
+        $envExample = file_get_contents(base_path('.env.example'));
         $env = str_replace($search_db, $replace_db, $envExample);
         if (file_exists(base_path('.env'))) {
             if ($this->confirm('目录存在 .env 文件，即将覆盖，继续吗？')) {
@@ -69,7 +69,6 @@ class Install extends Command
         } else {
             file_put_contents(base_path('.env'), $env);
         }
-        $this->info('应用回调地址请填写：【 ' . trim($app_url, '/') . '/oauth 】');
         $this->call('config:cache'); // 生成配置缓存否则报错
         $this->warn('后台登录原始密码：【 12345678 】');
         $this->info('请手动执行 【 chmod 777 storage/app/config.json 】 确保配置文件权限，否则会出现403错误');
