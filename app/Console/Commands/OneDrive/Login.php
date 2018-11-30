@@ -77,32 +77,30 @@ class Login extends Command
      */
     public function handle()
     {
-        $default_redirect = Constants::DEFAULT_REDIRECT_URI;
         if (Tool::hasBind()) {
-            $this->warn('已登录绑定');
-            return;
+            $this->error('Already bind account');
+            exit;
         }
         if (!Tool::hasConfig()) {
-            if ($this->confirm('未配置client_id、client_secret，现在配置吗？')) {
-                $client_id = $this->ask('请输入 client_id');
-                $client_secret = $this->ask('请输入 client_secret');
-                $redirect_uri = $this->ask('请输入 redirect_uri', $default_redirect);
-                $account_type = $type = $this->choice('请选择账户类型(com:国际通用 cn:世纪互联)', ['com', 'cn'], 'com');
+            if ($this->confirm('Missing client_id & client_secret,continue?')) {
+                $account_type = $this->choice('Please choose a version (com:World cn:21Vianet)', ['com', 'cn'], 'com');
+                $client_id = $this->ask('client_id');
+                $client_secret = $this->ask('client_secret');
+                $redirect_uri = $this->ask('redirect_uri', Constants::DEFAULT_REDIRECT_URI);
+                $cache_expires = $this->ask('cache expires (min)');
                 $data = [
                     'client_id' => $client_id,
                     'client_secret' => $client_secret,
                     'redirect_uri' => $redirect_uri,
-                    'account_type' => $account_type
+                    'account_type' => $account_type,
+                    'expires' => $cache_expires,
                 ];
                 Tool::updateConfig($data);
-                $this->warn('请重新运行此命令登录');
+                $this->info('Configuration completed!');
+                $this->warn('Please run this command again!');
             }
-            return;
+            exit('Already out!');
         }
-        if ($this->redirect_uri !== $default_redirect) {
-            $this->warn("此方法仅适用于以 {$default_redirect} 作中转的应用");
-            return;
-        };
         $values = [
             'client_id' => $this->client_id,
             'redirect_uri' => $this->redirect_uri,
@@ -111,8 +109,8 @@ class Login extends Command
         ];
         $query = http_build_query($values, '', '&', PHP_QUERY_RFC3986);
         $authorizationUrl = $this->authorize_url . "?{$query}";
-        $this->info("请复制此链接到浏览器打开获取 【code】\n{$authorizationUrl}");
-        $code = $this->ask('请输入浏览器获取 【code】');
+        $this->info("Please copy this link to your browser to open.\n{$authorizationUrl}");
+        $code = $this->ask('Please enter the code obtained by the browser.');
         try {
             $client = new Client();
             $form_params = [
@@ -136,7 +134,7 @@ class Login extends Command
                 'access_token_expires' => $expires
             ];
             Tool::updateConfig($data);
-            $this->info('登陆成功');
+            $this->info('Login Success!');
             $this->info('Account [' . Tool::bindAccount() . ']');
         } catch (ClientException $e) {
             $this->warn($e->getMessage());

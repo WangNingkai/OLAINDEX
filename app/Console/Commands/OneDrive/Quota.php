@@ -42,7 +42,7 @@ class Quota extends Command
         $this->call('od:refresh');
         $headers = array_keys(is_array(Tool::quota()) ? Tool::quota() : []);
         if (!$headers) {
-            $this->warn('请稍后重试...');
+            $this->warn('Please try again later!');
             exit;
         }
         $quota[] = Tool::quota();

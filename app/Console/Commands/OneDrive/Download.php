@@ -14,7 +14,8 @@ class Download extends Command
      * @var string
      */
     protected $signature = 'od:download
-                            {remote : 文件地址}';
+                            {remote? : Download Remote Path}
+                            {--id= : Download Remote File ID}';
 
     /**
      * The console command description.
@@ -38,13 +39,20 @@ class Download extends Command
      */
     public function handle()
     {
-        $this->info('请稍等...');
         $this->call('od:refresh');
-        $target = $this->argument('remote');
-        $target_path = trim(Tool::handleUrl($target), '/');
-        $path = empty($target_path) ? '/' : ":/{$target_path}:/";
-        $result = OneDrive::getItemByPath($path);
+        $remote = $this->argument('remote');
+        $id = $this->option('id');
+        if ($id) {
+            $result = OneDrive::getItem($id);
+        } else {
+            if (empty($remote)) exit('Parameters Missing!');
+            $graphPath = OneDrive::getRequestPath($remote);
+            $result = OneDrive::getItemByPath($graphPath);
+        }
         $response = OneDrive::responseToArray($result);
-        $response['code'] === 200 ? $this->info("下载地址：{$response['data']['@microsoft.graph.downloadUrl']}") : $this->warn("获取文件失败!\n{$response['msg']} ");
+        if ($response['code'] === 200) {
+            $download = $response['data']['@microsoft.graph.downloadUrl'];
+            $this->info("Download Link:\n{$download}");
+        } else  $this->warn("Failed!\n{$response['msg']} ");
     }
 }

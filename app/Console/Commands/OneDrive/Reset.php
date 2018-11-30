@@ -11,7 +11,7 @@ class Reset extends Command
      *
      * @var string
      */
-    protected $signature = 'od:reset {--f|force}';
+    protected $signature = 'od:reset {--f|force  : Force Reset}';
 
     /**
      * The console command description.
@@ -40,7 +40,7 @@ class Reset extends Command
         if ($this->option('force')) {
            return $this->reset();
         } else {
-            if ($this->confirm('重置将会抹去全部数据，继续吗？')) {
+            if ($this->confirm('Reset will erase all data, continue?')) {
                 return $this->reset();
             }
         }
@@ -53,6 +53,6 @@ class Reset extends Command
     {
         $this->call('cache:clear');
         copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
-        $this->warn('重置完成！');
+        $this->info('Reset Completed！');
     }
 }

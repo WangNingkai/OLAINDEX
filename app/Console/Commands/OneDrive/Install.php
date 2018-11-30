@@ -39,18 +39,18 @@ class Install extends Command
     {
         $this->info(Constants::LOGO);
         $this->call('cache:clear');
-        $this->warn('确保已经手动执行以下目录读写权限命令！');
+        $this->warn('Please make sure you have rights to configure!');
         $this->info('chmod -R 755 storage/* && chown -R www:www *');
         if (!file_exists(storage_path('app/config.json'))) {
-            $this->warn('未检测到配置文件！正在创建配置文件！');
+            $this->warn('Missing the Configuration File');
             copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
-            $this->info('创建完成！');
+            $this->info('Done!');
         };
         if (!file_exists(base_path('.env.example'))) {
-            $this->warn('目录不存在 .env.example 文件，请确保拉取仓库完整！');
+            $this->warn('No [.env.example] File,please make sure the project complete!');
             exit;
         }
-        $app_url = $this->ask('请输入本机绑定域名(绑定登录需要)');
+        $app_url = $this->ask('Bind Domain(For Authorize)');
         $search_db = [
             'APP_KEY=',
             'APP_URL=http://localhost:8000',
@@ -62,7 +62,7 @@ class Install extends Command
         $envExample = file_get_contents(base_path('.env.example'));
         $env = str_replace($search_db, $replace_db, $envExample);
         if (file_exists(base_path('.env'))) {
-            if ($this->confirm('目录存在 .env 文件，即将覆盖，继续吗？')) {
+            if ($this->confirm('Already have [.env] ,overwrite?')) {
                 @unlink(base_path('.env'));
                 file_put_contents(base_path('.env'), $env);
             }
@@ -70,8 +70,8 @@ class Install extends Command
             file_put_contents(base_path('.env'), $env);
         }
         $this->call('config:cache'); // 生成配置缓存否则报错
-        $this->warn('后台登录原始密码：【 12345678 】');
-        $this->info('请手动执行 【 chmod 777 storage/app/config.json 】 确保配置文件权限，否则会出现403错误');
-        $this->warn('预安装完成，请继续下面的操作！');
+        $this->warn('Password：[ 12345678 ]');
+        $this->info('Please run this command to make sure you have the permission [ chmod 777 storage/app/config.json ]');
+        $this->warn('All Done!');
     }
 }

@@ -13,8 +13,7 @@ class Share extends Command
      *
      * @var string
      */
-    protected $signature = 'od:share
-                            {remote : 文件地址}';
+    protected $signature = 'od:share {remote : Remote Path}';
 
     /**
      * The console command description.
@@ -38,24 +37,18 @@ class Share extends Command
      */
     public function handle()
     {
-        $this->info('请稍等...');
         $this->call('od:refresh');
-        $target = $this->argument('remote');
-        $target_path = trim(Tool::handleUrl($target), '/');
-        $id_request = OneDrive::responseToArray(OneDrive::pathToItemId(empty($target_path) ? '/' : ":/{$target_path}:/"));
-        if ($id_request['code'] === 200)
-            $_id = $id_request['data']['id'];
-        else {
-            $this->warn('路径异常！');
-            exit;
-        }
-        /* @var $result \Illuminate\Http\JsonResponse */
-        $result = OneDrive::createShareLink($_id);
-        $response = OneDrive::responseToArray($result);
+        $this->info('Please waiting...');
+        $remote = $this->argument('remote');
+        $_remote = OneDrive::responseToArray(OneDrive::pathToItemId(OneDrive::getRequestPath($remote)));
+        $remote_id = $_remote['code'] === 200 ? array_get($_remote, 'data.id') : exit('Remote Path Abnormal');
+        $share = OneDrive::createShareLink($remote_id);
+        $response = OneDrive::responseToArray($share);
         if ($response['code'] === 200) {
             $direct = str_replace('15/download.aspx', '15/guestaccess.aspx', $response['data']['redirect']);
-            $this->info("创建成功！\n分享链接： {$direct}");
-        } else
-            $this->warn("创建失败！\n{$response['msg']} ");
+            $this->info("Success! Share Link:\n{$direct}");
+        } else {
+            $this->warn("Failed!\n{$response['msg']}");
+        }
     }
 }

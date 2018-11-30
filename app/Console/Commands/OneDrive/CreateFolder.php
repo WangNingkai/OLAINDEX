@@ -14,8 +14,8 @@ class CreateFolder extends Command
      * @var string
      */
     protected $signature = 'od:mkdir
-                            {name : 文件夹名称}
-                            {target : 目标地址}';
+                            {name : Floder Name}
+                            {remote : Remote Path}';
 
     /**
      * The console command description.
@@ -41,11 +41,11 @@ class CreateFolder extends Command
     {
         $this->call('od:refresh');
         $name = $this->argument('name');
-        $target = $this->argument('target');
-        $target_path = trim(Tool::handleUrl($target), '/');
-        $path = empty($target_path) ? '/' : ":/{$target_path}:/";
-        $result = OneDrive::mkdirByPath($name, $path);
+        $remote = $this->argument('remote');
+        $graphPath = OneDrive::getRequestPath($remote);
+        $result = OneDrive::mkdirByPath($name, $graphPath);
         $response = OneDrive::responseToArray($result);
-        $response['code'] === 200 ? $this->info("创建目录成功!") : $this->warn("创建目录失败!\n{$response['msg']} ");
+        $this->call('cache:clear');
+        $response['code'] === 200 ? $this->info("Folder Created!") : $this->warn("Failed!\n{$response['msg']} ");
     }
 }

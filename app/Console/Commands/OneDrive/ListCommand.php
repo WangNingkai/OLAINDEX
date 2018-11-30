@@ -56,8 +56,8 @@ Options:
 Available commands:
 
   od:command   List Command
-  od:cp        Copy File
-  od:direct    DirectDownloadLink For File
+  od:cp        Copy Item
+  od:direct    Create Direct Share Link
   od:download  Download File
   od:info      OneDrive Info
   od:install   Install App
@@ -65,16 +65,19 @@ Available commands:
   od:logout    Account Logout
   od:ls        List Items
   od:mkdir     Create New Folder
-  od:mv        Move File
+  od:mv        Move Item
+  od:offline   Remote download links to your drive
   od:password  Reset Password
   od:refresh   Refresh Token
   od:reset     Reset App
-  od:rm        Delete File
-  od:search    Search Items
+  od:rm        Delete Item
+  od:search    Find Items
   od:share     ShareLink For File
   od:switch    Switch Type
   od:update    Update App
   od:upload    UploadFile File
+  od:whereis   Find The Item's Remote Path
+
 EOF;
 
         $this->info($output);

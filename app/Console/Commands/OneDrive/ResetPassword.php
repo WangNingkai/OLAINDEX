@@ -41,6 +41,6 @@ class ResetPassword extends Command
     {
         $password = str_random(8);
         Tool::updateConfig(['password' => md5($password)]);
-        $this->info("重置密码成功，新密码：【 {$password} 】");
+        $this->info("New Password:[ {$password} ]");
     }
 }

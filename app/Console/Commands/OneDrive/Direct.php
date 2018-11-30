@@ -13,15 +13,14 @@ class Direct extends Command
      *
      * @var string
      */
-    protected $signature = 'od:direct
-                            {remote : 文件地址}';
+    protected $signature = 'od:direct {remote : RemotePath}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'DirectDownloadLink For File';
+    protected $description = 'Create Direct Share Link';
 
     /**
      * Create a new command instance.
@@ -38,20 +37,13 @@ class Direct extends Command
      */
     public function handle()
     {
-        $this->info('请稍等...');
         $this->call('od:refresh');
-        $target = $this->argument('remote');
-        $target_path = trim(Tool::handleUrl($target), '/');
-        $id_request = OneDrive::responseToArray(OneDrive::pathToItemId(empty($target_path) ? '/' : ":/{$target_path}:/"));
-        if ($id_request['code'] === 200)
-            $_id = $id_request['data']['id'];
-        else {
-            $this->warn('路径异常!');
-            exit;
-        }
-        /* @var $result \Illuminate\Http\JsonResponse */
-        $result = OneDrive::createShareLink($_id);
-        $response = OneDrive::responseToArray($result);
-        $response['code'] === 200 ? $this->info("创建成功!\n永久直链地址： {$response['data']['redirect']}") : $this->warn("创建失败!\n{$response['msg']} ");
+        $this->info('Please waiting...');
+        $remote = $this->argument('remote');
+        $_remote = OneDrive::responseToArray(OneDrive::pathToItemId(OneDrive::getRequestPath($remote)));
+        $remote_id = $_remote['code'] === 200 ? array_get($_remote, 'data.id') : exit('Remote Path Abnormal');
+        $share = OneDrive::createShareLink($remote_id);
+        $response = OneDrive::responseToArray($share);
+        $response['code'] === 200 ? $this->info("Success! Direct Link:\n{$response['data']['redirect']}") : $this->warn("Failed!\n{$response['msg']} ");
     }
 }

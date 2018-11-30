@@ -12,7 +12,7 @@ class Logout extends Command
      *
      * @var string
      */
-    protected $signature = 'od:logout {--f|force}';
+    protected $signature = 'od:logout {--f|force : Force Logout}';
 
     /**
      * The console command description.
@@ -38,8 +38,7 @@ class Logout extends Command
     public function handle()
     {
         if ($this->option('force')) return $this->logout();
-        $this->call('cache:clear');
-        if ($this->confirm('重置账号可能出现无法登录的错误，建议重置应用，确认继续吗?')) {
+        if ($this->confirm('Confirm Logout?')) {
             return $this->logout();
         }
     }
@@ -59,7 +58,8 @@ class Logout extends Command
         ];
         $saved = Tool::updateConfig($data);
         if ($saved) {
-            $this->warn('重置成功，请重新登录!');
+            $this->call('cache:clear');
+            $this->warn('Logout Success!');
         }
     }
 }

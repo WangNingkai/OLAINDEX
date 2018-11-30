@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title','Home/'.implode('/',$path_array))
+@section('title',\App\Helpers\Tool::config('name','OLAINDEX'))
 @section('css')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/css/blueimp-gallery-indicator.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/css/blueimp-gallery.min.css">

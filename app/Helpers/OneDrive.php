@@ -333,7 +333,7 @@ class OneDrive
     }
 
     /**
-     * Search
+     * Find
      * @param $path
      * @param $query
      * @return mixed
@@ -768,6 +768,23 @@ class OneDrive
         } else {
             return json_decode($data, true)['data'];
         }
+    }
+
+    /**
+     * Handle Request Path
+     * @param $path
+     * @param bool $isFile
+     * @return string
+     */
+    public static function getRequestPath($path, $isFile = false)
+    {
+        $origin_path = self::getAbsolutePath($path);
+        $query_path = trim($origin_path, '/');
+        $query_path = self::getEncodeUrl(rawurldecode($query_path));
+        $request_path = empty($query_path) ? '/' : ":/{$query_path}:/";
+        if ($isFile)
+            return rtrim($request_path, ':/');
+        return $request_path;
     }
 
     /**

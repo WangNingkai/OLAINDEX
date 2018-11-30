@@ -12,7 +12,7 @@ class SwitchType extends Command
      *
      * @var string
      */
-    protected $signature = 'od:switch {--type= : 转换类型}';
+    protected $signature = 'od:switch {--type= : Switch Type}';
 
     /**
      * The console command description.
@@ -38,14 +38,14 @@ class SwitchType extends Command
             $this->call('od:reset', ['--force' => true]);
             $type = $this->option('type');
         } else {
-            if ($this->confirm('切换版本将会删除全部数据确定吗？')) {
+            if ($this->confirm('Switch type will erase all data,continue?')) {
                 $this->call('od:reset', ['--yes' => true]);
-                $type = $this->choice('请选择切换的版本(com:国际通用 cn:世纪互联)', ['com', 'cn'], 'com');
+                $type = $this->choice('Please choose a version (com:World cn:21Vianet)', ['com', 'cn'], 'com');
             } else exit;
         }
         $data = ['account_type' => $type];
         $saved = Tool::updateConfig($data);
-        $saved ? $this->info('切换成功！') : $this->warn('切换失败！');
+        $saved ? $this->info('Success!') : $this->warn('Failed!');
 
     }
 }

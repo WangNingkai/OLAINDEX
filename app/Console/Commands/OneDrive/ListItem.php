@@ -15,9 +15,11 @@ class ListItem extends Command
      * @var string
      */
     protected $signature = 'od:ls
-                            {remote? : 文件地址}
-                            {--offset=0 : 起始位置}
-                            {--limit=10 : 限制数量}';
+                           {remote? : Remote Path}
+                            {--a|all : List All Info}
+                            {--id= : ID}
+                            {--offset=0 : Start}
+                            {--limit=20 : Length}';
 
     /**
      * The console command description.
@@ -39,18 +41,27 @@ class ListItem extends Command
     public function handle()
     {
         $this->call('od:refresh');
-        $target = $this->argument('remote');
+        $remote = $this->argument('remote');
+        $id = $this->option('id');
         $offset = $this->option('offset');
         $length = $this->option('limit');
-        $target_path = trim(Tool::handleUrl($target), '/');
-        $graphPath = empty($target_path) ? '/' : ":/{$target_path}:/";
-        $data = Cache::remember('one:list:' . $graphPath, Tool::config('expires'), function () use ($graphPath) {
-            $result = OneDrive::getChildrenByPath($graphPath);
-            $response = OneDrive::responseToArray($result);
-            return $response['code'] === 200 ? $response['data'] : [];
-        });
+        if ($id) {
+            $data = Cache::remember('one:list:id:' . $id, Tool::config('expires'), function () use ($id) {
+                $result = OneDrive::getChildren($id);
+                $response = OneDrive::responseToArray($result);
+                return $response['code'] === 200 ? $response['data'] : [];
+            });
+        } else {
+            $graphPath = OneDrive::getRequestPath($remote);
+            $data = Cache::remember('one:list:path:' . $graphPath, Tool::config('expires'), function () use ($graphPath) {
+                $result = OneDrive::getChildrenByPath($graphPath);
+                $response = OneDrive::responseToArray($result);
+                return $response['code'] === 200 ? $response['data'] : [];
+            });
+        }
         if (!$data) {
-            $this->warn('出错了，请稍后重试...');
+            $this->error('Please confirm your options and try again later!');
+            $this->call('cache:clear');
             exit;
         }
         $data = $this->format($data);
@@ -73,7 +84,12 @@ class ListItem extends Command
             $time = date('M m H:i', strtotime($item['lastModifiedDateTime']));
             $folder = array_has($item, 'folder') ? array_get($item, 'folder.childCount') : '1';
             $owner = array_get($item, 'createdBy.user.displayName');
-            $list[] = [$type, $folder, $owner, $size, $time, $item['name']];
+            if ($this->option('all')) {
+                $content = [$type, $item['id'], $folder, $owner, $size, $time, $item['name']];
+            } else {
+                $content = [$type, $folder, $owner, $size, $time, $item['name']];
+            }
+            $list[] = $content;
         }
         return $list;
     }

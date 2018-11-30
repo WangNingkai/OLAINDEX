@@ -6,7 +6,7 @@ use App\Helpers\Tool;
 use App\Helpers\OneDrive;
 use Illuminate\Console\Command;
 
-class Search extends Command
+class Find extends Command
 {
     /**
      * The name and signature of the console command.
@@ -14,18 +14,18 @@ class Search extends Command
      * @var string
      */
     protected $signature = 'od:search
-                            {keyword : 关键词}
+                            {keywords : Keywords}
                             {--id= : id}
-                            {--remote=/ : 查询路径}
-                            {--offset=0 : 起始位置}
-                            {--limit=10 : 限制数量}';
+                            {--remote=/ : Query Path}
+                            {--offset=0 : Start}
+                            {--limit=20 : Length}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Search Items';
+    protected $description = 'Find Items';
 
     /**
      * Create a new command instance.
@@ -44,21 +44,20 @@ class Search extends Command
     {
         $this->info('请稍等...');
         $this->call('od:refresh');
-        $keyword = $this->argument('keyword');
-        $target = $this->option('remote');
+        $keywords = $this->argument('keywords');
+        $remote = $this->option('remote');
         $offset = $this->option('offset');
         $length = $this->option('limit');
-        $target_path = empty(Tool::handleUrl($target)) ? '/' : ':/' . Tool::handleUrl($target) . ':/';
+        $graphPath = OneDrive::getRequestPath($remote);
         if ($id = $this->option('id')) {
             $result = OneDrive::getItem($id);
         } else {
-            $result = OneDrive::search($target_path, $keyword);
+            $result = OneDrive::search($graphPath, $keywords);
         }
-        /* @var $result \Illuminate\Http\JsonResponse */
         $response = OneDrive::responseToArray($result);
         $data = $response['code'] === 200 ? $response['data'] : [];
         if (!$data) {
-            $this->warn('出错了，请稍后重试...');
+            $this->warn('Please try again later');
             exit;
         }
         if ($id = $this->option('id')) {
@@ -87,9 +86,8 @@ class Search extends Command
             $owner = array_get($item, 'createdBy.user.displayName');
             if ($id = $this->option('id')) {
                 $result = OneDrive::itemIdToPath($item['id']);
-                /* @var $result \Illuminate\Http\JsonResponse */
                 $response = OneDrive::responseToArray($result);
-                $path = $response['code'] === 200 ? $response['data']['path'] : '获取目录失败';
+                $path = $response['code'] === 200 ? $response['data']['path'] : 'Failed Fetch Path!';
                 $content = [$type, $path, $folder, $owner, $size, $time, $item['name']];
             } else {
                 $content = [$type, $item['id'], $folder, $owner, $size, $time, $item['name']];
