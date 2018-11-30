@@ -135,7 +135,7 @@ class Login extends Command
             ];
             Tool::updateConfig($data);
             $this->info('Login Success!');
-            $this->info('Account [' . Tool::bindAccount() . ']');
+            $this->info('Account [' . Tool::getBindAccount() . ']');
         } catch (ClientException $e) {
             $this->warn($e->getMessage());
             exit;

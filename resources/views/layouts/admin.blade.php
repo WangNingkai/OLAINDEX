@@ -92,12 +92,12 @@
         </div>
     @endif
     <div class="bg-white">
-        <p class="text-center text-muted">{{ \App\Helpers\Tool::bindAccount() }}</p>
+        <p class="text-center text-muted">{{ \App\Helpers\Tool::getBindAccount() }}</p>
         <p class="text-center">
-            <span class="text-info">状态: {{ \App\Helpers\Tool::quota('state') }} &nbsp;&nbsp;</span>
-            <span class="text-danger">已使用: {{ \App\Helpers\Tool::quota('used') }} &nbsp;&nbsp;</span>
-            <span class="text-warning">剩余: {{ \App\Helpers\Tool::quota('remaining') }} &nbsp;&nbsp;</span>
-            <span class="text-success">全部: {{ \App\Helpers\Tool::quota('total') }} &nbsp;&nbsp;</span>
+            <span class="text-info">状态: {{ \App\Helpers\Tool::getOneDriveInfo('state') }} &nbsp;&nbsp;</span>
+            <span class="text-danger">已使用: {{ \App\Helpers\Tool::getOneDriveInfo('used') }} &nbsp;&nbsp;</span>
+            <span class="text-warning">剩余: {{ \App\Helpers\Tool::getOneDriveInfo('remaining') }} &nbsp;&nbsp;</span>
+            <span class="text-success">全部: {{ \App\Helpers\Tool::getOneDriveInfo('total') }} &nbsp;&nbsp;</span>
         </p>
     </div>
     <div class="card border-light mb-3">

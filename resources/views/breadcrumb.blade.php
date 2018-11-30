@@ -8,7 +8,7 @@
                 @else
                     @if (!blank($value))
                         <li class="breadcrumb-item "><a
-                                href="{{ route('home',\App\Helpers\Tool::handleUrl(\App\Helpers\Tool::getBreadcrumbUrl($key + 1,$path_array))) }}">{{ str_limit($value,20) }}</a>
+                                href="{{ route('home',\App\Helpers\Tool::getEncodeUrl(\App\Helpers\Tool::getBreadcrumbUrl($key + 1,$path_array))) }}">{{ str_limit($value,20) }}</a>
                         </li>
                     @endif
                 @endif

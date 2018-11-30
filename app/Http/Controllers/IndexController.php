@@ -74,8 +74,8 @@ class IndexController extends Controller
     public function list(Request $request)
     {
         $realPath = $request->route()->parameter('query') ?? '/';
-        $graphPath = Tool::convertPath($realPath);
-        $origin_path = rawurldecode(Tool::convertPath($realPath, false));
+        $graphPath = Tool::getRequestPath($realPath);
+        $origin_path = rawurldecode(Tool::getRequestPath($realPath, false));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
         $result = OneDrive::getItemByPath($graphPath);
         $response = OneDrive::responseToArray($result);
@@ -143,8 +143,8 @@ class IndexController extends Controller
     public function show(Request $request)
     {
         $realPath = $request->route()->parameter('query') ?? '/';
-        $graphPath = Tool::convertPath($realPath, true, true);
-        $origin_path = rawurldecode(Tool::convertPath($realPath, false));
+        $graphPath = Tool::getRequestPath($realPath, true, true);
+        $origin_path = rawurldecode(Tool::getRequestPath($realPath, false));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
         // 获取文件
         $file = Cache::remember('one:file:' . $graphPath, $this->expires, function () use ($graphPath) {
@@ -206,7 +206,7 @@ class IndexController extends Controller
     public function download(Request $request)
     {
         $realPath = $request->route()->parameter('query') ?? '/';
-        $graphPath = Tool::convertPath($realPath, true, true);
+        $graphPath = Tool::getRequestPath($realPath, true, true);
         $file = Cache::remember('one:file:' . $graphPath, $this->expires, function () use ($graphPath) {
             $result = OneDrive::getItemByPath($graphPath);
             $response = OneDrive::responseToArray($result);
@@ -244,7 +244,7 @@ class IndexController extends Controller
     public function view(Request $request)
     {
         $realPath = $request->route()->parameter('query') ?? '/';
-        $graphPath = Tool::convertPath($realPath, true, true);
+        $graphPath = Tool::getRequestPath($realPath, true, true);
         $file = Cache::remember('one:file:' . $graphPath, $this->expires, function () use ($graphPath) {
             $result = OneDrive::getItemByPath($graphPath);
             $response = OneDrive::responseToArray($result);
@@ -268,7 +268,7 @@ class IndexController extends Controller
     {
         $keywords = $request->get('keywords');
         if ($keywords) {
-            $path = Tool::handleUrl($this->root);
+            $path = Tool::getEncodeUrl($this->root);
             $result = OneDrive::search(empty($path) ? '/' : ":/{$path}:/", $keywords);
             $response = OneDrive::responseToArray($result);
             if ($response['code'] === 200) {
@@ -335,7 +335,7 @@ class IndexController extends Controller
             $directory_password = '';
         }
         if (strcmp($password, $directory_password) === 0)
-            return redirect()->route('home', Tool::handleUrl($origin_path));
+            return redirect()->route('home', Tool::getEncodeUrl($origin_path));
         else {
             Tool::showMessage('密码错误', false);
             return view('password', compact('origin_path', 'pass_id'));

@@ -149,7 +149,7 @@ class Tool
      * @param $path
      * @return string
      */
-    public static function handleUrl($path)
+    public static function getEncodeUrl($path)
     {
         $url = [];
         foreach (explode('/', $path) as $key => $value) {
@@ -277,13 +277,13 @@ class Tool
      * @param bool $isFile
      * @return string
      */
-    public static function convertPath($path, $isQuery = true, $isFile = false)
+    public static function getRequestPath($path, $isQuery = true, $isFile = false)
     {
         $path = self::getAbsolutePath($path);
         $query_path = trim($path, '/');
         if (!$isQuery) return $query_path;
-        $query_path = self::handleUrl(rawurldecode($query_path));
-        $root = trim(self::handleUrl(self::config('root')), '/');
+        $query_path = self::getEncodeUrl(rawurldecode($query_path));
+        $root = trim(self::getEncodeUrl(self::config('root')), '/');
         if ($query_path)
             $request_path = empty($root) ? ":/{$query_path}:/" : ":/{$root}/{$query_path}:/";
         else
@@ -315,39 +315,21 @@ class Tool
     }
 
     /**
-     * 获取远程文件内容
      * @param $url
      * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function getFileContent($url)
     {
-        return self::getFileContentByUrl($url);
-    }
-
-    /**
-     * 获取url文件内容
-     * @param $url
-     * @param bool $cache
-     * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public static function getFileContentByUrl($url, $cache = true)
-    {
-        if ($cache) {
-            return Cache::remember('one:content:' . $url, self::config('expires'), function () use ($url) {
-                try {
-                    $client = new Client();
-                    $response = $client->request('get', $url);
-                    $response = $response->getBody()->getContents();
-                } catch (ClientException $e) {
-                    $response = response()->json(['code' => $e->getCode(), 'msg' => $e->getMessage()]);
-                }
-                return $response ?? '';
-            });
-        } else {
-            return self::getFileContent($url);
-        }
+        return Cache::remember('one:content:' . $url, self::config('expires'), function () use ($url) {
+            try {
+                $client = new Client();
+                $response = $client->request('get', $url);
+                $response = $response->getBody()->getContents();
+            } catch (ClientException $e) {
+                $response = response()->json(['code' => $e->getCode(), 'msg' => $e->getMessage()]);
+            }
+            return $response ?? '';
+        });
     }
 
     /**
@@ -355,7 +337,7 @@ class Tool
      * @param string $key
      * @return array|mixed
      */
-    public static function quota($key = '')
+    public static function getOneDriveInfo($key = '')
     {
         if (self::refreshToken()) {
             $quota = Cache::remember('one:quota', self::config('expires'), function () {
@@ -399,7 +381,7 @@ class Tool
     /**
      * @return mixed|string
      */
-    public static function bindAccount()
+    public static function getBindAccount()
     {
         if (self::refreshToken()) {
             $account = Cache::remember('one:account', Tool::config('expires'), function () {

@@ -17,7 +17,7 @@ class HandleIllegalFile
     public function handle($request, Closure $next)
     {
         if (!config('app.env')) {
-            $origin_path = rawurldecode(Tool::convertPath($request->getPathInfo(), false));
+            $origin_path = rawurldecode(Tool::getRequestPath($request->getPathInfo(), false));
             $path_array = $origin_path ? explode('/', $origin_path) : [];
             $fileName = array_pop($path_array);
             $illegalFile = ['README.md', 'HEAD.md', '.password', '.deny'];
