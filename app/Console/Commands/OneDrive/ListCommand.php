@@ -59,6 +59,7 @@ Available commands:
   od:cp        Copy Item
   od:direct    Create Direct Share Link
   od:download  Download File
+  od:find      Find Items
   od:info      OneDrive Info
   od:install   Install App
   od:login     Account Login
@@ -71,7 +72,6 @@ Available commands:
   od:refresh   Refresh Token
   od:reset     Reset App
   od:rm        Delete Item
-  od:search    Find Items
   od:share     ShareLink For File
   od:switch    Switch Type
   od:update    Update App

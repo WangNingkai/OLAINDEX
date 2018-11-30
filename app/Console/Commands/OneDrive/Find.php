@@ -13,7 +13,7 @@ class Find extends Command
      *
      * @var string
      */
-    protected $signature = 'od:search
+    protected $signature = 'od:find
                             {keywords : Keywords}
                             {--id= : id}
                             {--remote=/ : Query Path}
