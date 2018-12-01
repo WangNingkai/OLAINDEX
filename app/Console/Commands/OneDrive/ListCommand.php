@@ -55,6 +55,7 @@ Options:
 
 Available commands:
 
+  od:cache     Cache Dir
   od:command   List Command
   od:cp        Copy Item
   od:direct    Create Direct Share Link
@@ -77,6 +78,7 @@ Available commands:
   od:update    Update App
   od:upload    UploadFile File
   od:whereis   Find The Item's Remote Path
+
 
 EOF;
 

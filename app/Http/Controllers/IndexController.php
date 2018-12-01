@@ -90,7 +90,7 @@ class IndexController extends Controller
         }
         // 获取列表
         $origin_items = Cache::remember('one:list:' . $graphPath, $this->expires, function () use ($graphPath) {
-            $result = OneDrive::getChildrenByPath($graphPath);
+            $result = OneDrive::getChildrenByPath($graphPath, '?select=id,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl');
             $response = OneDrive::responseToArray($result);
             if ($response['code'] === 200) {
                 return $response['data'];

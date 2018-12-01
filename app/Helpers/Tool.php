@@ -317,34 +317,19 @@ class Tool
     /**
      * Get Remote File Content
      * @param $url
-     * @param bool $cache
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public static function getFileContent($url, $cache = true)
+    public static function getFileContent($url)
     {
-        if ($cache) {
-            return Cache::remember('one:content:' . $url, self::config('expires'), function () use ($url) {
-                try {
-                    $client = new Client();
-                    $resp = $client->request('get', $url, ['stream' => true]);
-                    return $content = $resp->getBody()->getContents();
-                    /*$encoding = mb_detect_encoding($content, array('GB2312', 'GBK', 'UTF-16', 'UCS-2', 'UTF-8', 'BIG5', 'ASCII'));
-                    $response = mb_convert_encoding($content, 'UTF-8', $encoding);*/
-                } catch (ClientException $e) {
-                    return $response = response()->json(['code' => $e->getCode(), 'msg' => $e->getMessage()]);
-                }
-            });
-        } else {
-            try {
-                $client = new Client();
-                $resp = $client->request('get', $url, ['stream' => true]);
-                return $content = $resp->getBody()->getContents();
-                /*$encoding = mb_detect_encoding($content, array('GB2312', 'GBK', 'UTF-16', 'UCS-2', 'UTF-8', 'BIG5', 'ASCII'));
-                $response = mb_convert_encoding($content, 'UTF-8', $encoding);*/
-            } catch (ClientException $e) {
-                return $response = response()->json(['code' => $e->getCode(), 'msg' => $e->getMessage()]);
-            }
+        try {
+            $client = new Client();
+            $resp = $client->request('get', $url);
+            return $content = $resp->getBody()->getContents();
+            /*$encoding = mb_detect_encoding($content, array('GB2312', 'GBK', 'UTF-16', 'UCS-2', 'UTF-8', 'BIG5', 'ASCII'));
+            $response = mb_convert_encoding($content, 'UTF-8', $encoding);*/
+        } catch (ClientException $e) {
+            return $response = response()->json(['code' => $e->getCode(), 'msg' => $e->getMessage()]);
         }
     }
 
