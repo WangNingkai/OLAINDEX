@@ -27,8 +27,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
-        // 每10分钟刷新Token和缓存
-        $schedule->command('od:refresh')->everyTenMinutes();
+        $schedule->command('od:refresh')->everyThirtyMinutes();
         $schedule->command('od:cache')->everyTenMinutes();
     }
 
