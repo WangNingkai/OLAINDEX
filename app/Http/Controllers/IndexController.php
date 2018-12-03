@@ -77,20 +77,21 @@ class IndexController extends Controller
         $graphPath = Tool::getRequestPath($realPath);
         $origin_path = rawurldecode(Tool::getRequestPath($realPath, false));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
-        $result = OneDrive::getItemByPath($graphPath);
-        $response = OneDrive::responseToArray($result);
-        if ($response['code'] !== 200) {
-            Tool::showMessage($response['msg'], false);
-            return redirect()->route('message');
-        }
-        $item = $response['data'];
+        $item = Cache::remember('one:file:' . $graphPath, $this->expires, function () use ($graphPath) {
+            $result = OneDrive::getItemByPath($graphPath);
+            $response = OneDrive::responseToArray($result);
+            if ($response['code'] === 200) {
+                return $response['data'];
+            } else {
+                return null;
+            }
+        });
         if (array_has($item, 'file')) {
-            Cache::put('one:file:' . $graphPath, $item, $this->expires);
             return redirect()->away($item['@microsoft.graph.downloadUrl']);
         }
         // 获取列表
         $origin_items = Cache::remember('one:list:' . $graphPath, $this->expires, function () use ($graphPath) {
-            $result = OneDrive::getChildrenByPath($graphPath, '?select=id,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl');
+            $result = OneDrive::getChildrenByPath($graphPath, '?select=id,name,size,lastModifiedDateTime,eTag,file,image,folder,@microsoft.graph.downloadUrl');
             $response = OneDrive::responseToArray($result);
             if ($response['code'] === 200) {
                 return $response['data'];
