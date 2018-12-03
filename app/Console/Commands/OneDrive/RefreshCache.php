@@ -49,7 +49,7 @@ class RefreshCache extends Command
     public function getChildren($path)
     {
         \Illuminate\Support\Facades\Artisan::call('od:refresh');
-        $result = OneDrive::getChildrenByPath($path, '?select=id,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl');
+        $result = OneDrive::getChildrenByPath($path, '?select=id,name,size,lastModifiedDateTime,eTag,file,image,folder,@microsoft.graph.downloadUrl');
         $response = OneDrive::responseToArray($result);
         return $response['code'] === 200 ? $response['data'] : null;
     }
