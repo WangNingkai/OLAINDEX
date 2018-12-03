@@ -271,8 +271,9 @@ class OneDrive
                 'id' => $parentItemId
             ]
         ];
-        if ($itemName)
+        if ($itemName) {
             $content = array_add($content, 'name', $itemName);
+        }
         $body = json_encode($content);
         $response = self::request('patch', [$endpoint, $body]);
         return self::handleResponse($response);
@@ -582,7 +583,6 @@ class OneDrive
         ]);
         $response = self::request('post', [$endpoint, $body]);
         return self::handleResponse($response);
-
     }
 
     /**
@@ -707,7 +707,9 @@ class OneDrive
         if ($isList) {
             $items = [];
             foreach ($response as $item) {
-                if (array_has($item, 'file')) $item['ext'] = strtolower(pathinfo($item['name'], PATHINFO_EXTENSION));
+                if (array_has($item, 'file')) {
+                    $item['ext'] = strtolower(pathinfo($item['name'], PATHINFO_EXTENSION));
+                }
                 $items[$item['name']] = $item;
             }
             return $items;
@@ -760,9 +762,11 @@ class OneDrive
      */
     public static function responseToArray($response, $origin = true)
     {
-        if ($response instanceof JsonResponse)
+        if ($response instanceof JsonResponse) {
             $data = json_encode($response->getData());
-        else $data = $response;
+        } else {
+            $data = $response;
+        }
         if ($origin) {
             return json_decode($data, true);
         } else {
@@ -782,8 +786,9 @@ class OneDrive
         $query_path = trim($origin_path, '/');
         $query_path = self::getEncodeUrl(rawurldecode($query_path));
         $request_path = empty($query_path) ? '/' : ":/{$query_path}:/";
-        if ($isFile)
+        if ($isFile) {
             return rtrim($request_path, ':/');
+        }
         return $request_path;
     }
 
@@ -799,7 +804,9 @@ class OneDrive
         $parts = array_filter(explode('/', $path), 'strlen');
         $absolutes = [];
         foreach ($parts as $part) {
-            if ('.' == $part) continue;
+            if ('.' == $part) {
+                continue;
+            }
             if ('..' == $part) {
                 array_pop($absolutes);
             } else {
@@ -832,11 +839,13 @@ class OneDrive
      */
     public static function readFileSize($path)
     {
-        if (!file_exists($path))
+        if (!file_exists($path)) {
             return false;
+        }
         $size = filesize($path);
-        if (!($file = fopen($path, 'rb')))
+        if (!($file = fopen($path, 'rb'))) {
             return false;
+        }
         if ($size >= 0) { //Check if it really is a small file (< 2 GB)
             if (fseek($file, 0, SEEK_END) === 0) { //It really is a small file
                 fclose($file);

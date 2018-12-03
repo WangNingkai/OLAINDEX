@@ -32,8 +32,9 @@ class ManageController extends Controller
      */
     public function uploadImage(Request $request)
     {
-        if (!$request->isMethod('post'))
+        if (!$request->isMethod('post')) {
             return view('image');
+        }
         $field = 'olaindex_img';
         if (!$request->hasFile($field)) {
             $data = ['code' => 500, 'message' => '上传文件为空'];
@@ -92,7 +93,9 @@ class ManageController extends Controller
      */
     public function uploadFile(Request $request)
     {
-        if (!$request->isMethod('post')) return view('admin.file');
+        if (!$request->isMethod('post')) {
+            return view('admin.file');
+        }
         $field = 'olaindex_file';
         $target_directory = $request->get('root', '/');
         if (!$request->hasFile($field)) {
@@ -129,8 +132,9 @@ class ManageController extends Controller
                 ];
                 @unlink($path);
                 return response()->json($data);
-            } else return $result;
-
+            } else {
+                return $result;
+            }
         } else {
             $data = ['code' => 500, 'message' => '无法获取文件内容'];
             return response()->json($data);
@@ -169,7 +173,9 @@ class ManageController extends Controller
      */
     public function createFile(Request $request)
     {
-        if (!$request->isMethod('post')) return view('admin.add');
+        if (!$request->isMethod('post')) {
+            return view('admin.add');
+        }
         $name = $request->get('name');
         try {
             $path = decrypt($request->get('path'));
@@ -185,7 +191,6 @@ class ManageController extends Controller
         $response['code'] === 200 ? Tool::showMessage('添加成功！') : Tool::showMessage('添加失败！', false);
         Artisan::call('cache:clear');
         return redirect()->route('home', Tool::getEncodeUrl($path));
-
     }
 
     /**

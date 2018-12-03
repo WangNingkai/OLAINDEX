@@ -117,7 +117,9 @@ class IndexController extends Controller
                     Tool::showMessage('密码已过期', false);
                     return view('password', compact('origin_path', 'pass_id'));
                 }
-            } else return view('password', compact('origin_path', 'pass_id'));
+            } else {
+                return view('password', compact('origin_path', 'pass_id'));
+            }
         }
         // 过滤受限隐藏目录
         if (!empty($origin_items['.deny'])) {
@@ -129,7 +131,9 @@ class IndexController extends Controller
         // 处理 head/readme
         $head = array_key_exists('HEAD.md', $origin_items) ? Tool::markdown2Html(Tool::getFileContent($origin_items['HEAD.md']['@microsoft.graph.downloadUrl'])) : '';
         $readme = array_key_exists('README.md', $origin_items) ? Tool::markdown2Html(Tool::getFileContent($origin_items['README.md']['@microsoft.graph.downloadUrl'])) : '';
-        if (!session()->has('LogInfo')) $origin_items = array_except($origin_items, ['README.md', 'HEAD.md', '.password', '.deny']);
+        if (!session()->has('LogInfo')) {
+            $origin_items = array_except($origin_items, ['README.md', 'HEAD.md', '.password', '.deny']);
+        }
         $items = Tool::paginate($origin_items, 20);
         return view('one', compact('items', 'origin_items', 'origin_path', 'path_array', 'head', 'readme', 'hasImage'));
     }
@@ -156,9 +160,13 @@ class IndexController extends Controller
                 return null;
             }
         });
-        if (!$file) abort(404);
+        if (!$file) {
+            abort(404);
+        }
         // 过滤文件夹
-        if (array_has($file, 'folder')) abort(403);
+        if (array_has($file, 'folder')) {
+            abort(403);
+        }
         $file['download'] = $file['@microsoft.graph.downloadUrl'];
         foreach ($this->show as $key => $suffix) {
             if (in_array($file['ext'], $suffix)) {
@@ -168,7 +176,9 @@ class IndexController extends Controller
                     if ($file['size'] > 5 * 1024 * 1024) {
                         Tool::showMessage('文件过大，请下载查看', false);
                         return redirect()->back();
-                    } else $file['content'] = Tool::getFileContent($file['@microsoft.graph.downloadUrl']);
+                    } else {
+                        $file['content'] = Tool::getFileContent($file['@microsoft.graph.downloadUrl']);
+                    }
                 }
                 // 处理缩略图
                 if (in_array($key, ['image', 'dash', 'video'])) {
@@ -176,11 +186,15 @@ class IndexController extends Controller
                     $response = OneDrive::responseToArray($result);
                     if ($response['code'] === 200) {
                         $file['thumb'] = $response['data']['url'];
-                    } else $file['thumb'] = 'https://i.loli.net/2018/11/27/5bfcdf9f16a6c.jpg';
+                    } else {
+                        $file['thumb'] = 'https://i.loli.net/2018/11/27/5bfcdf9f16a6c.jpg';
+                    }
                 }
                 // dash视频流
                 if ($key === 'dash') {
-                    if (!strpos($file['@microsoft.graph.downloadUrl'], "sharepoint.com")) return redirect()->away($file['download']);
+                    if (!strpos($file['@microsoft.graph.downloadUrl'], "sharepoint.com")) {
+                        return redirect()->away($file['download']);
+                    }
                     $file['dash'] = str_replace("thumbnail", "videomanifest", $file['thumb']) . "&part=index&format=dash&useScf=True&pretranscode=0&transcodeahead=0";
                 }
                 // 处理微软文档
@@ -216,7 +230,9 @@ class IndexController extends Controller
                 return null;
             }
         });
-        if (array_has($file, 'folder')) abort(403);
+        if (array_has($file, 'folder')) {
+            abort(403);
+        }
         $url = $file['@microsoft.graph.downloadUrl'];
         return redirect()->away($url);
     }
@@ -233,7 +249,9 @@ class IndexController extends Controller
         $response = OneDrive::responseToArray($result);
         if ($response['code'] === 200) {
             $url = $response['data']['url'];
-        } else $url = 'https://i.loli.net/2018/11/27/5bfcdf9f16a6c.jpg';
+        } else {
+            $url = 'https://i.loli.net/2018/11/27/5bfcdf9f16a6c.jpg';
+        }
         return redirect()->away($url);
     }
 
@@ -254,7 +272,9 @@ class IndexController extends Controller
                 return null;
             }
         });
-        if (array_has($file, 'folder')) abort(403);
+        if (array_has($file, 'folder')) {
+            abort(403);
+        }
         $download = $file['@microsoft.graph.downloadUrl'];
         return redirect()->away($download);
     }
@@ -334,9 +354,9 @@ class IndexController extends Controller
             Tool::showMessage('获取文件夹密码失败', false);
             $directory_password = '';
         }
-        if (strcmp($password, $directory_password) === 0)
+        if (strcmp($password, $directory_password) === 0) {
             return redirect()->route('home', Tool::getEncodeUrl($origin_path));
-        else {
+        } else {
             Tool::showMessage('密码错误', false);
             return view('password', compact('origin_path', 'pass_id'));
         }

@@ -45,7 +45,9 @@ class Download extends Command
         if ($id) {
             $result = OneDrive::getItem($id);
         } else {
-            if (empty($remote)) exit('Parameters Missing!');
+            if (empty($remote)) {
+                exit('Parameters Missing!');
+            }
             $graphPath = OneDrive::getRequestPath($remote);
             $result = OneDrive::getItemByPath($graphPath);
         }
@@ -53,6 +55,8 @@ class Download extends Command
         if ($response['code'] === 200) {
             $download = $response['data']['@microsoft.graph.downloadUrl'] ?? exit('404 NOT FOUND');
             $this->info("Download Link:\n{$download}");
-        } else  $this->warn("Failed!\n{$response['msg']} ");
+        } else {
+            $this->warn("Failed!\n{$response['msg']} ");
+        }
     }
 }

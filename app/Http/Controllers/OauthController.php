@@ -92,7 +92,9 @@ class OauthController extends Controller
                         'code' => $code,
                         'grant_type' => 'authorization_code',
                     ];
-                    if (Tool::config('account_type', 'com') === 'cn') $form_params = array_add($form_params, 'resource', Constants::REST_ENDPOINT_21V);
+                    if (Tool::config('account_type', 'com') === 'cn') {
+                        $form_params = array_add($form_params, 'resource', Constants::REST_ENDPOINT_21V);
+                    }
                     $response = $client->post($this->access_token_url, [
                         'form_params' => $form_params
                     ]);
@@ -149,7 +151,9 @@ class OauthController extends Controller
     {
         $expires = Tool::config('access_token_expires', 0);
         $hasExpired = $expires - time() <= 0;
-        if (!$hasExpired) return response()->json(['code' => 400, 'msg' => 'Bad Request']);
+        if (!$hasExpired) {
+            return response()->json(['code' => 400, 'msg' => 'Bad Request']);
+        }
         $existingRefreshToken = Tool::config('refresh_token');
         try {
             $client = new Client();
@@ -160,7 +164,9 @@ class OauthController extends Controller
                 'refresh_token' => $existingRefreshToken,
                 'grant_type' => 'refresh_token',
             ];
-            if (Tool::config('account_type', 'com') === 'cn') $form_params = array_add($form_params, 'resource', Constants::REST_ENDPOINT_21V);
+            if (Tool::config('account_type', 'com') === 'cn') {
+                $form_params = array_add($form_params, 'resource', Constants::REST_ENDPOINT_21V);
+            }
             $response = $client->post($this->access_token_url, [
                 'form_params' => $form_params,
             ]);

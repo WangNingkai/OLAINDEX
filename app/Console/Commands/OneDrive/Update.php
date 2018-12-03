@@ -68,5 +68,4 @@ class Update extends Command
             'msg' => $msg
         ];
     }
-
 }
