@@ -11,7 +11,8 @@ class CheckInstall
      * 处理验证安装
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
+     * @param  \Closure                 $next
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -20,6 +21,7 @@ class CheckInstall
         if (!Tool::hasConfig()) {
             return redirect()->route('_1stInstall');
         }
+
         return $next($request);
     }
 }

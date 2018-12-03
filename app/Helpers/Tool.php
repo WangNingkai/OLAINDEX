@@ -14,29 +14,43 @@ class Tool
 {
     /**
      * 判断密钥配置
+     *
      * @return bool
      */
     public static function hasConfig()
     {
-        if (!empty(self::config('client_id')) && !empty(self::config('client_secret')) && !empty(self::config('redirect_uri'))) {
+        if (!empty(self::config('client_id'))
+            && !empty(self::config('client_secret'))
+            && !empty(self::config('redirect_uri'))
+        ) {
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
     /**
      * 判断账号绑定
+     *
      * @return bool
      */
     public static function hasBind()
     {
-        if (!empty(self::config('access_token')) && !empty(self::config('refresh_token')) && !empty(self::config('access_token_expires'))) {
+        if (!empty(self::config('access_token'))
+            && !empty(self::config('refresh_token'))
+            && !empty(self::config('access_token_expires'))
+        ) {
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
     /**
      * 判断列表是否含有图片
+     *
      * @param $items
+     *
      * @return bool
      */
     public static function hasImages($items)
@@ -48,13 +62,15 @@ class Tool
                 break;
             }
         }
+
         return $hasImage;
     }
 
     /**
      * 操作成功或者失败的提示
+     *
      * @param string $message
-     * @param bool $success
+     * @param bool   $success
      */
     public static function showMessage($message = '成功', $success = true)
     {
@@ -65,20 +81,27 @@ class Tool
 
     /**
      *文件大小转换
+     *
      * @param string $size 原始大小
+     *
      * @return string 转换大小
      */
     public static function convertSize($size)
     {
         $units = array(' B', ' KB', ' MB', ' GB', ' TB');
-        for ($i = 0; $size >= 1024 && $i < 4; $i++) $size /= 1024;
-        return @round($size, 2) . $units[$i];
+        for ($i = 0; $size >= 1024 && $i < 4; $i++) {
+            $size /= 1024;
+        }
+
+        return @round($size, 2).$units[$i];
     }
 
     /**
      * markdown转html
-     * @param $markdown
+     *
+     * @param      $markdown
      * @param bool $line
+     *
      * @return mixed|string
      */
     public static function markdown2Html($markdown, $line = false)
@@ -89,13 +112,16 @@ class Tool
         } else {
             $html = $parser->line($markdown);
         }
+
         return $html;
     }
 
     /**
      * 数组分页
+     *
      * @param $items
      * @param $perPage
+     *
      * @return LengthAwarePaginator
      */
     public static function paginate($items, $perPage)
@@ -107,13 +133,21 @@ class Tool
         // Get only the items you need using array_slice
         $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
 
-        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage, Paginator::resolveCurrentPage(), ['path' => Paginator::resolveCurrentPath()]);
+        return new LengthAwarePaginator(
+            $itemsForCurrentPage,
+            count($items),
+            $perPage,
+            Paginator::resolveCurrentPage(),
+            ['path' => Paginator::resolveCurrentPath()]
+        );
     }
 
     /**
      * 获取包屑导航url
+     *
      * @param $key
      * @param $pathArr
+     *
      * @return string
      */
     public static function getBreadcrumbUrl($key, $pathArr)
@@ -121,14 +155,17 @@ class Tool
         $pathArr = array_slice($pathArr, 0, $key);
         $url = '';
         foreach ($pathArr as $param) {
-            $url .= '/' . $param;
+            $url .= '/'.$param;
         }
+
         return trim($url, '/');
     }
 
     /**
      * 获取父级url
+     *
      * @param $pathArr
+     *
      * @return string
      */
     public static function getParentUrl($pathArr)
@@ -139,14 +176,17 @@ class Tool
         }
         $url = '';
         foreach ($pathArr as $param) {
-            $url .= '/' . $param;
+            $url .= '/'.$param;
         }
+
         return trim($url, '/');
     }
 
     /**
      * 处理url
+     *
      * @param $path
+     *
      * @return string
      */
     public static function getEncodeUrl($path)
@@ -157,12 +197,15 @@ class Tool
                 $url[] = rawurlencode($value);
             }
         }
+
         return @implode('/', $url);
     }
 
     /**
      * 获取文件图标
+     *
      * @param $ext
+     *
      * @return string
      */
     public static function getExtIcon($ext = '')
@@ -177,12 +220,15 @@ class Tool
                 $icon = 'fa-file-text-o';
             }
         }
+
         return $icon;
     }
 
     /**
      * 文件是否可编辑
+     *
      * @param $file
+     *
      * @return bool
      */
     public static function canEdit($file)
@@ -201,18 +247,23 @@ class Tool
 
     /**
      * 保存配置到json文件
+     *
      * @param $config
+     *
      * @return bool
      */
     public static function saveConfig($config)
     {
         $file = storage_path('app/config.json');
+
         return self::writeJson($file, $config);
     }
 
     /**
      * 更新配置
+     *
      * @param $data
+     *
      * @return bool
      */
     public static function updateConfig($data)
@@ -221,13 +272,16 @@ class Tool
         $config = array_merge($config, $data);
         $saved = self::saveConfig($config);
         Cache::forget('config');
+
         return $saved;
     }
 
     /**
      * 从json文件读取配置
+     *
      * @param string $key
      * @param string $default
+     *
      * @return string|array
      */
     public static function config($key = '', $default = '')
@@ -235,21 +289,29 @@ class Tool
         $config = Cache::remember('config', 1440, function () {
             $file = storage_path('app/config.json');
             if (!file_exists($file)) {
-                copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
+                copy(
+                    storage_path('app/example.config.json'),
+                    storage_path('app/config.json')
+                );
             };
+
             return self::readJson($file);
         });
-        return $key ? (array_has($config, $key) ? (array_get($config, $key) ?: $default) : $default) : $config;
+
+        return $key ? (array_has($config, $key) ? (array_get($config, $key)
+            ?: $default) : $default) : $config;
     }
 
     /**
      * @param string $file
+     *
      * @return array|bool
      */
     public static function readJson(string $file)
     {
         try {
             $config = file_get_contents($file);
+
             return json_decode($config, true);
         } catch (\Exception $e) {
             return abort(403, $e->getMessage());
@@ -258,7 +320,8 @@ class Tool
 
     /**
      * @param string $file
-     * @param array $array
+     * @param array  $array
+     *
      * @return bool|int
      */
     public static function writeJson(string $file, array $array)
@@ -272,30 +335,43 @@ class Tool
 
     /**
      * 解析路径
-     * @param $path
+     *
+     * @param      $path
      * @param bool $isQuery
      * @param bool $isFile
+     *
      * @return string
      */
-    public static function getRequestPath($path, $isQuery = true, $isFile = false)
-    {
+    public static function getRequestPath(
+        $path,
+        $isQuery = true,
+        $isFile = false
+    ) {
         $path = self::getAbsolutePath($path);
         $query_path = trim($path, '/');
-        if (!$isQuery) return $query_path;
+        if (!$isQuery) {
+            return $query_path;
+        }
         $query_path = self::getEncodeUrl(rawurldecode($query_path));
         $root = trim(self::getEncodeUrl(self::config('root')), '/');
-        if ($query_path)
-            $request_path = empty($root) ? ":/{$query_path}:/" : ":/{$root}/{$query_path}:/";
-        else
+        if ($query_path) {
+            $request_path = empty($root) ? ":/{$query_path}:/"
+                : ":/{$root}/{$query_path}:/";
+        } else {
             $request_path = empty($root) ? '/' : ":/{$root}:/";
-        if ($isFile)
+        }
+        if ($isFile) {
             return rtrim($request_path, ':/');
+        }
+
         return $request_path;
     }
 
     /**
      * 绝对路径转换
+     *
      * @param $path
+     *
      * @return mixed
      */
     public static function getAbsolutePath($path)
@@ -304,56 +380,78 @@ class Tool
         $parts = array_filter(explode('/', $path), 'strlen');
         $absolutes = [];
         foreach ($parts as $part) {
-            if ('.' === $part) continue;
+            if ('.' === $part) {
+                continue;
+            }
             if ('..' === $part) {
                 array_pop($absolutes);
             } else {
                 $absolutes[] = $part;
             }
         }
-        return str_replace('//', '/', '/' . implode('/', $absolutes) . '/');
+
+        return str_replace('//', '/', '/'.implode('/', $absolutes).'/');
     }
 
     /**
      * @param $url
+     *
      * @return mixed
      */
     public static function getFileContent($url)
     {
-        return Cache::remember('one:content:' . $url, self::config('expires'), function () use ($url) {
-            try {
-                $client = new Client();
-                $resp = $client->request('get', $url);
-                return $content = $resp->getBody()->getContents();
-            } catch (ClientException $e) {
-                return $response = response()->json(['code' => $e->getCode(), 'msg' => $e->getMessage()]);
+        return Cache::remember(
+            'one:content:'.$url,
+            self::config('expires'),
+            function () use ($url) {
+                try {
+                    $client = new Client();
+                    $resp = $client->request('get', $url);
+
+                    return $content = $resp->getBody()->getContents();
+                } catch (ClientException $e) {
+                    return response()->json(
+                        [
+                            'code' => $e->getCode(),
+                            'msg'  => $e->getMessage(),
+                        ]
+                    );
+                }
             }
-        });
+        );
     }
 
     /**
      * 获取磁盘信息
+     *
      * @param string $key
+     *
      * @return array|mixed
      */
     public static function getOneDriveInfo($key = '')
     {
         if (self::refreshToken()) {
-            $quota = Cache::remember('one:quota', self::config('expires'), function () {
-                $drive = OneDrive::getDrive();
-                $res = OneDrive::responseToArray($drive);
-                if ($res['code'] === 200) {
-                    $quota = $res['data']['quota'];
-                    foreach ($quota as $k => $item) {
-                        if (!is_string($item)) {
-                            $quota[$k] = Tool::convertSize($item);
+            $quota = Cache::remember(
+                'one:quota',
+                self::config('expires'),
+                function () {
+                    $drive = OneDrive::getDrive();
+                    $res = OneDrive::responseToArray($drive);
+                    if ($res['code'] === 200) {
+                        $quota = $res['data']['quota'];
+                        foreach ($quota as $k => $item) {
+                            if (!is_string($item)) {
+                                $quota[$k] = Tool::convertSize($item);
+                            }
                         }
+
+                        return $quota;
+                    } else {
+                        return [];
                     }
-                    return $quota;
-                } else {
-                    return [];
                 }
-            });
+            );
+
             return $key ? $quota[$key] ?? '' : $quota ?? '';
         } else {
             return '';
@@ -362,6 +460,7 @@ class Tool
 
     /**
      * 刷新refresh_token
+     *
      * @return bool
      */
     public static function refreshToken()
@@ -371,6 +470,7 @@ class Tool
         if ($hasExpired) {
             $oauth = new OauthController();
             $res = json_decode($oauth->refreshToken(false), true);
+
             return $res['code'] === 200;
         } else {
             return true;
@@ -383,15 +483,20 @@ class Tool
     public static function getBindAccount()
     {
         if (self::refreshToken()) {
-            $account = Cache::remember('one:account', Tool::config('expires'), function () {
-                $drive = OneDrive::getMe();
-                $res = OneDrive::responseToArray($drive);
-                if ($res['code'] == 200) {
-                    return array_get($res, 'data.userPrincipalName');
-                } else {
-                    return '';
+            $account = Cache::remember(
+                'one:account',
+                Tool::config('expires'),
+                function () {
+                    $drive = OneDrive::getMe();
+                    $res = OneDrive::responseToArray($drive);
+                    if ($res['code'] == 200) {
+                        return array_get($res, 'data.userPrincipalName');
+                    } else {
+                        return '';
+                    }
                 }
-            });
+            );
+
             return $account;
         } else {
             return '';

@@ -54,24 +54,28 @@ class UploadFile extends Command
 
     /**
      * 普通文件上传
-     * @param string $local 本地文件地址
+     *
+     * @param string $local  本地文件地址
      * @param string $remote 远程上传地址（包括文件名）
+     *
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function upload($local, $remote)
     {
         $content = file_get_contents($local);
         $file_name = basename($local);
-        $graphPath = OneDrive::getRequestPath($remote . $file_name);
+        $graphPath = OneDrive::getRequestPath($remote.$file_name);
         $result = OneDrive::uploadByPath($graphPath, $content);
         $response = OneDrive::responseToArray($result);
-        $response['code'] === 200 ? $this->info('Upload Success!') : $this->warn('Failed!');
+        $response['code'] === 200 ? $this->info('Upload Success!')
+            : $this->warn('Failed!');
     }
 
     /**
-     * @param $local
-     * @param $remote
+     * @param     $local
+     * @param     $remote
      * @param int $chuck
+     *
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function uploadBySession($local, $remote, $chuck = 3276800)
@@ -80,7 +84,8 @@ class UploadFile extends Command
         $file_size = OneDrive::readFileSize($local);
         $file_name = basename($local);
         $target_path = Tool::getAbsolutePath($remote);
-        $path = trim($target_path, '/') === '' ? ":/{$file_name}:/" : OneDrive::getRequestPath($target_path . $file_name);
+        $path = trim($target_path, '/') === '' ? ":/{$file_name}:/"
+            : OneDrive::getRequestPath($target_path.$file_name);
         $url_request = OneDrive::createUploadSession($path);
         $url_response = OneDrive::responseToArray($url_request);
         if ($url_response['code'] === 200) {
@@ -104,10 +109,12 @@ class UploadFile extends Command
                     $this->info("length: {$data['nextExpectedRanges'][0]}");
                     $ranges = explode('-', $data['nextExpectedRanges'][0]);
                     $offset = intval($ranges[0]);
-                    $status = @floor($offset / $file_size * 100) . '%';
+                    $status = @floor($offset / $file_size * 100).'%';
                     $this->info("success. progress:{$status}");
                     $done = false;
-                } elseif (!empty($data['@content.downloadUrl']) || !empty($data['id'])) {
+                } elseif (!empty($data['@content.downloadUrl'])
+                    || !empty($data['id'])
+                ) {
                     $this->info('Upload Success!');
                     $done = true;
                 } else {

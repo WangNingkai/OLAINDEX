@@ -65,7 +65,8 @@ class Remove extends Command
                 exit;
             }
             $graphPath = OneDrive::getRequestPath($remote);
-            $id_response = OneDrive::responseToArray(OneDrive::pathToItemId($graphPath));
+            $id_response
+                = OneDrive::responseToArray(OneDrive::pathToItemId($graphPath));
             if ($id_response['code'] === 200) {
                 $id = $id_response['data']['id'];
             } else {
@@ -75,6 +76,7 @@ class Remove extends Command
         }
         $response = OneDrive::responseToArray(OneDrive::delete($id));
         $this->call('cache:clear');
-        $response['code'] === 200 ? $this->info("Deleted!") : $this->warn("Failed!\n{$response['msg']} ");
+        $response['code'] === 200 ? $this->info("Deleted!")
+            : $this->warn("Failed!\n{$response['msg']} ");
     }
 }

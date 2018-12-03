@@ -11,7 +11,8 @@ class HotlinkProtection
      * 处理防盗链
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
+     * @param  \Closure                 $next
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)

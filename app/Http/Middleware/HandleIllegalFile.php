@@ -11,17 +11,23 @@ class HandleIllegalFile
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
+     * @param  \Closure                 $next
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
         if (!config('app.env')) {
-            $origin_path = rawurldecode(Tool::getRequestPath($request->getPathInfo(), false));
+            $origin_path
+                = rawurldecode(Tool::getRequestPath($request->getPathInfo(),
+                false));
             $path_array = $origin_path ? explode('/', $origin_path) : [];
             $fileName = array_pop($path_array);
             $illegalFile = ['README.md', 'HEAD.md', '.password', '.deny'];
-            if (in_array($fileName, $illegalFile) || preg_match('/^README\.md|HEAD\.md|\.password|\.deny/', $fileName, $arr) > 0) {
+            if (in_array($fileName, $illegalFile)
+                || preg_match('/^README\.md|HEAD\.md|\.password|\.deny/',
+                    $fileName, $arr) > 0
+            ) {
                 abort(403);
             }
         } else {

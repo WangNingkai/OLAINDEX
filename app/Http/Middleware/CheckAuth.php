@@ -11,7 +11,8 @@ class CheckAuth
      * 处理登陆
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
+     * @param  \Closure                 $next
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -20,6 +21,7 @@ class CheckAuth
             return redirect()->route('login');
         }
         Session::put('LogInfo.LastActivityTime', time());
+
         return $next($request);
     }
 }

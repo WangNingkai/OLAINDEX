@@ -43,19 +43,25 @@ class RefreshCache extends Command
 
     /**
      * @param $path
+     *
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getChildren($path)
     {
         \Illuminate\Support\Facades\Artisan::call('od:refresh');
-        $result = OneDrive::getChildrenByPath($path, '?select=id,name,size,lastModifiedDateTime,eTag,file,image,folder,@microsoft.graph.downloadUrl');
+        $result = OneDrive::getChildrenByPath(
+            $path,
+            '?select=id,name,size,lastModifiedDateTime,eTag,file,image,folder,@microsoft.graph.downloadUrl'
+        );
         $response = OneDrive::responseToArray($result);
+
         return $response['code'] === 200 ? $response['data'] : null;
     }
 
     /**
      * @param $path
+     *
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getRecursive($path)
@@ -65,13 +71,17 @@ class RefreshCache extends Command
         $graphPath = OneDrive::getRequestPath($path);
         $data = $this->getChildren($graphPath);
         if (is_array($data)) {
-            \Illuminate\Support\Facades\Cache::put('one:list:' . $graphPath, $data, Tool::config('expires'));
+            \Illuminate\Support\Facades\Cache::put(
+                'one:list:'.$graphPath,
+                $data,
+                Tool::config('expires')
+            );
         } else {
             exit('Cache Error!');
         }
         foreach ((array)$data as $item) {
             if (array_has($item, 'folder')) {
-                $this->getRecursive($path . $item['name'] . '/');
+                $this->getRecursive($path.$item['name'].'/');
             }
         }
     }

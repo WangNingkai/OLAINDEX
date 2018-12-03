@@ -53,7 +53,8 @@ class Download extends Command
         }
         $response = OneDrive::responseToArray($result);
         if ($response['code'] === 200) {
-            $download = $response['data']['@microsoft.graph.downloadUrl'] ?? exit('404 NOT FOUND');
+            $download = $response['data']['@microsoft.graph.downloadUrl'] ??
+                exit('404 NOT FOUND');
             $this->info("Download Link:\n{$download}");
         } else {
             $this->warn("Failed!\n{$response['msg']} ");

@@ -41,7 +41,7 @@ class Update extends Command
     public function handle()
     {
         $this->info(Constants::LOGO);
-        $this->info('Current Version  [' . Tool::config('app_version') . ']');
+        $this->info('Current Version  ['.Tool::config('app_version').']');
         // 获取当前版本,默认开发版
         $this->warn('Start updating...');
         $version = Tool::config('app_version', 'v3.2');
@@ -57,15 +57,17 @@ class Update extends Command
 
     /**
      * 返回状态
-     * @param $msg
+     *
+     * @param      $msg
      * @param bool $status
+     *
      * @return array
      */
     public function returnStatus($msg, $status = true)
     {
         return [
             'status' => $status,
-            'msg' => $msg
+            'msg'    => $msg,
         ];
     }
 }

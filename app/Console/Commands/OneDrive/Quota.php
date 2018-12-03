@@ -40,15 +40,16 @@ class Quota extends Command
     public function handle()
     {
         $this->call('od:refresh');
-        $headers = array_keys(is_array(Tool::getOneDriveInfo()) ? Tool::getOneDriveInfo() : []);
+        $headers = array_keys(is_array(Tool::getOneDriveInfo())
+            ? Tool::getOneDriveInfo() : []);
         if (!$headers) {
             $this->warn('Please try again later!');
             exit;
         }
         $quota[] = Tool::getOneDriveInfo();
         $this->info(Constants::LOGO);
-        $this->info('Account [' . Tool::getBindAccount() . ']');
-        $this->info('App Version  [' . Tool::config('app_version') . ']');
+        $this->info('Account ['.Tool::getBindAccount().']');
+        $this->info('App Version  ['.Tool::config('app_version').']');
         $this->table($headers, $quota, 'default');
     }
 }

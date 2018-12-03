@@ -25,17 +25,23 @@ Route::prefix('install')->group(function () {
 // 索引
 Route::redirect('/', '/home');
 Route::prefix('home')->group(function () {
-    Route::get('{query?}', 'IndexController@list')->where('query', '.*')->name('home');
+    Route::get('{query?}', 'IndexController@list')->where('query', '.*')
+        ->name('home');
 });
-Route::get('show/{query}', 'IndexController@show')->where('query', '.*')->name('show');
-Route::get('down/{query}', 'IndexController@download')->where('query', '.*')->name('download')->middleware('hotlinkProtection');
-Route::get('view/{query}', 'IndexController@view')->where('query', '.*')->name('view')->middleware('hotlinkProtection');
+Route::get('show/{query}', 'IndexController@show')->where('query', '.*')
+    ->name('show');
+Route::get('down/{query}', 'IndexController@download')->where('query', '.*')
+    ->name('download')->middleware('hotlinkProtection');
+Route::get('view/{query}', 'IndexController@view')->where('query', '.*')
+    ->name('view')->middleware('hotlinkProtection');
 Route::post('password', 'IndexController@handlePassword')->name('password');
 Route::get('thumb/{id}/size/{size}', 'IndexController@thumb')->name('thumb');
 Route::view('message', 'message')->name('message');
 // 图床
-Route::get('image', 'ManageController@uploadImage')->name('image')->middleware('checkImage');
-Route::post('image/upload', 'ManageController@uploadImage')->name('image.upload')->middleware('throttle:10,2', 'checkImage');
+Route::get('image', 'ManageController@uploadImage')->name('image')
+    ->middleware('checkImage');
+Route::post('image/upload', 'ManageController@uploadImage')
+    ->name('image.upload')->middleware('throttle:10,2', 'checkImage');
 Route::get('file/delete/{sign}', 'ManageController@deleteItem')->name('delete');
 // 后台设置管理
 Route::any('login', 'AdminController@login')->name('login');
@@ -51,24 +57,34 @@ Route::prefix('admin')->group(function () {
     // 文件夹操作
     Route::prefix('folder')->group(function () {
         Route::post('lock', 'ManageController@lockFolder')->name('admin.lock');
-        Route::post('create', 'ManageController@createFolder')->name('admin.folder.create');
+        Route::post('create', 'ManageController@createFolder')
+            ->name('admin.folder.create');
     });
     // 文件操作
     Route::prefix('file')->group(function () {
         Route::get('/', 'ManageController@uploadFile')->name('admin.file');
-        Route::post('upload', 'ManageController@uploadFile')->name('admin.file.upload')->middleware('throttle:10,2');
-        Route::any('add', 'ManageController@createFile')->name('admin.file.create');
-        Route::any('edit/{id}', 'ManageController@updateFile')->name('admin.file.update');
+        Route::post('upload', 'ManageController@uploadFile')
+            ->name('admin.file.upload')->middleware('throttle:10,2');
+        Route::any('add', 'ManageController@createFile')
+            ->name('admin.file.create');
+        Route::any('edit/{id}', 'ManageController@updateFile')
+            ->name('admin.file.update');
         Route::view('other', 'admin.other')->name('admin.other');
         Route::post('copy', 'ManageController@copyItem')->name('admin.copy');
         Route::post('move', 'ManageController@moveItem')->name('admin.move');
-        Route::post('file/path2id', 'ManageController@pathToItemId')->name('admin.path2id');
-        Route::post('share', 'ManageController@createShareLink')->name('admin.share');
-        Route::post('share/delete', 'ManageController@deleteShareLink')->name('admin.share.delete');
+        Route::post('file/path2id', 'ManageController@pathToItemId')
+            ->name('admin.path2id');
+        Route::post('share', 'ManageController@createShareLink')
+            ->name('admin.share');
+        Route::post('share/delete', 'ManageController@deleteShareLink')
+            ->name('admin.share.delete');
     });
     // 离线上传
-    Route::post('url/upload', 'ManageController@uploadUrl')->name('admin.url.upload');
+    Route::post('url/upload', 'ManageController@uploadUrl')
+        ->name('admin.url.upload');
 });
 // 搜索
-Route::any('search', 'IndexController@search')->name('search')->middleware('checkAuth', 'throttle:10,2');
-Route::any('search/file/{id}', 'IndexController@searchShow')->name('search.show')->middleware('checkAuth');
+Route::any('search', 'IndexController@search')->name('search')
+    ->middleware('checkAuth', 'throttle:10,2');
+Route::any('search/file/{id}', 'IndexController@searchShow')
+    ->name('search.show')->middleware('checkAuth');

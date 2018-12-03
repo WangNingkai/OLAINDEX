@@ -51,12 +51,12 @@ class Logout extends Command
     public function logout()
     {
         $data = [
-            'access_token' => '',
-            'refresh_token' => '',
+            'access_token'         => '',
+            'refresh_token'        => '',
             'access_token_expires' => 0,
-            'root' => '/',
-            'image_hosting' => 0,
-            'image_hosting_path' => ''
+            'root'                 => '/',
+            'image_hosting'        => 0,
+            'image_hosting_path'   => '',
         ];
         $saved = Tool::updateConfig($data);
         if ($saved) {

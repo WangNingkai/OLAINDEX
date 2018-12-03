@@ -46,6 +46,7 @@ class CreateFolder extends Command
         $result = OneDrive::mkdirByPath($name, $graphPath);
         $response = OneDrive::responseToArray($result);
         $this->call('cache:clear');
-        $response['code'] === 200 ? $this->info("Folder Created!") : $this->warn("Failed!\n{$response['msg']} ");
+        $response['code'] === 200 ? $this->info("Folder Created!")
+            : $this->warn("Failed!\n{$response['msg']} ");
     }
 }

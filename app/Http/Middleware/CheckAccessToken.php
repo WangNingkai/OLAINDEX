@@ -13,13 +13,15 @@ class CheckAccessToken
      * 处理access_token
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
+     * @param  \Closure                 $next
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
         if (!Tool::hasBind()) {
             Tool::showMessage('请绑定帐号！', false);
+
             return redirect()->route('bind');
         }
         $expires = Tool::config('access_token_expires', 0);
@@ -28,8 +30,10 @@ class CheckAccessToken
             $current = url()->current();
             Session::put('refresh_redirect', $current);
             $oauth = new OauthController();
+
             return $oauth->refreshToken();
         }
+
         return $next($request);
     }
 }

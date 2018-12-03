@@ -4,7 +4,8 @@ namespace App\Helpers;
 
 class Constants
 {
-    const LOGO = <<<EOF
+    const LOGO
+        = <<<EOF
    ____  __    ___    _____   ______  _______  __
   / __ \/ /   /   |  /  _/ | / / __ \/ ____/ |/ /
  / / / / /   / /| |  / //  |/ / / / / __/  |   / 
@@ -27,50 +28,113 @@ EOF;
 
     const SCOPES = 'offline_access user.read files.readwrite.all';
 
-    const ACCOUNT = [
-        "account_type" => "com",
-        "client_id" => "",
-        "client_secret" => "",
-        "redirect_uri" => "",
-        "access_token" => "",
-        "access_token_expires" => "",
-        "refresh_token" => ""
-    ];
+    const ACCOUNT
+        = [
+            "account_type"         => "com",
+            "client_id"            => "",
+            "client_secret"        => "",
+            "redirect_uri"         => "",
+            "access_token"         => "",
+            "access_token_expires" => "",
+            "refresh_token"        => "",
+        ];
 
-    const FILE_ICON = [
-        'stream' => ['fa-file-text-o', ['txt', 'log']],
-        'image' => ['fa-file-image-o', ['bmp', 'jpg', 'jpeg', 'png', 'gif', 'ico', 'jpe']],
-        'video' => ['fa-file-video-o', ['mkv', 'mp4', 'webm', 'avi', 'mpg', 'mpeg', 'rm', 'rmvb', 'mov', 'wmv', 'asf', 'ts', 'flv']],
-        'audio' => ['fa-file-audio-o', ['ogg', 'mp3', 'wav']],
-        'code' => ['fa-file-code-o', ['html', 'htm', 'css', 'go', 'java', 'js', 'json', 'txt', 'sh', 'md', 'php']],
-        'doc' => ['fa-file-word-o', ['csv', 'doc', 'docx', 'odp', 'ods', 'odt', 'pot', 'potm', 'potx', 'pps', 'ppsx', 'ppsxm', 'ppt', 'pptm', 'pptx', 'rtf', 'xls', 'xlsx']],
-        'pdf' => ['fa-file-pdf-o', ['pdf']],
-        'zip' => ['fa-file-archive-o', ['zip', '7z', 'rar', 'bz', 'gz']],
-        'android' => ['fa-android', ['apk']],
-        'exe' => ['fa-windows', ['exe', 'msi']],
-    ];
+    const FILE_ICON
+        = [
+            'stream'  => ['fa-file-text-o', ['txt', 'log']],
+            'image'   => [
+                'fa-file-image-o',
+                ['bmp', 'jpg', 'jpeg', 'png', 'gif', 'ico', 'jpe'],
+            ],
+            'video'   => [
+                'fa-file-video-o',
+                [
+                    'mkv',
+                    'mp4',
+                    'webm',
+                    'avi',
+                    'mpg',
+                    'mpeg',
+                    'rm',
+                    'rmvb',
+                    'mov',
+                    'wmv',
+                    'asf',
+                    'ts',
+                    'flv',
+                ],
+            ],
+            'audio'   => ['fa-file-audio-o', ['ogg', 'mp3', 'wav']],
+            'code'    => [
+                'fa-file-code-o',
+                [
+                    'html',
+                    'htm',
+                    'css',
+                    'go',
+                    'java',
+                    'js',
+                    'json',
+                    'txt',
+                    'sh',
+                    'md',
+                    'php',
+                ],
+            ],
+            'doc'     => [
+                'fa-file-word-o',
+                [
+                    'csv',
+                    'doc',
+                    'docx',
+                    'odp',
+                    'ods',
+                    'odt',
+                    'pot',
+                    'potm',
+                    'potx',
+                    'pps',
+                    'ppsx',
+                    'ppsxm',
+                    'ppt',
+                    'pptm',
+                    'pptx',
+                    'rtf',
+                    'xls',
+                    'xlsx',
+                ],
+            ],
+            'pdf'     => ['fa-file-pdf-o', ['pdf']],
+            'zip'     => [
+                'fa-file-archive-o',
+                ['zip', '7z', 'rar', 'bz', 'gz'],
+            ],
+            'android' => ['fa-android', ['apk']],
+            'exe'     => ['fa-windows', ['exe', 'msi']],
+        ];
 
-    const SITE_THEME = [
-        'Cerulean' => 'cerulean',
-        'Cosmo' => 'cosmo',
-        'Cyborg' => 'cyborg',
-        'Darkly' => 'darkly',
-        'Flatly' => 'flatly',
-        'Journal' => 'journal',
-        'Litera' => 'litera',
-        'Lumen' => 'lumen',
-        'Materia' => 'materia',
-        'Lux' => 'lux',
-        'Minty' => 'minty',
-        'Pulse' => 'pulse',
-        'Sandstone' => 'sandstone',
-        'Simplex' => 'simplex',
-        'Sketchy' => 'sketchy',
-        'Slate' => 'slate',
-        'Solar' => 'solar',
-        'Spacelab' => 'spacelab',
-        'Superhero' => 'superhero',
-        'United' => 'united',
-        'Yeti' => 'yeti',
-    ];
+    const SITE_THEME
+        = [
+            'Cerulean'  => 'cerulean',
+            'Cosmo'     => 'cosmo',
+            'Cyborg'    => 'cyborg',
+            'Darkly'    => 'darkly',
+            'Flatly'    => 'flatly',
+            'Journal'   => 'journal',
+            'Litera'    => 'litera',
+            'Lumen'     => 'lumen',
+            'Materia'   => 'materia',
+            'Lux'       => 'lux',
+            'Minty'     => 'minty',
+            'Pulse'     => 'pulse',
+            'Sandstone' => 'sandstone',
+            'Simplex'   => 'simplex',
+            'Sketchy'   => 'sketchy',
+            'Slate'     => 'slate',
+            'Solar'     => 'solar',
+            'Spacelab'  => 'spacelab',
+            'Superhero' => 'superhero',
+            'United'    => 'united',
+            'Yeti'      => 'yeti',
+        ];
 }

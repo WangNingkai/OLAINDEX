@@ -66,12 +66,13 @@ class Find extends Command
         $data = $this->format($data);
         $items = array_slice($data, $offset, $length);
         $headers = [];
-        $this->line('total ' . count($items));
+        $this->line('total '.count($items));
         $this->table($headers, $items, 'compact');
     }
 
     /**
      * @param $data
+     *
      * @return array
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -82,18 +83,37 @@ class Find extends Command
             $type = array_has($item, 'folder') ? 'd' : '-';
             $size = Tool::convertSize($item['size']);
             $time = date('M m H:i', strtotime($item['lastModifiedDateTime']));
-            $folder = array_has($item, 'folder') ? array_get($item, 'folder.childCount') : '1';
+            $folder = array_has($item, 'folder') ? array_get($item,
+                'folder.childCount') : '1';
             $owner = array_get($item, 'createdBy.user.displayName');
             if ($id = $this->option('id')) {
                 $result = OneDrive::itemIdToPath($item['id']);
                 $response = OneDrive::responseToArray($result);
-                $path = $response['code'] === 200 ? $response['data']['path'] : 'Failed Fetch Path!';
-                $content = [$type, $path, $folder, $owner, $size, $time, $item['name']];
+                $path = $response['code'] === 200 ? $response['data']['path']
+                    : 'Failed Fetch Path!';
+                $content = [
+                    $type,
+                    $path,
+                    $folder,
+                    $owner,
+                    $size,
+                    $time,
+                    $item['name'],
+                ];
             } else {
-                $content = [$type, $item['id'], $folder, $owner, $size, $time, $item['name']];
+                $content = [
+                    $type,
+                    $item['id'],
+                    $folder,
+                    $owner,
+                    $size,
+                    $time,
+                    $item['name'],
+                ];
             }
             $list[] = $content;
         }
+
         return $list;
     }
 }

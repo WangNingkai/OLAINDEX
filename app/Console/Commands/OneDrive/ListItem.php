@@ -46,18 +46,22 @@ class ListItem extends Command
         $offset = $this->option('offset');
         $length = $this->option('limit');
         if ($id) {
-            $data = Cache::remember('one:list:id:' . $id, Tool::config('expires'), function () use ($id) {
-                $result = OneDrive::getChildren($id);
-                $response = OneDrive::responseToArray($result);
-                return $response['code'] === 200 ? $response['data'] : [];
-            });
+            $data = Cache::remember('one:list:id:'.$id, Tool::config('expires'),
+                function () use ($id) {
+                    $result = OneDrive::getChildren($id);
+                    $response = OneDrive::responseToArray($result);
+
+                    return $response['code'] === 200 ? $response['data'] : [];
+                });
         } else {
             $graphPath = OneDrive::getRequestPath($remote);
-            $data = Cache::remember('one:list:path:' . $graphPath, Tool::config('expires'), function () use ($graphPath) {
-                $result = OneDrive::getChildrenByPath($graphPath);
-                $response = OneDrive::responseToArray($result);
-                return $response['code'] === 200 ? $response['data'] : [];
-            });
+            $data = Cache::remember('one:list:path:'.$graphPath,
+                Tool::config('expires'), function () use ($graphPath) {
+                    $result = OneDrive::getChildrenByPath($graphPath);
+                    $response = OneDrive::responseToArray($result);
+
+                    return $response['code'] === 200 ? $response['data'] : [];
+                });
         }
         if (!$data) {
             $this->error('Please confirm your options and try again later!');
@@ -67,12 +71,13 @@ class ListItem extends Command
         $data = $this->format($data);
         $items = array_slice($data, $offset, $length);
         $headers = [];
-        $this->line('total ' . count($items));
+        $this->line('total '.count($items));
         $this->table($headers, $items, 'compact');
     }
 
     /**
      * @param $data
+     *
      * @return array
      */
     public function format($data)
@@ -82,15 +87,32 @@ class ListItem extends Command
             $type = array_has($item, 'folder') ? 'd' : '-';
             $size = Tool::convertSize($item['size']);
             $time = date('M m H:i', strtotime($item['lastModifiedDateTime']));
-            $folder = array_has($item, 'folder') ? array_get($item, 'folder.childCount') : '1';
+            $folder = array_has($item, 'folder') ? array_get($item,
+                'folder.childCount') : '1';
             $owner = array_get($item, 'createdBy.user.displayName');
             if ($this->option('all')) {
-                $content = [$type, $item['id'], $folder, $owner, $size, $time, $item['name']];
+                $content = [
+                    $type,
+                    $item['id'],
+                    $folder,
+                    $owner,
+                    $size,
+                    $time,
+                    $item['name'],
+                ];
             } else {
-                $content = [$type, $folder, $owner, $size, $time, $item['name']];
+                $content = [
+                    $type,
+                    $folder,
+                    $owner,
+                    $size,
+                    $time,
+                    $item['name'],
+                ];
             }
             $list[] = $content;
         }
+
         return $list;
     }
 }

@@ -40,10 +40,14 @@ class Direct extends Command
         $this->call('od:refresh');
         $this->info('Please waiting...');
         $remote = $this->argument('remote');
-        $_remote = OneDrive::responseToArray(OneDrive::pathToItemId(OneDrive::getRequestPath($remote)));
-        $remote_id = $_remote['code'] === 200 ? array_get($_remote, 'data.id') : exit('Remote Path Abnormal');
+        $_remote
+            = OneDrive::responseToArray(OneDrive::pathToItemId(OneDrive::getRequestPath($remote)));
+        $remote_id = $_remote['code'] === 200 ? array_get($_remote, 'data.id')
+            : exit('Remote Path Abnormal');
         $share = OneDrive::createShareLink($remote_id);
         $response = OneDrive::responseToArray($share);
-        $response['code'] === 200 ? $this->info("Success! Direct Link:\n{$response['data']['redirect']}") : $this->warn("Failed!\n{$response['msg']} ");
+        $response['code'] === 200
+            ? $this->info("Success! Direct Link:\n{$response['data']['redirect']}")
+            : $this->warn("Failed!\n{$response['msg']} ");
     }
 }

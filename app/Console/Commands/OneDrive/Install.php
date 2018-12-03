@@ -43,7 +43,8 @@ class Install extends Command
         $this->info('chmod -R 755 storage/* && chown -R www:www *');
         if (!file_exists(storage_path('app/config.json'))) {
             $this->warn('Missing the Configuration File');
-            copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
+            copy(storage_path('app/example.config.json'),
+                storage_path('app/config.json'));
             $this->info('Done!');
         };
         if (!file_exists(base_path('.env.example'))) {
@@ -56,8 +57,8 @@ class Install extends Command
             'APP_URL=http://localhost:8000',
         ];
         $replace_db = [
-            'APP_KEY=' . str_random(32),
-            'APP_URL=' . $app_url,
+            'APP_KEY='.str_random(32),
+            'APP_URL='.$app_url,
         ];
         $envExample = file_get_contents(base_path('.env.example'));
         $env = str_replace($search_db, $replace_db, $envExample);
