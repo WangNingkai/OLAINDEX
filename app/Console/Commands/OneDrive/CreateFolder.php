@@ -3,7 +3,6 @@
 namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\OneDrive;
-use App\Helpers\Tool;
 use Illuminate\Console\Command;
 
 class CreateFolder extends Command
@@ -14,7 +13,7 @@ class CreateFolder extends Command
      * @var string
      */
     protected $signature = 'od:mkdir
-                            {name : Floder Name}
+                            {name : Folder Name}
                             {remote : Remote Path}';
 
     /**

@@ -35,9 +35,11 @@ class InstallController extends Controller
             return view('message');
         }
         $ru
-            = "https://developer.microsoft.com/en-us/graph/quick-start?appID=_appId_&appName=_appName_&redirectUrl={$redirect_uri}&platform=option-php";
+            = 'https://developer.microsoft.com/en-us/graph/quick-start?appID=_appId_&appName=_appName_&redirectUrl='
+            .$redirect_uri.'&platform=option-php';
         $deepLink
-            = "/quickstart/graphIO?publicClientSupport=false&appName=OLAINDEX&redirectUrl={$redirect_uri}&allowImplicitFlow=false&ru="
+            = '/quickstart/graphIO?publicClientSupport=false&appName=OLAINDEX&redirectUrl='
+            .$redirect_uri.'&allowImplicitFlow=false&ru='
             .urlencode($ru);
         $app_url = "https://apps.dev.microsoft.com/?deepLink="
             .urlencode($deepLink);
@@ -52,7 +54,7 @@ class InstallController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
-    public function _1stInstall(Request $request)
+    public function install(Request $request)
     {
         // 检测是否已经配置client_id等信息
         if (Tool::hasConfig()) {

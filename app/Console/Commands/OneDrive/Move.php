@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands\OneDrive;
 
-use App\Helpers\Tool;
 use App\Helpers\OneDrive;
 use Illuminate\Console\Command;
 

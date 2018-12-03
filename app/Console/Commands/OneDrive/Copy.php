@@ -59,20 +59,30 @@ class Copy extends Command
             $redirect = array_get($response, 'data.redirect');
             $done = false;
             while (!$done) {
-                $result = OneDrive::responseToArray(OneDrive::request('get',
-                    $redirect, '', true)->getBody()->getContents());
+                $resp = OneDrive::request(
+                    'get',
+                    $redirect,
+                    '',
+                    true
+                )
+                    ->getBody()->getContents();
+                $result = OneDrive::responseToArray($resp);
                 $status = array_get($result, 'status');
                 if ($status === 'failed') {
                     $this->error(array_get($result, 'error.message'));
                     $done = true;
                 } elseif ($status === 'inProgress') {
-                    $this->info('Progress: '.array_get($result,
-                            'percentageComplete'));
+                    $this->info(
+                        'Progress: '
+                        .array_get($result, 'percentageComplete')
+                    );
                     sleep(3);
                     $done = false;
                 } elseif ($status === 'completed') {
-                    $this->info('Progress: '.array_get($result,
-                            'percentageComplete'));
+                    $this->info(
+                        'Progress: '
+                        .array_get($result, 'percentageComplete')
+                    );
                     $done = true;
                 } elseif ($status === 'notStarted') {
                     $this->error('Status:'.$status);

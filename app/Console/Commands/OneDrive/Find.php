@@ -83,8 +83,9 @@ class Find extends Command
             $type = array_has($item, 'folder') ? 'd' : '-';
             $size = Tool::convertSize($item['size']);
             $time = date('M m H:i', strtotime($item['lastModifiedDateTime']));
-            $folder = array_has($item, 'folder') ? array_get($item,
-                'folder.childCount') : '1';
+            $folder = array_has($item, 'folder')
+                ? array_get($item, 'folder.childCount')
+                : '1';
             $owner = array_get($item, 'createdBy.user.displayName');
             if ($id = $this->option('id')) {
                 $result = OneDrive::itemIdToPath($item['id']);

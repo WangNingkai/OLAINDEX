@@ -5,7 +5,6 @@ namespace App\Console\Commands\OneDrive;
 use App\Helpers\Constants;
 use App\Helpers\Tool;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 
 class Update extends Command
 {

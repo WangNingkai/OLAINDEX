@@ -103,14 +103,19 @@ class OauthController extends Controller
                         'grant_type'    => 'authorization_code',
                     ];
                     if (Tool::config('account_type', 'com') === 'cn') {
-                        $form_params = array_add($form_params, 'resource',
-                            Constants::REST_ENDPOINT_21V);
+                        $form_params = array_add(
+                            $form_params,
+                            'resource',
+                            Constants::REST_ENDPOINT_21V
+                        );
                     }
                     $response = $client->post($this->access_token_url, [
                         'form_params' => $form_params,
                     ]);
-                    $token = json_decode($response->getBody()->getContents(),
-                        true);
+                    $token = json_decode(
+                        $response->getBody()->getContents(),
+                        true
+                    );
                     $access_token = $token['access_token'];
                     $refresh_token = $token['refresh_token'];
                     $expires = (int)$token['expires_in'] !== 0 ? time()
@@ -185,8 +190,11 @@ class OauthController extends Controller
                 'grant_type'    => 'refresh_token',
             ];
             if (Tool::config('account_type', 'com') === 'cn') {
-                $form_params = array_add($form_params, 'resource',
-                    Constants::REST_ENDPOINT_21V);
+                $form_params = array_add(
+                    $form_params,
+                    'resource',
+                    Constants::REST_ENDPOINT_21V
+                );
             }
             $response = $client->post($this->access_token_url, [
                 'form_params' => $form_params,

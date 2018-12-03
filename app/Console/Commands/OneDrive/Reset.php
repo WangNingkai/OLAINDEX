@@ -52,8 +52,10 @@ class Reset extends Command
     public function reset()
     {
         $this->call('cache:clear');
-        copy(storage_path('app/example.config.json'),
-            storage_path('app/config.json'));
+        copy(
+            storage_path('app/example.config.json'),
+            storage_path('app/config.json')
+        );
         $this->info('Reset Completed！');
     }
 }

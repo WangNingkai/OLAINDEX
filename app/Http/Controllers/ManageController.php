@@ -7,6 +7,7 @@ use App\Helpers\OneDrive;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * 管理员 OneDrive 操作
@@ -46,9 +47,10 @@ class ManageController extends Controller
         }
         $file = $request->file($field);
         $rule = [$field => 'required|max:4096|image'];
-        $validator
-            = \Illuminate\Support\Facades\Validator::make(request()->all(),
-            $rule);
+        $validator = Validator::make(
+            request()->all(),
+            $rule
+        );
         if ($validator->fails()) {
             $data = ['code' => 500, 'message' => $validator->errors()->first()];
 
@@ -62,12 +64,11 @@ class ManageController extends Controller
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
             $content = file_get_contents($path);
-            $image_hosting_path
-                = trim(Tool::getEncodeUrl(Tool::config('image_hosting_path')),
-                '/');
-            $filePath = trim($image_hosting_path.'/'.date('Y').'/'.date('m').'/'
-                .date('d').'/'.str_random(8).'/'.$file->getClientOriginalName(),
-                '/');
+            $hostingPath
+                = Tool::getEncodeUrl(Tool::config('image_hosting_path'));
+            $middleName = '/'.date('Y').'/'.date('m').'/'
+                .date('d').'/'.str_random(8).'/';
+            $filePath = $hostingPath.$middleName.$file->getClientOriginalName();
             $remoteFilePath = Tool::getRequestPath($filePath); // 远程图片保存地址
             $result = OneDrive::uploadByPath($remoteFilePath, $content);
             $response = OneDrive::responseToArray($result);
@@ -122,8 +123,8 @@ class ManageController extends Controller
         }
         $file = $request->file($field);
         $rule = [$field => 'required|max:4096']; // 上传文件规则，单文件指定大小4M
-        $validator
-            = \Illuminate\Support\Facades\Validator::make(request()->all(),
+        $validator = Validator::make(
+            request()->all(),
             $rule);
         if ($validator->fails()) {
             $data = ['code' => 500, 'message' => $validator->errors()->first()];

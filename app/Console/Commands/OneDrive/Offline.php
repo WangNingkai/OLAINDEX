@@ -56,13 +56,17 @@ class Offline extends Command
                     $this->error(array_get($result, 'error.message'));
                     $done = true;
                 } elseif ($status === 'inProgress') {
-                    $this->info('Progress: '.array_get($result,
-                            'percentageComplete'));
+                    $this->info(
+                        'Progress: '
+                        .array_get($result, 'percentageComplete')
+                    );
                     sleep(3);
                     $done = false;
                 } elseif ($status === 'completed') {
-                    $this->info('Progress: '.array_get($result,
-                            'percentageComplete'));
+                    $this->info(
+                        'Progress: '
+                        .array_get($result, 'percentageComplete')
+                    );
                     $done = true;
                 } elseif ($status === 'notStarted') {
                     $this->error('Status:'.$status);

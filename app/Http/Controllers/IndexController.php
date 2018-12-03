@@ -64,7 +64,6 @@ class IndexController extends Controller
      * @param Request $request
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function home(Request $request)
     {
@@ -84,7 +83,9 @@ class IndexController extends Controller
         $graphPath = Tool::getRequestPath($realPath);
         $origin_path = rawurldecode(Tool::getRequestPath($realPath, false));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
-        $item = Cache::remember('one:file:'.$graphPath, $this->expires,
+        $item = Cache::remember(
+            'one:file:'.$graphPath,
+            $this->expires,
             function () use ($graphPath) {
                 $result = OneDrive::getItemByPath($graphPath);
                 $response = OneDrive::responseToArray($result);
@@ -93,15 +94,20 @@ class IndexController extends Controller
                 } else {
                     return null;
                 }
-            });
+            }
+        );
         if (array_has($item, 'file')) {
             return redirect()->away($item['@microsoft.graph.downloadUrl']);
         }
         // 获取列表
-        $origin_items = Cache::remember('one:list:'.$graphPath, $this->expires,
+        $origin_items = Cache::remember(
+            'one:list:'.$graphPath,
+            $this->expires,
             function () use ($graphPath) {
-                $result = OneDrive::getChildrenByPath($graphPath,
-                    '?select=id,name,size,lastModifiedDateTime,eTag,file,image,folder,@microsoft.graph.downloadUrl');
+                $result = OneDrive::getChildrenByPath(
+                    $graphPath,
+                    '?select=id,name,size,lastModifiedDateTime,eTag,file,image,folder,@microsoft.graph.downloadUrl'
+                );
                 $response = OneDrive::responseToArray($result);
                 if ($response['code'] === 200) {
                     return $response['data'];
@@ -110,7 +116,8 @@ class IndexController extends Controller
 
                     return [];
                 }
-            });
+            }
+        );
         $hasImage = Tool::hasImages($origin_items);
         // 过滤微软OneNote文件
         $origin_items = array_where($origin_items, function ($value) {
@@ -152,14 +159,23 @@ class IndexController extends Controller
             ? Tool::markdown2Html(Tool::getFileContent($origin_items['README.md']['@microsoft.graph.downloadUrl']))
             : '';
         if (!session()->has('LogInfo')) {
-            $origin_items = array_except($origin_items,
-                ['README.md', 'HEAD.md', '.password', '.deny']);
+            $origin_items = array_except(
+                $origin_items,
+                ['README.md', 'HEAD.md', '.password', '.deny']
+            );
         }
         $items = Tool::paginate($origin_items, 20);
+        $data = compact(
+            'items',
+            'origin_items',
+            'origin_path',
+            'path_array',
+            'head',
+            'readme',
+            'hasImage'
+        );
 
-        return view('one',
-            compact('items', 'origin_items', 'origin_path', 'path_array',
-                'head', 'readme', 'hasImage'));
+        return view('one', $data);
     }
 
     /**
@@ -177,7 +193,9 @@ class IndexController extends Controller
         $origin_path = rawurldecode(Tool::getRequestPath($realPath, false));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
         // 获取文件
-        $file = Cache::remember('one:file:'.$graphPath, $this->expires,
+        $file = Cache::remember(
+            'one:file:'.$graphPath,
+            $this->expires,
             function () use ($graphPath) {
                 $result = OneDrive::getItemByPath($graphPath);
                 $response = OneDrive::responseToArray($result);
@@ -186,7 +204,8 @@ class IndexController extends Controller
                 } else {
                     return null;
                 }
-            });
+            }
+        );
         if (!$file) {
             abort(404);
         }
@@ -222,13 +241,19 @@ class IndexController extends Controller
                 }
                 // dash视频流
                 if ($key === 'dash') {
-                    if (!strpos($file['@microsoft.graph.downloadUrl'],
-                        "sharepoint.com")
+                    if (!strpos(
+                        $file['@microsoft.graph.downloadUrl'],
+                        "sharepoint.com"
+                    )
                     ) {
                         return redirect()->away($file['download']);
                     }
-                    $file['dash'] = str_replace("thumbnail", "videomanifest",
-                            $file['thumb'])
+                    $replace = str_replace(
+                        "thumbnail",
+                        "videomanifest",
+                        $file['thumb']
+                    );
+                    $file['dash'] = $replace
                         ."&part=index&format=dash&useScf=True&pretranscode=0&transcodeahead=0";
                 }
                 // 处理微软文档
@@ -239,8 +264,9 @@ class IndexController extends Controller
                     return redirect()->away($url);
                 }
 
-                return view($view,
-                    compact('file', 'path_array', 'origin_path'));
+                $data = compact('file', 'path_array', 'origin_path');
+
+                return view($view, $data);
             } else {
                 $last = end($this->show);
                 if ($last === $suffix) {
@@ -261,7 +287,9 @@ class IndexController extends Controller
     {
         $realPath = $request->route()->parameter('query') ?? '/';
         $graphPath = Tool::getRequestPath($realPath, true, true);
-        $file = Cache::remember('one:file:'.$graphPath, $this->expires,
+        $file = Cache::remember(
+            'one:file:'.$graphPath,
+            $this->expires,
             function () use ($graphPath) {
                 $result = OneDrive::getItemByPath($graphPath);
                 $response = OneDrive::responseToArray($result);
@@ -270,7 +298,8 @@ class IndexController extends Controller
                 } else {
                     return null;
                 }
-            });
+            }
+        );
         if (array_has($file, 'folder')) {
             abort(403);
         }
@@ -308,7 +337,9 @@ class IndexController extends Controller
     {
         $realPath = $request->route()->parameter('query') ?? '/';
         $graphPath = Tool::getRequestPath($realPath, true, true);
-        $file = Cache::remember('one:file:'.$graphPath, $this->expires,
+        $file = Cache::remember(
+            'one:file:'.$graphPath,
+            $this->expires,
             function () use ($graphPath) {
                 $result = OneDrive::getItemByPath($graphPath);
                 $response = OneDrive::responseToArray($result);
@@ -317,7 +348,8 @@ class IndexController extends Controller
                 } else {
                     return null;
                 }
-            });
+            }
+        );
         if (array_has($file, 'folder')) {
             abort(403);
         }
@@ -337,8 +369,8 @@ class IndexController extends Controller
         $keywords = $request->get('keywords');
         if ($keywords) {
             $path = Tool::getEncodeUrl($this->root);
-            $result = OneDrive::search(empty($path) ? '/' : ":/{$path}:/",
-                $keywords);
+            $graphPath = empty($path) ? '/' : ":/{$path}:/";
+            $result = OneDrive::search($graphPath, $keywords);
             $response = OneDrive::responseToArray($result);
             if ($response['code'] === 200) {
                 // 过滤结果中的文件夹\过滤微软OneNote文件

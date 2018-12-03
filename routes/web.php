@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/oauth', 'OauthController@oauth')->name('oauth');
 // 安装
 Route::prefix('install')->group(function () {
-    Route::any('/', 'InstallController@_1stInstall')->name('_1stInstall');
+    Route::any('/', 'InstallController@install')->name('_1stInstall');
     Route::any('apply', 'InstallController@apply')->name('apply');
     Route::any('reset', 'InstallController@reset')->name('reset');
     Route::any('bind', 'InstallController@bind')->name('bind');

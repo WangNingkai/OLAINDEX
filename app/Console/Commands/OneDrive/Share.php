@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands\OneDrive;
 
-use App\Helpers\Tool;
 use App\Helpers\OneDrive;
 use Illuminate\Console\Command;
 
@@ -47,8 +46,11 @@ class Share extends Command
         $share = OneDrive::createShareLink($remote_id);
         $response = OneDrive::responseToArray($share);
         if ($response['code'] === 200) {
-            $direct = str_replace('15/download.aspx', '15/guestaccess.aspx',
-                $response['data']['redirect']);
+            $direct = str_replace(
+                '15/download.aspx',
+                '15/guestaccess.aspx',
+                $response['data']['redirect']
+            );
             $this->info("Success! Share Link:\n{$direct}");
         } else {
             $this->warn("Failed!\n{$response['msg']}");

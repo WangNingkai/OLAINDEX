@@ -4,8 +4,6 @@ namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\Tool;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
 
 class ResetPassword extends Command
 {

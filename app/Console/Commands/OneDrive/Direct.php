@@ -3,7 +3,6 @@
 namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\OneDrive;
-use App\Helpers\Tool;
 use Illuminate\Console\Command;
 
 class Direct extends Command
