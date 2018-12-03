@@ -43,7 +43,9 @@ class Remove extends Command
     {
         $this->info('请稍等...');
         $this->call('od:refresh');
-        if ($this->option('force')) return $this->delete();
+        if ($this->option('force')) {
+            return $this->delete();
+        }
         if ($this->confirm('You can not restore,continue?')) {
             return $this->delete();
         }
@@ -64,9 +66,9 @@ class Remove extends Command
             }
             $graphPath = OneDrive::getRequestPath($remote);
             $id_response = OneDrive::responseToArray(OneDrive::pathToItemId($graphPath));
-            if ($id_response['code'] === 200)
+            if ($id_response['code'] === 200) {
                 $id = $id_response['data']['id'];
-            else {
+            } else {
                 $this->warn('Path Abnormal!');
                 exit;
             }

@@ -43,10 +43,13 @@ class InstallController extends Controller
     public function _1stInstall(Request $request)
     {
         // 检测是否已经配置client_id等信息
-        if (Tool::hasConfig())
+        if (Tool::hasConfig()) {
             return redirect()->route('bind');
+        }
         //  显示基础信息的填写、申请或提交应用信息、返回
-        if ($request->isMethod('get')) return view('install.init');
+        if ($request->isMethod('get')) {
+            return view('install.init');
+        }
         $client_id = $request->get('client_id');
         $client_secret = $request->get('client_secret');
         $redirect_uri = $request->get('redirect_uri');

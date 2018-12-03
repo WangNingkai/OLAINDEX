@@ -41,11 +41,12 @@ class SwitchType extends Command
             if ($this->confirm('Switch type will erase all data,continue?')) {
                 $this->call('od:reset', ['--yes' => true]);
                 $type = $this->choice('Please choose a version (com:World cn:21Vianet)', ['com', 'cn'], 'com');
-            } else exit;
+            } else {
+                exit;
+            }
         }
         $data = ['account_type' => $type];
         $saved = Tool::updateConfig($data);
         $saved ? $this->info('Success!') : $this->warn('Failed!');
-
     }
 }

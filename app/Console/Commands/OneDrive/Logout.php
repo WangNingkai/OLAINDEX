@@ -37,7 +37,9 @@ class Logout extends Command
      */
     public function handle()
     {
-        if ($this->option('force')) return $this->logout();
+        if ($this->option('force')) {
+            return $this->logout();
+        }
         if ($this->confirm('Confirm Logout?')) {
             return $this->logout();
         }

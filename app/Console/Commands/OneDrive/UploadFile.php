@@ -128,5 +128,4 @@ class UploadFile extends Command
             }
         }
     }
-
 }

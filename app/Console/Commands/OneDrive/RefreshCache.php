@@ -66,7 +66,9 @@ class RefreshCache extends Command
         $data = $this->getChildren($graphPath);
         if (is_array($data)) {
             \Illuminate\Support\Facades\Cache::put('one:list:' . $graphPath, $data, Tool::config('expires'));
-        } else exit('Cache Error!');
+        } else {
+            exit('Cache Error!');
+        }
         foreach ((array)$data as $item) {
             if (array_has($item, 'folder')) {
                 $this->getRecursive($path . $item['name'] . '/');
