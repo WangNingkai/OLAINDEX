@@ -15,9 +15,9 @@
 
 ## 简介
 
-项目地址：[https://github.com/WangNingkai/OLAINDEX](https://git.io/fpoCQ)
+项目地址：[https://github.com/WangNingkai/OLAINDEX](https://git.io/OLAINDEX)
 
-OLAINDEX-CMD [https://github.com/WangNingkai/OLAINDEX-CMD](https://git.io/fpoCQ)
+OLAINDEX-CMD [https://github.com/WangNingkai/OLAINDEX-CMD](https://git.io/OLACMD)
 
 - 1.`OneDrive` 目录索引；
 - 2.后端采用最新 `PHP` 框架 `laravel5` ；
