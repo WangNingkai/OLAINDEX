@@ -106,7 +106,7 @@ class IndexController extends Controller
             function () use ($graphPath) {
                 $result = OneDrive::getChildrenByPath(
                     $graphPath,
-                    '?select=id,name,size,lastModifiedDateTime,eTag,file,image,folder,@microsoft.graph.downloadUrl'
+                    '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl'
                 );
                 $response = OneDrive::responseToArray($result);
                 if ($response['code'] === 200) {
@@ -175,7 +175,7 @@ class IndexController extends Controller
             'hasImage'
         );
 
-        return view('one', $data);
+        return view('one-ext', $data);
     }
 
     /**

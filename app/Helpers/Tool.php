@@ -511,4 +511,34 @@ class Tool
             return '';
         }
     }
+
+    public static function fileIcon($ext)
+    {
+        if (in_array($ext, ['bmp', 'jpg', 'jpeg', 'png', 'gif'])) {
+            return "image";
+        }
+        if (in_array($ext, [
+            'mp4',
+            'mkv',
+            'webm',
+            'avi',
+            'mpg',
+            'mpeg',
+            'rm',
+            'rmvb',
+            'mov',
+            'wmv',
+            'mkv',
+            'asf',
+        ])
+        ) {
+            return "ondemand_video";
+        }
+        if (in_array($ext, ['ogg', 'mp3', 'wav'])) {
+            return "audiotrack";
+        }
+
+        return "insert_drive_file";
+    }
+
 }
