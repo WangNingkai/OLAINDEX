@@ -175,7 +175,7 @@ class IndexController extends Controller
             'hasImage'
         );
 
-        return view('one-ext', $data);
+        return view('one', $data);
     }
 
     /**
