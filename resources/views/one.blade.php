@@ -291,6 +291,7 @@
         }
 
         function getDirect() {
+            $("#dl").val('');
             $(".download_url").each(function () {
                 let dl = decodeURI($(this).attr("href"));
                 let url = dl + "\n";

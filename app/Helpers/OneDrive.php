@@ -62,12 +62,12 @@ class OneDrive
             @list($endpoint, $requestBody, $requestHeaders, $timeout) = $param;
             $body = $requestBody ?? '';
             $headers = $requestHeaders ?? [];
-            $timeout = $timeout ?? 5;
+            $timeout = $timeout ?? 120;
         } else {
             $endpoint = $param;
             $body = '';
             $headers = [];
-            $timeout = 5;
+            $timeout = 120;
         }
         if ($noToken) {
             $clientSettings = [
@@ -84,6 +84,7 @@ class OneDrive
                     'Host'          => $od->base_url,
                     'Content-Type'  => 'application/json',
                     'Authorization' => 'Bearer '.$od->access_token,
+                    'User-Agent'    => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.30 Safari/537.36',
                 ], $headers),
             ];
         }
@@ -92,7 +93,9 @@ class OneDrive
             $response = $client->request($method, $endpoint, [
                 'body'            => $body,
                 'stream'          => $returnStream,
+                'connect_timeout' => 5,
                 'timeout'         => $timeout,
+                'synchronous'     => true,
                 'allow_redirects' => [
                     'track_redirects' => true,
                 ],

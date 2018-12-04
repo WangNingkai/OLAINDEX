@@ -406,12 +406,17 @@ class Tool
             self::config('expires'),
             function () use ($url) {
                 try {
-                    $client = new Client(['timeout' => 5,]);
+                    $client = new Client([]);
                     $resp = $client->request('get', $url, [
+                        'headers'         => [
+                            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.30 Safari/537.36',
+                        ],
                         'connect_timeout' => 5,
+                        'timeout' => 120,
                         'stream'          => true,
                         'synchronous'     => true,
                     ]);
+
                     return $content = $resp->getBody()->getContents();
                 } catch (ClientException $e) {
                     Log::error(
