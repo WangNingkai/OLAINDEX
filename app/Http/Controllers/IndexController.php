@@ -179,6 +179,47 @@ class IndexController extends Controller
     }
 
     /**
+     * 获取文件信息或缓存
+     *
+     * @param $realPath
+     *
+     * @return mixed
+     */
+    public function getFileOrCache($realPath)
+    {
+        $absolutePath = Tool::getAbsolutePath($realPath);
+        $absolutePathArr = explode('/', $absolutePath);
+        $absolutePathArr = array_where($absolutePathArr, function ($value) {
+            return $value !== '';
+        });
+        $name = array_pop($absolutePathArr);
+        $absolutePath = implode('/', $absolutePathArr);
+        $listPath = Tool::getRequestPath($absolutePath);
+        $list = Cache::get('one:list:'.$listPath, '');
+
+        if ($list && array_key_exists($name, $list)) {
+            return $list[$name];
+        } else {
+            $graphPath = Tool::getRequestPath($realPath, true, true);
+
+            // 获取文件
+            return Cache::remember(
+                'one:file:'.$graphPath,
+                $this->expires,
+                function () use ($graphPath) {
+                    $result = OneDrive::getItemByPath($graphPath);
+                    $response = OneDrive::responseToArray($result);
+                    if ($response['code'] === 200) {
+                        return $response['data'];
+                    } else {
+                        return null;
+                    }
+                }
+            );
+        }
+    }
+
+    /**
      * 展示
      *
      * @param Request $request
@@ -189,29 +230,12 @@ class IndexController extends Controller
     public function show(Request $request)
     {
         $realPath = $request->route()->parameter('query') ?? '/';
-        $graphPath = Tool::getRequestPath($realPath, true, true);
-        $origin_path = rawurldecode(Tool::getRequestPath($realPath, false));
-        $path_array = $origin_path ? explode('/', $origin_path) : [];
-        // 获取文件
-        $file = Cache::remember(
-            'one:file:'.$graphPath,
-            $this->expires,
-            function () use ($graphPath) {
-                $result = OneDrive::getItemByPath($graphPath);
-                $response = OneDrive::responseToArray($result);
-                if ($response['code'] === 200) {
-                    return $response['data'];
-                } else {
-                    return null;
-                }
-            }
-        );
-        if (!$file) {
+        if ($realPath === '/') {
             abort(404);
         }
-        // 过滤文件夹
-        if (array_has($file, 'folder')) {
-            abort(403);
+        $file = $this->getFileOrCache($realPath);
+        if (!$file || array_has($file, 'folder')) {
+            abort(404);
         }
         $file['download'] = $file['@microsoft.graph.downloadUrl'];
         foreach ($this->show as $key => $suffix) {
@@ -263,7 +287,10 @@ class IndexController extends Controller
 
                     return redirect()->away($url);
                 }
-
+                $origin_path = rawurldecode(
+                    Tool::getRequestPath($realPath, false)
+                );
+                $path_array = $origin_path ? explode('/', $origin_path) : [];
                 $data = compact('file', 'path_array', 'origin_path');
 
                 return view($view, $data);
@@ -286,22 +313,12 @@ class IndexController extends Controller
     public function download(Request $request)
     {
         $realPath = $request->route()->parameter('query') ?? '/';
-        $graphPath = Tool::getRequestPath($realPath, true, true);
-        $file = Cache::remember(
-            'one:file:'.$graphPath,
-            $this->expires,
-            function () use ($graphPath) {
-                $result = OneDrive::getItemByPath($graphPath);
-                $response = OneDrive::responseToArray($result);
-                if ($response['code'] === 200) {
-                    return $response['data'];
-                } else {
-                    return null;
-                }
-            }
-        );
+        if ($realPath === '/') {
+            abort(404);
+        }
+        $file = $this->getFileOrCache($realPath);
         if (array_has($file, 'folder')) {
-            abort(403);
+            abort(404);
         }
         $url = $file['@microsoft.graph.downloadUrl'];
 
@@ -336,22 +353,12 @@ class IndexController extends Controller
     public function view(Request $request)
     {
         $realPath = $request->route()->parameter('query') ?? '/';
-        $graphPath = Tool::getRequestPath($realPath, true, true);
-        $file = Cache::remember(
-            'one:file:'.$graphPath,
-            $this->expires,
-            function () use ($graphPath) {
-                $result = OneDrive::getItemByPath($graphPath);
-                $response = OneDrive::responseToArray($result);
-                if ($response['code'] === 200) {
-                    return $response['data'];
-                } else {
-                    return null;
-                }
-            }
-        );
+        if ($realPath === '/') {
+            abort(404);
+        }
+        $file = $this->getFileOrCache($realPath);
         if (array_has($file, 'folder')) {
-            abort(403);
+            abort(404);
         }
         $download = $file['@microsoft.graph.downloadUrl'];
 

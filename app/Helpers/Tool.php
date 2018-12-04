@@ -406,7 +406,7 @@ class Tool
             self::config('expires'),
             function () use ($url) {
                 try {
-                    $client = new Client();
+                    $client = new Client(['verify' => false,]);
                     $resp = $client->request('get', $url);
 
                     return $content = $resp->getBody()->getContents();

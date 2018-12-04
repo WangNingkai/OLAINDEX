@@ -222,13 +222,14 @@ class OneDrive
      * Get Item
      *
      * @param $itemId
+     * @param $query
      *
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public static function getItem($itemId)
+    public static function getItem($itemId, $query = '')
     {
-        $endpoint = "/me/drive/items/{$itemId}";
+        $endpoint = "/me/drive/items/{$itemId}{$query}";
         $response = self::request('get', $endpoint);
         if ($response instanceof Response) {
             $data = json_decode($response->getBody()->getContents(), true);
@@ -244,13 +245,14 @@ class OneDrive
      * Get Item By Path
      *
      * @param $path
+     * @param $query
      *
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public static function getItemByPath($path)
+    public static function getItemByPath($path, $query = '')
     {
-        $endpoint = "/me/drive/root{$path}";
+        $endpoint = "/me/drive/root{$path}{$query}";
         $response = self::request('get', $endpoint);
         if ($response instanceof Response) {
             $data = json_decode($response->getBody()->getContents(), true);
