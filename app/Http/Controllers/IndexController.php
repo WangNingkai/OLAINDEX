@@ -236,7 +236,7 @@ class IndexController extends Controller
                         $file['thumb'] = $response['data']['url'];
                     } else {
                         $file['thumb']
-                            = 'https://i.loli.net/2018/11/27/5bfcdf9f16a6c.jpg';
+                            = 'https://i.loli.net/2018/12/04/5c05cd3086425.png';
                     }
                 }
                 // dash视频流
@@ -322,7 +322,7 @@ class IndexController extends Controller
         if ($response['code'] === 200) {
             $url = $response['data']['url'];
         } else {
-            $url = 'https://i.loli.net/2018/11/27/5bfcdf9f16a6c.jpg';
+            $url = 'https://i.loli.net/2018/12/04/5c05cd3086425.png';
         }
 
         return redirect()->away($url);

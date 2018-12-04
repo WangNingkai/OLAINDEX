@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\ClientException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class Tool
@@ -410,10 +411,18 @@ class Tool
 
                     return $content = $resp->getBody()->getContents();
                 } catch (ClientException $e) {
+                    Log::error(
+                        'OneDrive API',
+                        [
+                            'code' => $e->getCode(),
+                            'msg'  => 'API ERR',
+                        ]
+                    );
+
                     return response()->json(
                         [
                             'code' => $e->getCode(),
-                            'msg'  => $e->getMessage(),
+                            'msg'  => 'GET CONTENT ERR',
                         ]
                     );
                 }
