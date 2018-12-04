@@ -59,6 +59,8 @@
                             @endif
                             <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal"
                                data-target="#newFolderModal"><i class="fa fa-plus-circle"></i> 新建目录</a>
+                                <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal"
+                                   data-target="#directLinkModal"><i class="fa fa-link"></i> 导出直链</a>
                         </div>
                         @if (!array_key_exists('.password', $origin_items))
                             <div class="modal fade" id="lockFolderModal" tabindex="-1" aria-hidden="true">
@@ -122,6 +124,36 @@
                                 </form>
                             </div>
                         </div>
+                        <div class="modal fade" id="directLinkModal" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"><i class="fa fa-link"></i> 导出直链</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p class="text-danger">
+                                            链接将在 {{ date('m/d/Y H:i', \App\Helpers\Tool::config('access_token_expires')) }}
+                                            后失效</p>
+                                        <p><a href="javascript:void(0)"
+                                              style="text-decoration: none" data-toggle="tooltip"
+                                              data-placement="right" data-clipboard-target="#dl"
+                                              class="clipboard">点击复制</a></p>
+                                        <label for="dl"><textarea name="urls" id="dl" class="form-control" cols="60"
+                                                                  rows="20"></textarea></label>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" onclick="getDirect()" class="btn btn-primary">点击获取
+                                        </button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     @else
                         <span class="pull-right">操作</span>
                     @endif
@@ -170,7 +202,8 @@
                                         <a href="{{ route('admin.file.update',$item['id']) }}"><i
                                                 class="fa fa-pencil"></i></a>&nbsp;&nbsp;
                                     @endif
-                                    <a href="{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"><i
+                                    <a class="download_url"
+                                       href="{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"><i
                                             class="fa fa-download"
                                             title="下载"></i></a>&nbsp;&nbsp;
                                 @else
@@ -196,7 +229,7 @@
     @if ($hasImage)
         <div class="card border-light mb-3">
             <div class="card-header">
-                图片列表
+                看图
             </div>
             <div class="card-body">
                 <div id="links">
@@ -235,25 +268,37 @@
     <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/jquery.blueimp-gallery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/blueimp-gallery-indicator.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/blueimp-gallery-fullscreen.min.js"></script>
-    @if(session()->has('LogInfo'))
-        <script>
-            function deleteItem($sign) {
-                swal({
-                    title: '确定删除吗？',
-                    text: "删除后无法恢复",
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: '确定删除',
-                    cancelButtonText: '取消',
-                    reverseButtons: true
-                }).then((result) => {
-                    if (result.value) {
-                        window.open('/file/delete/' + $sign, '_blank');
-                    } else if (result.dismiss === swal.DismissReason.cancel) {
-                        swal('已取消', '文件安全 :)', 'error');
-                    }
-                })
-            }
-        </script>
-    @endif
+    <script src="https://cdn.bootcss.com/store.js/1.3.20/store.min.js"></script>
+
+    <script>
+        @if(session()->has('LogInfo'))
+        function deleteItem($sign) {
+            swal({
+                title: '确定删除吗？',
+                text: "删除后无法恢复",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '确定删除',
+                cancelButtonText: '取消',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+                    window.open('/file/delete/' + $sign, '_blank');
+                } else if (result.dismiss === swal.DismissReason.cancel) {
+                    swal('已取消', '文件安全 :)', 'error');
+                }
+            })
+        }
+
+        function getDirect() {
+            $(".download_url").each(function () {
+                let dl = decodeURI($(this).attr("href"));
+                let url = dl + "\n";
+                let origin = $("#dl").val();
+                $("#dl").val(origin + url);
+            });
+        }
+        @endif
+    </script>
+
 @stop
