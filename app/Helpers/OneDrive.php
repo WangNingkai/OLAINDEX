@@ -104,11 +104,11 @@ class OneDrive
                 'OneDrive API',
                 [
                     'code' => $e->getCode(),
-                    'msg'  => $e->getMessage(),
+                    'msg'  => 'API ERR',
                 ]
             );
 
-            return self::response('', $e->getCode(), $e->getMessage());
+            return self::response('', $e->getCode(), 'API ERR');
         }
     }
 
