@@ -28,17 +28,6 @@ EOF;
 
     const SCOPES = 'offline_access user.read files.readwrite.all';
 
-    const ACCOUNT
-        = [
-            "account_type"         => "com",
-            "client_id"            => "",
-            "client_secret"        => "",
-            "redirect_uri"         => "",
-            "access_token"         => "",
-            "access_token_expires" => "",
-            "refresh_token"        => "",
-        ];
-
     const FILE_ICON
         = [
             'stream'  => ['fa-file-text-o', ['txt', 'log']],

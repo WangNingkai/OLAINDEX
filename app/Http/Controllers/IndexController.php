@@ -62,7 +62,7 @@ class IndexController extends Controller
      * @param Request $request
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function home(Request $request)
     {
@@ -74,7 +74,7 @@ class IndexController extends Controller
      * @param Request $request
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function list(Request $request)
     {
@@ -219,11 +219,10 @@ class IndexController extends Controller
     }
 
     /**
-     * 展示
-     *
      * @param Request $request
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @throws \ErrorException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function show(Request $request)
@@ -423,9 +422,8 @@ class IndexController extends Controller
     }
 
     /**
-     * 处理加密目录
-     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @throws \ErrorException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function handlePassword()

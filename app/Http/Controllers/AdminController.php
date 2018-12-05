@@ -160,6 +160,19 @@ class AdminController extends Controller
     }
 
     /**
+     * 刷新缓存
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function refresh()
+    {
+        Artisan::call('od:cache');
+        Tool::showMessage('刷新成功');
+
+        return redirect()->route('admin.basic');
+    }
+
+    /**
      * 账号绑定
      *
      * @param Request $request

@@ -53,7 +53,9 @@ Route::prefix('admin')->group(function () {
     Route::any('bind', 'AdminController@bind')->name('admin.bind');
     Route::any('show', 'AdminController@show')->name('admin.show');
     Route::any('profile', 'AdminController@profile')->name('admin.profile');
-    Route::any('clear', 'AdminController@clear')->name('admin.clear');
+    Route::any('clear', 'AdminController@clear')->name('admin.cache.clear');
+    Route::any('refresh', 'AdminController@refresh')
+        ->name('admin.cache.refresh');
     // 文件夹操作
     Route::prefix('folder')->group(function () {
         Route::post('lock', 'ManageController@lockFolder')->name('admin.lock');

@@ -4,9 +4,9 @@ namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\Constants;
 use App\Helpers\Tool;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
+use Curl\Curl;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class Login extends Command
 {
@@ -75,9 +75,7 @@ class Login extends Command
     }
 
     /**
-     * Execute the console command.
-     *
-     * @return mixed
+     * @throws \ErrorException
      */
     public function handle()
     {
@@ -87,8 +85,7 @@ class Login extends Command
         }
         if (!Tool::hasConfig()) {
             if ($this->confirm('Missing client_id & client_secret,continue?')) {
-                $account_type
-                    = $this->choice(
+                $account_type = $this->choice(
                     'Please choose a version (com:World cn:21Vianet)',
                     ['com', 'cn'],
                     'com'
@@ -123,26 +120,35 @@ class Login extends Command
         $authorizationUrl = $this->authorize_url."?{$query}";
         $this->info("Please copy this link to your browser to open.\n{$authorizationUrl}");
         $code = $this->ask('Please enter the code obtained by the browser.');
-        try {
-            $client = new Client();
-            $form_params = [
-                'client_id'     => $this->client_id,
-                'client_secret' => $this->client_secret,
-                'redirect_uri'  => $this->redirect_uri,
-                'code'          => $code,
-                'grant_type'    => 'authorization_code',
-            ];
-            if (Tool::config('account_type', 'com') === 'cn') {
-                $form_params = array_add(
-                    $form_params,
-                    'resource',
-                    Constants::REST_ENDPOINT_21V
-                );
-            }
-            $response = $client->post($this->access_token_url, [
-                'form_params' => $form_params,
-            ]);
-            $token = json_decode($response->getBody()->getContents(), true);
+        $form_params = [
+            'client_id'     => $this->client_id,
+            'client_secret' => $this->client_secret,
+            'redirect_uri'  => $this->redirect_uri,
+            'code'          => $code,
+            'grant_type'    => 'authorization_code',
+        ];
+        if (Tool::config('account_type', 'com') === 'cn') {
+            $form_params = array_add(
+                $form_params,
+                'resource',
+                Constants::REST_ENDPOINT_21V
+            );
+        }
+        $curl = new Curl();
+        $curl->post($this->access_token_url, $form_params);
+        if ($curl->error) {
+            Log::error(
+                'OneDrive Login Err',
+                [
+                    'code' => $curl->errorCode,
+                    'msg'  => $curl->errorMessage,
+                ]
+            );
+            $msg = 'Error: '.$curl->errorCode.': '.$curl->errorMessage."\n";
+
+            exit($msg);
+        } else {
+            $token = collect($curl->response)->toArray();
             $access_token = $token['access_token'];
             $refresh_token = $token['refresh_token'];
             $expires = $token['expires_in'] != 0 ? time() + $token['expires_in']
@@ -155,9 +161,6 @@ class Login extends Command
             Tool::updateConfig($data);
             $this->info('Login Success!');
             $this->info('Account ['.Tool::getBindAccount().']');
-        } catch (ClientException $e) {
-            $this->warn($e->getMessage());
-            exit;
         }
     }
 }

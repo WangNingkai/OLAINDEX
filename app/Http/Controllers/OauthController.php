@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Constants;
 use App\Helpers\Tool;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
+use Curl\Curl;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 /**
@@ -67,11 +67,10 @@ class OauthController extends Controller
     }
 
     /**
-     * 处理授权
-     *
      * @param Request $request
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @throws \ErrorException
      */
     public function oauth(Request $request)
     {
@@ -93,33 +92,42 @@ class OauthController extends Controller
                 }
                 Session::forget('state'); // 兼容下次登陆
                 $code = $request->get('code');
-                try {
-                    $client = new Client();
-                    $form_params = [
-                        'client_id'     => $this->client_id,
-                        'client_secret' => $this->client_secret,
-                        'redirect_uri'  => $this->redirect_uri,
-                        'code'          => $code,
-                        'grant_type'    => 'authorization_code',
-                    ];
-                    if (Tool::config('account_type', 'com') === 'cn') {
-                        $form_params = array_add(
-                            $form_params,
-                            'resource',
-                            Constants::REST_ENDPOINT_21V
-                        );
-                    }
-                    $response = $client->post($this->access_token_url, [
-                        'form_params' => $form_params,
-                    ]);
-                    $token = json_decode(
-                        $response->getBody()->getContents(),
-                        true
+                $form_params = [
+                    'client_id'     => $this->client_id,
+                    'client_secret' => $this->client_secret,
+                    'redirect_uri'  => $this->redirect_uri,
+                    'code'          => $code,
+                    'grant_type'    => 'authorization_code',
+                ];
+                if (Tool::config('account_type', 'com') === 'cn') {
+                    $form_params = array_add(
+                        $form_params,
+                        'resource',
+                        Constants::REST_ENDPOINT_21V
                     );
+                }
+                $curl = new Curl();
+                $curl->post($this->access_token_url, $form_params);
+                if ($curl->error) {
+                    Log::error(
+                        'OneDrive Login Err',
+                        [
+                            'code' => $curl->errorCode,
+                            'msg'  => $curl->errorMessage,
+                        ]
+                    );
+                    $msg = 'Error: '.$curl->errorCode.': '.$curl->errorMessage
+                        ."\n";
+                    Tool::showMessage($msg, false);
+
+                    return view('message');
+                } else {
+                    $token = collect($curl->response)->toArray();
                     $access_token = $token['access_token'];
                     $refresh_token = $token['refresh_token'];
-                    $expires = (int)$token['expires_in'] !== 0 ? time()
-                        + $token['expires_in'] : 0;
+                    $expires = (int)$token['expires_in'] != 0 ? time()
+                        + $token['expires_in']
+                        : 0;
                     $data = [
                         'access_token'         => $access_token,
                         'refresh_token'        => $refresh_token,
@@ -128,10 +136,6 @@ class OauthController extends Controller
                     Tool::updateConfig($data);
 
                     return redirect()->route('home');
-                } catch (ClientException $e) {
-                    Tool::showMessage($e->getMessage(), false);
-
-                    return view('message');
                 }
             }
         } else {
@@ -166,11 +170,10 @@ class OauthController extends Controller
     }
 
     /**
-     * 刷新授权
-     *
      * @param bool $redirect
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return false|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|string
+     * @throws \ErrorException
      */
     public function refreshToken($redirect = true)
     {
@@ -180,29 +183,41 @@ class OauthController extends Controller
             return response()->json(['code' => 400, 'msg' => 'Bad Request']);
         }
         $existingRefreshToken = Tool::config('refresh_token');
-        try {
-            $client = new Client();
-            $form_params = [
-                'client_id'     => $this->client_id,
-                'client_secret' => $this->client_secret,
-                'redirect_uri'  => $this->redirect_uri,
-                'refresh_token' => $existingRefreshToken,
-                'grant_type'    => 'refresh_token',
-            ];
-            if (Tool::config('account_type', 'com') === 'cn') {
-                $form_params = array_add(
-                    $form_params,
-                    'resource',
-                    Constants::REST_ENDPOINT_21V
-                );
-            }
-            $response = $client->post($this->access_token_url, [
-                'form_params' => $form_params,
+        $form_params = [
+            'client_id'     => $this->client_id,
+            'client_secret' => $this->client_secret,
+            'redirect_uri'  => $this->redirect_uri,
+            'refresh_token' => $existingRefreshToken,
+            'grant_type'    => 'refresh_token',
+        ];
+        if (Tool::config('account_type', 'com') === 'cn') {
+            $form_params = array_add(
+                $form_params,
+                'resource',
+                Constants::REST_ENDPOINT_21V
+            );
+        }
+        $curl = new Curl();
+        $curl->post($this->access_token_url, $form_params);
+        if ($curl->error) {
+            Log::error(
+                'OneDrive Refresh Token Err',
+                [
+                    'code' => $curl->errorCode,
+                    'msg'  => $curl->errorMessage,
+                ]
+            );
+
+            return json_encode([
+                'code' => $curl->errorCode,
+                'msg'  => $curl->errorMessage,
             ]);
-            $token = json_decode($response->getBody()->getContents(), true);
+        } else {
+            $token = collect($curl->response)->toArray();
             $access_token = $token['access_token'];
             $refresh_token = $token['refresh_token'];
-            $expires = $token['expires_in'] != 0 ? time() + $token['expires_in']
+            $expires = (int)$token['expires_in'] != 0 ? time()
+                + $token['expires_in']
                 : 0;
             $data = [
                 'access_token'         => $access_token,
@@ -217,11 +232,6 @@ class OauthController extends Controller
             } else {
                 return json_encode(['code' => 200, 'msg' => 'ok']);
             }
-        } catch (ClientException $e) {
-            return json_encode([
-                'code' => $e->getCode(),
-                'msg'  => $e->getMessage(),
-            ]);
         }
     }
 }
