@@ -63,12 +63,14 @@ class IndexController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @throws \ErrorException
      */
     public function home(Request $request)
     {
         return $this->list($request);
     }
+
 
     /**
      * 列表
@@ -76,6 +78,7 @@ class IndexController extends Controller
      * @param Request $request
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @throws \ErrorException
      */
     public function list(Request $request)
     {
@@ -131,7 +134,7 @@ class IndexController extends Controller
             $key = 'password:'.$origin_path;
             if (Session::has($key)) {
                 $data = Session::get($key);
-                $password = Tool::getFileContent($pass_url);
+                $password = Tool::getFileContent($pass_url, false);
                 if (strcmp($password, decrypt($data['password'])) !== 0
                     || time() > $data['expires']
                 ) {
@@ -225,6 +228,7 @@ class IndexController extends Controller
      * @param Request $request
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @throws \ErrorException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function show(Request $request)
@@ -426,7 +430,8 @@ class IndexController extends Controller
     /**
      * 处理加密目录
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @throws \ErrorException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function handlePassword()
@@ -443,7 +448,8 @@ class IndexController extends Controller
         $response = OneDrive::responseToArray($result);
         if ($response['code'] === 200) {
             $directory_password
-                = Tool::getFileContent($response['data']['@microsoft.graph.downloadUrl']);
+                = Tool::getFileContent($response['data']['@microsoft.graph.downloadUrl'],
+                false);
         } else {
             Tool::showMessage('获取文件夹密码失败', false);
             $directory_password = '';

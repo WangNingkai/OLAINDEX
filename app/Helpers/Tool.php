@@ -3,8 +3,7 @@
 namespace App\Helpers;
 
 use App\Http\Controllers\OauthController;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
+use Curl\Curl;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
@@ -395,47 +394,47 @@ class Tool
     }
 
     /**
-     * @param $url
+     * @param      $url
+     * @param bool $cache
      *
-     * @return mixed
+     * @return \Illuminate\Http\JsonResponse|mixed|null
+     * @throws \ErrorException
      */
-    public static function getFileContent($url)
+    public static function getFileContent($url, $cache = true)
     {
-        return Cache::remember(
-            'one:content:'.$url,
-            self::config('expires'),
-            function () use ($url) {
-                try {
-                    $client = new Client([]);
-                    $resp = $client->request('get', $url, [
-                        'headers'         => [
-                            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.30 Safari/537.36',
-                        ],
-                        'connect_timeout' => 5,
-                        'timeout' => 120,
-                        'stream'          => true,
-                        'synchronous'     => true,
-                    ]);
-
-                    return $content = $resp->getBody()->getContents();
-                } catch (ClientException $e) {
-                    Log::error(
-                        'OneDrive API',
-                        [
-                            'code' => $e->getCode(),
-                            'msg'  => 'API ERR',
-                        ]
-                    );
-
-                    return response()->json(
-                        [
-                            'code' => $e->getCode(),
-                            'msg'  => 'GET CONTENT ERR',
-                        ]
-                    );
-                }
+        $key = 'one:content:'.$url;
+        if ($cache && Cache::has($key)) {
+            $content = Cache::get($key);
+            if ($content) {
+                return $content;
             }
-        );
+        }
+        $curl = new Curl();
+        $curl->setConnectTimeout(5);
+        $curl->setTimeout(120);
+        $curl->get($url);
+        if ($curl->error) {
+            Log::error(
+                'Get OneDrive FileContent Err',
+                [
+                    'code' => $curl->errorCode,
+                    'msg'  => $curl->errorMessage,
+                ]
+            );
+
+            return abort($curl->errorCode);
+        } else {
+            $content = $curl->response;
+            if ($cache) {
+                Cache::put(
+                    $key,
+                    $content,
+                    self::config('expires')
+                );
+            }
+
+            return $content;
+        }
     }
 
     /**

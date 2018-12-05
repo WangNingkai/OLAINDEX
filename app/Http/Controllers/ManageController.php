@@ -125,7 +125,8 @@ class ManageController extends Controller
         $rule = [$field => 'required|max:4096']; // 上传文件规则，单文件指定大小4M
         $validator = Validator::make(
             request()->all(),
-            $rule);
+            $rule
+        );
         if ($validator->fails()) {
             $data = ['code' => 500, 'message' => $validator->errors()->first()];
 
@@ -237,6 +238,7 @@ class ManageController extends Controller
      * @param         $id
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @throws \ErrorException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function updateFile(Request $request, $id)
