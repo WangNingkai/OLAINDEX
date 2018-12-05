@@ -4,6 +4,8 @@ namespace App\Helpers;
 
 use App\Http\Controllers\OauthController;
 use Curl\Curl;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
@@ -397,8 +399,8 @@ class Tool
      * @param      $url
      * @param bool $cache
      *
-     * @return \Illuminate\Http\JsonResponse|mixed|null
-     * @throws \ErrorException
+     * @return mixed|string
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function getFileContent($url, $cache = true)
     {
@@ -409,24 +411,16 @@ class Tool
                 return $content;
             }
         }
-        $curl = new Curl();
-        $curl->setConnectTimeout(5);
-        $curl->setTimeout(120);
-        $curl->get($url);
-        if ($curl->error) {
-            Log::error(
-                'Get OneDrive FileContent Err',
-                [
-                    'code' => $curl->errorCode,
-                    'msg'  => $curl->errorMessage,
-                ]
-            );
-            Tool::showMessage('Error: '.$curl->errorCode.': '
-                .$curl->errorMessage."\n", false);
+        try {
+            $client = new Client();
+            $response = $client->request('get', $url, [
+                'connect_timeout' => 5,
+                'timeout'         => 120,
+                'stream'          => true,
+                'synchronous'     => true,
+            ]);
+            $content = $response->getBody()->getContents();
 
-            return '获取内容失败，请刷新';
-        } else {
-            $content = $curl->response;
             if ($cache) {
                 Cache::put(
                     $key,
@@ -436,6 +430,19 @@ class Tool
             }
 
             return $content;
+        } catch (ClientException $e) {
+            Log::error(
+                'OneDrive API FileContent Fetch Err',
+                [
+                    'code' => $e->getCode(),
+                    'msg'  => $e->getMessage(),
+                ]
+            );
+
+            Tool::showMessage('Error: '.$e->getCode().': '
+                .$e->getMessage()."\n", false);
+
+            return '远程获取内容失败，请刷新重试';
         }
     }
 

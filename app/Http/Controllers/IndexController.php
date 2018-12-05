@@ -59,12 +59,10 @@ class IndexController extends Controller
     }
 
     /**
-     * 首页
-     *
      * @param Request $request
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     * @throws \ErrorException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function home(Request $request)
     {
@@ -73,12 +71,10 @@ class IndexController extends Controller
 
 
     /**
-     * 列表
-     *
      * @param Request $request
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     * @throws \ErrorException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function list(Request $request)
     {
@@ -228,7 +224,6 @@ class IndexController extends Controller
      * @param Request $request
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     * @throws \ErrorException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function show(Request $request)
@@ -431,7 +426,6 @@ class IndexController extends Controller
      * 处理加密目录
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     * @throws \ErrorException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function handlePassword()
@@ -447,9 +441,8 @@ class IndexController extends Controller
         $result = OneDrive::getItem($pass_id);
         $response = OneDrive::responseToArray($result);
         if ($response['code'] === 200) {
-            $directory_password
-                = Tool::getFileContent($response['data']['@microsoft.graph.downloadUrl'],
-                false);
+            $url = $response['data']['@microsoft.graph.downloadUrl'];
+            $directory_password = Tool::getFileContent($url, false);
         } else {
             Tool::showMessage('获取文件夹密码失败', false);
             $directory_password = '';

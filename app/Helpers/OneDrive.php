@@ -84,7 +84,6 @@ class OneDrive
                     'Host'          => $od->base_url,
                     'Content-Type'  => 'application/json',
                     'Authorization' => 'Bearer '.$od->access_token,
-                    'User-Agent'    => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.30 Safari/537.36',
                 ], $headers),
             ];
         }
@@ -107,11 +106,11 @@ class OneDrive
                 'OneDrive API',
                 [
                     'code' => $e->getCode(),
-                    'msg'  => 'API ERR',
+                    'msg'  => $e->getMessage(),
                 ]
             );
 
-            return self::response('', $e->getCode(), 'API ERR');
+            return self::response('', $e->getCode(), 'OneDrive API Fetch Err');
         }
     }
 
