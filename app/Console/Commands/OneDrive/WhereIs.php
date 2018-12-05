@@ -32,14 +32,14 @@ class WhereIs extends Command
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function handle()
     {
-        $this->call('refresh:token');
+        $this->call('od:refresh');
         $id = $this->argument('id');
-        $response = OneDrive::responseToArray(OneDrive::itemIdToPath($id));
-        if ($response['code'] === 200) {
+        $response = OneDrive::itemIdToPath($id);
+        if ($response['errno'] === 0) {
             $this->info(array_get($response, 'data.path'));
         } else {
             $this->error($response['msg']);

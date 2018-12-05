@@ -3,7 +3,6 @@
 namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\OneDrive;
-use App\Helpers\Tool;
 use Illuminate\Console\Command;
 
 class Copy extends Command
@@ -36,52 +35,45 @@ class Copy extends Command
 
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function handle()
     {
         $this->info('开始复制...');
         $this->call('od:refresh');
         $origin = $this->argument('origin');
-        $_origin
-            = OneDrive::responseToArray(OneDrive::pathToItemId(OneDrive::getRequestPath($origin)));
-        $origin_id = $_origin['code'] === 200 ? array_get($_origin, 'data.id')
+        $_origin = OneDrive::pathToItemId($origin);
+        $origin_id = $_origin['errno'] === 0 ? array_get($_origin, 'data.id')
             : exit('Origin Path Abnormal');
         $target = $this->argument('target');
-        $_target
-            = OneDrive::responseToArray(OneDrive::pathToItemId(OneDrive::getRequestPath($target)));
-        $target_id = $_origin['code'] === 200 ? array_get($_target, 'data.id')
+        $_target = OneDrive::pathToItemId($target);
+        $target_id = $_origin['errno'] === 0 ? array_get($_target, 'data.id')
             : exit('Target Path Abnormal');
-        $copy = OneDrive::copy($origin_id, $target_id);
-        /* @var $copy \Illuminate\Http\JsonResponse */
-        $response = OneDrive::responseToArray($copy);
-        if ($response['code'] === 200) {
+        $response = OneDrive::copy($origin_id, $target_id);
+        if ($response['errno'] === 0) {
             $redirect = array_get($response, 'data.redirect');
             $done = false;
             while (!$done) {
                 $resp = OneDrive::request(
                     'get',
                     $redirect,
-                    '',
-                    true
-                )
-                    ->getBody()->getContents();
-                $result = OneDrive::responseToArray($resp);
-                $status = array_get($result, 'status');
+                    false
+                );
+                $status = array_get($resp, 'data.status');
                 if ($status === 'failed') {
-                    $this->error(array_get($result, 'error.message'));
+                    $this->error(array_get($resp, 'data.error.message'));
                     $done = true;
                 } elseif ($status === 'inProgress') {
                     $this->info(
                         'Progress: '
-                        .array_get($result, 'percentageComplete')
+                        .array_get($resp, 'data.percentageComplete')
                     );
                     sleep(3);
                     $done = false;
                 } elseif ($status === 'completed') {
                     $this->info(
                         'Progress: '
-                        .array_get($result, 'percentageComplete')
+                        .array_get($resp, 'data.percentageComplete')
                     );
                     $done = true;
                 } elseif ($status === 'notStarted') {

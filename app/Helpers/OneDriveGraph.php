@@ -2,129 +2,166 @@
 
 namespace App\Helpers;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Psr7\Response;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
+
 /**
- * Class OneDrive
+ * Class OneDriveGraph
  *
  * @package App\Helpers
  */
-class OneDrive
+class OneDriveGraph
 {
+    /**
+     * @var $access_token
+     */
+    public $access_token;
 
     /**
-     * @var GraphRequest
+     * @var $base_url
      */
-    protected $graph;
+    public $base_url;
 
     /**
-     * @var $baseUrl
+     * @var $api_version
      */
-    protected $baseUrl;
-
-    /**
-     * @var $apiVersion
-     */
-    protected $apiVersion;
+    public $api_version;
 
     /**
      * OneDriveGraph constructor.
      */
     public function __construct()
     {
-        $access_token = Tool::config('access_token');
-        $base_url = Tool::config('account_type', 'com') === 'com'
+        $this->access_token = Tool::config('access_token');
+        $this->base_url = Tool::config('account_type', 'com') === 'com'
             ? Constants::REST_ENDPOINT : Constants::REST_ENDPOINT_21V;
-        $api_version = Constants::API_VERSION;
-        $this->graph = new GraphRequest();
-        $this->graph->setAccessToken($access_token);
-        $this->graph->setBaseUrl($base_url);
-        $this->graph->setApiVersion($api_version);
-        $this->baseUrl = $base_url;
-        $this->apiVersion = $api_version;
+        $this->api_version = Constants::API_VERSION;
     }
 
     /**
+     * Request API
+     *
      * @param      $method
      * @param      $param
-     * @param bool $token
+     * @param bool $returnStream
+     * @param bool $noToken
      *
-     * @return mixed
-     * @throws \ErrorException
+     * @return \Psr\Http\Message\ResponseInterface|mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function request(
         $method,
         $param,
-        $token = false
+        $returnStream = true,
+        $noToken = false
     ) {
-        $od = new self();
-        $response = $od->graph->request(
-            $method,
-            $param,
-            $token
-        );
-        if (is_null($response->getResponseError())) {
-            $headers = json_decode($response->getResponseHeaders(), true);
-            $response = json_decode($response->getResponse(), true);
-
-            return [
-                'errno'   => 0,
-                'msg'     => 'OK',
+        if (is_array($param)) {
+            @list($endpoint, $requestBody, $requestHeaders, $timeout) = $param;
+            $body = $requestBody ?? '';
+            $headers = $requestHeaders ?? [];
+            $timeout = $timeout ?? 120;
+        } else {
+            $endpoint = $param;
+            $body = '';
+            $headers = [];
+            $timeout = 120;
+        }
+        if ($noToken) {
+            $clientSettings = [
                 'headers' => $headers,
-                'data'    => $response,
             ];
         } else {
-            return json_decode($response->getResponseError(), true);
+            $od = new self();
+            if (stripos($endpoint, "http") !== 0) {
+                $endpoint = $od->api_version.$endpoint;
+            }
+            $clientSettings = [
+                'base_uri' => $od->base_url,
+                'headers'  => array_merge([
+                    'Host'          => $od->base_url,
+                    'Content-Type'  => 'application/json',
+                    'Authorization' => 'Bearer '.$od->access_token,
+                ], $headers),
+            ];
+        }
+        try {
+            $client = new Client($clientSettings);
+            $response = $client->request($method, $endpoint, [
+                'body'            => $body,
+                'stream'          => $returnStream,
+                'connect_timeout' => 5,
+                'timeout'         => $timeout,
+                'synchronous'     => true,
+                'allow_redirects' => [
+                    'track_redirects' => true,
+                ],
+            ]);
+
+            return $response;
+        } catch (ClientException $e) {
+            Log::error(
+                'OneDriveGraph API',
+                [
+                    'code' => $e->getCode(),
+                    'msg'  => $e->getMessage(),
+                ]
+            );
+
+            return self::response('', $e->getCode(), 'OneDriveGraph API Fetch Err');
         }
     }
 
     /**
      * Get Account Info
      *
-     * @throws \ErrorException
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function getMe()
     {
         $endpoint = '/me';
         $response = self::request('get', $endpoint);
 
-        return $response;
+        return self::handleResponse($response);
     }
 
     /**
      * Get Drive Info
      *
      * @return mixed
-     * @throws \ErrorException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function getDrive()
     {
         $endpoint = '/me/drive';
         $response = self::request('get', $endpoint);
 
-        return $response;
+        return self::handleResponse($response);
     }
 
     /**
      * Get Drive Item Children
      *
-     * @param string $itemId
-     * @param string $query
+     * @param $itemId
+     * @param $query
      *
-     * @return array|mixed
-     * @throws \ErrorException
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function getChildren($itemId = '', $query = '')
     {
         $endpoint = $itemId ? "/me/drive/items/{$itemId}/children{$query}"
             : "/me/drive/root/children{$query}";
         $response = self::request('get', $endpoint);
+        if ($response instanceof Response) {
+            $response = json_decode($response->getBody()->getContents(), true);
+            $data = self::getNextLinkList($response);
+            $res = self::formatArray($data);
 
-        if ($response['errno'] === 0) {
-            $response_data = array_get($response, 'data');
-            $data = self::getNextLinkList($response_data);
-
-            $format = self::formatArray($data);
-
-            return self::response($format);
+            return self::response($res);
         } else {
             return $response;
         }
@@ -133,25 +170,23 @@ class OneDrive
     /**
      * Get Drive Item Children by Path
      *
-     * @param string $path
-     * @param string $query
+     * @param $path
+     * @param $query
      *
-     * @return array|mixed
-     * @throws \ErrorException
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function getChildrenByPath($path = '/', $query = '')
     {
-        $requestPath = self::getRequestPath($path);
-        $endpoint = $requestPath === '/' ? "/me/drive/root/children{$query}"
-            : "/me/drive/root{$requestPath}children{$query}";
+        $endpoint = $path === '/' ? "/me/drive/root/children{$query}"
+            : "/me/drive/root{$path}children{$query}";
         $response = self::request('get', $endpoint);
-        if ($response['errno'] === 0) {
-            $response_data = array_get($response, 'data');
-            $data = self::getNextLinkList($response_data);
+        if ($response instanceof Response) {
+            $response = json_decode($response->getBody()->getContents(), true);
+            $data = self::getNextLinkList($response);
+            $res = self::formatArray($data);
 
-            $format = self::formatArray($data);
-
-            return self::response($format);
+            return self::response($res);
         } else {
             return $response;
         }
@@ -163,21 +198,17 @@ class OneDrive
      * @param       $list
      * @param array $result
      *
-     * @return array
-     * @throws \ErrorException
+     * @return array|false|mixed|\Psr\Http\Message\ResponseInterface|string
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function getNextLinkList($list, &$result = [])
     {
         if (array_has($list, '@odata.nextLink')) {
             $od = new self();
-            $baseLength = strlen($od->baseUrl) + strlen($od->apiVersion);
+            $baseLength = strlen($od->base_url) + strlen($od->api_version);
             $endpoint = substr($list['@odata.nextLink'], $baseLength);
             $response = self::request('get', $endpoint);
-            if ($response['errno'] === 0) {
-                $data = $response['data'];
-            } else {
-                $data = [];
-            }
+            $data = json_decode($response->getBody()->getContents(), true);
             $result = array_merge(
                 $list['value'],
                 self::getNextLinkList($data, $result)
@@ -192,22 +223,21 @@ class OneDrive
     /**
      * Get Item
      *
-     * @param        $itemId
-     * @param string $query
+     * @param $itemId
+     * @param $query
      *
-     * @return array|mixed
-     * @throws \ErrorException
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function getItem($itemId, $query = '')
     {
         $endpoint = "/me/drive/items/{$itemId}{$query}";
         $response = self::request('get', $endpoint);
-        if ($response['errno'] === 0) {
-            $data = array_get($response, 'data');
+        if ($response instanceof Response) {
+            $data = json_decode($response->getBody()->getContents(), true);
+            $res = self::formatArray($data, false);
 
-            $format = self::formatArray($data, false);
-
-            return self::response($format);
+            return self::response($res);
         } else {
             return $response;
         }
@@ -216,39 +246,39 @@ class OneDrive
     /**
      * Get Item By Path
      *
-     * @param        $path
-     * @param string $query
+     * @param $path
+     * @param $query
      *
-     * @return array|mixed
-     * @throws \ErrorException
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function getItemByPath($path, $query = '')
     {
-        $requestPath = self::getRequestPath($path);
-        $endpoint = "/me/drive/root{$requestPath}{$query}";
+        $endpoint = "/me/drive/root{$path}{$query}";
         $response = self::request('get', $endpoint);
-        if ($response['errno'] === 0) {
-            $data = array_get($response, 'data');
+        if ($response instanceof Response) {
+            $data = json_decode($response->getBody()->getContents(), true);
+            $res = self::formatArray($data, false);
 
-            $format = self::formatArray($data, false);
-
-            return self::response($format);
+            return self::response($res);
         } else {
             return $response;
         }
     }
 
     /**
+     * Copy Item
+     *
      * @param $itemId
      * @param $parentItemId
      *
-     * @return mixed
-     * @throws \ErrorException
+     * @return string
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function copy($itemId, $parentItemId)
     {
-        $drive = self::getDrive();
-        if ($drive['errno'] === 0) {
+        $drive = self::responseToArray(self::getDrive());
+        if ($drive['code'] === 200) {
             $driveId = array_get($drive, 'data.id');
             $endpoint = "/me/drive/items/{$itemId}/copy";
             $body = json_encode([
@@ -258,9 +288,9 @@ class OneDrive
                 ],
             ]);
             $response = self::request('post', [$endpoint, $body], false);
-            if ($response['errno'] === 0) {
+            if ($response instanceof Response) {
                 $data = [
-                    'redirect' => array_get($response, 'headers.Location'),
+                    'redirect' => $response->getHeaderLine('Location'),
                 ];
 
                 return self::response($data);
@@ -268,17 +298,19 @@ class OneDrive
                 return $response;
             }
         } else {
-            return $drive;
+            return self::response('', 400, 'Error');
         }
     }
 
     /**
+     * Move Item
+     *
      * @param        $itemId
      * @param        $parentItemId
      * @param string $itemName
      *
      * @return mixed
-     * @throws \ErrorException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function move($itemId, $parentItemId, $itemName = '')
     {
@@ -292,18 +324,19 @@ class OneDrive
             $content = array_add($content, 'name', $itemName);
         }
         $body = json_encode($content);
-
         $response = self::request('patch', [$endpoint, $body]);
 
-        return $response;
+        return self::handleResponse($response);
     }
 
     /**
+     * Create Folder
+     *
      * @param $itemName
      * @param $parentItemId
      *
      * @return mixed
-     * @throws \ErrorException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function mkdir($itemName, $parentItemId)
     {
@@ -312,102 +345,112 @@ class OneDrive
             .'","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
         $response = self::request('post', [$endpoint, $body]);
 
-        return $response;
+        return self::handleResponse($response);
     }
 
     /**
+     * Create Folder By Path
+     *
      * @param $itemName
      * @param $path
      *
      * @return mixed
-     * @throws \ErrorException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function mkdirByPath($itemName, $path)
     {
-        $requestPath = self::getRequestPath($path);
-        $endpoint = $requestPath === '/' ? "/me/drive/root/children"
-            : "/me/drive/root{$requestPath}children";
+        $endpoint = $path === '/' ? "/me/drive/root/children"
+            : "/me/drive/root{$path}children";
         $body = '{"name":"'.$itemName
             .'","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
         $response = self::request('post', [$endpoint, $body]);
 
-        return $response;
+        return self::handleResponse($response);
     }
 
     /**
-     * @param        $itemId
-     * @param string $eTag
+     * Remove Item
      *
-     * @return array|mixed
-     * @throws \ErrorException
+     * @param $itemId
+     * @param $eTag
+     *
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function delete($itemId, $eTag = '')
     {
         $endpoint = "/me/drive/items/{$itemId}";
         $headers = $eTag ? ['if-match' => $eTag] : [];
         $response = self::request('delete', [$endpoint, '', $headers]);
-        if ($response['errno'] === 0) {
-            return self::response(['deleted' => true]);
+        if ($response instanceof Response) {
+            $statusCode = $response->getStatusCode();
+            if ($statusCode === 204) {
+                return self::response(['deleted' => true]);
+            } else {
+                return self::handleResponse($response);
+            }
         } else {
             return $response;
         }
     }
 
-
     /**
+     * Find
+     *
      * @param $path
      * @param $query
      *
-     * @return array|mixed
-     * @throws \ErrorException
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function search($path, $query)
     {
         $endpoint = $path === '/' ? "/me/drive/root/search(q='{$query}')"
             : "/me/drive/root{$path}search(q='{$query}')";
         $response = self::request('get', $endpoint);
-        if ($response['errno'] === 0) {
-            $response_data = array_get($response, 'data');
-            $data = self::getNextLinkList($response_data);
+        if ($response instanceof Response) {
+            $response = json_decode($response->getBody()->getContents(), true);
+            $data = self::getNextLinkList($response);
+            $res = self::formatArray($data);
 
-            $format = self::formatArray($data);
-
-            return self::response($format);
+            return self::response($res);
         } else {
             return $response;
         }
     }
 
     /**
+     * Get Thumbnails
+     *
      * @param $itemId
      * @param $size
      *
      * @return mixed
-     * @throws \ErrorException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function thumbnails($itemId, $size)
     {
         $endpoint = "/me/drive/items/{$itemId}/thumbnails/0/{$size}";
         $response = self::request('get', $endpoint);
 
-        return $response;
+        return self::handleResponse($response);
     }
 
-
     /**
+     * Create Share Link
+     *
      * @param $itemId
      *
-     * @return array|mixed
-     * @throws \ErrorException
+     * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function createShareLink($itemId)
     {
         $endpoint = "/me/drive/items/{$itemId}/createLink";
         $body = '{"type": "view","scope": "anonymous"}';
         $response = self::request('post', [$endpoint, $body]);
-
-        if ($response['errno'] === 0) {
-            $data = $response['data'];
+        if ($response instanceof Response) {
+            $data = json_decode($response->getBody()->getContents(), true);
             $web_url = array_get($data, 'link.webUrl');
             if (str_contains($web_url, ['sharepoint.com', 'sharepoint.cn'])) {
                 $parse = parse_url($web_url);
@@ -419,15 +462,19 @@ class OneDrive
                 $direct_link = $domain.'personal/'.$user_info
                     .'/_layouts/15/download.aspx?share='.$res_id;
             } elseif (str_contains($web_url, '1drv.ms')) {
-                $req = self::request('get', $web_url);
-                if ($req['errno'] === 0) {
+                $client = new Client();
+                try {
+                    $request = $client->get(
+                        $web_url,
+                        ['allow_redirects' => false]
+                    );
                     $direct_link = str_replace(
                         'redir?',
                         'download?',
-                        $req['headers']['Location']
+                        $request->getHeaderLine('Location')
                     );
-                } else {
-                    return $req;
+                } catch (ClientException $e) {
+                    return self::response('', $e->getCode(), $e->getMessage());
                 }
             } else {
                 $direct_link = '';
@@ -442,15 +489,18 @@ class OneDrive
     }
 
     /**
+     * Delete Share Link
+     *
      * @param $itemId
      *
-     * @return array|mixed
-     * @throws \ErrorException
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function deleteShareLink($itemId)
     {
-        $response = self::getPermission($itemId);
-        if ($response['errno'] === 0) {
+        $result = self::getPermission($itemId);
+        $response = self::responseToArray($result);
+        if ($response['code'] === 200) {
             $data = $response['data'];
             $permission = array_first($data, function ($value) {
                 return $value['roles'][0] === 'read';
@@ -459,22 +509,24 @@ class OneDrive
 
             return self::deletePermission($itemId, $permissionId);
         } else {
-            return $response;
+            return $result;
         }
     }
 
     /**
+     * List Item permission
+     *
      * @param $itemId
      *
-     * @return array|mixed
-     * @throws \ErrorException
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function getPermission($itemId)
     {
         $endpoint = "/me/drive/items/{$itemId}/permissions";
         $response = self::request('get', $endpoint);
-        if ($response ['errno'] === 0) {
-            $data = $response ['data'];
+        if ($response instanceof Response) {
+            $data = json_decode($response->getBody()->getContents(), true);
 
             return self::response($data['value']);
         } else {
@@ -483,67 +535,112 @@ class OneDrive
     }
 
     /**
+     * Delete Item permission
+     *
      * @param $itemId
      * @param $permissionId
      *
-     * @return array|mixed
-     * @throws \ErrorException
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function deletePermission($itemId, $permissionId)
     {
         $endpoint = "/me/drive/items/{$itemId}/permissions/{$permissionId}";
         $response = self::request('delete', $endpoint);
-        if ($response['errno'] === 0) {
-            return self::response(['deleted' => true]);
+        if ($response instanceof Response) {
+            $statusCode = $response->getStatusCode();
+            if ($statusCode == 204) {
+                return self::response(['deleted' => true]);
+            } else {
+                return self::handleResponse($response);
+            }
         } else {
             return $response;
         }
     }
 
     /**
+     * Get Shared Item
+     *
+     * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public static function getShareWithMe()
+    {
+        $endpoint = '/me/drive/sharedWithMe';
+        $response = self::request('get', $endpoint);
+
+        return self::handleResponse($response);
+    }
+
+    /**
+     *  Get Shared Item Detail
+     *
+     * @param $driveId
+     * @param $itemId
+     *
+     * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public static function getShareWithMeDetail($driveId, $itemId)
+    {
+        $endpoint = "/drives/{$driveId}/items/{$itemId}";
+        $response = self::request('get', $endpoint);
+
+        return self::handleResponse($response);
+    }
+
+    /**
+     * Upload File(less 4MB)
+     *
      * @param $id
      * @param $content
      *
      * @return mixed
-     * @throws \ErrorException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function upload($id, $content)
     {
+        $stream = \GuzzleHttp\Psr7\stream_for($content);
         $endpoint = "/me/drive/items/{$id}/content";
-        $body = $content;
+        $body = $stream;
         $response = self::request('put', [$endpoint, $body]);
 
-        return $response;
+        return self::handleResponse($response);
     }
 
     /**
+     * Upload File(less 4MB) by path
+     *
      * @param $path
      * @param $content
      *
      * @return mixed
-     * @throws \ErrorException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function uploadByPath($path, $content)
     {
-        $requestPath = self::getRequestPath($path);
-        $endpoint = "/me/drive/root{$requestPath}content";
-        $body = $content;
+        $stream = \GuzzleHttp\Psr7\stream_for($content);
+        $endpoint = "/me/drive/root{$path}content";
+        $body = $stream;
         $response = self::request('put', [$endpoint, $body]);
 
-        return $response;
+        return self::handleResponse($response);
     }
 
     /**
-     * @param $remote
-     * @param $url
+     * Download via Url
      *
-     * @return array|mixed
-     * @throws \ErrorException
+     * @param string $remote remote uri with filename
+     * @param string $url
+     *
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function uploadUrl($remote, $url)
     {
-        $drive = self::getDrive();
-        if ($drive['errno'] === 0) {
+        $drive = self::responseToArray(self::getDrive());
+        if ($drive['code'] == 200) {
             if ($drive['data']['driveType'] == 'business') {
                 return self::response(
                     ['driveType' => $drive['data']['driveType']],
@@ -561,9 +658,9 @@ class OneDrive
                 $body = '{"@microsoft.graph.sourceUrl":"'.$url.'","name":"'
                     .pathinfo($remote, PATHINFO_BASENAME).'","file":{}}';
                 $response = self::request('post', [$endpoint, $body, $headers]);
-                if ($response['errno'] === 0) {
+                if ($response instanceof Response) {
                     $data = [
-                        'redirect' => $response['headers']['Location'],
+                        'redirect' => $response->getHeaderLine('Location'),
                     ];
 
                     return self::response($data);
@@ -577,10 +674,12 @@ class OneDrive
     }
 
     /**
+     * Create Upload Session
+     *
      * @param $remote
      *
      * @return mixed
-     * @throws \ErrorException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function createUploadSession($remote)
     {
@@ -592,17 +691,19 @@ class OneDrive
         ]);
         $response = self::request('post', [$endpoint, $body]);
 
-        return $response;
+        return self::handleResponse($response);
     }
 
     /**
+     * Upload Partly
+     *
      * @param     $url
      * @param     $file
      * @param     $offset
      * @param int $length
      *
-     * @return mixed
-     * @throws \ErrorException
+     * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function uploadToSession(
         $url,
@@ -623,49 +724,58 @@ class OneDrive
         $requestBody = $content;
         $response = self::request(
             'put',
-            [$url, $requestBody, $headers, 360]
+            [$url, $requestBody, $headers, 360],
+            '',
+            true
         );
 
-        return $response;
+        return self::handleResponse($response);
     }
 
     /**
+     * Get Upload Status
+     *
      * @param $url
      *
      * @return mixed
-     * @throws \ErrorException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function uploadSessionStatus($url)
     {
-        $response = self::request('get', $url, false);
+        $response = self::request('get', $url, '', true);
 
-        return $response;
+        return self::handleResponse($response);
     }
 
     /**
+     * Delete Upload Session
+     *
      * @param $url
      *
      * @return mixed
-     * @throws \ErrorException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function deleteUploadSession($url)
     {
-        $response = self::request('delete', $url, false);
+        $response = self::request('delete', $url, '', true);
 
-        return $response;
+        return self::handleResponse($response);
     }
 
     /**
+     * Transfer Item ID To Path
+     *
      * @param      $itemId
      * @param bool $start
      *
-     * @return array|mixed
-     * @throws \ErrorException
+     * @return false|mixed|string
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function itemIdToPath($itemId, $start = false)
     {
-        $response = self::getItem($itemId);
-        if ($response['errno'] === 0) {
+        $result = self::getItem($itemId);
+        $response = self::responseToArray($result);
+        if ($response['code'] === 200) {
             $item = $response['data'];
             if (!array_key_exists('path', $item['parentReference'])
                 && $item['name'] == 'root'
@@ -698,31 +808,30 @@ class OneDrive
                 'path' => $path,
             ]);
         } else {
-            return $response;
+            return $result;
         }
     }
 
     /**
+     * Transfer Item Path To ID
+     *
      * @param $path
      *
-     * @return array|mixed
-     * @throws \ErrorException
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function pathToItemId($path)
     {
-        $requestPath = self::getRequestPath($path);
-        $endpoint = $requestPath === '/' ? '/me/drive/root'
-            : '/me/drive/root'.$requestPath;
+        $endpoint = $path === '/' ? '/me/drive/root' : '/me/drive/root'.$path;
         $response = self::request('get', $endpoint);
-        if ($response['errno'] === 0) {
-            $data = $response['data'];
+        if ($response instanceof Response) {
+            $response = json_decode($response->getBody()->getContents(), true);
 
-            return self::response(['id' => $data['id']]);
+            return self::response(['id' => $response['id']]);
         } else {
             return $response;
         }
     }
-
 
     /**
      * Format Response Data
@@ -758,6 +867,68 @@ class OneDrive
             );
 
             return $response;
+        }
+    }
+
+    /**
+     * Return Response
+     *
+     * @param        $data
+     * @param int    $code
+     * @param string $msg
+     *
+     * @return false|string
+     */
+    public static function response($data, $code = 200, $msg = '')
+    {
+        return response()->json([
+            'code' => $code,
+            'msg'  => $msg,
+            'data' => $data,
+        ], $code);
+    }
+
+    /**
+     * Handle Response
+     *
+     * @param $response Response
+     *
+     * @return false|string
+     */
+    public static function handleResponse($response)
+    {
+        if ($response instanceof Response) {
+            if (in_array($response->getStatusCode(), [200, 201, 202, 204])) {
+                $data = json_decode($response->getBody()->getContents(), true);
+
+                return self::response($data);
+            } else {
+                return $response;
+            }
+        } else {
+            return $response;
+        }
+    }
+
+    /**
+     * Response To Array
+     *
+     * @param      $response JsonResponse|Response
+     * @param bool $origin
+     *
+     * @return array
+     */
+    public static function responseToArray($response, $origin = true)
+    {
+        if ($response instanceof JsonResponse) {
+            $data = json_encode($response->getData());
+        } else {
+            $data = $response;
+        }
+        if ($origin) {
+            return json_decode($data, true);
+        } else {
+            return json_decode($data, true)['data'];
         }
     }
 
@@ -886,14 +1057,5 @@ class OneDrive
         fseek($handler, $offset);
 
         return fread($handler, $length);
-    }
-
-    public static function response($data, $errno = 0, $msg = 'ok')
-    {
-        return [
-            'errno' => $errno,
-            'msg'   => $msg,
-            'data'  => $data,
-        ];
     }
 }

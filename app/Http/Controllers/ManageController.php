@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
-use App\Helpers\OneDrive;
+use App\Helpers\OneDriveGraph;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Validator;
 
 /**
- * 管理员 OneDrive 操作
+ * 管理员 OneDriveGraph 操作
  * Class ManageController
  *
  * @package App\Http\Controllers
@@ -70,8 +70,8 @@ class ManageController extends Controller
                 .date('d').'/'.str_random(8).'/';
             $filePath = $hostingPath.$middleName.$file->getClientOriginalName();
             $remoteFilePath = Tool::getRequestPath($filePath); // 远程图片保存地址
-            $result = OneDrive::uploadByPath($remoteFilePath, $content);
-            $response = OneDrive::responseToArray($result);
+            $result = OneDriveGraph::uploadByPath($remoteFilePath, $content);
+            $response = OneDriveGraph::responseToArray($result);
             if ($response['code'] === 200) {
                 $sign = $response['data']['id'].'.'
                     .encrypt($response['data']['eTag']);
@@ -143,8 +143,8 @@ class ManageController extends Controller
             $storeFilePath = trim(Tool::getEncodeUrl($target_directory), '/')
                 .'/'.$file->getClientOriginalName(); // 远程保存地址
             $remoteFilePath = Tool::getRequestPath($storeFilePath); // 远程文件保存地址
-            $result = OneDrive::uploadByPath($remoteFilePath, $content);
-            $response = OneDrive::responseToArray($result);
+            $result = OneDriveGraph::uploadByPath($remoteFilePath, $content);
+            $response = OneDriveGraph::responseToArray($result);
             if ($response['code'] = 200) {
                 $data = [
                     'code' => 200,
@@ -189,8 +189,8 @@ class ManageController extends Controller
         $storeFilePath = trim($path, '/').'/.password';
         $remoteFilePath
             = Tool::getRequestPath($storeFilePath); // 远程password保存地址
-        $result = OneDrive::uploadByPath($remoteFilePath, $password);
-        $response = OneDrive::responseToArray($result);
+        $result = OneDriveGraph::uploadByPath($remoteFilePath, $password);
+        $response = OneDriveGraph::responseToArray($result);
         $response['code'] === 200 ? Tool::showMessage('操作成功，请牢记密码！')
             : Tool::showMessage('加密失败！', false);
         Artisan::call('cache:clear');
@@ -222,8 +222,8 @@ class ManageController extends Controller
         $content = $request->get('content');
         $storeFilePath = trim($path, '/').'/'.$name.'.md';
         $remoteFilePath = Tool::getRequestPath($storeFilePath); // 远程md保存地址
-        $result = OneDrive::uploadByPath($remoteFilePath, $content);
-        $response = OneDrive::responseToArray($result);
+        $result = OneDriveGraph::uploadByPath($remoteFilePath, $content);
+        $response = OneDriveGraph::responseToArray($result);
         $response['code'] === 200 ? Tool::showMessage('添加成功！')
             : Tool::showMessage('添加失败！', false);
         Artisan::call('cache:clear');
@@ -244,8 +244,8 @@ class ManageController extends Controller
     public function updateFile(Request $request, $id)
     {
         if (!$request->isMethod('post')) {
-            $result = OneDrive::getItem($id);
-            $response = OneDrive::responseToArray($result);
+            $result = OneDriveGraph::getItem($id);
+            $response = OneDriveGraph::responseToArray($result);
             if ($response['code'] === 200) {
                 $file = $response['data'];
                 $file['content']
@@ -258,8 +258,8 @@ class ManageController extends Controller
             return view('admin.edit', compact('file'));
         }
         $content = $request->get('content');
-        $result = OneDrive::upload($id, $content);
-        $response = OneDrive::responseToArray($result);
+        $result = OneDriveGraph::upload($id, $content);
+        $response = OneDriveGraph::responseToArray($result);
         $response['code'] === 200 ? Tool::showMessage('修改成功！')
             : Tool::showMessage('修改失败！', false);
         Artisan::call('cache:clear');
@@ -286,8 +286,8 @@ class ManageController extends Controller
         }
         $name = $request->get('name');
         $graphPath = Tool::getRequestPath($path);
-        $result = OneDrive::mkdirByPath($name, $graphPath);
-        $response = OneDrive::responseToArray($result);
+        $result = OneDriveGraph::mkdirByPath($name, $graphPath);
+        $response = OneDriveGraph::responseToArray($result);
         $response['code'] === 200 ? Tool::showMessage('新建目录成功！')
             : Tool::showMessage('新建目录失败！', false);
         Artisan::call('cache:clear');
@@ -321,8 +321,8 @@ class ManageController extends Controller
 
             return view('message');
         }
-        $result = OneDrive::delete($id, $eTag);
-        $response = OneDrive::responseToArray($result);
+        $result = OneDriveGraph::delete($id, $eTag);
+        $response = OneDriveGraph::responseToArray($result);
         $response['code'] === 200 ? Tool::showMessage('文件已删除')
             : Tool::showMessage('文件删除失败', false);
         Artisan::call('cache:clear');
@@ -342,7 +342,7 @@ class ManageController extends Controller
     {
         $itemId = $request->get('source_id');
         $parentItemId = $request->get('target_id');
-        $response = OneDrive::copy($itemId, $parentItemId);
+        $response = OneDriveGraph::copy($itemId, $parentItemId);
 
         return $response; // 返回复制进度链接
     }
@@ -359,7 +359,7 @@ class ManageController extends Controller
     {
         $itemId = $request->get('source_id');
         $parentItemId = $request->get('target_id');
-        $response = OneDrive::move($itemId, $parentItemId);
+        $response = OneDriveGraph::move($itemId, $parentItemId);
 
         return $response;
     }
@@ -376,7 +376,7 @@ class ManageController extends Controller
     {
         $remote = $request->get('path');
         $url = $request->get('url');
-        $response = OneDrive::uploadUrl($remote, $url);
+        $response = OneDriveGraph::uploadUrl($remote, $url);
 
         return $response;
     }
@@ -393,7 +393,7 @@ class ManageController extends Controller
     public function createShareLink(Request $request)
     {
         $itemId = $request->get('id');
-        $response = OneDrive::createShareLink($itemId);
+        $response = OneDriveGraph::createShareLink($itemId);
 
         return $response; // 返回分享链接
     }
@@ -409,7 +409,7 @@ class ManageController extends Controller
     public function deleteShareLink(Request $request)
     {
         $itemId = $request->get('id');
-        $response = OneDrive::deleteShareLink($itemId);
+        $response = OneDriveGraph::deleteShareLink($itemId);
 
         return $response;
     }
@@ -426,6 +426,6 @@ class ManageController extends Controller
     {
         $graphPath = Tool::getRequestPath($request->get('path'));
 
-        return OneDrive::pathToItemId($graphPath);
+        return OneDriveGraph::pathToItemId($graphPath);
     }
 }

@@ -20,7 +20,7 @@ class Quota extends Command
      *
      * @var string
      */
-    protected $description = 'OneDrive Info';
+    protected $description = 'OneDriveGraph Info';
 
     /**
      * Create a new command instance.
@@ -33,9 +33,7 @@ class Quota extends Command
     }
 
     /**
-     * Execute the console command.
-     *
-     * @return mixed
+     * @throws \ErrorException
      */
     public function handle()
     {

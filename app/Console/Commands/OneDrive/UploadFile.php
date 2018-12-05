@@ -36,7 +36,7 @@ class UploadFile extends Command
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function handle()
     {
@@ -53,21 +53,17 @@ class UploadFile extends Command
     }
 
     /**
-     * 普通文件上传
+     * @param $local
+     * @param $remote
      *
-     * @param string $local  本地文件地址
-     * @param string $remote 远程上传地址（包括文件名）
-     *
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function upload($local, $remote)
     {
         $content = file_get_contents($local);
         $file_name = basename($local);
-        $graphPath = OneDrive::getRequestPath($remote.$file_name);
-        $result = OneDrive::uploadByPath($graphPath, $content);
-        $response = OneDrive::responseToArray($result);
-        $response['code'] === 200 ? $this->info('Upload Success!')
+        $response = OneDrive::uploadByPath($remote.$file_name, $content);
+        $response['errno'] === 0 ? $this->info('Upload Success!')
             : $this->warn('Failed!');
     }
 
@@ -76,7 +72,7 @@ class UploadFile extends Command
      * @param     $remote
      * @param int $chuck
      *
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function uploadBySession($local, $remote, $chuck = 3276800)
     {
@@ -84,11 +80,8 @@ class UploadFile extends Command
         $file_size = OneDrive::readFileSize($local);
         $file_name = basename($local);
         $target_path = Tool::getAbsolutePath($remote);
-        $path = trim($target_path, '/') === '' ? ":/{$file_name}:/"
-            : OneDrive::getRequestPath($target_path.$file_name);
-        $url_request = OneDrive::createUploadSession($path);
-        $url_response = OneDrive::responseToArray($url_request);
-        if ($url_response['code'] === 200) {
+        $url_response = OneDrive::createUploadSession($target_path.$file_name);
+        if ($url_response['errno'] === 0) {
             $url = array_get($url_response, 'data.uploadUrl');
         } else {
             $this->warn($url_response['msg']);
@@ -101,9 +94,13 @@ class UploadFile extends Command
         $length = $chuck;
         while (!$done) {
             $retry = 0;
-            $res = OneDrive::uploadToSession($url, $local, $offset, $length);
-            $response = OneDrive::responseToArray($res);
-            if ($response['code'] === 200) {
+            $response = OneDrive::uploadToSession(
+                $url,
+                $local,
+                $offset,
+                $length
+            );
+            if ($response['errno'] === 0) {
                 $data = $response['data'];
                 if (!empty($data['nextExpectedRanges'])) {
                     $this->info("length: {$data['nextExpectedRanges'][0]}");

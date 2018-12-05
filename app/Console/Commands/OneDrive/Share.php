@@ -32,7 +32,7 @@ class Share extends Command
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function handle()
     {
@@ -40,12 +40,11 @@ class Share extends Command
         $this->info('Please waiting...');
         $remote = $this->argument('remote');
         $_remote
-            = OneDrive::responseToArray(OneDrive::pathToItemId(OneDrive::getRequestPath($remote)));
-        $remote_id = $_remote['code'] === 200 ? array_get($_remote, 'data.id')
+            = OneDrive::pathToItemId($remote);
+        $remote_id = $_remote['errno'] === 0 ? array_get($_remote, 'data.id')
             : exit('Remote Path Abnormal');
-        $share = OneDrive::createShareLink($remote_id);
-        $response = OneDrive::responseToArray($share);
-        if ($response['code'] === 200) {
+        $response = OneDrive::createShareLink($remote_id);
+        if ($response['errno'] === 0) {
             $direct = str_replace(
                 '15/download.aspx',
                 '15/guestaccess.aspx',

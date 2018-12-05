@@ -34,7 +34,7 @@ class Download extends Command
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function handle()
     {
@@ -42,16 +42,14 @@ class Download extends Command
         $remote = $this->argument('remote');
         $id = $this->option('id');
         if ($id) {
-            $result = OneDrive::getItem($id);
+            $response = OneDrive::getItem($id);
         } else {
             if (empty($remote)) {
                 exit('Parameters Missing!');
             }
-            $graphPath = OneDrive::getRequestPath($remote);
-            $result = OneDrive::getItemByPath($graphPath);
+            $response = OneDrive::getItemByPath($remote);
         }
-        $response = OneDrive::responseToArray($result);
-        if ($response['code'] === 200) {
+        if ($response['errno'] === 0) {
             $download = $response['data']['@microsoft.graph.downloadUrl'] ??
                 exit('404 NOT FOUND');
             $this->info("Download Link:\n{$download}");

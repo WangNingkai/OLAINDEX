@@ -35,8 +35,7 @@ class Remove extends Command
     }
 
     /**
-     * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function handle()
     {
@@ -51,7 +50,7 @@ class Remove extends Command
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function delete()
     {
@@ -63,9 +62,8 @@ class Remove extends Command
                 $this->warn('Parameter Missing!');
                 exit;
             }
-            $graphPath = OneDrive::getRequestPath($remote);
             $id_response
-                = OneDrive::responseToArray(OneDrive::pathToItemId($graphPath));
+                = OneDrive::pathToItemId($remote);
             if ($id_response['code'] === 200) {
                 $id = $id_response['data']['id'];
             } else {
@@ -73,9 +71,9 @@ class Remove extends Command
                 exit;
             }
         }
-        $response = OneDrive::responseToArray(OneDrive::delete($id));
+        $response = OneDrive::delete($id);
         $this->call('cache:clear');
-        $response['code'] === 200 ? $this->info("Deleted!")
+        $response['errno'] === 0 ? $this->info("Deleted!")
             : $this->warn("Failed!\n{$response['msg']} ");
     }
 }

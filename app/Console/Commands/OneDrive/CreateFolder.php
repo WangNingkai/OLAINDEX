@@ -34,18 +34,16 @@ class CreateFolder extends Command
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function handle()
     {
         $this->call('od:refresh');
         $name = $this->argument('name');
         $remote = $this->argument('remote');
-        $graphPath = OneDrive::getRequestPath($remote);
-        $result = OneDrive::mkdirByPath($name, $graphPath);
-        $response = OneDrive::responseToArray($result);
+        $response = OneDrive::mkdirByPath($name, $remote);
         $this->call('cache:clear');
-        $response['code'] === 200 ? $this->info("Folder Created!")
+        $response['errno'] === 0 ? $this->info("Folder Created!")
             : $this->warn("Failed!\n{$response['msg']} ");
     }
 }

@@ -134,7 +134,7 @@ class GraphRequest
         $curl->close();
         if ($curl->error) {
             Log::error(
-                'OneDrive Graph API Err',
+                'OneDriveGraph Graph API Err',
                 [
                     'errno' => $curl->errorCode,
                     'msg'   => $curl->errorMessage,

@@ -46,22 +46,25 @@ class ListItem extends Command
         $offset = $this->option('offset');
         $length = $this->option('limit');
         if ($id) {
-            $data = Cache::remember('one:list:id:'.$id, Tool::config('expires'),
+            $data = Cache::remember(
+                'one:list:id:'.$id,
+                Tool::config('expires'),
                 function () use ($id) {
-                    $result = OneDrive::getChildren($id);
-                    $response = OneDrive::responseToArray($result);
+                    $response = OneDrive::getChildren($id);
 
-                    return $response['code'] === 200 ? $response['data'] : [];
-                });
+                    return $response['errno'] === 0 ? $response['data'] : [];
+                }
+            );
         } else {
-            $graphPath = OneDrive::getRequestPath($remote);
-            $data = Cache::remember('one:list:path:'.$graphPath,
-                Tool::config('expires'), function () use ($graphPath) {
-                    $result = OneDrive::getChildrenByPath($graphPath);
-                    $response = OneDrive::responseToArray($result);
+            $data = Cache::remember(
+                'one:list:path:'.$remote,
+                Tool::config('expires'),
+                function () use ($remote) {
+                    $response = OneDrive::getChildrenByPath($remote);
 
-                    return $response['code'] === 200 ? $response['data'] : [];
-                });
+                    return $response['errno'] === 0 ? $response['data'] : [];
+                }
+            );
         }
         if (!$data) {
             $this->error('Please confirm your options and try again later!');

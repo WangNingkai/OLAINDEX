@@ -33,39 +33,35 @@ class Offline extends Command
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function handle()
     {
         $this->call('refresh:token');
         $remote = $this->argument('remote');
         $url = $this->argument('url');
-        $result = OneDrive::uploadUrl($remote, $url);
-        $response = OneDrive::responseToArray($result);
-        if ($response['code'] === 200) {
+        $response = OneDrive::uploadUrl($remote, $url);
+        if ($response['errno'] === 200) {
             $redirect = array_get($response, 'data.redirect');
             $this->info('progress link: '.$redirect);
             $done = false;
             while (!$done) {
-                $content = OneDrive::request('get', $redirect, '', true)
-                    ->getBody()->getContents();
-                /* @var $content \Illuminate\Http\JsonResponse */
-                $result = OneDrive::responseToArray($content);
-                $status = array_get($result, 'status');
+                $result = OneDrive::request('get', $redirect, false);
+                $status = array_get($result, 'data.status');
                 if ($status === 'failed') {
-                    $this->error(array_get($result, 'error.message'));
+                    $this->error(array_get($result, 'data.error.message'));
                     $done = true;
                 } elseif ($status === 'inProgress') {
                     $this->info(
                         'Progress: '
-                        .array_get($result, 'percentageComplete')
+                        .array_get($result, 'data.percentageComplete')
                     );
                     sleep(3);
                     $done = false;
                 } elseif ($status === 'completed') {
                     $this->info(
                         'Progress: '
-                        .array_get($result, 'percentageComplete')
+                        .array_get($result, 'data.percentageComplete')
                     );
                     $done = true;
                 } elseif ($status === 'notStarted') {

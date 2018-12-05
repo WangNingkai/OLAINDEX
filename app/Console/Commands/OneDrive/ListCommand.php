@@ -61,7 +61,7 @@ Available commands:
   od:direct    Create Direct Share Link
   od:download  Download File
   od:find      Find Items
-  od:info      OneDrive Info
+  od:info      OneDriveGraph Info
   od:install   Install App
   od:login     Account Login
   od:logout    Account Logout

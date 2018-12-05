@@ -416,7 +416,7 @@ class Tool
         $curl->close();
         if ($curl->error) {
             Log::error(
-                'Get OneDrive FileContent Err',
+                'Get OneDriveGraph FileContent Err',
                 [
                     'code' => $curl->errorCode,
                     'msg'  => $curl->errorMessage,
@@ -453,10 +453,9 @@ class Tool
                 'one:quota',
                 self::config('expires'),
                 function () {
-                    $drive = OneDrive::getDrive();
-                    $res = OneDrive::responseToArray($drive);
-                    if ($res['code'] === 200) {
-                        $quota = $res['data']['quota'];
+                    $response = OneDrive::getDrive();
+                    if ($response['errno'] === 0) {
+                        $quota = $response['data']['quota'];
                         foreach ($quota as $k => $item) {
                             if (!is_string($item)) {
                                 $quota[$k] = Tool::convertSize($item);
@@ -505,8 +504,8 @@ class Tool
                 'one:account',
                 Tool::config('expires'),
                 function () {
-                    $drive = OneDrive::getMe();
-                    $res = OneDrive::responseToArray($drive);
+                    $drive = OneDriveGraph::getMe();
+                    $res = OneDriveGraph::responseToArray($drive);
                     if ($res['code'] == 200) {
                         return array_get($res, 'data.userPrincipalName');
                     } else {

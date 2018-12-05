@@ -38,7 +38,7 @@ class Find extends Command
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function handle()
     {
@@ -48,14 +48,12 @@ class Find extends Command
         $remote = $this->option('remote');
         $offset = $this->option('offset');
         $length = $this->option('limit');
-        $graphPath = OneDrive::getRequestPath($remote);
         if ($id = $this->option('id')) {
-            $result = OneDrive::getItem($id);
+            $response = OneDrive::getItem($id);
         } else {
-            $result = OneDrive::search($graphPath, $keywords);
+            $response = OneDrive::search($remote, $keywords);
         }
-        $response = OneDrive::responseToArray($result);
-        $data = $response['code'] === 200 ? $response['data'] : [];
+        $data = $response['errno'] === 0 ? $response['data'] : [];
         if (!$data) {
             $this->warn('Please try again later');
             exit;
@@ -74,7 +72,7 @@ class Find extends Command
      * @param $data
      *
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function format($data)
     {
@@ -88,9 +86,8 @@ class Find extends Command
                 : '1';
             $owner = array_get($item, 'createdBy.user.displayName');
             if ($id = $this->option('id')) {
-                $result = OneDrive::itemIdToPath($item['id']);
-                $response = OneDrive::responseToArray($result);
-                $path = $response['code'] === 200 ? $response['data']['path']
+                $response = OneDrive::itemIdToPath($item['id']);
+                $path = $response['errno'] === 0 ? $response['data']['path']
                     : 'Failed Fetch Path!';
                 $content = [
                     $type,

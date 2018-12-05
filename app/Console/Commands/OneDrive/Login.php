@@ -138,7 +138,7 @@ class Login extends Command
         $curl->post($this->access_token_url, $form_params);
         if ($curl->error) {
             Log::error(
-                'OneDrive Login Err',
+                'OneDriveGraph Login Err',
                 [
                     'code' => $curl->errorCode,
                     'msg'  => $curl->errorMessage,

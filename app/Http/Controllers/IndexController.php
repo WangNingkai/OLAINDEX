@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\OneDrive;
 use App\Helpers\Tool;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
-use App\Helpers\OneDrive;
+use App\Helpers\OneDriveGraph;
 
 /**
- * OneDrive 索引
+ * OneDriveGraph 索引
  * Class IndexController
  *
  * @package App\Http\Controllers
@@ -79,16 +80,15 @@ class IndexController extends Controller
     public function list(Request $request)
     {
         $realPath = $request->route()->parameter('query') ?? '/';
-        $graphPath = Tool::getRequestPath($realPath);
+        $graphPath = Tool::getAbsolutePath($realPath);
         $origin_path = rawurldecode(Tool::getRequestPath($realPath, false));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
         $item = Cache::remember(
             'one:file:'.$graphPath,
             $this->expires,
             function () use ($graphPath) {
-                $result = OneDrive::getItemByPath($graphPath);
-                $response = OneDrive::responseToArray($result);
-                if ($response['code'] === 200) {
+                $response = OneDrive::getItemByPath($graphPath);
+                if ($response['errno'] === 0) {
                     return $response['data'];
                 } else {
                     return null;
@@ -103,12 +103,11 @@ class IndexController extends Controller
             'one:list:'.$graphPath,
             $this->expires,
             function () use ($graphPath) {
-                $result = OneDrive::getChildrenByPath(
+                $response = OneDrive::getChildrenByPath(
                     $graphPath,
                     '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl'
                 );
-                $response = OneDrive::responseToArray($result);
-                if ($response['code'] === 200) {
+                if ($response['errno'] === 0) {
                     return $response['data'];
                 } else {
                     Tool::showMessage($response['msg'], false);
@@ -199,6 +198,7 @@ class IndexController extends Controller
         if ($list && array_key_exists($name, $list)) {
             return $list[$name];
         } else {
+            // todo:
             $graphPath = Tool::getRequestPath($realPath, true, true);
 
             // 获取文件
@@ -206,8 +206,8 @@ class IndexController extends Controller
                 'one:file:'.$graphPath,
                 $this->expires,
                 function () use ($graphPath) {
-                    $result = OneDrive::getItemByPath($graphPath);
-                    $response = OneDrive::responseToArray($result);
+                    $result = OneDriveGraph::getItemByPath($graphPath);
+                    $response = OneDriveGraph::responseToArray($result);
                     if ($response['code'] === 200) {
                         return $response['data'];
                     } else {
@@ -252,8 +252,8 @@ class IndexController extends Controller
                 }
                 // 处理缩略图
                 if (in_array($key, ['image', 'dash', 'video'])) {
-                    $result = OneDrive::thumbnails($file['id'], 'large');
-                    $response = OneDrive::responseToArray($result);
+                    $result = OneDriveGraph::thumbnails($file['id'], 'large');
+                    $response = OneDriveGraph::responseToArray($result);
                     if ($response['code'] === 200) {
                         $file['thumb'] = $response['data']['url'];
                     } else {
@@ -332,8 +332,8 @@ class IndexController extends Controller
      */
     public function thumb($id, $size)
     {
-        $result = OneDrive::thumbnails($id, $size);
-        $response = OneDrive::responseToArray($result);
+        $result = OneDriveGraph::thumbnails($id, $size);
+        $response = OneDriveGraph::responseToArray($result);
         if ($response['code'] === 200) {
             $url = $response['data']['url'];
         } else {
@@ -375,8 +375,8 @@ class IndexController extends Controller
         if ($keywords) {
             $path = Tool::getEncodeUrl($this->root);
             $graphPath = empty($path) ? '/' : ":/{$path}:/";
-            $result = OneDrive::search($graphPath, $keywords);
-            $response = OneDrive::responseToArray($result);
+            $result = OneDriveGraph::search($graphPath, $keywords);
+            $response = OneDriveGraph::responseToArray($result);
             if ($response['code'] === 200) {
                 // 过滤结果中的文件夹\过滤微软OneNote文件
                 $items = array_where($response['data'], function ($value) {
@@ -403,9 +403,9 @@ class IndexController extends Controller
      */
     public function searchShow($id)
     {
-        $result = OneDrive::itemIdToPath($id, Tool::config('root'));
+        $result = OneDriveGraph::itemIdToPath($id, Tool::config('root'));
         /* @var $result JsonResponse */
-        $response = OneDrive::responseToArray($result);
+        $response = OneDriveGraph::responseToArray($result);
         if ($response['code'] === 200) {
             $originPath = $response['data']['path'];
             if (trim($this->root, '/') != '') {
@@ -436,8 +436,8 @@ class IndexController extends Controller
             'expires'  => time() + (int)$this->expires * 60, // 目录密码过期时间
         ];
         Session::put('password:'.$origin_path, $data);
-        $result = OneDrive::getItem($pass_id);
-        $response = OneDrive::responseToArray($result);
+        $result = OneDriveGraph::getItem($pass_id);
+        $response = OneDriveGraph::responseToArray($result);
         if ($response['code'] === 200) {
             $url = $response['data']['@microsoft.graph.downloadUrl'];
             $directory_password = Tool::getFileContent($url, false);
