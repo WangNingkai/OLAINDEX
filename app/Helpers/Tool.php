@@ -421,8 +421,10 @@ class Tool
                     'msg'  => $curl->errorMessage,
                 ]
             );
+            Tool::showMessage('Error: '.$curl->errorCode.': '
+                .$curl->errorMessage."\n", false);
 
-            return abort($curl->errorCode);
+            return '获取内容失败，请刷新';
         } else {
             $content = $curl->response;
             if ($cache) {
