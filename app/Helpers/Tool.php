@@ -413,6 +413,7 @@ class Tool
         $curl->setConnectTimeout(5);
         $curl->setTimeout(120);
         $curl->get($url);
+        $curl->close();
         if ($curl->error) {
             Log::error(
                 'Get OneDrive FileContent Err',
@@ -440,11 +441,10 @@ class Tool
     }
 
     /**
-     * 获取磁盘信息
-     *
      * @param string $key
      *
-     * @return array|mixed
+     * @return mixed|string
+     * @throws \ErrorException
      */
     public static function getOneDriveInfo($key = '')
     {
@@ -477,9 +477,8 @@ class Tool
     }
 
     /**
-     * 刷新refresh_token
-     *
      * @return bool
+     * @throws \ErrorException
      */
     public static function refreshToken()
     {
@@ -497,6 +496,7 @@ class Tool
 
     /**
      * @return mixed|string
+     * @throws \ErrorException
      */
     public static function getBindAccount()
     {
