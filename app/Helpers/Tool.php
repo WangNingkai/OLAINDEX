@@ -451,7 +451,7 @@ class Tool
                 ]
             );
             Tool::showMessage('Error: '.$curl->errorCode.': '
-                .$curl->errorMessage."\n", false);
+                .$curl->errorMessage, false);
 
             return '远程获取内容失败，请刷新重试';
         } else {
