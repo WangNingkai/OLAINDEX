@@ -25,7 +25,6 @@
         "ext-openssl": "*",
         "ext-curl": "*",
         "fideloper/proxy": "^4.0",
-        "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "5.7.*",
         "laravel/tinker": "^1.0",
         "overtrue/laravel-lang": "^3.0",
