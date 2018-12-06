@@ -224,7 +224,7 @@
         </div>
     </div>
     <div class="text-center">
-        {{ $items->links('page') }}
+        {{ $items->appends(['limit' => request()->get('limit')])->links('page') }}
     </div>
     @if ($hasImage)
         <div class="card border-light mb-3">

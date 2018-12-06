@@ -161,7 +161,8 @@ class IndexController extends Controller
                 ['README.md', 'HEAD.md', '.password', '.deny']
             );
         }
-        $items = Tool::paginate($origin_items, 20);
+        $limit = $request->get('limit', 20);
+        $items = Tool::paginate($origin_items, $limit);
         $data = compact(
             'items',
             'origin_items',
