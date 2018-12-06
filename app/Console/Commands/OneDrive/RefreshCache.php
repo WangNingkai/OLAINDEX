@@ -39,7 +39,7 @@ class RefreshCache extends Command
     {
         $path = $this->argument('path');
 
-        $this->getRecursive(OneDrive::getAbsolutePath($path) ?? '/');
+        $this->getRecursive(Tool::getOriginPath($path));
     }
 
     /**

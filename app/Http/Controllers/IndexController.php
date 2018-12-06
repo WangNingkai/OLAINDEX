@@ -80,7 +80,7 @@ class IndexController extends Controller
     public function list(Request $request)
     {
         $realPath = $request->route()->parameter('query') ?? '/';
-        $graphPath = Tool::getAbsolutePath($realPath);
+        $graphPath = Tool::getOriginPath($realPath);
         $origin_path = rawurldecode(Tool::getRequestPath($realPath, false));
         $path_array = $origin_path ? explode('/', $origin_path) : [];
         $item = Cache::remember(

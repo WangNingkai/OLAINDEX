@@ -368,6 +368,34 @@ class Tool
     }
 
     /**
+     * @param      $path
+     * @param bool $isQuery
+     *
+     * @return string
+     */
+    public static function getOriginPath(
+        $path,
+        $isQuery = true
+    ) {
+        $path = self::getAbsolutePath($path);
+        $query_path = trim($path, '/');
+        if (!$isQuery) {
+            return $query_path;
+        }
+        $query_path = self::getEncodeUrl(rawurldecode($query_path));
+        $root = trim(self::getEncodeUrl(self::config('root')), '/');
+        if ($query_path) {
+            $request_path = empty($root) ?
+                $query_path
+                : "{$root}/{$query_path}";
+        } else {
+            $request_path = empty($root) ? '/' : $root;
+        }
+
+        return $request_path;
+    }
+
+    /**
      * 绝对路径转换
      *
      * @param $path
