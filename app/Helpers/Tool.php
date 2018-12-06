@@ -440,6 +440,15 @@ class Tool
         $curl = new Curl();
         $curl->setConnectTimeout(5);
         $curl->setTimeout(120);
+        $curl->setOpts([
+            CURLOPT_AUTOREFERER      => true,
+            CURLOPT_FAILONERROR      => true,
+            CURLOPT_FOLLOWLOCATION   => false,
+            CURLOPT_ENCODING         => 'gzip,deflate',
+            CURLOPT_SSL_VERIFYHOST   => true,
+            CURLOPT_SSL_VERIFYPEER   => true,
+            CURLOPT_SSL_VERIFYSTATUS => true,
+        ]);
         $curl->get($url);
         $curl->close();
         if ($curl->error) {
