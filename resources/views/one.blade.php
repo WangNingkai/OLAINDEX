@@ -223,7 +223,7 @@
             @endforeach
         </div>
     </div>
-    <div class="text-center">
+    <div>
         {{ $items->appends(['limit' => request()->get('limit')])->links('page') }}
     </div>
     @if ($hasImage)

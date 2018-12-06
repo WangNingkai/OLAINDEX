@@ -443,11 +443,11 @@ class Tool
         $curl->setOpts([
             CURLOPT_AUTOREFERER      => true,
             CURLOPT_FAILONERROR      => true,
-            CURLOPT_FOLLOWLOCATION   => false,
+            CURLOPT_FOLLOWLOCATION   => true,
             CURLOPT_ENCODING         => 'gzip,deflate',
-            CURLOPT_SSL_VERIFYHOST   => true,
-            CURLOPT_SSL_VERIFYPEER   => true,
-            CURLOPT_SSL_VERIFYSTATUS => true,
+            CURLOPT_SSL_VERIFYHOST   => false,
+            CURLOPT_SSL_VERIFYPEER   => false,
+            CURLOPT_SSL_VERIFYSTATUS => false,
         ]);
         $curl->get($url);
         $curl->close();

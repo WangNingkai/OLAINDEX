@@ -111,9 +111,6 @@ class GraphRequest
             CURLOPT_FAILONERROR      => true,
             CURLOPT_FOLLOWLOCATION   => false,
             CURLOPT_ENCODING         => 'gzip,deflate',
-            CURLOPT_SSL_VERIFYHOST   => true,
-            CURLOPT_SSL_VERIFYPEER   => true,
-            CURLOPT_SSL_VERIFYSTATUS => true,
         ];
         if ($this->requestBody) {
             $options = array_add($options, CURLOPT_POST, true);

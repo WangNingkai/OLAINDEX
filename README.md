@@ -54,11 +54,11 @@ OLAINDEX-CMD [https://github.com/WangNingkai/OLAINDEX-CMD](https://git.io/OLACMD
 
 **帮助文档 ：**
 
-[Github Wiki](https://git.io/fpoCF)
+[Github Wiki](https://github.com/WangNingkai/OLAINDEX/wiki)
 
 ## 更新升级
 
-**更新日志：** [CHANGELOG](https://git.io/fpoCN)
+**更新日志：** [CHANGELOG](https://raw.githubusercontent.com/WangNingkai/OLAINDEX/master/CHANGELOG.md)
 
 **版本升级：**
 
