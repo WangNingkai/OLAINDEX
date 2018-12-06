@@ -585,7 +585,8 @@ class OneDrive
      */
     public static function createUploadSession($remote)
     {
-        $endpoint = "/me/drive/root{$remote}createUploadSession";
+        $graphPath = self::getRequestPath($remote);
+        $endpoint = "/me/drive/root{$graphPath}createUploadSession";
         $body = json_encode([
             'item' => [
                 '@microsoft.graph.conflictBehavior' => 'fail',
