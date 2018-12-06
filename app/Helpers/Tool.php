@@ -440,6 +440,7 @@ class Tool
         $curl = new Curl();
         $curl->setConnectTimeout(5);
         $curl->setTimeout(120);
+        $curl->setRetry(3);
         $curl->setOpts([
             CURLOPT_AUTOREFERER      => true,
             CURLOPT_FAILONERROR      => true,

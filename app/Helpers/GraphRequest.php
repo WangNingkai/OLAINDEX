@@ -87,12 +87,12 @@ class GraphRequest
             @list($endpoint, $requestBody, $requestHeaders, $timeout) = $param;
             $this->requestBody = $requestBody ?? '';
             $this->headers = $requestHeaders ?? [];
-            $this->timeout = $timeout ?? 5;
+            $this->timeout = $timeout ?? 120;
             $this->endpoint = $endpoint;
         } else {
             $this->endpoint = $param;
             $this->headers = [];
-            $this->timeout = 5;
+            $this->timeout = 120;
         }
         if (!$token) {
             $this->headers = array_merge([
@@ -126,9 +126,10 @@ class GraphRequest
             $curl = new Curl();
         }
         $curl->setHeaders($this->headers);
-        $curl->setConnectTimeout(3);
+        $curl->setConnectTimeout(5);
         $curl->setTimeout((int)$this->timeout);
         $curl->setUrl($this->endpoint);
+        $curl->setRetry(3);
         $curl->setOpts($options);
         $curl->exec();
         $curl->close();
