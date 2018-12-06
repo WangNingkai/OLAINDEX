@@ -392,7 +392,7 @@ class Tool
             $request_path = empty($root) ? '/' : $root;
         }
 
-        return $request_path;
+        return self::getAbsolutePath($request_path);
     }
 
     /**
@@ -532,10 +532,9 @@ class Tool
                 'one:account',
                 Tool::config('expires'),
                 function () {
-                    $drive = OneDriveGraph::getMe();
-                    $res = OneDriveGraph::responseToArray($drive);
-                    if ($res['code'] == 200) {
-                        return array_get($res, 'data.userPrincipalName');
+                    $response = OneDrive::getMe();
+                    if ($response['errno'] == 0) {
+                        return array_get($response, 'data.userPrincipalName');
                     } else {
                         return '';
                     }

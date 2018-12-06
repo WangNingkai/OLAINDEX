@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
-use App\Helpers\OneDriveGraph;
+use App\Helpers\OneDrive;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Artisan;
@@ -27,12 +27,10 @@ class ManageController extends Controller
     }
 
     /**
-     * 图片上传
-     *
      * @param Request $request
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function uploadImage(Request $request)
     {
@@ -68,11 +66,11 @@ class ManageController extends Controller
                 = Tool::getEncodeUrl(Tool::config('image_hosting_path'));
             $middleName = '/'.date('Y').'/'.date('m').'/'
                 .date('d').'/'.str_random(8).'/';
-            $filePath = $hostingPath.$middleName.$file->getClientOriginalName();
-            $remoteFilePath = Tool::getRequestPath($filePath); // 远程图片保存地址
-            $result = OneDriveGraph::uploadByPath($remoteFilePath, $content);
-            $response = OneDriveGraph::responseToArray($result);
-            if ($response['code'] === 200) {
+            $filePath = trim($hostingPath.$middleName
+                .$file->getClientOriginalName(), '/');
+            $remoteFilePath = Tool::getOriginPath($filePath); // 远程图片保存地址
+            $response = OneDrive::uploadByPath($remoteFilePath, $content);
+            if ($response['errno'] === 0) {
                 $sign = $response['data']['id'].'.'
                     .encrypt($response['data']['eTag']);
                 $fileIdentifier = encrypt($sign);
@@ -91,7 +89,7 @@ class ManageController extends Controller
 
                 return response()->json($data);
             } else {
-                return $result;
+                return $response;
             }
         } else {
             $data = ['code' => 500, 'message' => '无法获取文件内容'];
@@ -102,12 +100,10 @@ class ManageController extends Controller
 
 
     /**
-     * 文件上传
-     *
      * @param Request $request
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View|mixed
+     * @throws \ErrorException
      */
     public function uploadFile(Request $request)
     {
@@ -142,10 +138,9 @@ class ManageController extends Controller
             $content = file_get_contents($path);
             $storeFilePath = trim(Tool::getEncodeUrl($target_directory), '/')
                 .'/'.$file->getClientOriginalName(); // 远程保存地址
-            $remoteFilePath = Tool::getRequestPath($storeFilePath); // 远程文件保存地址
-            $result = OneDriveGraph::uploadByPath($remoteFilePath, $content);
-            $response = OneDriveGraph::responseToArray($result);
-            if ($response['code'] = 200) {
+            $remoteFilePath = Tool::getOriginPath($storeFilePath); // 远程文件保存地址
+            $response = OneDrive::uploadByPath($remoteFilePath, $content);
+            if ($response['errno'] === 0) {
                 $data = [
                     'code' => 200,
                     'data' => [
@@ -159,7 +154,7 @@ class ManageController extends Controller
 
                 return response()->json($data);
             } else {
-                return $result;
+                return $response;
             }
         } else {
             $data = ['code' => 500, 'message' => '无法获取文件内容'];
@@ -169,12 +164,10 @@ class ManageController extends Controller
     }
 
     /**
-     * 加密目录
-     *
      * @param Request $request
      *
-     * @return \Illuminate\Http\RedirectResponse
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @throws \ErrorException
      */
     public function lockFolder(Request $request)
     {
@@ -188,10 +181,9 @@ class ManageController extends Controller
         $password = $request->get('password', '12345678');
         $storeFilePath = trim($path, '/').'/.password';
         $remoteFilePath
-            = Tool::getRequestPath($storeFilePath); // 远程password保存地址
-        $result = OneDriveGraph::uploadByPath($remoteFilePath, $password);
-        $response = OneDriveGraph::responseToArray($result);
-        $response['code'] === 200 ? Tool::showMessage('操作成功，请牢记密码！')
+            = Tool::getOriginPath($storeFilePath); // 远程password保存地址
+        $response = OneDrive::uploadByPath($remoteFilePath, $password);
+        $response['errno'] === 0 ? Tool::showMessage('操作成功，请牢记密码！')
             : Tool::showMessage('加密失败！', false);
         Artisan::call('cache:clear');
 
@@ -199,12 +191,10 @@ class ManageController extends Controller
     }
 
     /**
-     * 新建 head/readme.md 文件
-     *
      * @param Request $request
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function createFile(Request $request)
     {
@@ -221,10 +211,9 @@ class ManageController extends Controller
         }
         $content = $request->get('content');
         $storeFilePath = trim($path, '/').'/'.$name.'.md';
-        $remoteFilePath = Tool::getRequestPath($storeFilePath); // 远程md保存地址
-        $result = OneDriveGraph::uploadByPath($remoteFilePath, $content);
-        $response = OneDriveGraph::responseToArray($result);
-        $response['code'] === 200 ? Tool::showMessage('添加成功！')
+        $remoteFilePath = Tool::getOriginPath($storeFilePath); // 远程md保存地址
+        $response = OneDrive::uploadByPath($remoteFilePath, $content);
+        $response['errno'] === 0 ? Tool::showMessage('添加成功！')
             : Tool::showMessage('添加失败！', false);
         Artisan::call('cache:clear');
 
@@ -232,21 +221,17 @@ class ManageController extends Controller
     }
 
     /**
-     * 编辑文本文件
-     *
      * @param Request $request
      * @param         $id
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      * @throws \ErrorException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function updateFile(Request $request, $id)
     {
         if (!$request->isMethod('post')) {
-            $result = OneDriveGraph::getItem($id);
-            $response = OneDriveGraph::responseToArray($result);
-            if ($response['code'] === 200) {
+            $response = OneDrive::getItem($id);
+            if ($response['errno'] === 0) {
                 $file = $response['data'];
                 $file['content']
                     = Tool::getFileContent($file['@microsoft.graph.downloadUrl']);
@@ -258,9 +243,8 @@ class ManageController extends Controller
             return view('admin.edit', compact('file'));
         }
         $content = $request->get('content');
-        $result = OneDriveGraph::upload($id, $content);
-        $response = OneDriveGraph::responseToArray($result);
-        $response['code'] === 200 ? Tool::showMessage('修改成功！')
+        $response = OneDrive::upload($id, $content);
+        $response['errno'] === 0 ? Tool::showMessage('修改成功！')
             : Tool::showMessage('修改失败！', false);
         Artisan::call('cache:clear');
 
@@ -268,12 +252,10 @@ class ManageController extends Controller
     }
 
     /**
-     * 创建目录
-     *
      * @param Request $request
      *
-     * @return \Illuminate\Http\RedirectResponse
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @throws \ErrorException
      */
     public function createFolder(Request $request)
     {
@@ -285,10 +267,9 @@ class ManageController extends Controller
             return view('message');
         }
         $name = $request->get('name');
-        $graphPath = Tool::getRequestPath($path);
-        $result = OneDriveGraph::mkdirByPath($name, $graphPath);
-        $response = OneDriveGraph::responseToArray($result);
-        $response['code'] === 200 ? Tool::showMessage('新建目录成功！')
+        $graphPath = Tool::getOriginPath($path);
+        $response = OneDrive::mkdirByPath($name, $graphPath);
+        $response['errno'] === 0 ? Tool::showMessage('新建目录成功！')
             : Tool::showMessage('新建目录失败！', false);
         Artisan::call('cache:clear');
 
@@ -296,12 +277,10 @@ class ManageController extends Controller
     }
 
     /**
-     * 删除文件
-     *
      * @param $sign
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function deleteItem($sign)
     {
@@ -321,9 +300,8 @@ class ManageController extends Controller
 
             return view('message');
         }
-        $result = OneDriveGraph::delete($id, $eTag);
-        $response = OneDriveGraph::responseToArray($result);
-        $response['code'] === 200 ? Tool::showMessage('文件已删除')
+        $response = OneDrive::delete($id, $eTag);
+        $response['errno'] === 0 ? Tool::showMessage('文件已删除')
             : Tool::showMessage('文件删除失败', false);
         Artisan::call('cache:clear');
 
@@ -331,101 +309,150 @@ class ManageController extends Controller
     }
 
     /**
-     * 复制文件
-     *
      * @param Request $request
      *
-     * @return string
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
+     * @throws \ErrorException
      */
     public function copyItem(Request $request)
     {
         $itemId = $request->get('source_id');
         $parentItemId = $request->get('target_id');
-        $response = OneDriveGraph::copy($itemId, $parentItemId);
-
-        return $response; // 返回复制进度链接
+        $response = OneDrive::copy($itemId, $parentItemId);
+        if ($response['errno'] === 0) {
+            return response()->json(
+                [
+                    'code' => 200,
+                    'data' => $response['data'],
+                    'msg'  => 'OK',
+                ]
+            );
+        } else {
+            return $response;
+        } // 返回复制进度链接
     }
 
     /**
-     * 移动文件
-     *
      * @param Request $request
      *
      * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function moveItem(Request $request)
     {
         $itemId = $request->get('source_id');
         $parentItemId = $request->get('target_id');
-        $response = OneDriveGraph::move($itemId, $parentItemId);
+        $response = OneDrive::move($itemId, $parentItemId);
 
-        return $response;
+        if ($response['errno'] === 0) {
+            return response()->json(
+                [
+                    'code' => 200,
+                    'data' => $response['data'],
+                    'msg'  => 'OK',
+                ]
+            );
+        } else {
+            return $response;
+        }
     }
 
     /**
-     * 离线下载（个人版）
-     *
      * @param Request $request
      *
-     * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return array|mixed
+     * @throws \ErrorException
      */
     public function uploadUrl(Request $request)
     {
         $remote = $request->get('path');
         $url = $request->get('url');
-        $response = OneDriveGraph::uploadUrl($remote, $url);
+        $response = OneDrive::uploadUrl($remote, $url);
 
-        return $response;
+        if ($response['errno'] === 0) {
+            return response()->json(
+                [
+                    'code' => 200,
+                    'data' => $response['data'],
+                    'msg'  => 'OK',
+                ]
+            );
+        } else {
+            return $response;
+        }
     }
 
 
     /**
-     * 创建分享链接
-     *
      * @param Request $request
      *
-     * @return false|mixed|\Psr\Http\Message\ResponseInterface|string
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return array|mixed
+     * @throws \ErrorException
      */
     public function createShareLink(Request $request)
     {
         $itemId = $request->get('id');
-        $response = OneDriveGraph::createShareLink($itemId);
+        $response = OneDrive::createShareLink($itemId);
 
-        return $response; // 返回分享链接
+        if ($response['errno'] === 0) {
+            return response()->json(
+                [
+                    'code' => 200,
+                    'data' => $response['data'],
+                    'msg'  => 'OK',
+                ]
+            );
+        } else {
+            return $response;
+        }
     }
 
     /**
-     * 删除分享链接
-     *
      * @param Request $request
      *
-     * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return array|mixed
+     * @throws \ErrorException
      */
     public function deleteShareLink(Request $request)
     {
         $itemId = $request->get('id');
-        $response = OneDriveGraph::deleteShareLink($itemId);
+        $response = OneDrive::deleteShareLink($itemId);
 
-        return $response;
+        if ($response['errno'] === 0) {
+            return response()->json(
+                [
+                    'code' => 200,
+                    'data' => $response['data'],
+                    'msg'  => 'OK',
+                ]
+            );
+        } else {
+            return $response;
+        }
     }
 
     /**
-     * 路径转id
-     *
      * @param Request $request
      *
-     * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return array|mixed
+     * @throws \ErrorException
      */
     public function pathToItemId(Request $request)
     {
-        $graphPath = Tool::getRequestPath($request->get('path'));
+        $graphPath = Tool::getOriginPath($request->get('path'));
 
-        return OneDriveGraph::pathToItemId($graphPath);
+        $response = OneDrive::pathToItemId($graphPath);
+
+        if ($response['errno'] === 0) {
+            return response()->json(
+                [
+                    'code' => 200,
+                    'data' => $response['data'],
+                    'msg'  => 'OK',
+                ]
+            );
+        } else {
+            return $response;
+        }
     }
 }

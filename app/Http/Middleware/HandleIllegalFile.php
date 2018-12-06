@@ -17,21 +17,17 @@ class HandleIllegalFile
      */
     public function handle($request, Closure $next)
     {
-        if (!config('app.env')) {
-            $path = Tool::getRequestPath(
-                $request->route()->parameter('query'),
-                false
-            );
-            $origin_path = rawurldecode($path);
-            $path_array = $origin_path ? explode('/', $origin_path) : [];
-            $fileName = array_pop($path_array);
-            $illegalFile = ['README.md', 'HEAD.md', '.password', '.deny'];
-            $pattern = '/^README\.md|HEAD\.md|\.password|\.deny/';
-            if (in_array($fileName, $illegalFile)
-                || preg_match($pattern, $fileName, $arr) > 0
-            ) {
-                abort(403);
-            }
+        $queryPath = $request->route()->parameter('query');
+        $path = trim(Tool::getAbsolutePath($queryPath), '/');
+        $origin_path = rawurldecode($path);
+        $path_array = $origin_path ? explode('/', $origin_path) : [];
+        $fileName = array_pop($path_array);
+        $illegalFile = ['README.md', 'HEAD.md', '.password', '.deny'];
+        $pattern = '/^README\.md|HEAD\.md|\.password|\.deny/';
+        if (in_array($fileName, $illegalFile)
+            || preg_match($pattern, $fileName, $arr) > 0
+        ) {
+            abort(403);
         }
 
         return $next($request);

@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Helpers\OneDrive;
 use App\Helpers\Tool;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
-use App\Helpers\OneDriveGraph;
 
 /**
  * OneDriveGraph 索引
@@ -81,7 +79,8 @@ class IndexController extends Controller
     {
         $realPath = $request->route()->parameter('query') ?? '/';
         $graphPath = Tool::getOriginPath($realPath);
-        $origin_path = rawurldecode(Tool::getRequestPath($realPath, false));
+        $queryPath = trim(Tool::getAbsolutePath($realPath), '/');
+        $origin_path = rawurldecode($queryPath);
         $path_array = $origin_path ? explode('/', $origin_path) : [];
         $item = Cache::remember(
             'one:file:'.$graphPath,
@@ -192,23 +191,20 @@ class IndexController extends Controller
         });
         $name = array_pop($absolutePathArr);
         $absolutePath = implode('/', $absolutePathArr);
-        $listPath = Tool::getRequestPath($absolutePath);
+        $listPath = Tool::getOriginPath($absolutePath);
         $list = Cache::get('one:list:'.$listPath, '');
-
         if ($list && array_key_exists($name, $list)) {
             return $list[$name];
         } else {
-            // todo:
-            $graphPath = Tool::getRequestPath($realPath, true, true);
+            $graphPath = Tool::getOriginPath($realPath);
 
             // 获取文件
             return Cache::remember(
                 'one:file:'.$graphPath,
                 $this->expires,
                 function () use ($graphPath) {
-                    $result = OneDriveGraph::getItemByPath($graphPath);
-                    $response = OneDriveGraph::responseToArray($result);
-                    if ($response['code'] === 200) {
+                    $response = OneDrive::getItemByPath($graphPath);
+                    if ($response['errno'] === 0) {
                         return $response['data'];
                     } else {
                         return null;
@@ -223,7 +219,6 @@ class IndexController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      * @throws \ErrorException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function show(Request $request)
     {
@@ -252,9 +247,8 @@ class IndexController extends Controller
                 }
                 // 处理缩略图
                 if (in_array($key, ['image', 'dash', 'video'])) {
-                    $result = OneDriveGraph::thumbnails($file['id'], 'large');
-                    $response = OneDriveGraph::responseToArray($result);
-                    if ($response['code'] === 200) {
+                    $response = OneDrive::thumbnails($file['id'], 'large');
+                    if ($response['errno'] === 0) {
                         $file['thumb'] = $response['data']['url'];
                     } else {
                         $file['thumb']
@@ -286,7 +280,7 @@ class IndexController extends Controller
                     return redirect()->away($url);
                 }
                 $origin_path = rawurldecode(
-                    Tool::getRequestPath($realPath, false)
+                    trim(Tool::getAbsolutePath($realPath), '/')
                 );
                 $path_array = $origin_path ? explode('/', $origin_path) : [];
                 $data = compact('file', 'path_array', 'origin_path');
@@ -328,13 +322,12 @@ class IndexController extends Controller
      * @param $size
      *
      * @return \Illuminate\Http\RedirectResponse
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function thumb($id, $size)
     {
-        $result = OneDriveGraph::thumbnails($id, $size);
-        $response = OneDriveGraph::responseToArray($result);
-        if ($response['code'] === 200) {
+        $response = OneDrive::thumbnails($id, $size);
+        if ($response['errno'] === 0) {
             $url = $response['data']['url'];
         } else {
             $url = 'https://i.loli.net/2018/12/04/5c05cd3086425.png';
@@ -367,17 +360,15 @@ class IndexController extends Controller
      * @param Request $request
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function search(Request $request)
     {
         $keywords = $request->get('keywords');
         if ($keywords) {
             $path = Tool::getEncodeUrl($this->root);
-            $graphPath = empty($path) ? '/' : ":/{$path}:/";
-            $result = OneDriveGraph::search($graphPath, $keywords);
-            $response = OneDriveGraph::responseToArray($result);
-            if ($response['code'] === 200) {
+            $response = OneDrive::search($path, $keywords);
+            if ($response['errno'] === 0) {
                 // 过滤结果中的文件夹\过滤微软OneNote文件
                 $items = array_where($response['data'], function ($value) {
                     return !array_has($value, 'folder')
@@ -398,15 +389,13 @@ class IndexController extends Controller
     /**
      * @param $id
      *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \ErrorException
      */
     public function searchShow($id)
     {
-        $result = OneDriveGraph::itemIdToPath($id, Tool::config('root'));
-        /* @var $result JsonResponse */
-        $response = OneDriveGraph::responseToArray($result);
-        if ($response['code'] === 200) {
+        $response = OneDrive::itemIdToPath($id, Tool::config('root'));
+        if ($response['errno'] === 0) {
             $originPath = $response['data']['path'];
             if (trim($this->root, '/') != '') {
                 $path = str_after($originPath, $this->root);
@@ -424,7 +413,6 @@ class IndexController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      * @throws \ErrorException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function handlePassword()
     {
@@ -436,9 +424,8 @@ class IndexController extends Controller
             'expires'  => time() + (int)$this->expires * 60, // 目录密码过期时间
         ];
         Session::put('password:'.$origin_path, $data);
-        $result = OneDriveGraph::getItem($pass_id);
-        $response = OneDriveGraph::responseToArray($result);
-        if ($response['code'] === 200) {
+        $response = OneDrive::getItem($pass_id);
+        if ($response['errno'] === 0) {
             $url = $response['data']['@microsoft.graph.downloadUrl'];
             $directory_password = Tool::getFileContent($url, false);
         } else {

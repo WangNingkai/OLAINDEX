@@ -363,8 +363,9 @@ class OneDrive
      */
     public static function search($path, $query)
     {
-        $endpoint = $path === '/' ? "/me/drive/root/search(q='{$query}')"
-            : "/me/drive/root{$path}search(q='{$query}')";
+        $graphPath = self::getRequestPath($path);
+        $endpoint = $graphPath === '/' ? "/me/drive/root/search(q='{$query}')"
+            : "/me/drive/root{$graphPath}search(q='{$query}')";
         $response = self::request('get', $endpoint);
         if ($response['errno'] === 0) {
             $response_data = array_get($response, 'data');
