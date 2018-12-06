@@ -382,7 +382,8 @@ class IndexController extends Controller
         } else {
             $items = [];
         }
-        $items = Tool::paginate($items, 20);
+        $limit = $request->get('limit', 20);
+        $items = Tool::paginate($items, $limit);
 
         return view('search', compact('items'));
     }

@@ -29,7 +29,8 @@
                 @foreach($items as $item)
                     <li class="list-group-item list-group-item-action">
                         <div class="row">
-                            <div class="col-8 col-sm-6" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
+                            <div class="col-8 col-sm-6"
+                                 style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
                                 <a href="{{ route('search.show',$item['id']) }}"
                                    title="{{ $item['name'] }}">
                                     <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i> {{ $item['name'] }}
@@ -55,7 +56,7 @@
             </div>
         </div>
         <div class="text-center">
-            {{ $items->appends(['keywords' => request()->get('keywords')])->links('page') }}
+            {{ $items->appends(['keywords' => request()->get('keywords'),'limit' => request()->get('limit')])->links('page') }}
         </div>
     @endif
 @stop
