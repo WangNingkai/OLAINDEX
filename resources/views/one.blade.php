@@ -1,8 +1,8 @@
 @extends('layouts.main')
 @section('title',\App\Helpers\Tool::config('name','OLAINDEX'))
 @section('css')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/css/blueimp-gallery-indicator.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/css/blueimp-gallery.min.css">
+{{--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/css/blueimp-gallery-indicator.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/css/blueimp-gallery.min.css">--}}
 @stop
 @section('content')
     @include('breadcrumb')
@@ -226,7 +226,7 @@
     <div>
         {{ $items->appends(['limit' => request()->get('limit')])->links('page') }}
     </div>
-    @if ($hasImage)
+    {{--@if ($hasImage)
         <div class="card border-light mb-3">
             <div class="card-header">
                 看图
@@ -254,7 +254,7 @@
                 </div>
             </div>
         </div>
-    @endif
+    @endif--}}
     @if (!blank($readme))
         <div class="card border-light mb-3">
             <div class="card-header"><i class="fa fa-bookmark"></i> README</div>
@@ -265,10 +265,10 @@
     @endif
 @stop
 @section('js')
-    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/jquery.blueimp-gallery.min.js"></script>
+{{--    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/jquery.blueimp-gallery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/blueimp-gallery-indicator.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/blueimp-gallery-fullscreen.min.js"></script>
-    <script src="https://cdn.bootcss.com/store.js/1.3.20/store.min.js"></script>
+    <script src="https://cdn.bootcss.com/store.js/1.3.20/store.min.js"></script>--}}
 
     <script>
         @if(session()->has('LogInfo'))
