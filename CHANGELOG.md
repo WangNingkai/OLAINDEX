@@ -13,6 +13,8 @@
 ```
 {"code":35,"msg":"SSL connect error: OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection toxxx:443"}
 ```
+- 添加多主题
+
 ## 2018.12.06
 
 - 更换核心请求类，优化报错显示

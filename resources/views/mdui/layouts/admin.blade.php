@@ -45,7 +45,7 @@
     <div class="mdui-list" mdui-collapse="{accordion: true}">
         <div class="mdui-chip mdui-ripple mdui-m-a-1">
             <span class="mdui-chip-icon"><i class="mdui-icon material-icons">face</i></span>
-            <span class="mdui-chip-title">{{ \App\Helpers\Tool::getBindAccount() }}</span>
+            <span class="mdui-chip-title">{{ str_before(\App\Helpers\Tool::getBindAccount(),'@')  }}</span>
         </div>
         <div class="mdui-list-item mdui-ripple">
             <i class="mdui-list-item-icon mdui-icon material-icons mdui-text-color-indigo">storage</i>
