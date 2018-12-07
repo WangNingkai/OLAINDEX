@@ -80,7 +80,7 @@ class OauthController extends Controller
         }
         if ($request->isMethod('get')) {
             if (!$request->has('code')) {
-                return $this->authorizeLogin();
+                return $this->authorizeLogin(request()->getHttpHost());
             } else {
                 if (empty($request->get('state')) || !Session::has('state')
                     || ($request->get('state') !== Session::get('state'))
@@ -146,15 +146,15 @@ class OauthController extends Controller
     }
 
     /**
-     * 请求授权登陆
+     * @param $url
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function authorizeLogin()
+    public function authorizeLogin($url = '')
     {
         // 跳转授权登录
 //        $state = str_random(32);
-        $state = urlencode(config('app.url')); // 添加中转
+        $state = urlencode($url ? 'http://'.$url : config('app.url')); // 添加中转
         Session::put('state', $state);
         $values = [
             'client_id'     => $this->client_id,
