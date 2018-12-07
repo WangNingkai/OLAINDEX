@@ -112,8 +112,7 @@
                     </div>
                 @endforeach
             </div>
-
-            {{ $items->appends(['limit' => request()->get('limit')])->links('mdui.page') }}
+            {{ $items->appends(['keywords' => request()->get('keywords'),'limit' => request()->get('limit')])->links('mdui.page') }}
         @endif
 
     </div>
