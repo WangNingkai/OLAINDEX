@@ -139,8 +139,18 @@
 </div>
 <script src="https://cdn.bootcss.com/mdui/0.4.1/js/mdui.min.js"></script>
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-
+@if (session()->has('alertMessage'))
+    <script>
+        $(function () {
+            mdui.snackbar({
+                message: '{{ session()->pull('alertMessage') }}',
+                position: 'right-top'
+            });
+        });
+    </script>
+@endif
 @yield('js')
+
 </body>
 
 </html>

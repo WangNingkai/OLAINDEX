@@ -1,5 +1,5 @@
 @if ($paginator->hasPages())
-    <div class="mdui-btn-group" style="margin: 20px 0;">
+    <div class="mdui-btn-group mdui-m-t-3 mdui-m-b-3">
         @if ($paginator->onFirstPage())
             <a href="javascript:void(0)" class="mdui-btn" disabled><i class="mdui-icon material-icons">chevron_left</i></a>
         @else

@@ -9,8 +9,6 @@
         }
 
         .link-container {
-            margin-top: 15px;
-            padding: 10px;
             border: solid 1px #dadada;
             word-wrap: break-word;
             background-color: #f7f7f7;
@@ -63,7 +61,7 @@
 @stop
 @section('content')
     <div class="mdui-container-fluid">
-        <div class="mdui-row" style="margin-top: 20px;">
+        <div class="mdui-row mdui-m-t-3">
             <div class="mdui-typo-headline-opacity">图床</div>
             <br>
             <div class="mdui-typo-title-opacity">您可以尝试文件拖拽或者点击虚线框进行文件上传，单张图片最大支持4MB.</div>
@@ -80,12 +78,12 @@
                 <a class="mdui-ripple" href="#markdownLinks">Markdown with Link</a>
                 <a class="mdui-ripple" href="#deleteCode">Delete Link</a>
             </div>
-            <div class="mdui-p-a-2 link-container" id="urlCode"></div>
-            <div class="mdui-p-a-2 link-container" id="htmlCode"></div>
-            <div class="mdui-p-a-2 link-container" id="bbCode"></div>
-            <div class="mdui-p-a-2 link-container" id="markdown"></div>
-            <div class="mdui-p-a-2 link-container" id="markdownLinks"></div>
-            <div class="mdui-p-a-2 link-container" id="deleteCode"></div>
+            <div class="mdui-p-a-2 mdui-m-t-2 link-container" id="urlCode"></div>
+            <div class="mdui-p-a-2 mdui-m-t-2 link-container" id="htmlCode"></div>
+            <div class="mdui-p-a-2 mdui-m-t-2 link-container" id="bbCode"></div>
+            <div class="mdui-p-a-2 mdui-m-t-2 link-container" id="markdown"></div>
+            <div class="mdui-p-a-2 mdui-m-t-2 link-container" id="markdownLinks"></div>
+            <div class="mdui-p-a-2 mdui-m-t-2 link-container" id="deleteCode"></div>
         </div>
     </div>
 @stop

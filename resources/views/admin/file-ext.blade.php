@@ -1,7 +1,6 @@
-@extends('layouts.admin')
-@section('title','普通文件上传')
+@extends('layouts.admin-ext')
 @section('css')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dropzone@5/dist/min/dropzone.min.css">
+    <link href="https://cdn.bootcss.com/dropzone/5.5.1/min/dropzone.min.css" rel="stylesheet">
     <style>
         .dropzone {
             border: 2px dashed #ccc;
@@ -11,7 +10,7 @@
     </style>
 @stop
 @section('js')
-    <script src="https://cdn.jsdelivr.net/npm/dropzone@5/dist/min/dropzone.min.js"></script>
+    <script src="https://cdn.bootcss.com/dropzone/5.5.1/min/dropzone.min.js"></script>
     <script>
         Dropzone.options.fileDropzone = {
             url: Config.routes.upload_file,
@@ -26,7 +25,10 @@
                     formData.append('root', $('#target_directory').val());
                 });
                 this.on('success', function () {
-                    swal('上传成功', '文件已上传至OneDrive', 'success');
+                    mdui.snackbar({
+                        message: '文件已上传至OneDrive',
+                        position: 'right-top'
+                    });
                 });
             },
             dictDefaultMessage: '拖拽文件至此上传 (最大支持4M)',
@@ -44,15 +46,21 @@
     </script>
 @stop
 @section('content')
-    <div class="form-group">
-        <label class="form-control-label" for="target_directory">上传目录</label>
-        <input type="text" class="form-control" id="target_directory" name="target_directory"
-               placeholder="在此输入要上传的目录位置（默认 OneDrive 根目录）">
-        <span class="form-text text-danger">此上传方式仅支持小于4MB文件的上传</span>
-    </div>
-    <div class="form-group">
+    <div class="mdui-container-fluid mdui-m-t-2 mdui-m-b-2">
+
+        <div class="mdui-typo">
+            <h1>上传文件
+                <small>此上传方式仅支持小于4MB文件的上传</small>
+            </h1>
+        </div>
+
+        <div class="mdui-textfield mdui-textfield-floating-label">
+            <label class="mdui-textfield-label" for="target_directory">上传目录</label>
+            <input type="text" class="mdui-textfield-input" id="target_directory" name="target_directory">
+        </div>
+        <br>
         <form class="dropzone" id="file-dropzone">
         </form>
+        <br>
     </div>
 @stop
-

@@ -142,7 +142,7 @@
                                               data-placement="right" data-clipboard-target="#dl"
                                               class="clipboard">点击复制</a></p>
                                         <label for="dl"><textarea name="urls" id="dl" class="form-control" cols="60"
-                                                                  rows="20"></textarea></label>
+                                                                  rows="15"></textarea></label>
 
                                     </div>
                                     <div class="modal-footer">

@@ -5,7 +5,7 @@
     <script>
         function getDirect() {
             $("#dl").val('');
-            $(".download_url").each(function () {
+            $(".dl_url").each(function () {
                 let dl = decodeURI($(this).attr("href"));
                 let url = dl + "\n";
                 let origin = $("#dl").val();
@@ -14,12 +14,6 @@
         }
 
         $(function () {
-            @if (session()->has('alertMessage'))
-            mdui.snackbar({
-                message: '{{ session()->pull('alertMessage') }}',
-                position: 'right-top'
-            });
-                @endif
             let display_type = store.get('display_type');
             if (display_type !== 'table') {
                 $('.thumb-view').removeClass('mdui-hidden');
@@ -47,7 +41,7 @@
     <div class="mdui-container-fluid">
 
         @if (!blank($head))
-            <div class="mdui-typo" style="padding: 20px;">
+            <div class="mdui-typo mdui-p-t-3">
                 {!! $head !!}
             </div>
         @endif
@@ -94,8 +88,6 @@
                                     <i class="mdui-icon material-icons">{{ \App\Helpers\Tool::fileIcon($item['ext']) }}</i>
                                     {{ $item['name'] }}
                                 </div>
-                                <a class="download_url mdui-invisible"
-                                   href="{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"></a>
                                 <div
                                     class="mdui-col-sm-3 mdui-text-right">{{ date('M m H:i',strtotime($item['lastModifiedDateTime'])) }}</div>
                                 <div
@@ -103,18 +95,23 @@
                             </a>
                         </li>
                     @endif
+                    @if(array_has($item,'file'))
+                        <a class="dl_url mdui-hidden"
+                           href="{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"></a>
+                    @endif
                 @endforeach
             </ul>
         </div>
-        <div style="margin-top: 20px;"
-             class="thumb-view mdui-row-xs-3 mdui-row-sm-4 mdui-row-md-5 mdui-row-lg-6 mdui-row-xl-7 mdui-grid-list mdui-hidden">
+
+        <div
+            class="mdui-m-t-3 thumb-view mdui-row-xs-3 mdui-row-sm-4 mdui-row-md-5 mdui-row-lg-6 mdui-row-xl-7 mdui-grid-list mdui-hidden">
             @if(!blank($path_array))
                 <div class="mdui-col">
                     <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl(\App\Helpers\Tool::getParentUrl($path_array))) }}">
                         <div class="col-icon">
-                            <img src="https://i.loli.net/2018/12/06/5c08ca377d29f.png" alt="">
+                            <img src="https://i.loli.net/2018/12/07/5c09d7355ea27.png" alt="">
                         </div>
-                        <div class="col-detail" style="text-align: center">
+                        <div class="col-detail mdui-text-center">
                             <div class="col-title">
                                 ...
                             </div>
@@ -132,10 +129,10 @@
                         <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}">
                             <div class="col-icon">
                                 <img
-                                    src="https://i.loli.net/2018/12/06/5c08ca470a5fc.png"
+                                    src=" https://i.loli.net/2018/12/07/5c09d6920f8ac.png"
                                     alt="">
                             </div>
-                            <div class="col-detail" style="text-align: center">
+                            <div class="col-detail mdui-text-center">
                                 <div class="col-title">
                                     {{ $item['name'] }}
                                 </div>
@@ -156,11 +153,10 @@
                                          data-original="{{ route('thumb',['id'=>$item['id'],'size'=>'small']) }}"
                                          src="https://i.loli.net/2018/12/04/5c0625755d6ce.gif" alt="">
                                 @else
-                                    <img style="height: 80%;"
-                                         src="https://i.loli.net/2018/12/06/5c08ca560e03f.png" alt="">
+                                    <img src="https://i.loli.net/2018/12/07/5c09d6920dedb.png" alt="">
                                 @endif
                             </div>
-                            <div class="col-detail" style="text-align: center">
+                            <div class="col-detail mdui-text-center">
                                 <div class="col-title" title="{{ $item['name'] }}">
                                     {{ $item['name'] }}
                                 </div>
@@ -174,10 +170,11 @@
                 @endif
             @endforeach
         </div>
+
         {{ $items->appends(['limit' => request()->get('limit')])->links('page-ext') }}
 
         @if (!blank($readme))
-            <div class="mdui-typo mdui-shadow-3" style="padding: 20px;margin: 20px;">
+            <div class="mdui-typo mdui-shadow-3 mdui-p-t-3 mdui-m-t-3">
                 <div class="mdui-chip">
                     <span class="mdui-chip-icon"><i class="mdui-icon material-icons">face</i></span>
                     <span class="mdui-chip-title">README.md</span>
@@ -192,6 +189,8 @@
                     <i class="mdui-icon mdui-fab-opened material-icons">close</i>
                 </button>
                 <div class="mdui-fab-dial">
+                    <a href="{{ route('search') }}" class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-indigo"><i
+                            class="mdui-icon material-icons">search</i></a>
                     <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-green"
                        href="@if (array_key_exists('HEAD.md', $origin_items))
                        {{ route('admin.file.update',$origin_items['HEAD.md']['id']) }}
