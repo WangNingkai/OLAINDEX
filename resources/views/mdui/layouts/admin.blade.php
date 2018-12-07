@@ -50,7 +50,7 @@
         <div class="mdui-list-item mdui-ripple">
             <i class="mdui-list-item-icon mdui-icon material-icons mdui-text-color-indigo">storage</i>
             <div class="mdui-list-item-content"><span
-                    class="mdui-text-color-red">{{ \App\Helpers\Tool::getOneDriveInfo('used') }}</span>/ <span
+                    class="mdui-text-color-red">{{ \App\Helpers\Tool::getOneDriveInfo('used') }}</span> / <span
                     class="mdui-text-color-green">{{ \App\Helpers\Tool::getOneDriveInfo('total') }}</span></div>
         </div>
         <div
@@ -97,7 +97,7 @@
                 <a class="mdui-list-item mdui-ripple @if(request()->routeIs('admin.cache.clear')) mdui-list-item-active @endif "
                    href="{{ route('admin.cache.clear') }}">缓存清理 </a>
                 <a class="mdui-list-item mdui-ripple @if(request()->routeIs('admin.cache.refresh')) mdui-list-item-active @endif"
-                   href="{{ route('admin.cache.refresh') }}">刷新清理 </a>
+                   href="{{ route('admin.cache.refresh') }}">缓存刷新 </a>
             </div>
         </div>
         <a href="https://onedrive.live.com" class="mdui-list-item mdui-ripple">
