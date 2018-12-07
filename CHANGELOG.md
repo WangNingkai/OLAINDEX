@@ -7,6 +7,12 @@
 / /_/ / /___/ ___ |_/ // /|  / /_/ / /___ /   |
 \____/_____/_/  |_/___/_/ |_/_____/_____//_/|_|
 ```
+## 2018.12.07
+
+- fix curl:35 错误
+```
+{"code":35,"msg":"SSL connect error: OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection toxxx:443"}
+```
 ## 2018.12.06
 
 - 更换核心请求类，优化报错显示

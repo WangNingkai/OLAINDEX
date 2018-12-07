@@ -126,16 +126,16 @@ class GraphRequest
             $curl = new Curl();
         }
         $curl->setHeaders($this->headers);
+        $curl->setRetry(3);
         $curl->setConnectTimeout(5);
         $curl->setTimeout((int)$this->timeout);
         $curl->setUrl($this->endpoint);
-        $curl->setRetry(3);
         $curl->setOpts($options);
         $curl->exec();
         $curl->close();
         if ($curl->error) {
             Log::error(
-                'OneDriveGraph Graph API Err',
+                'Get OneDrive source content error.',
                 [
                     'errno' => $curl->errorCode,
                     'msg'   => $curl->errorMessage,

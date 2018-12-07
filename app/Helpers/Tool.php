@@ -446,15 +446,12 @@ class Tool
             CURLOPT_FAILONERROR      => true,
             CURLOPT_FOLLOWLOCATION   => true,
             CURLOPT_ENCODING         => 'gzip,deflate',
-            CURLOPT_SSL_VERIFYHOST   => false,
-            CURLOPT_SSL_VERIFYPEER   => false,
-            CURLOPT_SSL_VERIFYSTATUS => false,
         ]);
         $curl->get($url);
         $curl->close();
         if ($curl->error) {
             Log::error(
-                'Get OneDriveGraph FileContent Err',
+                'Get OneDrive file content error.',
                 [
                     'code' => $curl->errorCode,
                     'msg'  => $curl->errorMessage,
