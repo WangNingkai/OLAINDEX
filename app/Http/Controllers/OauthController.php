@@ -88,7 +88,7 @@ class OauthController extends Controller
                     Tool::showMessage('Invalid state', false);
                     Session::forget('state');
 
-                    return view('message');
+                    return view(config('olaindex.theme').'message');
                 }
                 Session::forget('state'); // 兼容下次登陆
                 $code = $request->get('code');
@@ -120,7 +120,7 @@ class OauthController extends Controller
                         ."\n";
                     Tool::showMessage($msg, false);
 
-                    return view('message');
+                    return view(config('olaindex.theme').'message');
                 } else {
                     $token = collect($curl->response)->toArray();
                     $access_token = $token['access_token'];
@@ -141,7 +141,7 @@ class OauthController extends Controller
         } else {
             Tool::showMessage('Invalid Request', false);
 
-            return view('message');
+            return view(config('olaindex.theme').'message');
         }
     }
 

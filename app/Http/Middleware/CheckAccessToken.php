@@ -10,12 +10,11 @@ use Illuminate\Support\Facades\Session;
 class CheckAccessToken
 {
     /**
-     * 处理access_token
+     * @param         $request
+     * @param Closure $next
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure                 $next
-     *
-     * @return mixed
+     * @return false|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|mixed|string
+     * @throws \ErrorException
      */
     public function handle($request, Closure $next)
     {

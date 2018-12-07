@@ -135,10 +135,10 @@ class IndexController extends Controller
                     Session::forget($key);
                     Tool::showMessage('密码已过期', false);
 
-                    return view('password', compact('origin_path', 'pass_id'));
+                    return view(config('olaindex.theme').'password', compact('origin_path', 'pass_id'));
                 }
             } else {
-                return view('password', compact('origin_path', 'pass_id'));
+                return view(config('olaindex.theme').'password', compact('origin_path', 'pass_id'));
             }
         }
         // 过滤受限隐藏目录
@@ -173,7 +173,7 @@ class IndexController extends Controller
             'hasImage'
         );
 
-        return view('one', $data);
+        return view(config('olaindex.theme').'one', $data);
     }
 
     /**
@@ -286,7 +286,7 @@ class IndexController extends Controller
                 $path_array = $origin_path ? explode('/', $origin_path) : [];
                 $data = compact('file', 'path_array', 'origin_path');
 
-                return view($view, $data);
+                return view(config('olaindex.theme').$view, $data);
             } else {
                 $last = end($this->show);
                 if ($last === $suffix) {
@@ -385,7 +385,7 @@ class IndexController extends Controller
         $limit = $request->get('limit', 20);
         $items = Tool::paginate($items, $limit);
 
-        return view('search', compact('items'));
+        return view(config('olaindex.theme').'search', compact('items'));
     }
 
     /**
@@ -439,7 +439,7 @@ class IndexController extends Controller
         } else {
             Tool::showMessage('密码错误', false);
 
-            return view('password', compact('origin_path', 'pass_id'));
+            return view(config('olaindex.theme').'password', compact('origin_path', 'pass_id'));
         }
     }
 }

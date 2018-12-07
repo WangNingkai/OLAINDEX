@@ -36,7 +36,7 @@ Route::get('view/{query}', 'IndexController@view')->where('query', '.*')
     ->name('view')->middleware('hotlinkProtection');
 Route::post('password', 'IndexController@handlePassword')->name('password');
 Route::get('thumb/{id}/size/{size}', 'IndexController@thumb')->name('thumb');
-Route::view('message', 'message')->name('message');
+Route::view('message', config('olaindex.theme').'message')->name('message');
 // 图床
 Route::get('image', 'ManageController@uploadImage')->name('image')
     ->middleware('checkImage');
@@ -71,7 +71,7 @@ Route::prefix('admin')->group(function () {
             ->name('admin.file.create');
         Route::any('edit/{id}', 'ManageController@updateFile')
             ->name('admin.file.update');
-        Route::view('other', 'admin.other')->name('admin.other');
+        Route::view('other', config('olaindex.theme').'admin.other')->name('admin.other');
         Route::post('copy', 'ManageController@copyItem')->name('admin.copy');
         Route::post('move', 'ManageController@moveItem')->name('admin.move');
         Route::post('file/path2id', 'ManageController@pathToItemId')

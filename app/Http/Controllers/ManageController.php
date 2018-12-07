@@ -35,7 +35,7 @@ class ManageController extends Controller
     public function uploadImage(Request $request)
     {
         if (!$request->isMethod('post')) {
-            return view('image');
+            return view(config('olaindex.theme').'image');
         }
         $field = 'olaindex_img';
         if (!$request->hasFile($field)) {
@@ -108,7 +108,7 @@ class ManageController extends Controller
     public function uploadFile(Request $request)
     {
         if (!$request->isMethod('post')) {
-            return view('admin.file');
+            return view(config('olaindex.theme').'admin.file');
         }
         $field = 'olaindex_file';
         $target_directory = $request->get('root', '/');
@@ -176,7 +176,7 @@ class ManageController extends Controller
         } catch (DecryptException $e) {
             Tool::showMessage($e->getMessage(), false);
 
-            return view('message');
+            return view(config('olaindex.theme').'message');
         }
         $password = $request->get('password', '12345678');
         $storeFilePath = trim($path, '/').'/.password';
@@ -199,7 +199,7 @@ class ManageController extends Controller
     public function createFile(Request $request)
     {
         if (!$request->isMethod('post')) {
-            return view('admin.add');
+            return view(config('olaindex.theme').'admin.add');
         }
         $name = $request->get('name');
         try {
@@ -207,7 +207,7 @@ class ManageController extends Controller
         } catch (DecryptException $e) {
             Tool::showMessage($e->getMessage(), false);
 
-            return view('message');
+            return view(config('olaindex.theme').'message');
         }
         $content = $request->get('content');
         $storeFilePath = trim($path, '/').'/'.$name.'.md';
@@ -240,7 +240,7 @@ class ManageController extends Controller
                 $file = '';
             }
 
-            return view('admin.edit', compact('file'));
+            return view(config('olaindex.theme').'admin.edit', compact('file'));
         }
         $content = $request->get('content');
         $response = OneDrive::upload($id, $content);
@@ -264,7 +264,7 @@ class ManageController extends Controller
         } catch (DecryptException $e) {
             Tool::showMessage($e->getMessage(), false);
 
-            return view('message');
+            return view(config('olaindex.theme').'message');
         }
         $name = $request->get('name');
         $graphPath = Tool::getOriginPath($path);
@@ -289,7 +289,7 @@ class ManageController extends Controller
         } catch (DecryptException $e) {
             Tool::showMessage($e->getMessage(), false);
 
-            return view('message');
+            return view(config('olaindex.theme').'message');
         }
         $reCode = explode('.', $deCode);
         $id = $reCode[0];
@@ -298,14 +298,14 @@ class ManageController extends Controller
         } catch (DecryptException $e) {
             Tool::showMessage($e->getMessage(), false);
 
-            return view('message');
+            return view(config('olaindex.theme').'message');
         }
         $response = OneDrive::delete($id, $eTag);
         $response['errno'] === 0 ? Tool::showMessage('文件已删除')
             : Tool::showMessage('文件删除失败', false);
         Artisan::call('cache:clear');
 
-        return view('message');
+        return view(config('olaindex.theme').'message');
     }
 
     /**
