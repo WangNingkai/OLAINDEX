@@ -60,7 +60,7 @@
     </script>
 @stop
 @section('content')
-    <div class="mdui-container-fluid">
+    <div class="mdui-container-fluid mdui-p-a-2">
         <div class="mdui-row mdui-m-t-3">
             <div class="mdui-typo-headline-opacity">图床</div>
             <br>
@@ -73,10 +73,10 @@
             <div class="mdui-tab" mdui-tab>
                 <a class="mdui-ripple" href="#urlCode">URL</a>
                 <a class="mdui-ripple" href="#htmlCode">HTML</a>
-                <a class="mdui-ripple" href="#bbCode">bbCode</a>
-                <a class="mdui-ripple" href="#markdown">Markdown</a>
-                <a class="mdui-ripple" href="#markdownLinks">Markdown with Link</a>
-                <a class="mdui-ripple" href="#deleteCode">Delete Link</a>
+                <a class="mdui-ripple" href="#bbCode">BBCODE</a>
+                <a class="mdui-ripple" href="#markdown">MD</a>
+                <a class="mdui-ripple" href="#markdownLinks">MD LINK</a>
+                <a class="mdui-ripple" href="#deleteCode">DEL Link</a>
             </div>
             <div class="mdui-p-a-2 mdui-m-t-2 link-container" id="urlCode"></div>
             <div class="mdui-p-a-2 mdui-m-t-2 link-container" id="htmlCode"></div>
