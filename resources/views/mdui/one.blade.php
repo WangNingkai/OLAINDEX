@@ -15,14 +15,19 @@
 
         $(function () {
             let display_type = store.get('display_type');
-            if (display_type !== 'table') {
+            if (typeof (display_type) == "undefined" || display_type === null) {
+                display_type = "table";
+            }
+            if (display_type === 'table') {
                 $('.thumb-view').removeClass('mdui-hidden');
                 $('img.lazy').lazyload();
                 $('#display-type-chk').attr('checked', true);
             } else {
                 $('.list-view').removeClass('mdui-hidden');
+                $('#display-type-chk').attr('checked', false);
             }
-            $('.display-type').on('click', function () {
+
+            $('.display-type').on('change', function () {
                 if (display_type !== 'table') {
                     store.set('display_type', 'table');
                 } else {
@@ -30,7 +35,6 @@
                 }
                 window.location.reload();
             });
-            $('img.lazy').lazyload();
         });
     </script>
 @stop
