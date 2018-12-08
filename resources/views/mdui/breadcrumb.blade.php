@@ -1,4 +1,4 @@
-@if(!blank($path_array))
+{{--@if(!blank($path_array))
     @foreach ($path_array as $key => $value)
         @if(end($path_array) === $value && $key === (count($path_array) - 1))
             <i class="mdui-icon material-icons mdui-icon-dark mdui-m-a-0">chevron_right</i>
@@ -11,14 +11,4 @@
             @endif
         @endif
     @endforeach
-@endif
-
-@if ($switch)
-    <label class="mdui-switch" style="position: absolute;right: 0">
-        {{--<img src="https://i.loli.net/2018/12/04/5c05f0c25aebd.png"
-             style="width: 18px;position: relative;top: 5px;right: 5px;" alt="切换">--}}
-        <i class="mdui-icon material-icons">view_comfy</i> &nbsp;&nbsp;
-        <input class="display-type" id="display-type-chk" type="checkbox"/>
-        <i class="mdui-switch-icon"></i>
-    </label>
-@endif
+@endif--}}

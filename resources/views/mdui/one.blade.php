@@ -38,12 +38,8 @@
         });
     </script>
 @stop
-@section('breadcrumb')
-    @include('mdui.breadcrumb',['switch' => true])
-@stop
 @section('content')
     <div class="mdui-container-fluid">
-
         @if (!blank($head))
             <div class="mdui-typo mdui-p-t-3">
                 {!! $head !!}
@@ -194,8 +190,6 @@
                     <i class="mdui-icon mdui-fab-opened material-icons">close</i>
                 </button>
                 <div class="mdui-fab-dial">
-                    <a href="{{ route('search') }}" class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-indigo"><i
-                            class="mdui-icon material-icons">search</i></a>
                     <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-green"
                        href="@if (array_key_exists('HEAD.md', $origin_items))
                        {{ route('admin.file.update',$origin_items['HEAD.md']['id']) }}

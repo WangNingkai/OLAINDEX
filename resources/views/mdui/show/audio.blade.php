@@ -17,18 +17,15 @@
         });
     </script>
 @stop
-@section('breadcrumb')
-    @include('mdui.breadcrumb',['switch' => false])
-@stop
 @section('content')
 
     <div class="mdui-container-fluid">
         {{--<br>--}}
-        <div class="mdui-chip mdui-m-t-2 mdui-m-b-2">
+        <div class="mdui-chip mdui-m-t-2 mdui-m-b-1 mdui-hidden-sm-down">
             <span class="mdui-chip-icon">A</span>
             <span class="mdui-chip-title">{{ $file['name'] }}</span>
         </div>
-        <div class="mudi-center" id="video-player">
+        <div class="mudi-center mdui-m-t-1" id="video-player">
             <div id="aplayer"></div>
         </div>
         <div class="mdui-typo">

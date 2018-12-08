@@ -5,18 +5,15 @@
 @section('js')
     <script src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
 @stop
-@section('breadcrumb')
-    @include('mdui.breadcrumb',['switch' => false])
-@stop
 @section('content')
 
     <div class="mdui-container-fluid">
-        <div class="mdui-chip mdui-m-t-2 mdui-m-b-2">
+        <div class="mdui-chip mdui-m-t-2 mdui-m-b-2 mdui-hidden-sm-down">
             <span class="mdui-chip-icon">A</span>
             <span class="mdui-chip-title">{{ $file['name'] }}</span>
         </div>
         <a href="{{ $file['download'] }}" data-fancybox><img
-                class="mdui-img-fluid mdui-center" src="{{ $file['thumb'] }}" alt="{{ $file['name'] }}"/></a>
+                class="mdui-img-fluid mdui-center mdui-m-t-1" src="{{ $file['thumb'] }}" alt="{{ $file['name'] }}"/></a>
         <div class="mdui-typo">
             <hr/>
         </div>

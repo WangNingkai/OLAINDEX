@@ -33,8 +33,9 @@
               mdui-drawer="{target: '#main-drawer', swipe: true}"><i class="mdui-icon material-icons">menu</i></span>
         <a href="{{ route('home') }}" target="_blank" class="mdui-typo-headline mdui-hidden-xs">OLAINDEX</a>
         <div class="mdui-toolbar-spacer"></div>
+        <a href="{{ route('admin.bind') }}" class="mdui-btn"><i class="mdui-icon material-icons">face</i> {{ str_before(\App\Helpers\Tool::getBindAccount(),'@')  }}</a>
         <a onclick="event.preventDefault();document.getElementById('logout-form').submit();"
-           href="javascript:void(0)"><i class="mdui-icon material-icons">&#xe8ac;</i> 登出</a>
+           href="javascript:void(0)" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">power_settings_new</i></a>
         <form id="logout-form" action="{{ route('logout') }}" method="POST"
               class="mdui-hidden">
             @csrf
@@ -43,10 +44,10 @@
 </header>
 <div class="mdui-drawer" id="main-drawer">
     <div class="mdui-list" mdui-collapse="{accordion: true}">
-        <div class="mdui-chip mdui-ripple mdui-m-a-1">
-            <span class="mdui-chip-icon"><i class="mdui-icon material-icons">face</i></span>
-            <span class="mdui-chip-title">{{ str_before(\App\Helpers\Tool::getBindAccount(),'@')  }}</span>
-        </div>
+        <a href="{{ route('search') }}" class="mdui-list-item mdui-ripple">
+            <i class="mdui-list-item-icon mdui-icon material-icons mdui-text-color-red">search</i>
+            <div class="mdui-list-item-content">搜索</div>
+        </a>
         <div class="mdui-list-item mdui-ripple">
             <i class="mdui-list-item-icon mdui-icon material-icons mdui-text-color-indigo">storage</i>
             <div class="mdui-list-item-content"><span
