@@ -49,6 +49,19 @@
             </div>
         </div>
         <div class="form-group">
+            <label class="form-control-label">图床设为首页</label>
+            <div class="custom-control custom-radio">
+                <input type="radio" id="image_home1" name="image_home" class="custom-control-input"
+                       @if(\App\Helpers\Tool::config('image_home',0) == 1) checked @endif value="1">
+                <label class="custom-control-label" for="image_home1">开启</label>
+            </div>
+            <div class="custom-control custom-radio">
+                <input type="radio" id="image_home0" name="image_home" class="custom-control-input"
+                       @if(\App\Helpers\Tool::config('image_home',0) == 0) checked @endif value="0">
+                <label class="custom-control-label" for="image_home0">关闭</label>
+            </div>
+        </div>
+        <div class="form-group">
             <label class="form-control-label" for="image_hosting_path">图床地址</label>
             <input type="text" class="form-control" id="image_hosting_path" name="image_hosting_path"
                    value="{{ \App\Helpers\Tool::config('image_hosting_path') }}">

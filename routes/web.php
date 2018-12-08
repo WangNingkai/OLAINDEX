@@ -23,7 +23,12 @@ Route::prefix('install')->group(function () {
     Route::any('bind', 'InstallController@bind')->name('bind');
 });
 // 索引
-Route::redirect('/', '/home');
+Route::any('/', function () {
+    $redirect = (int)\App\Helpers\Tool::config('image_home', 0) ? 'image'
+        : 'home';
+
+    return redirect()->route($redirect);
+});
 Route::prefix('home')->group(function () {
     Route::get('{query?}', 'IndexController@list')->where('query', '.*')
         ->name('home');
@@ -71,7 +76,8 @@ Route::prefix('admin')->group(function () {
             ->name('admin.file.create');
         Route::any('edit/{id}', 'ManageController@updateFile')
             ->name('admin.file.update');
-        Route::view('other', config('olaindex.theme').'admin.other')->name('admin.other');
+        Route::view('other', config('olaindex.theme').'admin.other')
+            ->name('admin.other');
         Route::post('copy', 'ManageController@copyItem')->name('admin.copy');
         Route::post('move', 'ManageController@moveItem')->name('admin.move');
         Route::post('file/path2id', 'ManageController@pathToItemId')

@@ -11,6 +11,7 @@
     "theme": "flatly",
     "root": "\/",
     "expires": "10",
+    "image_home": 0,
     "image_hosting": 0,
     "image_hosting_path": "Hosting",
     "image": "bmp jpg jpeg png gif",

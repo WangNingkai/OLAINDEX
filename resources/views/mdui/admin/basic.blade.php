@@ -29,7 +29,6 @@
                        value="{{ \App\Helpers\Tool::config('expires',0) }}">
                 <div class="mdui-textfield-helper">建议小于60分钟，否则会导致响应失败</div>
             </div>
-
             <br>
             <label for="image_hosting" class="mdui-textfield-label">是否开启图床</label> &nbsp; &nbsp;
             <br>
@@ -38,7 +37,14 @@
                 <option value="0" @if(\App\Helpers\Tool::config('image_hosting') == 0) selected @endif>关闭</option>
                 <option value="2" @if(\App\Helpers\Tool::config('image_hosting') == 2) selected @endif>仅管理员开启</option>
             </select>
-
+            <br>
+            <br>
+            <label for="image_home" class="mdui-textfield-label">图床设为首页</label> &nbsp; &nbsp;
+            <br>
+            <select name="image_home" id="image_home" class="mdui-select" mdui-select="{position: 'bottom'}">
+                <option value="1" @if(\App\Helpers\Tool::config('image_home',0) == 1) selected @endif>开启</option>
+                <option value="0" @if(\App\Helpers\Tool::config('image_home',0) == 0) selected @endif>关闭</option>
+            </select>
             <div class="mdui-textfield mdui-textfield-floating-label">
                 <label class="mdui-textfield-label" for="image_hosting_path">图床地址</label>
                 <input type="text" class="mdui-textfield-input" id="image_hosting_path" name="image_hosting_path"

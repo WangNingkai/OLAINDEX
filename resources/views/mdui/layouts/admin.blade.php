@@ -48,6 +48,7 @@
             <i class="mdui-list-item-icon mdui-icon material-icons mdui-text-color-red">search</i>
             <div class="mdui-list-item-content">搜索</div>
         </a>
+
         <div class="mdui-list-item mdui-ripple">
             <i class="mdui-list-item-icon mdui-icon material-icons mdui-text-color-indigo">storage</i>
             <div class="mdui-list-item-content"><span
@@ -101,6 +102,10 @@
                    href="{{ route('admin.cache.refresh') }}">缓存刷新 </a>
             </div>
         </div>
+        <a href="{{ route('image') }}" class="mdui-list-item mdui-ripple">
+            <i class="mdui-list-item-icon mdui-icon material-icons mdui-text-color-pink">image</i>
+            <div class="mdui-list-item-content">图床</div>
+        </a>
         <a href="https://onedrive.live.com" class="mdui-list-item mdui-ripple">
             <i class="mdui-list-item-icon mdui-icon material-icons mdui-text-color-blue">cloud</i>
             <div class="mdui-list-item-content">OneDrive管理</div>

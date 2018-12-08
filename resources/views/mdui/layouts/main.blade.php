@@ -24,26 +24,15 @@
 
 <body class="mdui-appbar-with-toolbar mdui-theme-accent-blue mdui-theme-primary-indigo">
 <div class="mdui-appbar  mdui-appbar-fixed mdui-color-theme">
-    <div class="mdui-toolbar mdui-color-theme mdui-container">
+    <div class="mdui-toolbar mdui-color-theme mdui-container" style="position: relative">
         <a href="{{ route('home') }}" class="mdui-typo-headline">{{ \App\Helpers\Tool::config('name') }}</a>
         <div class="mdui-toolbar-spacer"></div>
-
         @if(in_array(request()->route()->getName(),['home','search']))
-            <label class="mdui-switch" mdui-tooltip="{content: '切换视图'}">
+            <label class="mdui-switch" mdui-tooltip="{content: '切换视图'}" style="position: absolute;right: 0">
                 <i class="mdui-icon material-icons">view_comfy</i> &nbsp;&nbsp;
                 <input class="display-type" id="display-type-chk" type="checkbox"/>
                 <i class="mdui-switch-icon"></i>
             </label>
-        @endif
-        @if (\App\Helpers\Tool::config('image_hosting',0))
-            @if( (int)\App\Helpers\Tool::config('image_hosting') === 2 && session()->has('LogInfo') || (int)\App\Helpers\Tool::config('image_hosting') === 1)
-                <a class="mdui-btn mdui-btn-icon" href="{{ route('image') }}" mdui-tooltip="{content: '图床'}"> <i
-                        class="mdui-icon material-icons">image</i></a>
-            @endif
-        @endif
-        @if (session()->has('LogInfo'))
-            <a class="mdui-btn mdui-btn-icon" href="{{ route('admin.basic') }}" mdui-tooltip="{content: '管理'}"> <i
-                    class="mdui-icon material-icons">settings</i></a>
         @endif
     </div>
 </div>
