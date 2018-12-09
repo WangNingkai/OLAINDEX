@@ -22,16 +22,6 @@
                 <div class="mdui-textfield-helper">目录索引起始文件夹地址，有效文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ |</div>
             </div>
             <br>
-            <label for="theme" class="mdui-textfield-label">选择主题</label> &nbsp; &nbsp;
-            <br>
-            <select name="theme" id="theme" class="mdui-select" mdui-select="{position: 'bottom'}">
-                @foreach( \App\Helpers\Constants::SITE_THEME as $name => $theme)
-                    <option value="{{ $theme }}"
-                            @if(\App\Helpers\Tool::config('theme') === $theme) selected @endif>{{ $name }}</option>
-                @endforeach
-            </select>
-            <br>
-            <br>
             <div class="mdui-textfield mdui-textfield-floating-label">
                 <label class="mdui-textfield-label" for="expires">缓存时间(分钟)</label>
                 <input type="text" class="mdui-textfield-input" id="expires" name="expires"
