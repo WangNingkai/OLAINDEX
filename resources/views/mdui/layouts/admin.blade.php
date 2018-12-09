@@ -89,17 +89,17 @@
         </div>
 
         <div
-            class="mdui-collapse-item  @if(in_array(request()->route()->getName(),['admin.cache.clear','admin.cache.refresh'])) mdui-collapse-item-open @endif">
+            class="mdui-collapse-item">
             <div class="mdui-collapse-item-header mdui-list-item mdui-ripple">
                 <i class="mdui-list-item-icon mdui-icon material-icons mdui-text-color-red">clear_all</i>
                 <div class="mdui-list-item-content">缓存</div>
                 <i class="mdui-collapse-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
             </div>
             <div class="mdui-collapse-item-body mdui-list">
-                <a class="mdui-list-item mdui-ripple @if(request()->routeIs('admin.cache.clear')) mdui-list-item-active @endif "
+                <a class="mdui-list-item mdui-ripple"
                    href="{{ route('admin.cache.clear') }}">缓存清理 </a>
-                <a class="mdui-list-item mdui-ripple @if(request()->routeIs('admin.cache.refresh')) mdui-list-item-active @endif"
-                   href="{{ route('admin.cache.refresh') }}">缓存刷新 </a>
+                <a class="mdui-list-item mdui-ripple"
+                   href="{{ route('admin.cache.refresh') }}" onclick="swal('正在刷新，请稍后');">缓存刷新 </a>
             </div>
         </div>
         <a href="{{ route('image') }}" class="mdui-list-item mdui-ripple">

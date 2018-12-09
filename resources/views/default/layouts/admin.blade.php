@@ -22,7 +22,7 @@
                 'path2id': '{{ route('admin.path2id') }}',
                 'share': '{{ route('admin.share') }}',
                 'delete_share': '{{ route('admin.share.delete') }}',
-                'upload_url': '{{ route('admin.url.upload') }}',
+                'upload_url': '{{ route('admin.url.upload') }}'
             },
             '_token': '{{ csrf_token() }}',
         };
@@ -66,7 +66,7 @@
                        aria-haspopup="true" aria-expanded="false"><i class="fa fa-bolt"></i> 缓存</a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" href="{{ route('admin.cache.clear') }}">缓存清理 </a>
-                        <a class="dropdown-item" href="{{ route('admin.cache.refresh') }}">刷新清理 </a>
+                        <a class="dropdown-item" href="{{ route('admin.cache.refresh') }}" onclick="swal('正在刷新，请稍后');">刷新缓存 </a>
                     </div>
                 </li>
                 <li class="nav-item">
