@@ -109,7 +109,7 @@
                 <div class="mdui-col">
                     <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl(\App\Helpers\Tool::getParentUrl($path_array))) }}">
                         <div class="col-icon">
-                            <img src="https://i.loli.net/2018/12/07/5c09d7355ea27.png" alt="">
+                            <img src="{{ asset('img/return.png') }}" class="mdui-p-a-1" alt="">
                         </div>
                         <div class="col-detail mdui-text-center">
                             <div class="col-title">
@@ -129,7 +129,7 @@
                         <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}">
                             <div class="col-icon">
                                 <img
-                                    src=" https://i.loli.net/2018/12/07/5c09d6920f8ac.png"
+                                    src="{{ asset('img/folder.png') }}"
                                     alt="">
                             </div>
                             <div class="col-detail mdui-text-center">
@@ -148,12 +148,14 @@
                         <a target="_blank"
                            href="{{ route('show',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}">
                             <div class="col-icon">
-                                @if(in_array($item['ext'],['bmp','jpg','jpeg','png','gif']))
+                                @if(in_array($item['ext'],explode(' ',\App\Helpers\Tool::config('image'))))
                                     <img class="lazy"
                                          data-original="{{ route('thumb',['id'=>$item['id'],'size'=>'small']) }}"
-                                         src="https://i.loli.net/2018/12/04/5c0625755d6ce.gif" alt="">
+                                         src="{{ asset('img/loading.gif') }}" alt="">
                                 @else
-                                    <img src="https://i.loli.net/2018/12/07/5c09d6920dedb.png" alt="">
+                                    <img
+                                        src="{{ asset('img/'.\App\Helpers\Tool::getExtIcon($item['ext'],true).'.png') }}"
+                                        alt="">
                                 @endif
                             </div>
                             <div class="col-detail mdui-text-center">

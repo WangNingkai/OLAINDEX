@@ -30,13 +30,15 @@ EOF;
 
     const FILE_ICON
         = [
-            'stream'  => ['fa-file-text-o', ['txt', 'log']],
+            'stream'  => ['fa-file-text-o', 'text', ['txt', 'log']],
             'image'   => [
                 'fa-file-image-o',
+                'image',
                 ['bmp', 'jpg', 'jpeg', 'png', 'gif', 'ico', 'jpe'],
             ],
             'video'   => [
                 'fa-file-video-o',
+                'video',
                 [
                     'mkv',
                     'mp4',
@@ -53,9 +55,10 @@ EOF;
                     'flv',
                 ],
             ],
-            'audio'   => ['fa-file-audio-o', ['ogg', 'mp3', 'wav']],
+            'audio'   => ['fa-file-audio-o', 'music', ['ogg', 'mp3', 'wav']],
             'code'    => [
                 'fa-file-code-o',
+                'code',
                 [
                     'html',
                     'htm',
@@ -72,6 +75,7 @@ EOF;
             ],
             'doc'     => [
                 'fa-file-word-o',
+                'doc',
                 [
                     'csv',
                     'doc',
@@ -93,13 +97,14 @@ EOF;
                     'xlsx',
                 ],
             ],
-            'pdf'     => ['fa-file-pdf-o', ['pdf']],
+            'pdf'     => ['fa-file-pdf-o', 'pdf', ['pdf']],
             'zip'     => [
                 'fa-file-archive-o',
+                'zip',
                 ['zip', '7z', 'rar', 'bz', 'gz'],
             ],
-            'android' => ['fa-android', ['apk']],
-            'exe'     => ['fa-windows', ['exe', 'msi']],
+            'android' => ['fa-android', 'app', ['apk']],
+            'exe'     => ['fa-windows', 'exe', ['exe', 'msi']],
         ];
 
     const SITE_THEME

@@ -202,22 +202,21 @@ class Tool
     }
 
     /**
-     * 获取文件图标
-     *
-     * @param $ext
+     * @param string $ext
+     * @param bool   $img
      *
      * @return string
      */
-    public static function getExtIcon($ext = '')
+    public static function getExtIcon($ext = '', $img = false)
     {
         $patterns = Constants::FILE_ICON;
         $icon = '';
         foreach ($patterns as $key => $suffix) {
-            if (in_array($ext, $suffix[1])) {
-                $icon = $suffix[0];
+            if (in_array($ext, $suffix[2])) {
+                $icon = $img ? $suffix[1] : $suffix[0];
                 break;
             } else {
-                $icon = 'fa-file-text-o';
+                $icon = $img ? 'file' : 'fa-file-text-o';
             }
         }
 
