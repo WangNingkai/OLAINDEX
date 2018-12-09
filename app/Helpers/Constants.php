@@ -125,5 +125,6 @@ EOF;
             'Superhero' => 'superhero',
             'United'    => 'united',
             'Yeti'      => 'yeti',
+            'Mdui'      => 'mdui',
         ];
 }

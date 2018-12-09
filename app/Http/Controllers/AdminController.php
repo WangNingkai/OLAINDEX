@@ -87,6 +87,7 @@ class AdminController extends Controller
         $data = $request->except('_token');
         Tool::updateConfig($data);
         Tool::showMessage('保存成功！');
+        Artisan::call('config:cache');
 
         return redirect()->back();
     }

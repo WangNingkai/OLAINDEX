@@ -1,5 +1,6 @@
 <?php
 
 return [
-    'theme' => env('THEME', 'default').'.',
+    'theme' => (\App\Helpers\Tool::config('theme') === 'mdui' ? 'mdui'
+            : 'default').'.',
 ];
