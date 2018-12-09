@@ -2,7 +2,7 @@
 @section('content')
     <div class="mdui-container-fluid">
         <div class="mdui-col-md-6 mdui-col-offset-md-3">
-            <h4 class="mdui-typo-headline-opacity">登录管理</h4>
+            <h4 class="mdui-typo-headline-opacity"><span class="mdui-center" style="text-align: center">登录后台</span></h4>
             <form action="" method="post">
                 @csrf
                 <div class="mdui-textfield mdui-textfield-floating-label">

@@ -442,10 +442,10 @@ class Tool
         $curl->setTimeout(120);
         $curl->setRetry(3);
         $curl->setOpts([
-            CURLOPT_AUTOREFERER      => true,
-            CURLOPT_FAILONERROR      => true,
-            CURLOPT_FOLLOWLOCATION   => true,
-            CURLOPT_ENCODING         => 'gzip,deflate',
+            CURLOPT_AUTOREFERER    => true,
+            CURLOPT_FAILONERROR    => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_ENCODING       => 'gzip,deflate',
         ]);
         $curl->get($url);
         $curl->close();
@@ -556,7 +556,25 @@ class Tool
 
     public static function fileIcon($ext)
     {
-        if (in_array($ext, ['bmp', 'jpg', 'jpeg', 'png', 'gif'])) {
+        if (in_array($ext, ['ogg', 'mp3', 'wav'])) {
+            return "audiotrack";
+        }
+        if (in_array($ext, ['apk'])) {
+            return 'android';
+        }
+        if (in_array($ext, ['pdf'])) {
+            return 'picture_as_pdf';
+        }
+        if (in_array($ext, [
+            'bmp',
+            'jpg',
+            'jpeg',
+            'png',
+            'gif',
+            'ico',
+            'jpe',
+        ])
+        ) {
             return "image";
         }
         if (in_array($ext, [
@@ -576,8 +594,21 @@ class Tool
         ) {
             return "ondemand_video";
         }
-        if (in_array($ext, ['ogg', 'mp3', 'wav'])) {
-            return "audiotrack";
+        if (in_array($ext, [
+            'html',
+            'htm',
+            'css',
+            'go',
+            'java',
+            'js',
+            'json',
+            'txt',
+            'sh',
+            'md',
+            'php',
+        ])
+        ) {
+            return 'code';
         }
 
         return "insert_drive_file";
