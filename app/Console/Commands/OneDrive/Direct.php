@@ -41,7 +41,7 @@ class Direct extends Command
         $remote = $this->argument('remote');
         $_remote
             = OneDrive::pathToItemId($remote);
-        $remote_id = $_remote['errno'] === 200 ? array_get($_remote, 'data.id')
+        $remote_id = $_remote['errno'] === 0 ? array_get($_remote, 'data.id')
             : exit('Remote Path Abnormal');
         $response = OneDrive::createShareLink($remote_id);
         $response['errno'] === 0
