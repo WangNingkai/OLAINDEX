@@ -90,31 +90,36 @@ class IndexController extends Controller
                 if ($response['errno'] === 0) {
                     return $response['data'];
                 } else {
+                    Tool::showMessage($response['msg'], false);
+
                     return null;
                 }
             }
         );
-        if (array_has($item, 'file')) {
+        if (is_null($item)) {
+            abort(404);
+        }
+        if (array_has($item, '@microsoft.graph.downloadUrl')) {
             return redirect()->away($item['@microsoft.graph.downloadUrl']);
         }
         // 获取列表
-        $origin_items = Cache::remember(
-            'one:list:'.$graphPath,
-            $this->expires,
-            function () use ($graphPath) {
-                $response = OneDrive::getChildrenByPath(
-                    $graphPath,
-                    '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl'
-                );
-                if ($response['errno'] === 0) {
-                    return $response['data'];
-                } else {
-                    Tool::showMessage($response['msg'], false);
+        $key = 'one:list:'.$graphPath;
+        if (Cache::has($key)) {
+            $origin_items = Cache::get($key);
+        } else {
+            $response = OneDrive::getChildrenByPath(
+                $graphPath,
+                '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl'
+            );
+            if ($response['errno'] === 0) {
+                $origin_items = $response['data'];
+                Cache::put($key, $origin_items, $this->expires);
+            } else {
+                Tool::showMessage($response['msg'], false);
 
-                    return [];
-                }
+                return view('message');
             }
-        );
+        }
         $hasImage = Tool::hasImages($origin_items);
         // 过滤微软OneNote文件
         $origin_items = array_where($origin_items, function ($value) {
@@ -135,10 +140,16 @@ class IndexController extends Controller
                     Session::forget($key);
                     Tool::showMessage('密码已过期', false);
 
-                    return view(config('olaindex.theme').'password', compact('origin_path', 'pass_id'));
+                    return view(
+                        config('olaindex.theme').'password',
+                        compact('origin_path', 'pass_id')
+                    );
                 }
             } else {
-                return view(config('olaindex.theme').'password', compact('origin_path', 'pass_id'));
+                return view(
+                    config('olaindex.theme').'password',
+                    compact('origin_path', 'pass_id')
+                );
             }
         }
         // 过滤受限隐藏目录
@@ -228,7 +239,7 @@ class IndexController extends Controller
             abort(404);
         }
         $file = $this->getFileOrCache($realPath);
-        if (!$file || array_has($file, 'folder')) {
+        if (is_null($file) || array_has($file, 'folder')) {
             abort(404);
         }
         $file['download'] = $file['@microsoft.graph.downloadUrl'];
@@ -310,7 +321,7 @@ class IndexController extends Controller
             abort(404);
         }
         $file = $this->getFileOrCache($realPath);
-        if (array_has($file, 'folder')) {
+        if (is_null($file) || array_has($file, 'folder')) {
             abort(404);
         }
         $url = $file['@microsoft.graph.downloadUrl'];
@@ -349,7 +360,7 @@ class IndexController extends Controller
             abort(404);
         }
         $file = $this->getFileOrCache($realPath);
-        if (array_has($file, 'folder')) {
+        if (is_null($file) || array_has($file, 'folder')) {
             abort(404);
         }
         $download = $file['@microsoft.graph.downloadUrl'];
@@ -439,7 +450,10 @@ class IndexController extends Controller
         } else {
             Tool::showMessage('密码错误', false);
 
-            return view(config('olaindex.theme').'password', compact('origin_path', 'pass_id'));
+            return view(
+                config('olaindex.theme').'password',
+                compact('origin_path', 'pass_id')
+            );
         }
     }
 }
