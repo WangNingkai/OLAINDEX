@@ -107,7 +107,7 @@ function init_install(){
 echo -e "${Tip} Requirements Check"
 wget_check
 git_check
-nginx_check
+# nginx_check
 php_check
 php_ext_check
 php_func_check
