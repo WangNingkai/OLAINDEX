@@ -10,14 +10,12 @@
     <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/blueimp-gallery-indicator.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/jquery.blueimp-gallery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/blueimp-gallery-fullscreen.min.js"></script>
-    <script src="https://cdn.bootcss.com/jquery_lazyload/1.9.7/jquery.lazyload.min.js"></script>
     <script>
         $(function () {
             blueimp.Gallery(carouselLinks, {
                 container: '#image-list',
                 carousel: true
             });
-            $('img.lazy').lazyload();
         });
 
         @if(session()->has('LogInfo'))
