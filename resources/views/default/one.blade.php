@@ -283,7 +283,7 @@
                             <a href="{{ route('view',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
                                title="{{ $item['name'] }}" data-gallery="#image-list">
                                 <img class="lazy"
-                                     data-original="{{ array_get($item,'thumbnails.0.small.url')}}"
+                                     data-original="{{ array_get($item,'thumbnails.0.small.url') }}"
                                      src="{{ asset('img/loading.gif') }}"
                                      alt="{{ $item['name'] }}" width="10%" height="10%">
                             </a>

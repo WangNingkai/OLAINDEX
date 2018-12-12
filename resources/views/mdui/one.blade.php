@@ -150,7 +150,7 @@
                             <div class="col-icon">
                                 @if(in_array($item['ext'],explode(' ',\App\Helpers\Tool::config('image'))))
                                     <img class="lazy"
-                                         data-original="{{ route('thumb',['id'=>$item['id'],'size'=>'small']) }}"
+                                         data-original="{{ array_get($item,'thumbnails.0.small.url') }}"
                                          src="{{ asset('img/loading.gif') }}" alt="">
                                 @else
                                     <img
