@@ -16,7 +16,8 @@
             blueimp.Gallery(carouselLinks, {
                 container: '#image-list',
                 carousel: true
-            })
+            });
+            $('img.lazy').lazyload();
         });
 
         @if(session()->has('LogInfo'))
