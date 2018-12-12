@@ -3,6 +3,24 @@
 @section('css')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.min.css">
 @stop
+@section('js')
+    <script>
+        (function (d, p) {
+            var a = new XMLHttpRequest(),
+                b = d.body;
+            a.open("GET", p, true);
+            a.send();
+            a.onload = function () {
+                var c = d.createElement("div");
+                c.style.display = "none";
+                c.innerHTML = a.responseText;
+                b.insertBefore(c, b.childNodes[0]);
+            }
+        })(document, "https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.svg");
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.min.js"></script>
+    <script>const player = new Plyr('#player');</script>
+@stop
 @section('content')
     @include('default.breadcrumb')
     <div class="card border-light mb-3">
@@ -37,21 +55,4 @@
     </div>
     </div>
 @stop
-@section('js')
-    <script>
-        (function(d, p){
-            var a = new XMLHttpRequest(),
-                b = d.body;
-            a.open("GET", p, true);
-            a.send();
-            a.onload = function(){
-                var c = d.createElement("div");
-                c.style.display = "none";
-                c.innerHTML = a.responseText;
-                b.insertBefore(c, b.childNodes[0]);
-            }
-        })(document, "https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.svg");
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.min.js"></script>
-    <script>const player = new Plyr('#player');</script>
-@stop
+

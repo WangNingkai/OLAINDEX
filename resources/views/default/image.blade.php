@@ -21,6 +21,46 @@
         }
     </style>
 @stop
+@section('js')
+    <script src="https://cdn.jsdelivr.net/npm/dropzone@5/dist/min/dropzone.min.js"></script>
+    <script>
+        Dropzone.options.imageDropzone = {
+            url: Config.routes.upload_image,
+            method: 'post',
+            maxFilesize: 4,
+            paramName: 'olaindex_img',
+            maxFiles: 10,
+            acceptedFiles: 'image/*',
+            addRemoveLinks: true,
+            init: function () {
+                this.on('sending', function (file, xhr, formData) {
+                    formData.append('_token', Config._token);
+                });
+                this.on('success', function (file, response) {
+                    $('#showUrl').removeClass('invisible');
+                    $('#urlCode').append('<p>' + response.data.url + '</p>');
+                    $('#htmlCode').append('<p>&lt;img src=\'' + response.data.url + '\' alt=\'' + response.data.filename + '\' title=\'' + response.data.filename + '\' /&gt;' + '</p>');
+                    $('#bbCode').append('<p>[img]' + response.data.url + '[/img]' + '</p>');
+                    $('#markdown').append('<p>![' + response.data.filename + '](' + response.data.url + ')' + '</p>');
+                    $('#markdownLinks').append('<p>[![' + response.data.filename + '](' + response.data.url + ')]' + '(' + response.data.url + ')' + '</p>');
+                    $('#deleteCode').append('<p>' + response.data.delete + '</p>')
+                });
+            },
+
+            dictDefaultMessage: '拖拽文件至此上传',
+            dictFallbackMessage: '浏览器不支持拖拽上传',
+            dictFileTooBig: '文件过大(@{{filesize}}MiB)，请重试',
+            dictInvalidFileType: '文件类型不支持',
+            dictResponseError: '上传错误 @{{statusCode}}',
+            dictCancelUpload: '取消上传',
+            dictUploadCanceled: '上传已取消',
+            dictCancelUploadConfirmation: '确定取消上传吗?',
+            dictRemoveFile: '移除此文件',
+            dictRemoveFileConfirmation: '确定移除此文件吗',
+            dictMaxFilesExceeded: '已达到最大上传数.',
+        };
+    </script>
+@stop
 @section('content')
     <div class="card border-light mb-3">
         <div class="card-body">
@@ -75,43 +115,4 @@
         </div>
     </div>
 @stop
-@section('js')
-    <script src="https://cdn.jsdelivr.net/npm/dropzone@5/dist/min/dropzone.min.js"></script>
-    <script>
-        Dropzone.options.imageDropzone = {
-            url: Config.routes.upload_image,
-            method: 'post',
-            maxFilesize: 4,
-            paramName: 'olaindex_img',
-            maxFiles: 10,
-            acceptedFiles: 'image/*',
-            addRemoveLinks: true,
-            init: function () {
-                this.on('sending', function (file, xhr, formData) {
-                    formData.append('_token', Config._token);
-                });
-                this.on('success', function (file, response) {
-                    $('#showUrl').removeClass('invisible');
-                    $('#urlCode').append('<p>' + response.data.url + '</p>');
-                    $('#htmlCode').append('<p>&lt;img src=\'' + response.data.url + '\' alt=\'' + response.data.filename + '\' title=\'' + response.data.filename + '\' /&gt;' + '</p>');
-                    $('#bbCode').append('<p>[img]' + response.data.url + '[/img]' + '</p>');
-                    $('#markdown').append('<p>![' + response.data.filename + '](' + response.data.url + ')' + '</p>');
-                    $('#markdownLinks').append('<p>[![' + response.data.filename + '](' + response.data.url + ')]' + '(' + response.data.url + ')' + '</p>');
-                    $('#deleteCode').append('<p>' + response.data.delete + '</p>')
-                });
-            },
 
-            dictDefaultMessage: '拖拽文件至此上传',
-            dictFallbackMessage: '浏览器不支持拖拽上传',
-            dictFileTooBig: '文件过大(@{{filesize}}MiB)，请重试',
-            dictInvalidFileType: '文件类型不支持',
-            dictResponseError: '上传错误 @{{statusCode}}',
-            dictCancelUpload: '取消上传',
-            dictUploadCanceled: '上传已取消',
-            dictCancelUploadConfirmation: '确定取消上传吗?',
-            dictRemoveFile: '移除此文件',
-            dictRemoveFileConfirmation: '确定移除此文件吗',
-            dictMaxFilesExceeded: '已达到最大上传数.',
-        };
-    </script>
-@stop

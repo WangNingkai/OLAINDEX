@@ -3,6 +3,20 @@
 @section('css')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
 @stop
+@section('js')
+    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+    <script>
+        const ap = new APlayer({
+            container: document.getElementById("aplayer"),
+            audio: [{
+                name: "{{ $file['name'] }}",
+                artist: 'unknown',
+                url: "{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}",
+                cover: "https://i.loli.net/2018/10/28/5bd571ce90e33.png"
+            }]
+        });
+    </script>
+@stop
 @section('content')
     @include('default.breadcrumb')
     <div class="card border-light mb-3">
@@ -33,17 +47,4 @@
         </div>
     </div>
 @stop
-@section('js')
-    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
-    <script>
-        const ap = new APlayer({
-            container: document.getElementById("aplayer"),
-            audio: [{
-                name: "{{ $file['name'] }}",
-                artist: 'unknown',
-                url: "{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}",
-                cover: "https://i.loli.net/2018/10/28/5bd571ce90e33.png"
-            }]
-        });
-    </script>
-@stop
+
