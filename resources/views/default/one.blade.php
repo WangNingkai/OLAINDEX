@@ -1,8 +1,44 @@
 @extends('default.layouts.main')
 @section('title',\App\Helpers\Tool::config('name','OLAINDEX'))
 @section('css')
-{{--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/css/blueimp-gallery-indicator.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/css/blueimp-gallery.min.css">--}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/css/blueimp-gallery-indicator.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/css/blueimp-gallery.min.css">
+@stop
+@section('js')
+    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/jquery.blueimp-gallery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/blueimp-gallery-indicator.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/blueimp-gallery-fullscreen.min.js"></script>
+    <script>
+        @if(session()->has('LogInfo'))
+        function deleteItem($sign) {
+            swal({
+                title: '确定删除吗？',
+                text: "删除后无法恢复",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '确定删除',
+                cancelButtonText: '取消',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+                    window.open('/file/delete/' + $sign, '_blank');
+                } else if (result.dismiss === swal.DismissReason.cancel) {
+                    swal('已取消', '文件安全 :)', 'error');
+                }
+            })
+        }
+
+        function getDirect() {
+            $("#dl").val('');
+            $(".download_url").each(function () {
+                let dl = decodeURI($(this).attr("href"));
+                let url = dl + "\n";
+                let origin = $("#dl").val();
+                $("#dl").val(origin + url);
+            });
+        }
+        @endif
+    </script>
 @stop
 @section('content')
     @include('default.breadcrumb')
@@ -226,7 +262,7 @@
     <div>
         {{ $items->appends(['limit' => request()->get('limit')])->links('default.page') }}
     </div>
-    {{--@if ($hasImage)
+    @if ($hasImage && (int)\App\Helpers\Tool::config('image_view'))
         <div class="card border-light mb-3">
             <div class="card-header">
                 看图
@@ -254,7 +290,7 @@
                 </div>
             </div>
         </div>
-    @endif--}}
+    @endif
     @if (!blank($readme))
         <div class="card border-light mb-3">
             <div class="card-header"><i class="fa fa-bookmark"></i> README</div>
@@ -264,42 +300,4 @@
         </div>
     @endif
 @stop
-@section('js')
-{{--    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/jquery.blueimp-gallery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/blueimp-gallery-indicator.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/blueimp-gallery-fullscreen.min.js"></script>
-    <script src="https://cdn.bootcss.com/store.js/1.3.20/store.min.js"></script>--}}
 
-    <script>
-        @if(session()->has('LogInfo'))
-        function deleteItem($sign) {
-            swal({
-                title: '确定删除吗？',
-                text: "删除后无法恢复",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonText: '确定删除',
-                cancelButtonText: '取消',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.value) {
-                    window.open('/file/delete/' + $sign, '_blank');
-                } else if (result.dismiss === swal.DismissReason.cancel) {
-                    swal('已取消', '文件安全 :)', 'error');
-                }
-            })
-        }
-
-        function getDirect() {
-            $("#dl").val('');
-            $(".download_url").each(function () {
-                let dl = decodeURI($(this).attr("href"));
-                let url = dl + "\n";
-                let origin = $("#dl").val();
-                $("#dl").val(origin + url);
-            });
-        }
-        @endif
-    </script>
-
-@stop

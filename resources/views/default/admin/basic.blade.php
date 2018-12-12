@@ -31,6 +31,19 @@
             <span class="form-text text-danger">建议小于60分钟，否则会导致响应失败</span>
         </div>
         <div class="form-group">
+            <label class="form-control-label">开启看图模式</label>
+            <div class="custom-control custom-radio">
+                <input type="radio" id="image_view1" name="image_view" class="custom-control-input"
+                       @if(\App\Helpers\Tool::config('image_view',0) == 1) checked @endif value="1">
+                <label class="custom-control-label" for="image_view1">开启</label>
+            </div>
+            <div class="custom-control custom-radio">
+                <input type="radio" id="image_view0" name="image_view" class="custom-control-input"
+                       @if(\App\Helpers\Tool::config('image_view',0) == 0) checked @endif value="0">
+                <label class="custom-control-label" for="image_view0">关闭</label>
+            </div>
+        </div>
+        <div class="form-group">
             <label class="form-control-label">开启图床</label>
             <div class="custom-control custom-radio">
                 <input type="radio" id="image_hosting1" name="image_hosting" class="custom-control-input"
