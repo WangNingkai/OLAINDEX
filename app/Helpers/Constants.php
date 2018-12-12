@@ -12,7 +12,7 @@ class Constants
 / /_/ / /___/ ___ |_/ // /|  / /_/ / /___ /   |  
 \____/_____/_/  |_/___/_/ |_/_____/_____//_/|_|
 EOF;
-    const LATEST_VERSION = 'v3.2';
+    const LATEST_VERSION = 'v3.2.1';
     const DEFAULT_REDIRECT_URI = 'https://olaindex.ningkai.wang';
 
     const API_VERSION = 'v1.0';
