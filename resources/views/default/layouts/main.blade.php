@@ -116,6 +116,7 @@
             title: '已复制',
             trigger: 'click'
         });
+        $('img.lazy').lazyload();
     });
 </script>
 </body>

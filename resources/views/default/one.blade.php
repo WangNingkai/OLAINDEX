@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/jquery.blueimp-gallery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/blueimp-gallery-indicator.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/blueimp-gallery-fullscreen.min.js"></script>
+    <script src="https://cdn.bootcss.com/jquery_lazyload/1.9.7/jquery.lazyload.min.js"></script>
     <script>
         @if(session()->has('LogInfo'))
         function deleteItem($sign) {
@@ -273,7 +274,9 @@
                         @if(array_has($item,'image'))
                             <a href="{{ route('view',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
                                title="{{ $item['name'] }}" data-gallery="image-list">
-                                <img src="{{ route('thumb',['id'=>$item['id'],'size'=>'small']) }}"
+                                <img class="lazy"
+                                     data-original="{{ route('thumb',['id'=>$item['id'],'size'=>'small']) }}"
+                                     src="{{ asset('img/loading.gif') }}" width="50px" height="50px"
                                      alt="{{ $item['name'] }}">
                             </a>
                         @endif
