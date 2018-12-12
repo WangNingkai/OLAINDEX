@@ -53,7 +53,7 @@ class RefreshCache extends Command
         \Illuminate\Support\Facades\Artisan::call('od:refresh');
         $response = OneDrive::getChildrenByPath(
             $path,
-            '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl'
+            '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl&expand=thumbnails'
         );
 
         return $response['errno'] === 0 ? $response['data'] : null;
