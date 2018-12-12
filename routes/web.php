@@ -41,6 +41,8 @@ Route::get('view/{query}', 'IndexController@view')->where('query', '.*')
     ->name('view')->middleware('hotlinkProtection');
 Route::post('password', 'IndexController@handlePassword')->name('password');
 Route::get('thumb/{id}/size/{size}', 'IndexController@thumb')->name('thumb');
+Route::get('thumb/{id}/{width}/{height}', 'IndexController@thumbCrop')
+    ->name('thumb_crop');
 Route::view('message', config('olaindex.theme').'message')->name('message');
 // 图床
 Route::get('image', 'ManageController@uploadImage')->name('image')

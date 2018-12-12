@@ -5,11 +5,20 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/css/blueimp-gallery.min.css">
 @stop
 @section('js')
-    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/jquery.blueimp-gallery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/blueimp-helper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/blueimp-gallery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/blueimp-gallery-indicator.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/jquery.blueimp-gallery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/blueimp-gallery-fullscreen.min.js"></script>
     <script src="https://cdn.bootcss.com/jquery_lazyload/1.9.7/jquery.lazyload.min.js"></script>
     <script>
+        $(function () {
+            blueimp.Gallery(carouselLinks, {
+                container: '#image-list',
+                carousel: true
+            })
+        });
+
         @if(session()->has('LogInfo'))
         function deleteItem($sign) {
             swal({
@@ -273,11 +282,11 @@
                     @foreach($items as $item)
                         @if(array_has($item,'image'))
                             <a href="{{ route('view',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
-                               title="{{ $item['name'] }}" data-gallery="image-list">
+                               title="{{ $item['name'] }}" data-gallery="#image-list">
                                 <img class="lazy"
-                                     data-original="{{ route('thumb',['id'=>$item['id'],'size'=>'small']) }}"
-                                     src="{{ asset('img/loading.gif') }}" width="50px" height="50px"
-                                     alt="{{ $item['name'] }}">
+                                     data-original="{{ array_get($item,'thumbnails.0.small.url')}}"
+                                     src="{{ asset('img/loading.gif') }}"
+                                     alt="{{ $item['name'] }}" width="10%" height="10%">
                             </a>
                         @endif
                     @endforeach

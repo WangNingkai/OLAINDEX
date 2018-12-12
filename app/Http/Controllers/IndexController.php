@@ -109,7 +109,7 @@ class IndexController extends Controller
         } else {
             $response = OneDrive::getChildrenByPath(
                 $graphPath,
-                '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl'
+                '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl&expand=thumbnails'
             );
             if ($response['errno'] === 0) {
                 $origin_items = $response['data'];
@@ -120,6 +120,7 @@ class IndexController extends Controller
                 return view('message');
             }
         }
+//        dd($origin_items);
         $hasImage = Tool::hasImages($origin_items);
         // 过滤微软OneNote文件
         $origin_items = array_where($origin_items, function ($value) {
@@ -215,7 +216,10 @@ class IndexController extends Controller
                 'one:file:'.$graphPath,
                 $this->expires,
                 function () use ($graphPath) {
-                    $response = OneDrive::getItemByPath($graphPath);
+                    $response = OneDrive::getItemByPath(
+                        $graphPath,
+                        '?select=id,eTag,name,size,lastModifiedDateTime,file,image,@microsoft.graph.downloadUrl&expand=thumbnails'
+                    );
                     if ($response['errno'] === 0) {
                         return $response['data'];
                     } else {
@@ -259,13 +263,7 @@ class IndexController extends Controller
                 }
                 // 处理缩略图
                 if (in_array($key, ['image', 'dash', 'video'])) {
-                    $response = OneDrive::thumbnails($file['id'], 'large');
-                    if ($response['errno'] === 0) {
-                        $file['thumb'] = $response['data']['url'];
-                    } else {
-                        $file['thumb']
-                            = 'https://i.loli.net/2018/12/04/5c05cd3086425.png';
-                    }
+                    $file['thumb'] = array_get($file, 'thumbnails.0.large.url');
                 }
                 // dash视频流
                 if ($key === 'dash') {
@@ -346,6 +344,29 @@ class IndexController extends Controller
         }
 
         return redirect()->away($url);
+    }
+
+    /**
+     * @param $id
+     * @param $width
+     * @param $height
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \ErrorException
+     */
+    public function thumbCrop($id, $width, $height)
+    {
+        $response = OneDrive::thumbnails($id, 'large');
+        if ($response['errno'] === 0) {
+            $url = $response['data']['url'];
+            @list($url, $tmp) = explode('&width=', $url);
+            $url .= strpos($url, '?') ? '&' : '?';
+            $thumb = $url."width={$width}&height={$height}";
+        } else {
+            $thumb = 'https://i.loli.net/2018/12/04/5c05cd3086425.png';
+        }
+
+        return redirect()->away($thumb);
     }
 
     /**

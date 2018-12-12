@@ -394,7 +394,6 @@ class OneDrive
         return $response;
     }
 
-
     /**
      * @param $itemId
      *
