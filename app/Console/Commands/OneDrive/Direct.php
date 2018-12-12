@@ -2,8 +2,7 @@
 
 namespace App\Console\Commands\OneDrive;
 
-use App\Helpers\Tool;
-use App\Http\Controllers\OneDriveController;
+use App\Helpers\OneDrive;
 use Illuminate\Console\Command;
 
 class Direct extends Command
@@ -13,15 +12,14 @@ class Direct extends Command
      *
      * @var string
      */
-    protected $signature = 'od:direct
-                            {path : 文件地址}';
+    protected $signature = 'od:direct {remote : RemotePath}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'DirectDownloadLink For File';
+    protected $description = 'Create Direct Share Link';
 
     /**
      * Create a new command instance.
@@ -34,28 +32,20 @@ class Direct extends Command
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function handle()
     {
-        $this->info('请稍等...');
-        if (!refresh_token()) {
-            $this->warn('请稍后重试...');
-            return;
-        }
-        $target = $this->argument('path');
-        $od = new OneDriveController();
-        $target_path = trim(Tool::handleUrl($target), '/');
-        $id_request = Tool::handleResponse($od->pathToItemId(empty($target_path) ? '/' : ":/{$target_path}:/"));
-        if ($id_request['code'] == 200)
-            $_id = $id_request['data']['id'];
-        else {
-            $this->error('路径异常!');
-            return;
-        }
-        /* @var $result \Illuminate\Http\JsonResponse */
-        $result = $od->createShareLink($_id);
-        $response = Tool::handleResponse($result);
-        $response['code'] == 200 ? $this->info("创建成功!\n永久直链地址： {$response['data']['redirect']}") : $this->error("创建失败!\n{$response['msg']} ");
+        $this->call('od:refresh');
+        $this->info('Please waiting...');
+        $remote = $this->argument('remote');
+        $_remote
+            = OneDrive::pathToItemId($remote);
+        $remote_id = $_remote['errno'] === 0 ? array_get($_remote, 'data.id')
+            : exit('Remote Path Abnormal');
+        $response = OneDrive::createShareLink($remote_id);
+        $response['errno'] === 0
+            ? $this->info("Success! Direct Link:\n{$response['data']['redirect']}")
+            : $this->warn("Failed!\n{$response['msg']} ");
     }
 }

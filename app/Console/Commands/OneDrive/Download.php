@@ -2,8 +2,7 @@
 
 namespace App\Console\Commands\OneDrive;
 
-use App\Helpers\Tool;
-use App\Http\Controllers\OneDriveController;
+use App\Helpers\OneDrive;
 use Illuminate\Console\Command;
 
 class Download extends Command
@@ -14,7 +13,8 @@ class Download extends Command
      * @var string
      */
     protected $signature = 'od:download
-                            {path : 文件地址}';
+                            {remote? : Download Remote Path}
+                            {--id= : Download Remote File ID}';
 
     /**
      * The console command description.
@@ -34,21 +34,27 @@ class Download extends Command
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function handle()
     {
-        $this->info('请稍等...');
-        if (!refresh_token()) {
-            $this->warn('请稍后重试...');
-            return;
+        $this->call('od:refresh');
+        $remote = $this->argument('remote');
+        $id = $this->option('id');
+        if ($id) {
+            $response = OneDrive::getItem($id);
+        } else {
+            if (empty($remote)) {
+                exit('Parameters Missing!');
+            }
+            $response = OneDrive::getItemByPath($remote);
         }
-        $target = $this->argument('path');
-        $target_path = trim(Tool::handleUrl($target), '/');
-        $path = empty($target_path) ? '/' : ":/{$target_path}:/";
-        $od = new OneDriveController();
-        $result = $od->getItemByPath($path);
-        $response = Tool::handleResponse($result);
-        $response['code'] == 200 ? $this->info("下载地址：{$response['data']['@microsoft.graph.downloadUrl']}") : $this->error("获取文件失败!\n{$response['msg']} ");
+        if ($response['errno'] === 0) {
+            $download = $response['data']['@microsoft.graph.downloadUrl'] ??
+                exit('404 NOT FOUND');
+            $this->info("Download Link:\n{$download}");
+        } else {
+            $this->warn("Failed!\n{$response['msg']} ");
+        }
     }
 }

@@ -12,7 +12,8 @@ class CheckImage
      * 处理图床开启
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
+     * @param  \Closure                 $next
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -21,6 +22,7 @@ class CheckImage
         if (!$status || $status == 2 && !Session::has('LogInfo')) {
             return redirect()->route('home');
         }
+
         return $next($request);
     }
 }

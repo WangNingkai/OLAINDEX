@@ -20,7 +20,7 @@ class Quota extends Command
      *
      * @var string
      */
-    protected $description = 'OneDrive Info';
+    protected $description = 'OneDriveGraph Info';
 
     /**
      * Create a new command instance.
@@ -33,21 +33,21 @@ class Quota extends Command
     }
 
     /**
-     * Execute the console command.
-     *
-     * @return mixed
+     * @throws \ErrorException
      */
     public function handle()
     {
-        $headers = array_keys(is_array(quota()) ? quota() : []);
+        $this->call('od:refresh');
+        $headers = array_keys(is_array(Tool::getOneDriveInfo())
+            ? Tool::getOneDriveInfo() : []);
         if (!$headers) {
-            $this->warn('请稍后重试...');
-            return;
+            $this->warn('Please try again later!');
+            exit;
         }
-        $quota[] = quota();
+        $quota[] = Tool::getOneDriveInfo();
         $this->info(Constants::LOGO);
-        $this->info('Account [' . bind_account() . ']');
-        $this->info('App Version  [' . Tool::config('app_version') . ']');
-        $this->table($headers, $quota);
+        $this->info('Account ['.Tool::getBindAccount().']');
+        $this->info('App Version  ['.Tool::config('app_version').']');
+        $this->table($headers, $quota, 'default');
     }
 }

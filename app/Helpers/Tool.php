@@ -2,21 +2,75 @@
 
 namespace App\Helpers;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\OauthController;
+use Curl\Curl;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class Tool
 {
     /**
+     * 判断密钥配置
+     *
+     * @return bool
+     */
+    public static function hasConfig()
+    {
+        if (!empty(self::config('client_id'))
+            && !empty(self::config('client_secret'))
+            && !empty(self::config('redirect_uri'))
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 判断账号绑定
+     *
+     * @return bool
+     */
+    public static function hasBind()
+    {
+        if (!empty(self::config('access_token'))
+            && !empty(self::config('refresh_token'))
+            && !empty(self::config('access_token_expires'))
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 判断列表是否含有图片
+     *
+     * @param $items
+     *
+     * @return bool
+     */
+    public static function hasImages($items)
+    {
+        $hasImage = false;
+        foreach ($items as $item) {
+            if (isset($item['image'])) {
+                $hasImage = true;
+                break;
+            }
+        }
+
+        return $hasImage;
+    }
+
+    /**
      * 操作成功或者失败的提示
+     *
      * @param string $message
-     * @param bool $success
+     * @param bool   $success
      */
     public static function showMessage($message = '成功', $success = true)
     {
@@ -27,20 +81,27 @@ class Tool
 
     /**
      *文件大小转换
+     *
      * @param string $size 原始大小
+     *
      * @return string 转换大小
      */
     public static function convertSize($size)
     {
         $units = array(' B', ' KB', ' MB', ' GB', ' TB');
-        for ($i = 0; $size >= 1024 && $i < 4; $i++) $size /= 1024;
-        return @round($size, 2) . $units[$i];
+        for ($i = 0; $size >= 1024 && $i < 4; $i++) {
+            $size /= 1024;
+        }
+
+        return @round($size, 2).$units[$i];
     }
 
     /**
      * markdown转html
-     * @param $markdown
+     *
+     * @param      $markdown
      * @param bool $line
+     *
      * @return mixed|string
      */
     public static function markdown2Html($markdown, $line = false)
@@ -48,17 +109,19 @@ class Tool
         $parser = new \Parsedown();
         if (!$line) {
             $html = $parser->text($markdown);
-            $html = str_replace('<code class="', '<code class="lang-', $html);
         } else {
             $html = $parser->line($markdown);
         }
+
         return $html;
     }
 
     /**
      * 数组分页
+     *
      * @param $items
      * @param $perPage
+     *
      * @return LengthAwarePaginator
      */
     public static function paginate($items, $perPage)
@@ -70,13 +133,21 @@ class Tool
         // Get only the items you need using array_slice
         $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
 
-        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage, Paginator::resolveCurrentPage(), ['path' => Paginator::resolveCurrentPath()]);
+        return new LengthAwarePaginator(
+            $itemsForCurrentPage,
+            count($items),
+            $perPage,
+            Paginator::resolveCurrentPage(),
+            ['path' => Paginator::resolveCurrentPath()]
+        );
     }
 
     /**
      * 获取包屑导航url
+     *
      * @param $key
      * @param $pathArr
+     *
      * @return string
      */
     public static function getBreadcrumbUrl($key, $pathArr)
@@ -84,35 +155,41 @@ class Tool
         $pathArr = array_slice($pathArr, 0, $key);
         $url = '';
         foreach ($pathArr as $param) {
-            $url .= '/' . $param;
+            $url .= '/'.$param;
         }
+
         return trim($url, '/');
     }
 
     /**
      * 获取父级url
+     *
      * @param $pathArr
+     *
      * @return string
      */
     public static function getParentUrl($pathArr)
     {
         array_pop($pathArr);
-        if (count($pathArr) == 0) {
+        if (count($pathArr) === 0) {
             return '';
         }
         $url = '';
         foreach ($pathArr as $param) {
-            $url .= '/' . $param;
+            $url .= '/'.$param;
         }
+
         return trim($url, '/');
     }
 
     /**
      * 处理url
+     *
      * @param $path
+     *
      * @return string
      */
-    public static function handleUrl($path)
+    public static function getEncodeUrl($path)
     {
         $url = [];
         foreach (explode('/', $path) as $key => $value) {
@@ -120,32 +197,37 @@ class Tool
                 $url[] = rawurlencode($value);
             }
         }
+
         return @implode('/', $url);
     }
 
     /**
-     * 获取文件图标
-     * @param $ext
+     * @param string $ext
+     * @param bool   $img
+     *
      * @return string
      */
-    public static function getExtIcon($ext = '')
+    public static function getExtIcon($ext = '', $img = false)
     {
         $patterns = Constants::FILE_ICON;
         $icon = '';
         foreach ($patterns as $key => $suffix) {
-            if (in_array($ext, $suffix[1])) {
-                $icon = $suffix[0];
+            if (in_array($ext, $suffix[2])) {
+                $icon = $img ? $suffix[1] : $suffix[0];
                 break;
             } else {
-                $icon = 'fa-file-text-o';
+                $icon = $img ? 'file' : 'fa-file-text-o';
             }
         }
+
         return $icon;
     }
 
     /**
      * 文件是否可编辑
+     *
      * @param $file
+     *
      * @return bool
      */
     public static function canEdit($file)
@@ -164,28 +246,23 @@ class Tool
 
     /**
      * 保存配置到json文件
+     *
      * @param $config
+     *
      * @return bool
      */
     public static function saveConfig($config)
     {
         $file = storage_path('app/config.json');
-        if (!is_writable($file)) {
-            self::showMessage('权限不足，无法写入配置文件', false);
-            abort(403, '权限不足，无法写入配置文件');
-        };
-        $saved = file_put_contents($file, json_encode($config));
-        if ($saved) {
-            Artisan::call('cache:clear');
-            return true;
-        } else {
-            return false;
-        }
+
+        return self::writeJson($file, $config);
     }
 
     /**
      * 更新配置
+     *
      * @param $data
+     *
      * @return bool
      */
     public static function updateConfig($data)
@@ -193,228 +270,346 @@ class Tool
         $config = self::config();
         $config = array_merge($config, $data);
         $saved = self::saveConfig($config);
-        Artisan::call('cache:clear');
+        Cache::forget('config');
+
         return $saved;
     }
 
     /**
      * 从json文件读取配置
+     *
      * @param string $key
      * @param string $default
-     * @return mixed|string
+     *
+     * @return string|array
      */
     public static function config($key = '', $default = '')
     {
         $config = Cache::remember('config', 1440, function () {
             $file = storage_path('app/config.json');
             if (!file_exists($file)) {
-                copy(storage_path('app/example.config.json'), storage_path('app/config.json'));
+                copy(
+                    storage_path('app/example.config.json'),
+                    storage_path('app/config.json')
+                );
             };
-            if (!is_readable($file)) {
-                self::showMessage('权限不足，无法预取配置文件', false);
-                abort(403, '权限不足，无法预取配置文件');
-            };
-            $config = file_get_contents($file);
-            return json_decode($config, true);
+
+            return self::readJson($file);
         });
-        return $key ? (array_key_exists($key, $config) ? ($config[$key] ?: $default) : $default) : $config;
+
+        return $key ? (array_has($config, $key) ? (array_get($config, $key)
+            ?: $default) : $default) : $config;
+    }
+
+    /**
+     * @param string $file
+     *
+     * @return array|bool
+     */
+    public static function readJson(string $file)
+    {
+        try {
+            $config = file_get_contents($file);
+
+            return json_decode($config, true);
+        } catch (\Exception $e) {
+            return abort(403, $e->getMessage());
+        }
+    }
+
+    /**
+     * @param string $file
+     * @param array  $array
+     *
+     * @return bool|int
+     */
+    public static function writeJson(string $file, array $array)
+    {
+        try {
+            return file_put_contents($file, json_encode($array));
+        } catch (\Exception $e) {
+            return abort(403, $e->getMessage());
+        }
     }
 
     /**
      * 解析路径
-     * @param $path
+     *
+     * @param      $path
      * @param bool $isQuery
      * @param bool $isFile
+     *
      * @return string
      */
-    public static function convertPath($path, $isQuery = true, $isFile = false)
-    {
-        $origin_path = trim($path, '/');
-        $path_array = explode('/', $origin_path);
-        $base = ['home', 'view', 'show', 'download'];
-        if (in_array($path_array[0], $base)) {
-            unset($path_array[0]);
-            $query_path = implode('/', $path_array);
-        } else $query_path = $origin_path;
-        if (!$isQuery) return $query_path;
-        $query_path = Tool::handleUrl(rawurldecode($query_path));
-        $root = trim(self::handleUrl(self::config('root')), '/');
-        if ($query_path)
-            $request_path = empty($root) ? ":/{$query_path}:/" : ":/{$root}/{$query_path}:/";
-        else
+    public static function getRequestPath(
+        $path,
+        $isQuery = true,
+        $isFile = false
+    ) {
+        $path = self::getAbsolutePath($path);
+        $query_path = trim($path, '/');
+        if (!$isQuery) {
+            return $query_path;
+        }
+        $query_path = self::getEncodeUrl(rawurldecode($query_path));
+        $root = trim(self::getEncodeUrl(self::config('root')), '/');
+        if ($query_path) {
+            $request_path = empty($root) ? ":/{$query_path}:/"
+                : ":/{$root}/{$query_path}:/";
+        } else {
             $request_path = empty($root) ? '/' : ":/{$root}:/";
-        if ($isFile)
+        }
+        if ($isFile) {
             return rtrim($request_path, ':/');
+        }
+
         return $request_path;
     }
 
     /**
+     * @param      $path
+     * @param bool $isQuery
+     *
+     * @return string
+     */
+    public static function getOriginPath(
+        $path,
+        $isQuery = true
+    ) {
+        $path = self::getAbsolutePath($path);
+        $query_path = trim($path, '/');
+        if (!$isQuery) {
+            return $query_path;
+        }
+        $query_path = self::getEncodeUrl(rawurldecode($query_path));
+        $root = trim(self::getEncodeUrl(self::config('root')), '/');
+        if ($query_path) {
+            $request_path = empty($root) ?
+                $query_path
+                : "{$root}/{$query_path}";
+        } else {
+            $request_path = empty($root) ? '/' : $root;
+        }
+
+        return self::getAbsolutePath($request_path);
+    }
+
+    /**
      * 绝对路径转换
+     *
      * @param $path
+     *
      * @return mixed
      */
     public static function getAbsolutePath($path)
     {
         $path = str_replace(['/', '\\', '//'], '/', $path);
-
         $parts = array_filter(explode('/', $path), 'strlen');
         $absolutes = [];
         foreach ($parts as $part) {
-            if ('.' == $part) continue;
-            if ('..' == $part) {
+            if ('.' === $part) {
+                continue;
+            }
+            if ('..' === $part) {
                 array_pop($absolutes);
             } else {
                 $absolutes[] = $part;
             }
         }
-        return str_replace('//', '/', '/' . implode('/', $absolutes) . '/');
+
+        return str_replace('//', '/', '/'.implode('/', $absolutes).'/');
     }
 
     /**
-     * 判断列表是否含有图片
-     * @param $items
-     * @return bool
-     */
-    public static function hasImages($items)
-    {
-        $hasImage = false;
-        foreach ($items as $item) {
-            if (isset($item['image'])) {
-                $hasImage = true;
-                break;
-            }
-        }
-        return $hasImage;
-    }
-
-    /**
-     * 获取远程文件内容
-     * @param $url
-     * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public static function getFileContent($url)
-    {
-        return self::getFileContentByUrl($url);
-    }
-
-    /**
-     * 获取url文件内容
-     * @param $url
+     * @param      $url
      * @param bool $cache
-     * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     *
+     * @return \Illuminate\Http\JsonResponse|mixed|null
+     * @throws \ErrorException
      */
-    public static function getFileContentByUrl($url, $cache = true)
+    public static function getFileContent($url, $cache = true)
     {
-        if ($cache) {
-            return Cache::remember('one:content:' . $url, self::config('expires'), function () use ($url) {
-                try {
-                    $client = new Client();
-                    $response = $client->request('get', $url);
-                    $response = $response->getBody()->getContents();
-                } catch (ClientException $e) {
-                    $response = response()->json(['code' => $e->getCode(), 'msg' => $e->getMessage()]);
-                }
-                return $response ?? '';
-            });
-        } else {
-            return self::getFileContent($url);
-        }
-    }
-
-    /**
-     * 读取文件大小
-     * @param $path
-     * @return bool|int|string
-     */
-    public static function readFileSize($path)
-    {
-        if (!file_exists($path))
-            return false;
-        $size = filesize($path);
-        if (!($file = fopen($path, 'rb')))
-            return false;
-        if ($size >= 0) { //Check if it really is a small file (< 2 GB)
-            if (fseek($file, 0, SEEK_END) === 0) { //It really is a small file
-                fclose($file);
-                return $size;
+        $key = 'one:content:'.$url;
+        if ($cache && Cache::has($key)) {
+            $content = Cache::get($key);
+            if ($content) {
+                return $content;
             }
         }
-        //Quickly jump the first 2 GB with fseek. After that fseek is not working on 32 bit php (it uses int internally)
-        $size = PHP_INT_MAX - 1;
-        if (fseek($file, PHP_INT_MAX - 1) !== 0) {
-            fclose($file);
-            return false;
-        }
-        $length = 1024 * 1024;
-        $read = '';
-        while (!feof($file)) { //Read the file until end
-            $read = fread($file, $length);
-            $size = bcadd($size, $length);
-        }
-        $size = bcsub($size, $length);
-        $size = bcadd($size, strlen($read));
-        fclose($file);
-        return $size;
-    }
+        $curl = new Curl();
+        $curl->setConnectTimeout(5);
+        $curl->setTimeout(120);
+        $curl->setRetry(3);
+        $curl->setOpts([
+            CURLOPT_AUTOREFERER    => true,
+            CURLOPT_FAILONERROR    => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_ENCODING       => 'gzip,deflate',
+        ]);
+        $curl->get($url);
+        $curl->close();
+        if ($curl->error) {
+            Log::error(
+                'Get OneDrive file content error.',
+                [
+                    'code' => $curl->errorCode,
+                    'msg'  => $curl->errorMessage,
+                ]
+            );
+            Tool::showMessage('Error: '.$curl->errorCode.': '
+                .$curl->errorMessage, false);
 
-    /**
-     * 读取文件内容
-     * @param $file
-     * @param $offset
-     * @param $length
-     * @return bool|string
-     */
-    public static function readFileContent($file, $offset, $length)
-    {
-        $handler = fopen($file, "rb") ?? die('获取文件内容失败');
-        fseek($handler, $offset);
-        return fread($handler, $length);
-    }
-
-    /**
-     * 处理格式化响应
-     * @param $response JsonResponse
-     * @param bool $origin
-     * @return array
-     */
-    public static function handleResponse($response, $origin = true)
-    {
-        if ($response instanceof JsonResponse)
-            $data = json_encode($response->getData());
-        else $data = $response;
-        if ($origin) {
-            return json_decode($data, true);
+            return '远程获取内容失败，请刷新重试';
         } else {
-            return json_decode($data, true)['data'];
+            $content = $curl->response;
+            if ($cache) {
+                Cache::put(
+                    $key,
+                    $content,
+                    self::config('expires')
+                );
+            }
+
+            return $content;
         }
     }
 
     /**
-     * 获取指定目录下全部子目录和文件
-     * @param $path
-     * @return array
+     * @param string $key
+     *
+     * @return mixed|string
+     * @throws \ErrorException
      */
-    public static function fetchDir($path)
+    public static function getOneDriveInfo($key = '')
     {
-        $arr = [];
-        $arr[] = $path;
-        if (!is_file($path)) {
-            if (is_dir($path)) {
-                $data = scandir($path);
-                if (!empty($data)) {
-                    foreach ($data as $value) {
-                        if ($value != '.' && $value != '..') {
-                            $sub_path = $path . "/" . $value;
-                            $temp = self::fetchDir($sub_path);
-                            $arr = array_merge($temp, $arr);
+        if (self::refreshToken()) {
+            $quota = Cache::remember(
+                'one:quota',
+                self::config('expires'),
+                function () {
+                    $response = OneDrive::getDrive();
+                    if ($response['errno'] === 0) {
+                        $quota = $response['data']['quota'];
+                        foreach ($quota as $k => $item) {
+                            if (!is_string($item)) {
+                                $quota[$k] = Tool::convertSize($item);
+                            }
                         }
+
+                        return $quota;
+                    } else {
+                        return [];
                     }
                 }
-            }
+            );
+
+            return $key ? $quota[$key] ?? '' : $quota ?? '';
+        } else {
+            return '';
         }
-        return $arr;
     }
 
+    /**
+     * @return bool
+     * @throws \ErrorException
+     */
+    public static function refreshToken()
+    {
+        $expires = Tool::config('access_token_expires', 0);
+        $hasExpired = $expires - time() <= 0 ? true : false;
+        if ($hasExpired) {
+            $oauth = new OauthController();
+            $res = json_decode($oauth->refreshToken(false), true);
+
+            return $res['code'] === 200;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * @return mixed|string
+     * @throws \ErrorException
+     */
+    public static function getBindAccount()
+    {
+        if (self::refreshToken()) {
+            $account = Cache::remember(
+                'one:account',
+                Tool::config('expires'),
+                function () {
+                    $response = OneDrive::getMe();
+                    if ($response['errno'] == 0) {
+                        return array_get($response, 'data.userPrincipalName');
+                    } else {
+                        return '';
+                    }
+                }
+            );
+
+            return $account;
+        } else {
+            return '';
+        }
+    }
+
+    public static function fileIcon($ext)
+    {
+        if (in_array($ext, ['ogg', 'mp3', 'wav'])) {
+            return "audiotrack";
+        }
+        if (in_array($ext, ['apk'])) {
+            return 'android';
+        }
+        if (in_array($ext, ['pdf'])) {
+            return 'picture_as_pdf';
+        }
+        if (in_array($ext, [
+            'bmp',
+            'jpg',
+            'jpeg',
+            'png',
+            'gif',
+            'ico',
+            'jpe',
+        ])
+        ) {
+            return "image";
+        }
+        if (in_array($ext, [
+            'mp4',
+            'mkv',
+            'webm',
+            'avi',
+            'mpg',
+            'mpeg',
+            'rm',
+            'rmvb',
+            'mov',
+            'wmv',
+            'mkv',
+            'asf',
+        ])
+        ) {
+            return "ondemand_video";
+        }
+        if (in_array($ext, [
+            'html',
+            'htm',
+            'css',
+            'go',
+            'java',
+            'js',
+            'json',
+            'txt',
+            'sh',
+            'md',
+            'php',
+        ])
+        ) {
+            return 'code';
+        }
+
+        return "insert_drive_file";
+    }
 }

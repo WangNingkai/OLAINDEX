@@ -2,8 +2,7 @@
 
 namespace App\Console\Commands\OneDrive;
 
-use App\Helpers\Tool;
-use App\Http\Controllers\OneDriveController;
+use App\Helpers\OneDrive;
 use Illuminate\Console\Command;
 
 class CreateFolder extends Command
@@ -14,8 +13,8 @@ class CreateFolder extends Command
      * @var string
      */
     protected $signature = 'od:mkdir
-                            {name : 文件夹名称}
-                            {target : 目标地址}';
+                            {name : Folder Name}
+                            {remote : Remote Path}';
 
     /**
      * The console command description.
@@ -35,21 +34,16 @@ class CreateFolder extends Command
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function handle()
     {
-        if (!refresh_token()) {
-            $this->warn('请稍后重试...');
-            return;
-        }
+        $this->call('od:refresh');
         $name = $this->argument('name');
-        $target = $this->argument('target');
-        $od = new OneDriveController();
-        $target_path = trim(Tool::handleUrl($target), '/');
-        $path = empty($target_path) ? '/' : ":/{$target_path}:/";
-        $result = $od->mkdirByPath($name, $path);
-        $response = Tool::handleResponse($result);
-        $response['code'] == 200 ? $this->info("创建目录成功!") : $this->error("创建目录失败!\n{$response['msg']} ");
+        $remote = $this->argument('remote');
+        $response = OneDrive::mkdirByPath($name, $remote);
+        $this->call('cache:clear');
+        $response['errno'] === 0 ? $this->info("Folder Created!")
+            : $this->warn("Failed!\n{$response['msg']} ");
     }
 }

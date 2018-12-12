@@ -3,7 +3,7 @@
 namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\Tool;
-use App\Http\Controllers\OneDriveController;
+use App\Helpers\OneDrive;
 use Illuminate\Console\Command;
 
 class UploadFile extends Command
@@ -14,9 +14,9 @@ class UploadFile extends Command
      * @var string
      */
     protected $signature = 'od:upload
-                            {local : 本地文件地址}
-                            {remote : 远程文件地址}
-                            {--chuck=5242880 : 分块大小(字节)（320kib的倍数） }';
+                            {local : Local Path}
+                            {remote : Remote Path}
+                            {--chuck=5242880 : Chuck Size(byte) }';
 
     /**
      * The console command description.
@@ -36,110 +36,98 @@ class UploadFile extends Command
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function handle()
     {
-        if (!refresh_token()) {
-            $this->warn('请稍后重试...');
-            return;
-        }
-        clearstatcache();
+        $this->call('od:refresh');
         $local = $this->argument('local');
-        if (!is_file($local)) {
-            $this->warn('暂不支持文件夹上传!');
-            return;
-        }
         $remote = $this->argument('remote');
         $chuck = $this->option('chuck');
-        $file_size = Tool::readFileSize($local);
-        $this->info('开始上传...');
+        $file_size = OneDrive::readFileSize($local);
         if ($file_size < 4194304) {
-            $this->upload($local, $remote);
+            return $this->upload($local, $remote);
         } else {
-            $this->uploadBySession($local, $remote, $chuck);
+            return $this->uploadBySession($local, $remote, $chuck);
         }
     }
 
     /**
-     * 普通文件上传
-     * @param string $local 本地文件地址
-     * @param string $remote 远程上传地址（包括文件名）
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @param $local
+     * @param $remote
+     *
+     * @throws \ErrorException
      */
     public function upload($local, $remote)
     {
-        $od = new OneDriveController();
         $content = file_get_contents($local);
         $file_name = basename($local);
-        $target_path = Tool::getAbsolutePath($remote);
-        $path = Tool::convertPath($target_path . $file_name);
-        $result = $od->uploadByPath($path, $content);
-        $response = Tool::handleResponse($result);
-        $response['code'] == 200 ? $this->info('上传成功!') : $this->error('上传失败!');
+        $response = OneDrive::uploadByPath($remote.$file_name, $content);
+        $response['errno'] === 0 ? $this->info('Upload Success!')
+            : $this->warn('Failed!');
     }
 
     /**
-     * 大文件上传
-     * @param string $local 本地文件地址
-     * @param string $remote 远程上传地址（包括文件名）
-     * @param integer $chuck 分片大小
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @param     $local
+     * @param     $remote
+     * @param int $chuck
+     *
+     * @throws \ErrorException
      */
     public function uploadBySession($local, $remote, $chuck = 3276800)
     {
         ini_set('memory_limit', '-1');
-        $od = new OneDriveController();
-        $file_size = Tool::readFileSize($local);
-        $target_path = Tool::getAbsolutePath($remote);
+        $file_size = OneDrive::readFileSize($local);
         $file_name = basename($local);
-        $path = trim($target_path, '/') == '' ? ":/{$file_name}:/" : Tool::convertPath($target_path . $file_name);
-        $url_request = $od->createUploadSession($path);
-        $url_response = Tool::handleResponse($url_request);
-        if ($url_response['code'] == 200) {
-            $url = $url_response['data']['uploadUrl'];
+        $target_path = Tool::getAbsolutePath($remote);
+        $url_response = OneDrive::createUploadSession($target_path.$file_name);
+        if ($url_response['errno'] === 0) {
+            $url = array_get($url_response, 'data.uploadUrl');
         } else {
-            $this->error('创建上传任务失败，检查文件是否已经存在！');
-            return;
+            $this->warn($url_response['msg']);
+            exit;
         }
-        $this->info("上传文件：{$local}");
-        $this->info("上传链接：{$url}");
+        $this->info("File Path:\n{$local}");
+        $this->info("Upload Url:\n{$url}");
         $done = false;
         $offset = 0;
         $length = $chuck;
         while (!$done) {
             $retry = 0;
-            $res = $od->uploadToSession($url, $local, $offset, $length);
-            $response = Tool::handleResponse($res);
-            if ($response['code'] == 200) {
+            $response = OneDrive::uploadToSession(
+                $url,
+                $local,
+                $offset,
+                $length
+            );
+            if ($response['errno'] === 0) {
                 $data = $response['data'];
                 if (!empty($data['nextExpectedRanges'])) {
-                    // 分片上传
                     $this->info("length: {$data['nextExpectedRanges'][0]}");
                     $ranges = explode('-', $data['nextExpectedRanges'][0]);
                     $offset = intval($ranges[0]);
-                    $status = @floor($offset / $file_size * 100) . '%';
+                    $status = @floor($offset / $file_size * 100).'%';
                     $this->info("success. progress:{$status}");
                     $done = false;
-                } elseif (!empty($data['@content.downloadUrl']) || !empty($data['id'])) {
-                    // 上传完成
-                    $this->info('文件上传成功！');
+                } elseif (!empty($data['@content.downloadUrl'])
+                    || !empty($data['id'])
+                ) {
+                    $this->info('Upload Success!');
                     $done = true;
                 } else {
-                    // 失败重试
                     $retry++;
                     if ($retry <= 3) {
-                        $this->warn("重试第{$retry}次，等待10秒重试...");
+                        $this->warn("Retry{$retry}times，Please wait 10s...");
                         sleep(10);
                     } else {
-                        $this->error('分片上传失败！');
-                        $od->deleteUploadSession($url); // 失败删除任务
+                        $this->warn('Upload Failed!');
+                        OneDrive::deleteUploadSession($url);
                         break;
                     }
                 }
             } else {
-                $this->error('分片上传失败！');
-                $od->deleteUploadSession($url); // 失败删除任务
+                $this->warn('Upload Failed!');
+                OneDrive::deleteUploadSession($url);
                 break;
             }
         }

@@ -15,7 +15,9 @@
 
 ## 简介
 
-项目地址：[https://github.com/WangNingkai/OLAINDEX](https://github.com/WangNingkai/OLAINDEX)
+项目地址：[https://github.com/WangNingkai/OLAINDEX](https://git.io/OLAINDEX)
+
+OLAINDEX-CMD [https://github.com/WangNingkai/OLAINDEX-CMD](https://git.io/OLACMD)
 
 - 1.`OneDrive` 目录索引；
 - 2.后端采用最新 `PHP` 框架 `laravel5` ；
@@ -48,13 +50,15 @@
 
 > 本项目基于 Laravel 开发，新手建议查看 laravel 的环境要求再进行部署。
 
-**再次强调：请参考 wiki 说明，确保操作环境达到要求！如出现错误提示，建议提供完整截图或相关完整报错代码**
+**强调：请参考 wiki 说明，确保操作环境达到要求！如出现错误提示，建议提供完整截图或相关完整报错代码**
 
-**帮助文档 ：** [Wiki](https://github.com/WangNingkai/OLAINDEX/wiki)
+**帮助文档 ：**
+
+[Github Wiki](https://github.com/WangNingkai/OLAINDEX/wiki)
 
 ## 更新升级
 
-**更新日志：** [CHANGELOG](https://raw.githubusercontent.com/WangNingkai/OLAINDEX/master/CHANGELOG.log)
+**更新日志：** [CHANGELOG](https://raw.githubusercontent.com/WangNingkai/OLAINDEX/master/CHANGELOG.md)
 
 **版本升级：**
 
@@ -62,6 +66,8 @@
 git pull 
 composer install -vvv # 无版本更新只需执行到此
 php artisan od:update # 跨版本更新
+chmod -R 755 storage # 补充，保证缓存的写入权限，否则500
+chown -R www:www *
 ```
 
 ## 分支说明
@@ -72,16 +78,13 @@ php artisan od:update # 跨版本更新
 
 - test: 测试版（不稳定）
 
-## TODO
-
-- 共享目录支持
-- 添加自定义视频字幕，音频歌词
-
 ## 捐赠
 
-项目完全个人喜好开发，不提供免费定制。
+项目完全个人喜好开发，如果你喜欢此项目，欢迎打赏。
 
 打赏可以获得一次安装服务。
+
+可提供付费定制。
 
 **打赏 ： [https://pay.ningkai.wang](https://pay.ningkai.wang)**
 

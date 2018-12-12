@@ -39,26 +39,49 @@ class ListCommand extends Command
     public function handle()
     {
         $this->info(Constants::LOGO);
-        $this->warn('OLAINDEX Console Command');
-        $header = ['command', 'description', 'params'];
-        $list = [
-            ['od:install', '初始安装', ''],
-            ['od:switch', '切换版本（世纪互联）', ''],
-            ['od:logout', '登出账户', ''],
-            ['od:password', '重置密码', ''],
-            ['od:reset', '重置应用', ''],
-            ['od:update', '更新升级', ''],
-            ['od:download', '下载文件', '{remote}'],
-            ['od:mkdir', '新建目录', '{remote}'],
-            ['od:mv', '移动项目', '{source} {target}'],
-            ['od:delete', '删除项目', '{remote}'],
-            ['od:share', '分享直链', '{remote}'],
-            ['od:direct', '永久直链', '{remote}'],
-            ['od:cp', '复制文件', '{source} {target}'],
-            ['od:upload', '上传文件', '{local} {remote} {--chuck=}'],
-            ['od:info', 'OneDrive信息', ''],
-            ['od:refresh', 'Refresh Token', ''],
-        ];
-        $this->table($header, $list);
+        $output = <<<'EOF'
+OLAINDEX Console Tool
+
+Usage:
+  command [options] [arguments]
+
+Options:
+  -h, --help            Display this help message
+  -q, --quiet           Do not output any message
+      --ansi            Force ANSI output
+      --no-ansi         Disable ANSI output
+  -n, --no-interaction  Do not ask any interactive question
+  -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+
+Available commands:
+
+  od:cache     Cache Dir
+  od:command   List Command
+  od:cp        Copy Item
+  od:direct    Create Direct Share Link
+  od:download  Download File
+  od:find      Find Items
+  od:info      OneDriveGraph Info
+  od:install   Install App
+  od:login     Account Login
+  od:logout    Account Logout
+  od:ls        List Items
+  od:mkdir     Create New Folder
+  od:mv        Move Item
+  od:offline   Remote download links to your drive
+  od:password  Reset Password
+  od:refresh   Refresh Token
+  od:reset     Reset App
+  od:rm        Delete Item
+  od:share     ShareLink For File
+  od:switch    Switch Type
+  od:update    Update App
+  od:upload    UploadFile File
+  od:whereis   Find The Item's Remote Path
+
+
+EOF;
+
+        $this->info($output);
     }
 }

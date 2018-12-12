@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands\OneDrive;
 
-use App\Helpers\Constants;
 use App\Helpers\Tool;
 use App\Http\Controllers\OauthController;
 use Illuminate\Console\Command;
@@ -34,21 +33,18 @@ class RefreshToken extends Command
     }
 
     /**
-     * Execute the console command.
-     *
-     * @return mixed
+     * @throws \ErrorException
      */
     public function handle()
     {
-        $this->info(Constants::LOGO);
         $expires = Tool::config('access_token_expires', 0);
         $hasExpired = $expires - time() <= 0 ? true : false;
-        if ($hasExpired) {
+        if (!$hasExpired) {
+            return;
+        } else {
             $oauth = new OauthController();
             $res = json_decode($oauth->refreshToken(false), true);
-            $res['code'] === 200 ? $this->info('Refresh Token Ok!') : $this->error('Refresh Token Error!');
-        } else {
-            $this->info('Refresh Token Ok!');
+            $res['code'] === 200 or exit('Refresh Token Error!');
         }
     }
 }

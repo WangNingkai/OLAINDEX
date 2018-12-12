@@ -2,8 +2,7 @@
 
 namespace App\Console\Commands\OneDrive;
 
-use App\Helpers\Tool;
-use App\Http\Controllers\OneDriveController;
+use App\Helpers\OneDrive;
 use Illuminate\Console\Command;
 
 class Share extends Command
@@ -13,8 +12,7 @@ class Share extends Command
      *
      * @var string
      */
-    protected $signature = 'od:share
-                            {path : 文件地址}';
+    protected $signature = 'od:share {remote : Remote Path}';
 
     /**
      * The console command description.
@@ -34,32 +32,27 @@ class Share extends Command
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \ErrorException
      */
     public function handle()
     {
-        $this->info('请稍等...');
-        if (!refresh_token()) {
-            $this->warn('请稍后重试...');
-            return;
+        $this->call('od:refresh');
+        $this->info('Please waiting...');
+        $remote = $this->argument('remote');
+        $_remote
+            = OneDrive::pathToItemId($remote);
+        $remote_id = $_remote['errno'] === 0 ? array_get($_remote, 'data.id')
+            : exit('Remote Path Abnormal');
+        $response = OneDrive::createShareLink($remote_id);
+        if ($response['errno'] === 0) {
+            $direct = str_replace(
+                '15/download.aspx',
+                '15/guestaccess.aspx',
+                $response['data']['redirect']
+            );
+            $this->info("Success! Share Link:\n{$direct}");
+        } else {
+            $this->warn("Failed!\n{$response['msg']}");
         }
-        $target = $this->argument('path');
-        $od = new OneDriveController();
-        $target_path = trim(Tool::handleUrl($target), '/');
-        $id_request = Tool::handleResponse($od->pathToItemId(empty($target_path) ? '/' : ":/{$target_path}:/"));
-        if ($id_request['code'] == 200)
-            $_id = $id_request['data']['id'];
-        else {
-            $this->error('路径异常！');
-            return;
-        }
-        /* @var $result \Illuminate\Http\JsonResponse */
-        $result = $od->createShareLink($_id);
-        $response = Tool::handleResponse($result);
-        if ($response['code'] == 200) {
-            $direct = str_replace('15/download.aspx', '15/guestaccess.aspx', $response['data']['redirect']);
-            $this->info("创建成功！\n分享链接： {$direct}");
-        } else
-            $this->error("创建失败！\n{$response['msg']} ");
     }
 }
