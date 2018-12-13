@@ -82,7 +82,7 @@ class IndexController extends Controller
         $queryPath = trim(Tool::getAbsolutePath($realPath), '/');
         $origin_path = rawurldecode($queryPath);
         $path_array = $origin_path ? explode('/', $origin_path) : [];
-        $item = Cache::remember(
+        $item = Cache::remember( //todo:优化性能
             'one:file:'.$graphPath,
             $this->expires,
             function () use ($graphPath) {
@@ -121,37 +121,38 @@ class IndexController extends Controller
                 return view('message');
             }
         }
-//        dd($origin_items);
         $hasImage = Tool::hasImages($origin_items);
         // 过滤微软OneNote文件
         $origin_items = array_where($origin_items, function ($value) {
             return !array_has($value, 'package.type');
         });
         // 处理加密目录
-        if (!empty($origin_items['.password'])) {
-            $pass_id = $origin_items['.password']['id'];
-            $pass_url
+        if (!Session::has('LogInfo')) {
+            if (!empty($origin_items['.password'])) {
+                $pass_id = $origin_items['.password']['id'];
+                $pass_url
                 = $origin_items['.password']['@microsoft.graph.downloadUrl'];
-            $key = 'password:'.$origin_path;
-            if (Session::has($key)) {
-                $data = Session::get($key);
-                $password = Tool::getFileContent($pass_url, false);
-                if (strcmp($password, decrypt($data['password'])) !== 0
+                $key = 'password:'.$origin_path;
+                if (Session::has($key)) {
+                    $data = Session::get($key);
+                    $password = Tool::getFileContent($pass_url, false);
+                    if (strcmp($password, decrypt($data['password'])) !== 0
                     || time() > $data['expires']
                 ) {
-                    Session::forget($key);
-                    Tool::showMessage('密码已过期', false);
+                        Session::forget($key);
+                        Tool::showMessage('密码已过期', false);
 
-                    return view(
+                        return view(
                         config('olaindex.theme').'password',
                         compact('origin_path', 'pass_id')
                     );
-                }
-            } else {
-                return view(
+                    }
+                } else {
+                    return view(
                     config('olaindex.theme').'password',
                     compact('origin_path', 'pass_id')
                 );
+                }
             }
         }
         // 过滤受限隐藏目录
@@ -168,7 +169,7 @@ class IndexController extends Controller
         $readme = array_key_exists('README.md', $origin_items)
             ? Tool::markdown2Html(Tool::getFileContent($origin_items['README.md']['@microsoft.graph.downloadUrl']))
             : '';
-        if (!session()->has('LogInfo')) {
+        if (!Session::has('LogInfo')) {
             $origin_items = array_except(
                 $origin_items,
                 ['README.md', 'HEAD.md', '.password', '.deny']
