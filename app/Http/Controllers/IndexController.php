@@ -258,14 +258,7 @@ class IndexController extends Controller
                         return redirect()->back();
                     } else {
                         $file['content']
-                            = Tool::getFileContent($file['@microsoft.graph.downloadUrl']);
-                        if ($file['ext'] === 'json') {
-                            $file['content'] = str_replace(
-                                '\\',
-                                '',
-                                json_encode(Tool::getFileContent($file['@microsoft.graph.downloadUrl']))
-                            );
-                        }
+                            = Tool::getFileContent($file['@microsoft.graph.downloadUrl'],false);
                     }
                 }
                 // 处理缩略图

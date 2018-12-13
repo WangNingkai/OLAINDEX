@@ -461,7 +461,7 @@ class Tool
 
             return '远程获取内容失败，请刷新重试';
         } else {
-            $content = $curl->response;
+            $content = $curl->rawResponse;
             if ($cache) {
                 Cache::put(
                     $key,
