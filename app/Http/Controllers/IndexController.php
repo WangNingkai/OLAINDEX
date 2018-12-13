@@ -109,7 +109,8 @@ class IndexController extends Controller
         } else {
             $response = OneDrive::getChildrenByPath(
                 $graphPath,
-                '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl&expand=thumbnails'
+                '?select=
+                id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl&expand=thumbnails'
             );
             if ($response['errno'] === 0) {
                 $origin_items = $response['data'];
@@ -218,7 +219,9 @@ class IndexController extends Controller
                 function () use ($graphPath) {
                     $response = OneDrive::getItemByPath(
                         $graphPath,
-                        '?select=id,eTag,name,size,lastModifiedDateTime,file,image,@microsoft.graph.downloadUrl&expand=thumbnails'
+                        '?select=
+                        id,eTag,name,size,lastModifiedDateTime,file,image,@microsoft.graph.downloadUrl
+                        &expand=thumbnails'
                     );
                     if ($response['errno'] === 0) {
                         return $response['data'];
@@ -258,7 +261,7 @@ class IndexController extends Controller
                         return redirect()->back();
                     } else {
                         $file['content']
-                            = Tool::getFileContent($file['@microsoft.graph.downloadUrl'],false);
+                            = Tool::getFileContent($file['@microsoft.graph.downloadUrl'], false);
                     }
                 }
                 // 处理缩略图
