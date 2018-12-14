@@ -118,7 +118,7 @@ class IndexController extends Controller
             } else {
                 Tool::showMessage($response['msg'], false);
 
-                return view('message');
+                return view(config('olaindex.theme').'message');
             }
         }
         $hasImage = Tool::hasImages($origin_items);
