@@ -21,7 +21,7 @@ OLAINDEX-CMD [https://github.com/WangNingkai/OLAINDEX-CMD](https://git.io/OLACMD
 
 - 1.`OneDrive` 目录索引；
 - 2.后端采用最新 `PHP` 框架 `laravel5` ；
-- 3.前端采用 `bootswatch` 主题，支持PC、平板、手机自适应；
+- 3.多主题，支持PC、平板、手机自适应；
 - 4.资源接口来源于 `Microsoft Graph`。
 
 ## 功能
@@ -37,6 +37,7 @@ OLAINDEX-CMD [https://github.com/WangNingkai/OLAINDEX-CMD](https://git.io/OLACMD
 - 支持文件离线下载（个人版）；
 - 后台基本显示管理，多主题管理，文件预览管理等等（清理缓存后及时生效）；
 - 支持世纪互联（一键切换）；
+- 支持多种缓存系统（Redis、Memcached等）；
 - 配置文件化，不依赖数据库；
 - 支持 Heroku 搭建（亲测地址：`http://imwnk-olaindex.herokuapp.com`）。
 
@@ -76,7 +77,7 @@ chown -R www:www *
 
 - master: 开发版
 
-- test: 测试版（不稳定）
+- test: 测试版（不推荐使用）
 
 ## 捐赠
 
