@@ -15,14 +15,15 @@
 
 ## 简介
 
-项目地址：[https://github.com/WangNingkai/OLAINDEX](https://git.io/OLAINDEX)
+一款 `OneDrive` 目录文件索引应用，基于优雅的 `PHP` 框架 `Laravel5.7` 搭建，并通过 `Microsoft Graph` 接口获取数据展示，支持多类型帐号登录，多种主题显示，简单而强大。
 
-OLAINDEX-CMD [https://github.com/WangNingkai/OLAINDEX-CMD](https://git.io/OLACMD)
+## 项目地址
 
-- 1.`OneDrive` 目录索引；
-- 2.后端采用最新 `PHP` 框架 `laravel5` ；
-- 3.多主题，支持PC、平板、手机自适应；
-- 4.资源接口来源于 `Microsoft Graph`。
+- [https://github.com/WangNingkai/OLAINDEX](https://git.io/OLAINDEX)
+
+## 演示地址
+
+- [https://dev.ningkai.wang](https://dev.ningkai.wang)
 
 ## 功能
 
@@ -40,18 +41,15 @@ OLAINDEX-CMD [https://github.com/WangNingkai/OLAINDEX-CMD](https://git.io/OLACMD
 - 支持多种缓存系统（Redis、Memcached等）；
 - 配置文件化，不依赖数据库；
 - 支持 Heroku 搭建（亲测地址：`http://imwnk-olaindex.herokuapp.com`）。
+- 更多功能欢迎亲自尝试。
 
 **注：** 部分功能需登录。
 
-## 演示链接
-
-- 演示地址：[https://dev.ningkai.wang](https://dev.ningkai.wang)
-
-## 安装使用
+## 安装
 
 > 本项目基于 Laravel 开发，新手建议查看 laravel 的环境要求再进行部署。
 
-**强调：请参考 wiki 说明，确保操作环境达到要求！如出现错误提示，建议提供完整截图或相关完整报错代码**
+**强调：Wiki 中包含常见的错误与解决，以及安装。如出现错误提示，建议到issues提供完整截图或相关完整报错代码，并仔细参考 wiki 说明，进行修改！**
 
 **帮助文档 ：**
 
@@ -65,8 +63,10 @@ OLAINDEX-CMD [https://github.com/WangNingkai/OLAINDEX-CMD](https://git.io/OLACMD
 
 ```
 git pull 
-composer install -vvv # 无版本更新只需执行到此
+composer install -vvv # 无版本更新只需执行到此（同时执行最后两条权限命令）
+
 php artisan od:update # 跨版本更新
+
 chmod -R 755 storage # 补充，保证缓存的写入权限，否则500
 chown -R www:www *
 ```
@@ -81,13 +81,13 @@ chown -R www:www *
 
 ## 捐赠
 
-项目完全个人喜好开发，如果你喜欢此项目，欢迎打赏。
+项目开发纯属个人爱好，如果你喜欢此项目，欢迎捐赠。
 
-打赏可以获得一次安装服务。
+同时捐赠可以获得一次安装技术服务。
 
-可提供付费定制。
+另可根据需求提供付费定制服务。
 
-**打赏 ： [https://pay.ningkai.wang](https://pay.ningkai.wang)**
+**捐赠 ： [https://pay.ningkai.wang](https://pay.ningkai.wang)**
 
 ## 作者
 
@@ -95,14 +95,16 @@ Blog : [https://imwnk.cn](https://imwnk.cn)
 
 Email : [imwnk@live.com](mailto:imwnk@live.com)
 
-### 附：
+### 其他：
 
-1.本软件仅供日常学习使用，不得用于任何商业用途；学习使用请遵守您所在国家的法律，任何非法行为由使用者本身承担。
+1. 本项目同样存在命令行版本，包含基本的显示下载，功能与此版本一致。项目地址 [OLAINDEX-CMD](https://git.io/OLACMD)
 
-2.如使用本应用，请保留底部版权，并分享给更多人，谢谢。
+2.本软件仅供日常学习使用，不得用于任何商业用途；学习使用请遵守您所在国家的法律，任何非法行为由使用者本身承担。
+
+3.如使用本应用，请保留底部版权，并分享给更多人，谢谢。
 
 
 ## 预览
 
-![68747470733a2f2f692e6c6f6c692e6e65742f323031382f31312f31312f356265383238303063653862352e706e67.png](https://img02.sogoucdn.com/app/a/100520146/cd2311797c818d8f37bd5a7474080be4)
-![68747470733a2f2f692e6c6f6c692e6e65742f323031382f31312f31312f356265383238363530316235662e706e67.png](https://img03.sogoucdn.com/app/a/100520146/f5ba120d0c44e7d57c8ff076da20cb9f)
+![demo1.png](https://img02.sogoucdn.com/app/a/100520146/cd2311797c818d8f37bd5a7474080be4)
+![demo2.png](https://img03.sogoucdn.com/app/a/100520146/f5ba120d0c44e7d57c8ff076da20cb9f)
