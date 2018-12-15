@@ -97,7 +97,9 @@ class IndexController extends Controller
             }
         );
         if (is_null($item)) {
-            abort(404);
+            Tool::showMessage('获取目录失败，请检查路径或稍后重试', false);
+
+            return view(config('olaindex.theme').'message');
         }
         if (array_has($item, '@microsoft.graph.downloadUrl')) {
             return redirect()->away($item['@microsoft.graph.downloadUrl']);
@@ -131,27 +133,27 @@ class IndexController extends Controller
             if (!empty($origin_items['.password'])) {
                 $pass_id = $origin_items['.password']['id'];
                 $pass_url
-                = $origin_items['.password']['@microsoft.graph.downloadUrl'];
+                    = $origin_items['.password']['@microsoft.graph.downloadUrl'];
                 $key = 'password:'.$origin_path;
                 if (Session::has($key)) {
                     $data = Session::get($key);
                     $password = Tool::getFileContent($pass_url, false);
                     if (strcmp($password, decrypt($data['password'])) !== 0
-                    || time() > $data['expires']
-                ) {
+                        || time() > $data['expires']
+                    ) {
                         Session::forget($key);
                         Tool::showMessage('密码已过期', false);
 
                         return view(
-                        config('olaindex.theme').'password',
-                        compact('origin_path', 'pass_id')
-                    );
+                            config('olaindex.theme').'password',
+                            compact('origin_path', 'pass_id')
+                        );
                     }
                 } else {
                     return view(
-                    config('olaindex.theme').'password',
-                    compact('origin_path', 'pass_id')
-                );
+                        config('olaindex.theme').'password',
+                        compact('origin_path', 'pass_id')
+                    );
                 }
             }
         }
@@ -159,7 +161,8 @@ class IndexController extends Controller
         if (!empty($origin_items['.deny'])) {
             if (!Session::has('LogInfo')) {
                 Tool::showMessage('目录访问受限，仅管理员可以访问！', false);
-                abort(403);
+
+                return view(config('olaindex.theme').'message');
             }
         }
         // 处理 head/readme
@@ -244,11 +247,13 @@ class IndexController extends Controller
     {
         $realPath = $request->route()->parameter('query') ?? '/';
         if ($realPath === '/') {
-            abort(404);
+            return redirect()->route('home');
         }
         $file = $this->getFileOrCache($realPath);
         if (is_null($file) || array_has($file, 'folder')) {
-            abort(404);
+            Tool::showMessage('获取文件失败，请检查路径或稍后重试', false);
+
+            return view(config('olaindex.theme').'message');
         }
         $file['download'] = $file['@microsoft.graph.downloadUrl'];
         foreach ($this->show as $key => $suffix) {
@@ -261,8 +266,10 @@ class IndexController extends Controller
 
                         return redirect()->back();
                     } else {
-                        $file['content']
-                            = Tool::getFileContent($file['@microsoft.graph.downloadUrl'], false);
+                        $file['content'] = Tool::getFileContent(
+                            $file['@microsoft.graph.downloadUrl'],
+                            false
+                        );
                     }
                 }
                 // 处理缩略图
@@ -320,11 +327,15 @@ class IndexController extends Controller
     {
         $realPath = $request->route()->parameter('query') ?? '/';
         if ($realPath === '/') {
-            abort(404);
+            Tool::showMessage('下载失败，请检查路径或稍后重试', false);
+
+            return view(config('olaindex.theme').'message');
         }
         $file = $this->getFileOrCache($realPath);
         if (is_null($file) || array_has($file, 'folder')) {
-            abort(404);
+            Tool::showMessage('下载失败，请检查路径或稍后重试', false);
+
+            return view(config('olaindex.theme').'message');
         }
         $url = $file['@microsoft.graph.downloadUrl'];
 
@@ -382,11 +393,15 @@ class IndexController extends Controller
     {
         $realPath = $request->route()->parameter('query') ?? '/';
         if ($realPath === '/') {
-            abort(404);
+            Tool::showMessage('获取失败，请检查路径或稍后重试', false);
+
+            return view(config('olaindex.theme').'message');
         }
         $file = $this->getFileOrCache($realPath);
         if (is_null($file) || array_has($file, 'folder')) {
-            abort(404);
+            Tool::showMessage('获取失败，请检查路径或稍后重试', false);
+
+            return view(config('olaindex.theme').'message');
         }
         $download = $file['@microsoft.graph.downloadUrl'];
 
