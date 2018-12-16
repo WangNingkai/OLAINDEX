@@ -82,28 +82,6 @@ class IndexController extends Controller
         $queryPath = trim(Tool::getAbsolutePath($realPath), '/');
         $origin_path = rawurldecode($queryPath);
         $path_array = $origin_path ? explode('/', $origin_path) : [];
-        $item = Cache::remember( //todo:优化性能
-            'one:file:'.$graphPath,
-            $this->expires,
-            function () use ($graphPath) {
-                $response = OneDrive::getItemByPath($graphPath);
-                if ($response['errno'] === 0) {
-                    return $response['data'];
-                } else {
-                    Tool::showMessage($response['msg'], false);
-
-                    return null;
-                }
-            }
-        );
-        if (is_null($item)) {
-            Tool::showMessage('获取目录失败，请检查路径或稍后重试', false);
-
-            return view(config('olaindex.theme').'message');
-        }
-        if (array_has($item, '@microsoft.graph.downloadUrl')) {
-            return redirect()->away($item['@microsoft.graph.downloadUrl']);
-        }
         // 获取列表
         $key = 'one:list:'.$graphPath;
         if (Cache::has($key)) {
@@ -122,6 +100,11 @@ class IndexController extends Controller
 
                 return view(config('olaindex.theme').'message');
             }
+        }
+        if (count($origin_items) === 0) {
+            Tool::showMessage('请求错误或目录为空，请检查路径或稍后重试', false);
+
+            return view(config('olaindex.theme').'message');
         }
         $hasImage = Tool::hasImages($origin_items);
         // 过滤微软OneNote文件
