@@ -39,9 +39,9 @@ class ManageController extends Controller
         }
         $field = 'olaindex_img';
         if (!$request->hasFile($field)) {
-            $data = ['code' => 500, 'message' => '上传文件为空'];
+            $data = ['errno' => 400, 'message' => '上传文件为空'];
 
-            return response()->json($data);
+            return response()->json($data, $data['errno']);
         }
         $file = $request->file($field);
         $rule = [$field => 'required|max:4096|image'];
@@ -50,14 +50,10 @@ class ManageController extends Controller
             $rule
         );
         if ($validator->fails()) {
-            $data = ['code' => 500, 'message' => $validator->errors()->first()];
-
-            return response()->json($data);
+            return response($validator->errors()->first(), 400);
         }
         if (!$file->isValid()) {
-            $data = ['code' => 500, 'message' => '文件上传出错'];
-
-            return response()->json($data);
+            return response('文件上传出错', 400);
         }
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
@@ -75,8 +71,8 @@ class ManageController extends Controller
                     .encrypt($response['data']['eTag']);
                 $fileIdentifier = encrypt($sign);
                 $data = [
-                    'code' => 200,
-                    'data' => [
+                    'errno' => 200,
+                    'data'  => [
                         'id'       => $response['data']['id'],
                         'filename' => $response['data']['name'],
                         'size'     => $response['data']['size'],
@@ -87,14 +83,12 @@ class ManageController extends Controller
                 ];
                 @unlink($path);
 
-                return response()->json($data);
+                return response()->json($data, $data['errno']);
             } else {
                 return $response;
             }
         } else {
-            $data = ['code' => 500, 'message' => '无法获取文件内容'];
-
-            return response()->json($data);
+            return response('无法获取文件内容', 400);
         }
     }
 
@@ -113,9 +107,7 @@ class ManageController extends Controller
         $field = 'olaindex_file';
         $target_directory = $request->get('root', '/');
         if (!$request->hasFile($field)) {
-            $data = ['code' => 500, 'message' => '上传文件或目录为空'];
-
-            return response()->json($data);
+            return response('上传文件或目录为空', 400);
         }
         $file = $request->file($field);
         $rule = [$field => 'required|max:4096']; // 上传文件规则，单文件指定大小4M
@@ -124,14 +116,10 @@ class ManageController extends Controller
             $rule
         );
         if ($validator->fails()) {
-            $data = ['code' => 500, 'message' => $validator->errors()->first()];
-
-            return response()->json($data);
+            return response($validator->errors()->first(), 400);
         }
         if (!$file->isValid()) {
-            $data = ['code' => 500, 'message' => '文件上传出错'];
-
-            return response()->json($data);
+            return response('文件上传出错', 400);
         }
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
@@ -142,8 +130,8 @@ class ManageController extends Controller
             $response = OneDrive::uploadByPath($remoteFilePath, $content);
             if ($response['errno'] === 0) {
                 $data = [
-                    'code' => 200,
-                    'data' => [
+                    'errno' => 200,
+                    'data'  => [
                         'id'       => $response['data']['id'],
                         'filename' => $response['data']['name'],
                         'size'     => $response['data']['size'],
@@ -152,14 +140,12 @@ class ManageController extends Controller
                 ];
                 @unlink($path);
 
-                return response()->json($data);
+                return response()->json($data, $data['errno']);
             } else {
                 return $response;
             }
         } else {
-            $data = ['code' => 500, 'message' => '无法获取文件内容'];
-
-            return response()->json($data);
+            return response('无法获取文件内容', 400);
         }
     }
 
