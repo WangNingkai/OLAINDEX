@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Constants;
 use App\Helpers\OneDrive;
 use App\Helpers\Tool;
 use Illuminate\Http\Request;
@@ -250,6 +251,18 @@ class IndexController extends Controller
                             $file['@microsoft.graph.downloadUrl'],
                             false
                         );
+                        if ($key === 'stream') {
+                            $fileType
+                                = empty(Constants::FILE_STREAM[$file['ext']])
+                                ? "application/octet-stream"
+                                : Constants::FILE_STREAM[$file['ext']];
+
+                            return response(
+                                $file['content'],
+                                200,
+                                ['Content-type' => $fileType,]
+                            );
+                        }
                     }
                 }
                 // 处理缩略图

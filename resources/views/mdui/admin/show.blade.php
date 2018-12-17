@@ -41,18 +41,11 @@
             </div>
             <br>
             <div class="mdui-textfield mdui-textfield-floating-label">
-                <label class="mdui-textfield-label" for="stream">文本</label>
+                <label class="mdui-textfield-label" for="stream">文件流</label>
                 <input type="text" class="mdui-textfield-input" id="stream" name="stream"
                        value="{{ \App\Helpers\Tool::config('stream','') }}">
             </div>
             <br>
-            <div class="mdui-textfield mdui-textfield-floating-label">
-                <label class="mdui-textfield-label" for="name">图片</label>
-                <input type="text" class="mdui-textfield-input" id="name" name="name"
-                       value="{{ \App\Helpers\Tool::config('name','') }}">
-            </div>
-            <br>
-
 
             <button class="mdui-btn mdui-color-theme-accent mdui-ripple mdui-float-right" type="submit"><i
                     class="mdui-icon material-icons">check</i> 保存

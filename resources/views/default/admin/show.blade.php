@@ -35,7 +35,7 @@
                    value="{{ \App\Helpers\Tool::config('code') }}">
         </div>
         <div class="form-group">
-            <label class="form-control-label" for="stream">文本</label>
+            <label class="form-control-label" for="stream">文件流</label>
             <input type="text" class="form-control" id="stream" name="stream"
                    value="{{ \App\Helpers\Tool::config('stream') }}">
         </div>
