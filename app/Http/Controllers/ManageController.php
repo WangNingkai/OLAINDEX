@@ -165,12 +165,7 @@ class ManageController extends Controller
             return view(config('olaindex.theme').'message');
         }
         $password = $request->get('password', '');
-        if ($password) {
-            $storeFilePath = trim($path, '/').'/.password';
-        } else {
-            $password = 'deny:'.$path;
-            $storeFilePath = trim($path, '/').'/.deny';
-        }
+        $storeFilePath = trim($path, '/').'/.password';
         $remoteFilePath
             = Tool::getOriginPath($storeFilePath); // 远程password保存地址
         $response = OneDrive::uploadByPath($remoteFilePath, $password);

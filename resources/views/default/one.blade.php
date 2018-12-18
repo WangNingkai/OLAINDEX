@@ -102,10 +102,6 @@
                                 <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal"
                                    data-target="#lockFolderModal"><i class="fa fa-lock"></i> 加密目录</a>
                             @endif
-                                @if (!array_key_exists('.deny', $origin_items))
-                                    <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal"
-                                       data-target="#denyFolderModal"><i class="fa fa-ban"></i> 禁用目录</a>
-                                @endif
                             <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal"
                                data-target="#newFolderModal"><i class="fa fa-plus-circle"></i> 新建目录</a>
                                 <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal"
@@ -132,35 +128,6 @@
                                                     <input type="hidden" name="path"
                                                            value="{{ encrypt($origin_path) }}">
                                                 </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="submit" class="btn btn-primary">确定</button>
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                                    取消
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        @endif
-                        @if (!array_key_exists('.deny', $origin_items))
-                            <div class="modal fade" id="denyFolderModal" tabindex="-1" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <form action="{{ route('admin.deny') }}" method="post">
-                                        @csrf
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title"><i class="fa fa-lock"></i> 禁用目录</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <h5 class="text-danger">确定禁用此目录吗？</h5>
-                                                <input type="hidden" name="path"
-                                                       value="{{ encrypt($origin_path) }}">
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="submit" class="btn btn-primary">确定</button>
