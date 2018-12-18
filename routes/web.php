@@ -66,6 +66,7 @@ Route::prefix('admin')->group(function () {
     // 文件夹操作
     Route::prefix('folder')->group(function () {
         Route::post('lock', 'ManageController@lockFolder')->name('admin.lock');
+        Route::post('deny', 'ManageController@lockFolder')->name('admin.deny');
         Route::post('create', 'ManageController@createFolder')
             ->name('admin.folder.create');
     });
