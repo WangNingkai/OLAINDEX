@@ -20,14 +20,26 @@ class HandleEncryptDir
     {
         $realPath = $request->route()->parameter('query') ?? '/';
         $encryptDir = Tool::handleEncryptDir(Tool::config('encrypt_path'));
-        if (Session::has('password:'.$realPath)) {
-            // todo:密码判断
-            return $next($request);
-        } else {
-            foreach ($encryptDir as $key => $item) {
-                if (starts_with(Tool::getAbsolutePath($realPath), $key)) {
-                    $encryptKey = $key;
+        foreach ($encryptDir as $key => $item) {
+            if (starts_with(Tool::getAbsolutePath($realPath), $key)) {
+                $encryptKey = $key;
+                if (Session::has('password:'.$key)) {
+                    $data = Session::get('password:'.$key);
+                    $encryptKey = $data['encryptKey'];
+                    if (strcmp($encryptDir[$encryptKey], decrypt($data['password'])) !== 0
+                        || time() > $data['expires']
+                    ) {
+                        Session::forget($key);
+                        Tool::showMessage('密码已过期', false);
 
+                        return response()->view(
+                            config('olaindex.theme').'password',
+                            compact('realPath', 'encryptKey')
+                        );
+                    } else {
+                        return $next($request);
+                    }
+                } else {
                     return response()->view(
                         config('olaindex.theme').'password',
                         compact('realPath', 'encryptKey')
@@ -35,5 +47,6 @@ class HandleEncryptDir
                 }
             }
         }
+        return $next($request);
     }
 }

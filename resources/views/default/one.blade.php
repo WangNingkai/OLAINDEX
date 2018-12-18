@@ -98,48 +98,11 @@
                                         class="fa fa-plus-circle"></i> 添加
                                     HEAD</a>
                             @endif
-                            @if (!array_key_exists('.password', $origin_items))
-                                <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal"
-                                   data-target="#lockFolderModal"><i class="fa fa-lock"></i> 加密目录</a>
-                            @endif
                             <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal"
                                data-target="#newFolderModal"><i class="fa fa-plus-circle"></i> 新建目录</a>
                                 <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal"
                                    data-target="#directLinkModal"><i class="fa fa-link"></i> 导出直链</a>
                         </div>
-                        @if (!array_key_exists('.password', $origin_items))
-                            <div class="modal fade" id="lockFolderModal" tabindex="-1" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <form action="{{ route('admin.lock') }}" method="post">
-                                        @csrf
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title"><i class="fa fa-lock"></i> 加密目录</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <p class="text-danger">确认锁定目录，请输入密码(默认密码 12345678)：</p>
-                                                <div class="form-group">
-                                                    <input type="password" name="password" class="form-control"
-                                                           placeholder="请输入密码" id="lockField" required>
-                                                    <input type="hidden" name="path"
-                                                           value="{{ encrypt($origin_path) }}">
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="submit" class="btn btn-primary">确定</button>
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                                    取消
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        @endif
                         <div class="modal fade" id="newFolderModal" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <form action="{{ route('admin.folder.create') }}" method="post">

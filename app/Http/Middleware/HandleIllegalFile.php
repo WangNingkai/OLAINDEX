@@ -27,7 +27,9 @@ class HandleIllegalFile
         if (in_array($fileName, $illegalFile)
             || preg_match($pattern, $fileName, $arr) > 0
         ) {
-            abort(403);
+            Tool::showMessage('非法请求', false);
+
+            return response()->view(config('olaindex.theme').'message');
         }
 
         return $next($request);

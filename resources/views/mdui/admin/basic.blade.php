@@ -29,6 +29,13 @@
                 <div class="mdui-textfield-helper">建议小于60分钟，否则会导致响应失败</div>
             </div>
             <br>
+            <div class="mdui-textfield mdui-textfield-floating-label">
+                <label class="mdui-textfield-label" for="encrypt_path">加密目录</label>
+                <textarea name="encrypt_path" id="encrypt_path" class="mdui-textfield-input"
+                          rows="3">{{ \App\Helpers\Tool::config('encrypt_path','') }}</textarea>
+                <div class="mdui-textfield-helper">如： /path1/xxx /path2/xxx [password]</div>
+            </div>
+            <br>
             <label for="image_hosting" class="mdui-textfield-label">是否开启图床</label> &nbsp; &nbsp;
             <br>
             <select name="image_hosting" id="image_hosting" class="mdui-select" mdui-select="{position: 'bottom'}">

@@ -206,10 +206,6 @@
                        {{ route('admin.file.create',['name' => 'README', 'path' => encrypt($origin_path)]) }}
                        @endif"
                        target="_blank"><i class="mdui-icon material-icons">face</i></a>
-                    @if (!array_key_exists('.password', $origin_items))
-                        <a href="javascript:void(0)" class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-purple"><i
-                                class="mdui-icon material-icons" mdui-dialog="{target: '#lockFolder'}">lock</i></a>
-                    @endif
                     <a href="javascript:void(0)" class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-red"><i
                             class="mdui-icon material-icons" mdui-dialog="{target: '#newFolder'}">create_new_folder</i>
                     </a>
@@ -218,29 +214,6 @@
                     </a>
                 </div>
             </div>
-            @if (!array_key_exists('.password', $origin_items))
-                <div class="mdui-dialog" id="lockFolder">
-                    <form action="{{ route('admin.lock') }}" method="post">
-                        @csrf
-                        <div class="mdui-dialog-content">
-                            <div class="mdui-dialog-title">加密目录</div>
-                            <p class="mdui-text-color-red">确认锁定目录，请输入密码(默认密码 12345678)：</p>
-                            <div class="mdui-textfield mdui-textfield-floating-label">
-                                <i class="mdui-icon material-icons">lock</i>
-                                <label class="mdui-textfield-label" for="lockField">请输入密码</label>
-                                <input name="password" class="mdui-textfield-input" type="password" id="lockField"
-                                       required/>
-                                <input type="hidden" name="path"
-                                       value="{{ encrypt($origin_path) }}">
-                            </div>
-                        </div>
-                        <div class="mdui-dialog-actions">
-                            <button class="mdui-btn mdui-ripple" mdui-dialog-close>取消</button>
-                            <button class="mdui-btn mdui-ripple" mdui-dialog-submit>确认</button>
-                        </div>
-                    </form>
-                </div>
-            @endif
             <div class="mdui-dialog" id="newFolder">
                 <form action="{{ route('admin.folder.create') }}" method="post">
                     @csrf

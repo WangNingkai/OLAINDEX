@@ -116,44 +116,6 @@ class IndexController extends Controller
         $origin_items = array_where($origin_items, function ($value) {
             return !array_has($value, 'package.type');
         });
-        // 处理加密目录
-        // todo:删除
-        if (!Session::has('LogInfo')) {
-            if (!empty($origin_items['.password'])) {
-                $pass_id = $origin_items['.password']['id'];
-                $pass_url
-                    = $origin_items['.password']['@microsoft.graph.downloadUrl'];
-                $key = 'password:'.$origin_path;
-                if (Session::has($key)) {
-                    $data = Session::get($key);
-                    $password = Tool::getFileContent($pass_url, false);
-                    if (strcmp($password, decrypt($data['password'])) !== 0
-                        || time() > $data['expires']
-                    ) {
-                        Session::forget($key);
-                        Tool::showMessage('密码已过期', false);
-
-                        return view(
-                            config('olaindex.theme').'password',
-                            compact('origin_path', 'pass_id')
-                        );
-                    }
-                } else {
-                    return view(
-                        config('olaindex.theme').'password',
-                        compact('origin_path', 'pass_id')
-                    );
-                }
-            }
-        }
-        // 过滤受限隐藏目录
-        if (!empty($origin_items['.deny'])) {
-            if (!Session::has('LogInfo')) {
-                Tool::showMessage('目录访问受限，仅管理员可以访问！', false);
-
-                return view(config('olaindex.theme').'message');
-            }
-        }
         // 处理 head/readme
         $head = array_key_exists('HEAD.md', $origin_items)
             ? Tool::markdown2Html(Tool::getFileContent($origin_items['HEAD.md']['@microsoft.graph.downloadUrl']))
@@ -471,10 +433,11 @@ class IndexController extends Controller
         $realPath = decrypt(request()->get('realPath'));
         $encryptKey = decrypt(request()->get('encryptKey'));
         $data = [
-            'password' => encrypt($password),
-            'expires'  => time() + (int)$this->expires * 60, // 目录密码过期时间
+            'password'   => encrypt($password),
+            'encryptKey' => $encryptKey,
+            'expires'    => time() + (int)$this->expires * 60, // 目录密码过期时间
         ];
-        Session::put('password:'.$realPath, $data);
+        Session::put('password:'.$encryptKey, $data);
         $arr = Tool::handleEncryptDir(Tool::config('encrypt_path'));
         $directory_password = $arr[$encryptKey];
         if (strcmp($password, $directory_password) === 0) {
@@ -484,7 +447,7 @@ class IndexController extends Controller
 
             return view(
                 config('olaindex.theme').'password',
-                compact('origin_path', 'pass_id')
+                compact('realPath', 'encryptKey')
             );
         }
     }
