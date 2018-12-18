@@ -11,8 +11,8 @@
                 <div class="form-group">
                     <label class="form-control-label" for="password">请输入密码</label>
                     <input type="password" class="form-control" id="password" name="password" required>
-                    <input type="hidden" name="pass_id" value="{{ encrypt($pass_id) }}">
-                    <input type="hidden" name="origin_path" value="{{ encrypt($origin_path) }}">
+                    <input type="hidden" name="encryptKey" value="{{ encrypt($encryptKey) }}">
+                    <input type="hidden" name="realPath" value="{{ encrypt($realPath) }}">
                 </div>
                 <button type="submit" class="btn btn-primary">确认</button>
             </form>

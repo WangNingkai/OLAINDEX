@@ -44,7 +44,12 @@ class IndexController extends Controller
      */
     public function __construct()
     {
-        $this->middleware(['checkInstall', 'checkToken', 'handleIllegalFile']);
+        $this->middleware([
+            'checkInstall',
+            'checkToken',
+            'handleIllegalFile',
+            'HandleEncryptDir',
+        ]);
         $this->expires = Tool::config('expires', 10);
         $this->root = Tool::config('root', '/');
         $this->show = [
@@ -112,6 +117,7 @@ class IndexController extends Controller
             return !array_has($value, 'package.type');
         });
         // 处理加密目录
+        // todo:删除
         if (!Session::has('LogInfo')) {
             if (!empty($origin_items['.password'])) {
                 $pass_id = $origin_items['.password']['id'];
@@ -458,28 +464,21 @@ class IndexController extends Controller
 
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     * @throws \ErrorException
      */
     public function handlePassword()
     {
         $password = request()->get('password');
-        $origin_path = decrypt(request()->get('origin_path'));
-        $pass_id = decrypt(request()->get('pass_id'));
+        $realPath = decrypt(request()->get('realPath'));
+        $encryptKey = decrypt(request()->get('encryptKey'));
         $data = [
             'password' => encrypt($password),
             'expires'  => time() + (int)$this->expires * 60, // 目录密码过期时间
         ];
-        Session::put('password:'.$origin_path, $data);
-        $response = OneDrive::getItem($pass_id);
-        if ($response['errno'] === 0) {
-            $url = $response['data']['@microsoft.graph.downloadUrl'];
-            $directory_password = Tool::getFileContent($url, false);
-        } else {
-            Tool::showMessage('获取文件夹密码失败', false);
-            $directory_password = '';
-        }
+        Session::put('password:'.$realPath, $data);
+        $arr = Tool::handleEncryptDir(Tool::config('encrypt_path'));
+        $directory_password = $arr[$encryptKey];
         if (strcmp($password, $directory_password) === 0) {
-            return redirect()->route('home', Tool::getEncodeUrl($origin_path));
+            return redirect()->route('home', Tool::getEncodeUrl($realPath));
         } else {
             Tool::showMessage('密码错误', false);
 

@@ -30,6 +30,14 @@
                    value="{{ \App\Helpers\Tool::config('expires') }}">
             <span class="form-text text-danger">建议小于60分钟，否则会导致响应失败</span>
         </div>
+
+        <div class="form-group">
+            <label for="encrypt_path">加密目录</label>
+            <textarea class="form-control" id="encrypt_path" name="encrypt_path"
+                      rows="5">{{ \App\Helpers\Tool::config('encrypt_path','') }}</textarea>
+            <span class="form-text text-danger">如： /path1/xxx /path2/xxx [password]</span>
+        </div>
+
         <div class="form-group">
             <label class="form-control-label">开启看图模式</label>
             <div class="custom-control custom-radio">

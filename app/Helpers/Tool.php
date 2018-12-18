@@ -553,6 +553,34 @@ class Tool
         }
     }
 
+    /**
+     * 解析加密目录
+     *
+     * @param $str
+     *
+     * @return array
+     */
+    public static function handleEncryptDir($str)
+    {
+        $str = str_replace(PHP_EOL, '', $str);
+        $str = trim($str, ',');
+        $encryptPathList = explode(',', $str);
+        $all = [];
+        foreach ($encryptPathList as $encryptPathDir) {
+            $pathItem = explode(' ', $encryptPathDir);
+            $password = array_pop($pathItem);
+            $pa = array_fill_keys($pathItem, $password);
+            $all = array_merge($pa, $all);
+        }
+
+        return $all;
+    }
+
+    /**
+     * @param $ext
+     *
+     * @return string
+     */
     public static function fileIcon($ext)
     {
         if (in_array($ext, ['ogg', 'mp3', 'wav'])) {
