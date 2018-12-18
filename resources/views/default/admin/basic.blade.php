@@ -35,7 +35,7 @@
             <label for="encrypt_path">加密目录</label>
             <textarea class="form-control" id="encrypt_path" name="encrypt_path"
                       rows="5">{{ \App\Helpers\Tool::config('encrypt_path','') }}</textarea>
-            <span class="form-text text-danger">如： /path1/xxx /path2/xxx [password]</span>
+            <span class="form-text text-danger">格式如： /path1/xxx/ /path2/xxx/ [password1],/path3/xxx/ /path4/xxx/ [password2] </span>
         </div>
 
         <div class="form-group">
