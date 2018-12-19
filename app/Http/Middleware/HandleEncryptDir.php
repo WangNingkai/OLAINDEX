@@ -23,7 +23,7 @@ class HandleEncryptDir
         }
         $realPath = $request->route()->parameter('query') ?? '/';
         $encryptDir = Tool::handleEncryptDir(Tool::config('encrypt_path'));
-        foreach (array_reverse($encryptDir) as $key => $item) {
+        foreach ($encryptDir as $key => $item) {
             if (starts_with(Tool::getAbsolutePath($realPath), $key)) {
                 $encryptKey = $key;
                 if (Session::has('password:'.$key)) {
@@ -43,7 +43,6 @@ class HandleEncryptDir
                         return $next($request);
                     }
                 } else {
-//                    dd($realPath,$encryptKey);
                     return response()->view(
                         config('olaindex.theme').'password',
                         compact('realPath', 'encryptKey')

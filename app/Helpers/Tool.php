@@ -572,8 +572,23 @@ class Tool
             $pa = array_fill_keys($pathItem, $password);
             $all = array_merge($pa, $all);
         }
+        uksort($all, [Tool::class, 'lenSort']);
 
         return $all;
+    }
+
+    /**
+     * @param $a
+     * @param $b
+     *
+     * @return int
+     */
+    public static function lenSort($a, $b)
+    {
+        $countA = count(explode('/', self::getAbsolutePath($a)));
+        $countB = count(explode('/', self::getAbsolutePath($b)));
+
+        return $countB - $countA;
     }
 
     /**
