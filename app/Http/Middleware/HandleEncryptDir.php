@@ -18,6 +18,9 @@ class HandleEncryptDir
      */
     public function handle($request, Closure $next)
     {
+        if (!Session::has('LogInfo')) {
+            return $next($request); // 兼容登录用户无需输入密码
+        }
         $realPath = $request->route()->parameter('query') ?? '/';
         $encryptDir = Tool::handleEncryptDir(Tool::config('encrypt_path'));
         foreach (array_reverse($encryptDir) as $key => $item) {
@@ -47,6 +50,7 @@ class HandleEncryptDir
                 }
             }
         }
+
         return $next($request);
     }
 }
