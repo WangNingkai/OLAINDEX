@@ -43,6 +43,7 @@ class HandleEncryptDir
                         return $next($request);
                     }
                 } else {
+//                    dd($realPath,$encryptKey);
                     return response()->view(
                         config('olaindex.theme').'password',
                         compact('realPath', 'encryptKey')
