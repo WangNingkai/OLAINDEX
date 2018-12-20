@@ -21,6 +21,10 @@
 
 - [https://github.com/WangNingkai/OLAINDEX](https://git.io/OLAINDEX)
 
+## 预览
+
+<div align="center" ><img src="https://img02.sogoucdn.com/app/a/100520146/cd2311797c818d8f37bd5a7474080be4" height="75%" alt="预览" /></div>
+ 
 ## 演示地址
 
 - [https://dev.ningkai.wang](https://dev.ningkai.wang)
@@ -111,12 +115,8 @@ Email : [imwnk@live.com](mailto:imwnk@live.com)
 
 1. 本项目同样存在命令行版本，包含基本的显示下载，功能与此版本一致。项目地址 [OLAINDEX-CMD](https://git.io/OLACMD)
 
-2.本软件仅供日常学习使用，不得用于任何商业用途；学习使用请遵守您所在国家的法律，任何非法行为由使用者本身承担。
+2. 本软件仅供日常学习使用，不得用于任何商业用途；学习使用请遵守您所在国家的法律，任何非法行为由使用者本身承担。
 
-3.如使用本应用，请保留底部版权，并分享给更多人，谢谢。
+3. 如使用本应用，请保留底部版权，并分享给更多人，谢谢。
 
-
-## 预览
-
-- [预览1](https://img02.sogoucdn.com/app/a/100520146/cd2311797c818d8f37bd5a7474080be4)
-- [预览2](https://img03.sogoucdn.com/app/a/100520146/f5ba120d0c44e7d57c8ff076da20cb9f)
+---
