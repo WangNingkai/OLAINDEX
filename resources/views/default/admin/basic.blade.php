@@ -32,12 +32,33 @@
         </div>
 
         <div class="form-group">
-            <label for="encrypt_path">加密目录</label>
+            <label for="encrypt_path">加密路径</label>
             <textarea class="form-control" id="encrypt_path" name="encrypt_path"
                       rows="5">{{ \App\Helpers\Tool::config('encrypt_path','') }}</textarea>
             <span class="form-text text-danger">格式如： /path1/xxx/ /path2/xxx/ [password1],/path3/xxx/ /path4/xxx/ [password2] </span>
         </div>
+        <div class="form-group">
+            <label for="">加密选项</label>
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input"  id="c1" name="encrypt_option[]" value="list" @if(in_array('list',\App\Helpers\Tool::config('encrypt_option',[]))) checked @endif>
+                <label class="custom-control-label" for="c1">加密目录列表</label>
+            </div>
 
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="c2" name="encrypt_option[]" value="show" @if(in_array('show',\App\Helpers\Tool::config('encrypt_option',[]))) checked @endif>
+                <label class="custom-control-label" for="c2">加密文件预览</label>
+            </div>
+
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="c3" name="encrypt_option[]" value="download" @if(in_array('download',\App\Helpers\Tool::config('encrypt_option',[]))) checked @endif>
+                <label class="custom-control-label" for="c3">加密文件下载</label>
+            </div>
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="c4" name="encrypt_option[]" value="view" @if(in_array('view',\App\Helpers\Tool::config('encrypt_option',[]))) checked @endif>
+                <label class="custom-control-label" for="c4">加密图片查看页</label>
+            </div>
+
+        </div>
         <div class="form-group">
             <label class="form-control-label">开启看图模式</label>
             <div class="custom-control custom-radio">

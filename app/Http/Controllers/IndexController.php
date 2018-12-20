@@ -49,13 +49,8 @@ class IndexController extends Controller
             'checkToken',
             'handleIllegalFile',
         ]);
-        $this->middleware('HandleEncryptDir')->only([
-            'home',
-            'list',
-            'show',
-            'download',
-            'view',
-        ]);
+        $this->middleware('HandleEncryptDir')
+            ->only(Tool::config('encrypt_option', ['list']));
         $this->expires = Tool::config('expires', 10);
         $this->root = Tool::config('root', '/');
         $this->show = [

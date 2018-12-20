@@ -30,11 +30,41 @@
             </div>
             <br>
             <div class="mdui-textfield mdui-textfield-floating-label">
-                <label class="mdui-textfield-label" for="encrypt_path">加密目录</label>
+                <label class="mdui-textfield-label" for="encrypt_path">加密路径</label>
                 <textarea name="encrypt_path" id="encrypt_path" class="mdui-textfield-input"
                           rows="3">{{ \App\Helpers\Tool::config('encrypt_path','') }}</textarea>
-                <div class="mdui-textfield-helper">格式如： /path1/xxx/ /path2/xxx/ [password1],/path3/xxx/ /path4/xxx/ [password2] </div>
+                <div class="mdui-textfield-helper">格式如： /path1/xxx/ /path2/xxx/ [password1],/path3/xxx/ /path4/xxx/
+                    [password2]
+                </div>
             </div>
+            <br>
+            <label for="image_hosting" class="mdui-textfield-label">加密选项</label> &nbsp; &nbsp;
+            <br>
+            <label class="mdui-checkbox">
+                <input type="checkbox" name="encrypt_option[]" value="list"
+                       @if(in_array('list',\App\Helpers\Tool::config('encrypt_option',[]))) checked @endif/>
+                <i class="mdui-checkbox-icon"></i>
+                加密目录列表
+            </label> &nbsp; &nbsp;
+            <label class="mdui-checkbox">
+                <input type="checkbox" name="encrypt_option[]" value="show"
+                       @if(in_array('show',\App\Helpers\Tool::config('encrypt_option',[]))) checked @endif/>
+                <i class="mdui-checkbox-icon"></i>
+                加密文件预览
+            </label> &nbsp; &nbsp;
+            <label class="mdui-checkbox">
+                <input type="checkbox" name="encrypt_option[]" value="download"
+                       @if(in_array('download',\App\Helpers\Tool::config('encrypt_option',[]))) checked @endif/>
+                <i class="mdui-checkbox-icon"></i>
+                加密文件下载
+            </label> &nbsp; &nbsp;
+            <label class="mdui-checkbox">
+                <input type="checkbox" name="encrypt_option[]" value="view"
+                       @if(in_array('view',\App\Helpers\Tool::config('encrypt_option',[]))) checked @endif/>
+                <i class="mdui-checkbox-icon"></i>
+                加密图片查看页
+            </label> &nbsp; &nbsp;
+            <br>
             <br>
             <label for="image_hosting" class="mdui-textfield-label">是否开启图床</label> &nbsp; &nbsp;
             <br>
@@ -48,6 +78,7 @@
             <label for="image_home" class="mdui-textfield-label">图床设为首页</label> &nbsp; &nbsp;
             <br>
             <select name="image_home" id="image_home" class="mdui-select" mdui-select="{position: 'bottom'}">
+                <option value="">开启图床设为首页</option>
                 <option value="1" @if(\App\Helpers\Tool::config('image_home',0) == 1) selected @endif>开启</option>
                 <option value="0" @if(\App\Helpers\Tool::config('image_home',0) == 0) selected @endif>关闭</option>
             </select>
