@@ -97,10 +97,10 @@ chown -R www:www *
 
 > 进行任何操作前请先阅读 [《提问的智慧》](https://github.com/ruby-china/How-To-Ask-Questions-The-Smart-Way/blob/master/README-zh_CN.md)
 
-当前获取帮助有两种方式：
+当前获取帮助有三种方式：
 
 1. 通过 [GitHub issue](https://github.com/WangNingkai/OLAINDEX/issues) 提交问题（仅限问题反馈）
-2. 通过 [个人博客](https://imwnk.cn) 评论留言
+2. 通过 [个人博客](https://imwnk.cn) 评论留言 或者 [关于](https://dev.nignkai.wang/about) 页面最下角留言
 3. 通过个人邮箱联系（每周不定时查看）
 
 无论采用哪种方式，请务必注意自己的言行举止，尊重他人，遵守最基本的社区行为规范。
