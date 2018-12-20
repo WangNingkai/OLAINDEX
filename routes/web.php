@@ -105,5 +105,6 @@ Route::get('about', function () {
     $content = \App\Helpers\Tool::getFileContent($url);
     $markdown = \App\Helpers\Tool::markdown2Html($content);
 
-    return response()->view('mdui.about', compact('markdown'));
+    return response()->view(config('olaindex.theme').'about',
+        compact('markdown'));
 });
