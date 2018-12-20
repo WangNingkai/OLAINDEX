@@ -10,6 +10,7 @@
     <meta name="description" content="OLAINDEX,Another OneDrive Directory Index"/>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.bootcss.com/mdui/0.4.1/css/mdui.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@2/github-markdown.min.css">
     <link rel="stylesheet" href="{{ asset('css/mdui.css') }}">
     @yield('css')
     <script>

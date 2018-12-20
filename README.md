@@ -118,5 +118,5 @@ Email : [imwnk@live.com](mailto:imwnk@live.com)
 
 ## 预览
 
-![demo1.png](https://img02.sogoucdn.com/app/a/100520146/cd2311797c818d8f37bd5a7474080be4)
-![demo2.png](https://img03.sogoucdn.com/app/a/100520146/f5ba120d0c44e7d57c8ff076da20cb9f)
+- [预览1](https://img02.sogoucdn.com/app/a/100520146/cd2311797c818d8f37bd5a7474080be4)
+- [预览2](https://img03.sogoucdn.com/app/a/100520146/f5ba120d0c44e7d57c8ff076da20cb9f)
