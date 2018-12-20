@@ -1,7 +1,7 @@
 @extends('mdui.layouts.main')
 @section('content')
     <div class="mdui-container-fluid">
-        <div class="mdui-typo mdui-p-t-3 markdown-body">
+        <div class="mdui-typo mdui-p-t-3">
             {!! $markdown !!}
         </div>
         @if (str_contains(config('app.url'),['localhost','dev.ningkai.wang']))
