@@ -36,7 +36,7 @@
 <div class="container mt-3">
     <div class="card border-light mb-3">
         <div class="card-header"><i class="fa fa-leaf"></i> 关于反馈</div>
-        <div class="card-body markdown-body px-5">
+        <div class="card-body markdown-body px-3">
             {!! $markdown !!}
 
         </div>
