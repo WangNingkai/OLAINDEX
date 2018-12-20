@@ -7,7 +7,7 @@
 [![GitHub forks](https://img.shields.io/github/forks/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/network)
 [![GitHub license](https://img.shields.io/github/license/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/blob/master/LICENSE)
 
-![OLAINDEX](https://i.loli.net/2018/10/11/5bbf40831f294.jpg)
+![OLAINDEX](https://i.loli.net/2018/12/20/5c1afb0e9a37b.jpg)
 
 此图来自 [如有乐享](https://51.ruyo.net/)，感谢推广
 
