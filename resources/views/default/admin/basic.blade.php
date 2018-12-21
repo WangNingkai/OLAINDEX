@@ -35,7 +35,7 @@
             <label for="encrypt_path">加密路径</label>
             <textarea class="form-control" id="encrypt_path" name="encrypt_path"
                       rows="5">{{ \App\Helpers\Tool::config('encrypt_path','') }}</textarea>
-            <span class="form-text text-danger">格式如： /path1/xxx/ /path2/xxx/ [password1],/path3/xxx/ /path4/xxx/ [password2] </span>
+            <span class="form-text text-danger">格式如： /path1/xxx/ /path2/xxx/ password1,/path3/xxx/ /path4/xxx/ password2 (以OneDrive根目录为基础)</span>
         </div>
         <div class="form-group">
             <label for="">加密选项</label>

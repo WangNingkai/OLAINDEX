@@ -33,8 +33,7 @@
                 <label class="mdui-textfield-label" for="encrypt_path">加密路径</label>
                 <textarea name="encrypt_path" id="encrypt_path" class="mdui-textfield-input"
                           rows="3">{{ \App\Helpers\Tool::config('encrypt_path','') }}</textarea>
-                <div class="mdui-textfield-helper">格式如： /path1/xxx/ /path2/xxx/ [password1],/path3/xxx/ /path4/xxx/
-                    [password2]
+                <div class="mdui-textfield-helper">格式如： /path1/xxx/ /path2/xxx/ password1,/path3/xxx/ /path4/xxx/ password2 (以OneDrive根目录为基础)
                 </div>
             </div>
             <br>
