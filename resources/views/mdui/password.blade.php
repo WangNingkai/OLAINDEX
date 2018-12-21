@@ -9,6 +9,7 @@
                     <label class="mdui-textfield-label" for="password">输入密码进行查看</label>
                     <input name="password" class="mdui-textfield-input" type="password" id="password" required/>
                     <input type="hidden" name="encryptKey" value="{{ encrypt($encryptKey) }}">
+                    <input type="hidden" name="route" value="{{ encrypt($route) }}">
                     <input type="hidden" name="realPath" value="{{ encrypt($realPath) }}">
                 </div>
                 <br>

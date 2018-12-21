@@ -21,6 +21,7 @@ class HandleEncryptDir
         if (Session::has('LogInfo')) {
             return $next($request); // 兼容登录用户无需输入密码
         }
+        $route = $request->route()->getName();
         $realPath = $request->route()->parameter('query') ?? '/';
         $encryptDir = Tool::handleEncryptDir(Tool::config('encrypt_path'));
         foreach ($encryptDir as $key => $item) {
@@ -37,7 +38,7 @@ class HandleEncryptDir
 
                         return response()->view(
                             config('olaindex.theme').'password',
-                            compact('realPath', 'encryptKey')
+                            compact('route', 'realPath', 'encryptKey')
                         );
                     } else {
                         return $next($request);
@@ -45,7 +46,7 @@ class HandleEncryptDir
                 } else {
                     return response()->view(
                         config('olaindex.theme').'password',
-                        compact('realPath', 'encryptKey')
+                        compact('route', 'realPath', 'encryptKey')
                     );
                 }
             }

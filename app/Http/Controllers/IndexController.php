@@ -431,6 +431,7 @@ class IndexController extends Controller
     public function handlePassword()
     {
         $password = request()->get('password');
+        $route = decrypt(request()->get('route'));
         $realPath = decrypt(request()->get('realPath'));
         $encryptKey = decrypt(request()->get('encryptKey'));
         $data = [
@@ -442,13 +443,13 @@ class IndexController extends Controller
         $arr = Tool::handleEncryptDir(Tool::config('encrypt_path'));
         $directory_password = $arr[$encryptKey];
         if (strcmp($password, $directory_password) === 0) {
-            return redirect()->route('home', Tool::getEncodeUrl($realPath));
+            return redirect()->route($route, Tool::getEncodeUrl($realPath));
         } else {
             Tool::showMessage('密码错误', false);
 
             return view(
                 config('olaindex.theme').'password',
-                compact('realPath', 'encryptKey')
+                compact('route', 'realPath', 'encryptKey')
             );
         }
     }
