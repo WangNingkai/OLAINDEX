@@ -1,7 +1,7 @@
 @extends('mdui.layouts.main')
 @section('js')
-    <script src="https://cdn.bootcss.com/store.js/1.3.20/store.min.js"></script>
-    <script src="https://cdn.bootcss.com/jquery_lazyload/1.9.7/jquery.lazyload.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/store@2/dist/store.everything.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-lazyload@1/jquery.lazyload.min.js"></script>
     <script>
         function getDirect() {
             $("#dl").val('');

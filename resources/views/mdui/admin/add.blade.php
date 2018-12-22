@@ -1,6 +1,6 @@
 @extends('mdui.layouts.admin')
 @section('css')
-    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/inscrybmde@1.11.4/dist/inscrybmde.min.css">
     <style>
         .editor-preview img, .editor-preview-side img {
@@ -96,14 +96,14 @@
     </script>
 @stop
 @section('content')
-    <div class="mdui-container-fluid mdui-m-t-2 mdui-m-b-2">
+    <div class="mdui-container-fluid mdui-m-y-2">
 
         <div class="mdui-typo">
             <h1>新建文本文件
                 <small>{{ request()->get('name') }}</small>
             </h1>
         </div>
-        <div class="mdui-chip mdui-m-t-2 mdui-m-b-2">
+        <div class="mdui-chip mdui-m-y-2">
             <span class="mdui-chip-icon">A</span>
             <span class="mdui-chip-title">{{ request()->get('name') }}</span>
         </div>

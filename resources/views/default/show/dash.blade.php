@@ -4,21 +4,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.min.css">
 @stop
 @section('js')
-
-    <script>
-        (function (d, p) {
-            var a = new XMLHttpRequest(),
-                b = d.body;
-            a.open("GET", p, true);
-            a.send();
-            a.onload = function () {
-                var c = d.createElement("div");
-                c.style.display = "none";
-                c.innerHTML = a.responseText;
-                b.insertBefore(c, b.childNodes[0]);
-            }
-        })(document, "https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.svg");
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/dashjs/dist/dash.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.min.js"></script>
     <script>
@@ -27,11 +12,13 @@
         const video = document.querySelector('video');
         dash.getDebug().setLogToBrowserConsole(false);
         dash.initialize(video, source, true);
-        const player = new Plyr(video, {captions: {active: true, update: true}});
+        const player = new Plyr(video, {
+            captions: {active: true, update: true},
+            iconUrl: "https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.svg",
+        });
         window.player = player;
         window.dash = dash;
     </script>
-
 @stop
 @section('content')
     @include('default.breadcrumb')
@@ -42,13 +29,13 @@
                 <a href="{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}" class="btn btn-success">
                     <i class="fa fa-download"></i>下载</a>
             </div>
-            <hr>
+            <br>
             <div class="text-center">
                 <div id="dash-player">
                     <video crossorigin playsinline controls poster="{!! $file['thumb'] !!}" id="player">
                     </video>
                 </div>
-                <hr>
+                <br>
                 <label class="control-label">下载链接</label>
                 <div class="form-group">
                     <div class="input-group mb-3">
@@ -63,6 +50,5 @@
                 </div>
             </div>
         </div>
-    </div>
     </div>
 @stop

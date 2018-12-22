@@ -18,7 +18,7 @@
             <div class="text-center"><a href="{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}"
                                         class="btn btn-success"><i
                         class="fa fa-download"></i> 下载</a></div>
-            <hr>
+            <br>
             <div class="text-center">
                 <pre>
                     <code

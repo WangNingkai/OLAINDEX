@@ -1,31 +1,20 @@
 @extends('mdui.layouts.main')
 @section('css')
-    <link href="https://cdn.bootcss.com/plyr/3.4.7/plyr.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.min.css">
 @stop
 @section('js')
-    <script>
-        (function (d, p) {
-            var a = new XMLHttpRequest(),
-                b = d.body;
-            a.open("GET", p, true);
-            a.send();
-            a.onload = function () {
-                var c = d.createElement("div");
-                c.style.display = "none";
-                c.innerHTML = a.responseText;
-                b.insertBefore(c, b.childNodes[0]);
-            }
-        })(document, "https://cdn.bootcss.com/plyr/3.4.7/plyr.svg");
-    </script>
-    <script src="https://cdn.bootcss.com/dashjs/2.9.2/dash.all.min.js"></script>
-    <script src="https://cdn.bootcss.com/plyr/3.4.7/plyr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dashjs/dist/dash.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.min.js"></script>
     <script>
         const source = '{!! $file["dash"] !!}';
         const dash = dashjs.MediaPlayer().create();
         const video = document.querySelector('video');
         dash.getDebug().setLogToBrowserConsole(false);
         dash.initialize(video, source, true);
-        const player = new Plyr(video, {captions: {active: true, update: true}});
+        const player = new Plyr(video, {
+            captions: {active: true, update: true},
+            iconUrl: "https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.svg",
+        });
         window.player = player;
         window.dash = dash;
     </script>
@@ -33,17 +22,14 @@
 @section('content')
 
     <div class="mdui-container-fluid">
-        <div class="mdui-chip mdui-m-t-2 mdui-m-b-2 mdui-hidden-sm-down">
-            <span class="mdui-chip-icon">A</span>
-            <span class="mdui-chip-title">{{ $file['name'] }}</span>
+        <div class="mdui-typo mdui-m-y-2">
+            <div class="mdui-typo-subheading-opacity">{{ $file['name'] }}</div>
         </div>
-        <div class="mudi-center mdui-m-t-1" id="dash-player">
+        <div class="mudi-center" id="dash-player">
             <video crossorigin playsinline controls poster="{!! $file['thumb'] !!}" id="player">
             </video>
         </div>
-        <div class="mdui-typo">
-            <hr/>
-        </div>
+        <br>
         <div class="mdui-textfield">
             <label class="mdui-textfield-label" for="downloadUrl">下载地址</label>
             <input class="mdui-textfield-input" type="text" id="downloadUrl"
