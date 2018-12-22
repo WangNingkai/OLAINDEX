@@ -123,7 +123,7 @@
     @yield('content')
 </div>
 <script src="https://cdn.bootcss.com/mdui/0.4.1/js/mdui.min.js"></script>
-<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
 <script src="https://cdn.bootcss.com/limonte-sweetalert2/7.29.2/sweetalert2.all.min.js"></script>
 @if (session()->has('alertMessage'))
     <script>

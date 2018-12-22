@@ -16,7 +16,7 @@
     <script src="https://cdn.jsdelivr.net/npm/inscrybmde@1.11.4/dist/inscrybmde.min.js"></script>
     <script>
         $(function () {
-            var mdeditor = new InscrybMDE({
+            const mdeditor = new InscrybMDE({
                 autoDownloadFontAwesome: false,
                 autofocus: true,
                 autosave: {
@@ -61,8 +61,8 @@
                     "link", "image", "|", "side-by-side", 'fullscreen', "|",
                     {
                         name: "guide",
-                        action: function customFunction(editor) {
-                            var win = window.open(
+                        action: function customFunction() {
+                            let win = window.open(
                                 'https://github.com/riku/Markdown-Syntax-CN/blob/master/syntax.md',
                                 '_blank');
                             if (win) {
