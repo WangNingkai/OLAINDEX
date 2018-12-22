@@ -93,14 +93,13 @@
 <script src="https://cdn.jsdelivr.net/npm/fancybox@3/dist/js/jquery.fancybox.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7/dist/sweetalert2.all.min.js"></script>
-<script src="https://cdn.bootcss.com/jquery_lazyload/1.9.7/jquery.lazyload.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-lazyload@1/jquery.lazyload.min.js"></script>
 @yield('js')
 {!! \App\Helpers\Tool::config('statistics') !!}
 <script>
     $(function () {
         $('[data-fancybox="image-list"]').fancybox({
-            type: "image",
-            protect: true
+            type: "image"
         });
         let clipboard = new ClipboardJS('.clipboard');
         clipboard.on('success', function (e) {
