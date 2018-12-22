@@ -23,8 +23,8 @@ return [
     |
     */
     'skip'   => [
-        '*/admin/file/edit/*',
-        '*/admin/file/add/*',
+        '*/edit/*',
+        '*/add/*',
         '*.xml',
         '*.less',
         '*.pdf',
