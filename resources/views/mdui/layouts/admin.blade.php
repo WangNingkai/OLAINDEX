@@ -99,7 +99,7 @@
                 <a class="mdui-list-item mdui-ripple"
                    href="{{ route('admin.cache.clear') }}">缓存清理 </a>
                 <a class="mdui-list-item mdui-ripple"
-                   href="{{ route('admin.cache.refresh') }}" onclick="swal('正在刷新，请稍后');">缓存刷新 </a>
+                   href="{{ route('admin.cache.refresh') }}" onclick="mdui.snackbar({ message: '正在刷新缓存，请稍等', position: 'right-top' });">缓存刷新 </a>
             </div>
         </div>
         <a href="{{ route('image') }}" class="mdui-list-item mdui-ripple">
