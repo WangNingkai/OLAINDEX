@@ -11,13 +11,6 @@
     <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/jquery.blueimp-gallery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/blueimp-gallery-fullscreen.min.js"></script>
     <script>
-        $(function () {
-            blueimp.Gallery(carouselLinks, {
-                container: '#image-list',
-                carousel: true
-            });
-        });
-
         @if(session()->has('LogInfo'))
         function deleteItem($sign) {
             swal({
@@ -73,8 +66,7 @@
                 </div>
                 <div class="col-4 col-sm-2">
                     @if (session()->has('LogInfo'))
-                        <a class="pull-right dropdown-toggle btn btn-sm btn-primary" href="javascript:void(0)"
-                           id="actionDropdownLink"
+                        <a class="pull-right dropdown-toggle btn btn-sm btn-primary" href="#" id="actionDropdownLink"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">操作</a>
                         <div class="dropdown-menu" aria-labelledby="actionDropdownLink">
                             @if (array_key_exists('README.md', $origin_items))
@@ -244,7 +236,7 @@
                     @foreach($items as $item)
                         @if(array_has($item,'image'))
                             <a href="{{ route('view',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
-                               title="{{ $item['name'] }}" data-gallery="#image-list">
+                               title="{{ $item['name'] }}" data-gallery>
                                 <img class="lazy"
                                      data-original="{{ array_get($item,'thumbnails.0.small.url') }}"
                                      src="{{ asset('img/loading.gif') }}"
