@@ -21,21 +21,21 @@
             <label class="form-control-label" for="root">OneDrive根目录</label>
             <input type="text" class="form-control" id="root" name="root"
                    value="{{ \App\Helpers\Tool::config('root') }}">
-            <span class="form-text text-danger">目录索引起始文件夹地址，有效文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ |。</span>
+            <span class="form-text text-danger">目录索引起始文件夹地址，文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ | 否则无法索引。</span>
         </div>
 
         <div class="form-group">
             <label class="form-control-label" for="expires">缓存时间(分钟)</label>
             <input type="text" class="form-control" id="expires" name="expires"
                    value="{{ \App\Helpers\Tool::config('expires') }}">
-            <span class="form-text text-danger">建议小于60分钟，否则会导致响应失败</span>
+            <span class="form-text text-danger">建议缓存时间小于60分钟，否则会导致缓存失效</span>
         </div>
 
         <div class="form-group">
-            <label for="encrypt_path">加密路径</label>
+            <label for="encrypt_path">加密</label>
             <textarea class="form-control" id="encrypt_path" name="encrypt_path"
                       rows="5">{{ \App\Helpers\Tool::config('encrypt_path','') }}</textarea>
-            <span class="form-text text-danger">格式如： /path1/xxx/ /path2/xxx/ password1,/path3/xxx/ /path4/xxx/ password2 (以OneDrive根目录为基础)</span>
+            <span class="form-text text-danger">填写需要加密的文件或文件夹路径，格式如： /path1/xxx/ /path2/xxx/ password1,/path3/xxx/ /path4/xxx/ password2 (以OneDrive根目录为基础)</span>
         </div>
         <div class="form-group">
             <label for="">加密选项</label>
@@ -57,10 +57,10 @@
                 <input type="checkbox" class="custom-control-input" id="c4" name="encrypt_option[]" value="view" @if(in_array('view',\App\Helpers\Tool::config('encrypt_option',[]))) checked @endif>
                 <label class="custom-control-label" for="c4">加密图片查看页</label>
             </div>
-
+            <span class="form-text text-danger">选择需要加密强度，默认加密列表</span>
         </div>
         <div class="form-group">
-            <label class="form-control-label">开启看图模式</label>
+            <label class="form-control-label">是否看图模式</label>
             <div class="custom-control custom-radio">
                 <input type="radio" id="image_view1" name="image_view" class="custom-control-input"
                        @if(\App\Helpers\Tool::config('image_view',0) == 1) checked @endif value="1">
@@ -73,7 +73,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="form-control-label">开启图床</label>
+            <label class="form-control-label">是否开启图床</label>
             <div class="custom-control custom-radio">
                 <input type="radio" id="image_hosting1" name="image_hosting" class="custom-control-input"
                        @if(\App\Helpers\Tool::config('image_hosting') == 1) checked @endif value="1">
@@ -91,35 +91,35 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="form-control-label">图床设为首页</label>
+            <label class="form-control-label">是否将图床设为首页</label>
             <div class="custom-control custom-radio">
                 <input type="radio" id="image_home1" name="image_home" class="custom-control-input"
                        @if(\App\Helpers\Tool::config('image_home',0) == 1) checked @endif value="1">
-                <label class="custom-control-label" for="image_home1">开启</label>
+                <label class="custom-control-label" for="image_home1">是</label>
             </div>
             <div class="custom-control custom-radio">
                 <input type="radio" id="image_home0" name="image_home" class="custom-control-input"
                        @if(\App\Helpers\Tool::config('image_home',0) == 0) checked @endif value="0">
-                <label class="custom-control-label" for="image_home0">关闭</label>
+                <label class="custom-control-label" for="image_home0">否</label>
             </div>
         </div>
         <div class="form-group">
-            <label class="form-control-label" for="image_hosting_path">图床地址</label>
+            <label class="form-control-label" for="image_hosting_path">OneDrive中图床保存地址</label>
             <input type="text" class="form-control" id="image_hosting_path" name="image_hosting_path"
                    value="{{ \App\Helpers\Tool::config('image_hosting_path') }}">
-            <span class="form-text text-danger">有效文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ |。</span>
+            <span class="form-text text-danger">文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ |。</span>
         </div>
         <div class="form-group">
             <label class="form-control-label" for="hotlink_protection">防盗链</label>
             <input type="text" class="form-control" id="hotlink_protection" name="hotlink_protection"
                    value="{{ \App\Helpers\Tool::config('hotlink_protection') }}">
-            <span class="form-text text-danger">留空则不开启。链接空格隔开</span>
+            <span class="form-text text-danger">留空则不开启。白名单链接以空格分开</span>
         </div>
         <div class="form-group">
             <label class="form-control-label" for="copyright">自定义版权显示</label>
             <input type="text" class="form-control" id="copyright" name="copyright"
                    value="{{ \App\Helpers\Tool::config('copyright','') }}">
-            <span class="form-text text-danger">留空则不显示。markdown格式书写 如：Made by [xxx](https://xxx)</span>
+            <span class="form-text text-danger">留空则不显示。使用markdown格式表示 如：Made by [xxx](https://xxx)</span>
         </div>
         <div class="form-group">
             <label class="form-control-label" for="statistics">统计代码</label>

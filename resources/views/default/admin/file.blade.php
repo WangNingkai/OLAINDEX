@@ -48,7 +48,7 @@
         <label class="form-control-label" for="target_directory">上传目录</label>
         <input type="text" class="form-control" id="target_directory" name="target_directory"
                placeholder="在此输入要上传的目录位置（默认 OneDrive 根目录）">
-        <span class="form-text text-danger">此上传方式仅支持小于4MB文件的上传</span>
+        <span class="form-text text-danger">由于接口限制，此上传方式仅支持小于4MB文件的上传</span>
     </div>
     <div class="form-group">
         <form class="dropzone" id="file-dropzone">

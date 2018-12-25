@@ -15,7 +15,7 @@
             <br>
 
             <button class="mdui-btn mdui-color-theme-accent mdui-ripple mdui-float-right" type="submit"><i
-                    class="mdui-icon material-icons">person</i> 解绑/绑定
+                    class="mdui-icon material-icons">person</i> 解绑/绑定账户
             </button>
         </form>
     </div>

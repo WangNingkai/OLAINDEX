@@ -19,21 +19,21 @@
                 <label class="mdui-textfield-label" for="root">OneDrive根目录</label>
                 <input type="text" class="mdui-textfield-input" id="root" name="root"
                        value="{{ \App\Helpers\Tool::config('root') }}" required>
-                <div class="mdui-textfield-helper">目录索引起始文件夹地址，有效文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ |</div>
+                <div class="mdui-textfield-helper">目录索引起始文件夹地址，文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ | 否则无法索引。</div>
             </div>
             <br>
             <div class="mdui-textfield mdui-textfield-floating-label">
                 <label class="mdui-textfield-label" for="expires">缓存时间(分钟)</label>
                 <input type="text" class="mdui-textfield-input" id="expires" name="expires"
                        value="{{ \App\Helpers\Tool::config('expires',0) }}">
-                <div class="mdui-textfield-helper">建议小于60分钟，否则会导致响应失败</div>
+                <div class="mdui-textfield-helper">建议缓存时间小于60分钟，否则会导致缓存失效</div>
             </div>
             <br>
             <div class="mdui-textfield mdui-textfield-floating-label">
-                <label class="mdui-textfield-label" for="encrypt_path">加密路径</label>
+                <label class="mdui-textfield-label" for="encrypt_path">加密</label>
                 <textarea name="encrypt_path" id="encrypt_path" class="mdui-textfield-input"
                           rows="3">{{ \App\Helpers\Tool::config('encrypt_path','') }}</textarea>
-                <div class="mdui-textfield-helper">格式如： /path1/xxx/ /path2/xxx/ password1,/path3/xxx/ /path4/xxx/ password2 (以OneDrive根目录为基础)
+                <div class="mdui-textfield-helper">填写需要加密的文件或文件夹路径，格式如： /path1/xxx/ /path2/xxx/ password1,/path3/xxx/ /path4/xxx/ password2 (以OneDrive根目录为基础)
                 </div>
             </div>
             <br>
@@ -74,7 +74,7 @@
             </select>
             <br>
             <br>
-            <label for="image_home" class="mdui-textfield-label">图床设为首页</label> &nbsp; &nbsp;
+            <label for="image_home" class="mdui-textfield-label">是否将图床设为首页</label> &nbsp; &nbsp;
             <br>
             <select name="image_home" id="image_home" class="mdui-select" mdui-select="{position: 'bottom'}">
                 <option value="">开启图床设为首页</option>
@@ -82,10 +82,10 @@
                 <option value="0" @if(\App\Helpers\Tool::config('image_home',0) == 0) selected @endif>关闭</option>
             </select>
             <div class="mdui-textfield mdui-textfield-floating-label">
-                <label class="mdui-textfield-label" for="image_hosting_path">图床地址</label>
+                <label class="mdui-textfield-label" for="image_hosting_path">OneDrive中图床保存地址</label>
                 <input type="text" class="mdui-textfield-input" id="image_hosting_path" name="image_hosting_path"
                        value="{{ \App\Helpers\Tool::config('image_hosting_path') }}">
-                <div class="mdui-textfield-helper">有效文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ |</div>
+                <div class="mdui-textfield-helper">文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ |</div>
             </div>
 
             <br>
@@ -93,7 +93,7 @@
                 <label class="mdui-textfield-label" for="hotlink_protection">防盗链</label>
                 <input type="text" class="mdui-textfield-input" id="hotlink_protection" name="hotlink_protection"
                        value="{{ \App\Helpers\Tool::config('hotlink_protection') }}">
-                <div class="mdui-textfield-helper">留空则不开启。链接空格隔开</div>
+                <div class="mdui-textfield-helper">留空则不开启。白名单链接以空格分开</div>
 
             </div>
             <br>
@@ -101,7 +101,7 @@
                 <label class="mdui-textfield-label" for="copyright">自定义版权显示</label>
                 <input type="text" class="mdui-textfield-input" id="copyright" name="copyright"
                        value="{{ \App\Helpers\Tool::config('copyright') }}">
-                <div class="mdui-textfield-helper">留空则不显示。markdown格式书写 如：Made by [xxx](https://xxx)</div>
+                <div class="mdui-textfield-helper">留空则不显示。使用markdown格式表示 如：Made by [xxx](https://xxx)</div>
             </div>
 
             <br>

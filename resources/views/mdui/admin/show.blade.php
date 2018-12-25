@@ -4,7 +4,7 @@
 
         <div class="mdui-typo">
             <h1>展示设置
-                <small>前台显示的文件后缀, 空格隔开</small>
+                <small>展示的文件后缀, 以空格分开</small>
             </h1>
         </div>
         <form action="" method="post">
@@ -25,7 +25,7 @@
                 <label class="mdui-textfield-label" for="dash">dash流</label>
                 <input type="text" class="mdui-textfield-input" id="dash" name="dash"
                        value="{{ \App\Helpers\Tool::config('dash','') }}">
-                <div class="mdui-textfield-helper">仅支持企业、教育版</div>
+                <div class="mdui-textfield-helper">仅支持企业、教育版账户</div>
             </div>
             <br>
             <div class="mdui-textfield mdui-textfield-floating-label">

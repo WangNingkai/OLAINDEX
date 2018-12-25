@@ -3,7 +3,7 @@
 @section('content')
     <div class="card border-light mb-3">
         <div class="card-header">
-            请输入文件夹密码
+            此文件夹或文件受到保护，您需要提供访问密码才能查看
         </div>
         <div class="card-body">
             <form action="{{ route('password') }}" method="post">

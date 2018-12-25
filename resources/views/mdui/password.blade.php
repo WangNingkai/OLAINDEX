@@ -6,7 +6,7 @@
                 @csrf
                 <div class="mdui-textfield mdui-textfield-floating-label">
                     <i class="mdui-icon material-icons">https</i>
-                    <label class="mdui-textfield-label" for="password">输入密码进行查看</label>
+                    <label class="mdui-textfield-label" for="password">此文件夹或文件受到保护，您需要提供访问密码才能查看</label>
                     <input name="password" class="mdui-textfield-input" type="password" id="password" required/>
                     <input type="hidden" name="encryptKey" value="{{ encrypt($encryptKey) }}">
                     <input type="hidden" name="route" value="{{ encrypt($route) }}">

@@ -23,7 +23,7 @@
                 <input type="text" class="form-control" name="source" id="source">
                 <input type="hidden" name="source_id" id="source_id">
             </div>
-            <span class="form-text text-danger">填写完整 OneDrive 地址</span>
+            <span class="form-text text-danger">移动、复制和创建分享操作，请填写完整OneDrive地址（包括文件/文件夹名），离线下载，填写完整的下载地址。</span>
         </div>
     </div>
     <div class="form-group">
@@ -36,7 +36,7 @@
                 <input type="text" class="form-control" name="target" id="target">
                 <input type="hidden" name="target_id" id="target_id">
             </div>
-            <span class="form-text text-danger">移动文件和离线下载（包括文件名）请填写目标文件或文件夹的完整地址，创建、删除分享时可不填</span>
+            <span class="form-text text-danger">移动复制操作时，请填写目标文件或文件夹的完整地址（包括文件/文件夹名），离线下载操作请填写完整的下载路径（包括文件/文件夹名）；创建、删除分享时可不填。</span>
         </div>
     </div>
     <button type="submit" id="submit_btn" class="btn btn-primary">提交</button>
