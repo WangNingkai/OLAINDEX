@@ -36,7 +36,7 @@
                 <input type="text" class="form-control" name="target" id="target">
                 <input type="hidden" name="target_id" id="target_id">
             </div>
-            <span class="form-text text-danger">移动文件和离线下载（包括文件名）请填写完整文件地址，创建、删除分享时可不填</span>
+            <span class="form-text text-danger">移动文件和离线下载（包括文件名）请填写目标文件或文件夹的完整地址，创建、删除分享时可不填</span>
         </div>
     </div>
     <button type="submit" id="submit_btn" class="btn btn-primary">提交</button>

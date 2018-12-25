@@ -253,7 +253,7 @@
             <label class="mdui-textfield-label" for="target">目标路径</label>
             <input type="text" class="mdui-textfield-input" id="target" name="target">
             <input type="hidden" name="target_id" id="target_id">
-            <div class="mdui-textfield-helper">移动文件和离线下载（包括文件名）请填写完整文件地址，创建、删除分享时可不填</div>
+            <div class="mdui-textfield-helper">移动文件和离线下载（包括文件名）请填写目标文件或文件夹的完整地址，创建、删除分享时可不填</div>
         </div>
 
         <br>
