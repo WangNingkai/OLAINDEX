@@ -75,7 +75,7 @@
                                     {{ $item['name'] }}
                                 </div>
                                 <div
-                                    class="mdui-col-sm-3 mdui-text-right">{{ date('M m H:i',strtotime($item['lastModifiedDateTime'])) }}</div>
+                                    class="mdui-col-sm-3 mdui-text-right">{{ date('M d H:i',strtotime($item['lastModifiedDateTime'])) }}</div>
                                 <div
                                     class="mdui-col-sm-2 mdui-text-right">{{ array_has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</div>
                             </a>
@@ -89,7 +89,7 @@
                                     {{ $item['name'] }}
                                 </div>
                                 <div
-                                    class="mdui-col-sm-3 mdui-text-right">{{ date('M m H:i',strtotime($item['lastModifiedDateTime'])) }}</div>
+                                    class="mdui-col-sm-3 mdui-text-right">{{ date('M d H:i',strtotime($item['lastModifiedDateTime'])) }}</div>
                                 <div
                                     class="mdui-col-sm-2 mdui-text-right">{{ array_has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</div>
                             </a>
@@ -138,7 +138,7 @@
                                 </div>
                                 <br/>
                                 <div class="col-date">
-                                    {{ date('M m H:i',strtotime($item['lastModifiedDateTime'])) }}
+                                    {{ date('M d H:i',strtotime($item['lastModifiedDateTime'])) }}
                                 </div>
                             </div>
                         </a>
@@ -164,7 +164,7 @@
                                 </div>
                                 <br/>
                                 <div class="col-date">
-                                    {{ date('M m H:i',strtotime($item['lastModifiedDateTime'])) }}
+                                    {{ date('M d H:i',strtotime($item['lastModifiedDateTime'])) }}
                                 </div>
                             </div>
                         </a>

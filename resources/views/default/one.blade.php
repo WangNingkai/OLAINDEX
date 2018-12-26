@@ -184,7 +184,7 @@
                         </div>
                         <div class="col-sm-2 d-none d-md-block d-md-none">
                             <span
-                                class="pull-right">{{ date('M m H:i',strtotime($item['lastModifiedDateTime'])) }}</span>
+                                class="pull-right">{{ date('M d H:i',strtotime($item['lastModifiedDateTime'])) }}</span>
                         </div>
                         <div class="col-sm-2 d-none d-md-block d-md-none">
                             <span
