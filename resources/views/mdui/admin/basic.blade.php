@@ -93,7 +93,7 @@
                 <label class="mdui-textfield-label" for="hotlink_protection">防盗链</label>
                 <input type="text" class="mdui-textfield-input" id="hotlink_protection" name="hotlink_protection"
                        value="{{ \App\Helpers\Tool::config('hotlink_protection') }}">
-                <div class="mdui-textfield-helper">留空则不开启。白名单链接以空格分开</div>
+                <div class="mdui-textfield-helper">留空则不开启。白名单链接以空格分开（此处采用 Http Referer 防盗链机制，如需加强请自行从服务器层面配置）</div>
 
             </div>
             <br>

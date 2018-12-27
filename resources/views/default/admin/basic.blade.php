@@ -113,7 +113,7 @@
             <label class="form-control-label" for="hotlink_protection">防盗链</label>
             <input type="text" class="form-control" id="hotlink_protection" name="hotlink_protection"
                    value="{{ \App\Helpers\Tool::config('hotlink_protection') }}">
-            <span class="form-text text-danger">留空则不开启。白名单链接以空格分开</span>
+            <span class="form-text text-danger">留空则不开启。白名单链接以空格分开（此处采用 Http Referer 防盗链机制，如需加强请自行从服务器层面配置）</span>
         </div>
         <div class="form-group">
             <label class="form-control-label" for="copyright">自定义版权显示</label>
