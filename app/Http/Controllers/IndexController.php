@@ -85,6 +85,12 @@ class IndexController extends Controller
     public function list(Request $request)
     {
         $realPath = $request->route()->parameter('query') ?? '/';
+        $limit = $request->get('limit', 20);
+        if (!is_numeric($limit)) {
+            Tool::showMessage('非法请求', false);
+
+            return view(config('olaindex.theme').'message');
+        }
         $graphPath = Tool::getOriginPath($realPath);
         $queryPath = trim(Tool::getAbsolutePath($realPath), '/');
         $origin_path = rawurldecode($queryPath);
@@ -143,7 +149,6 @@ class IndexController extends Controller
                 ['README.md', 'HEAD.md', '.password', '.deny']
             );
         }
-        $limit = $request->get('limit', 20);
         $items = Tool::paginate($origin_items, $limit);
         $data = compact(
             'items',
@@ -393,6 +398,12 @@ class IndexController extends Controller
     public function search(Request $request)
     {
         $keywords = $request->get('keywords');
+        $limit = $request->get('limit', 20);
+        if (!is_numeric($limit)) {
+            Tool::showMessage('非法请求', false);
+
+            return view(config('olaindex.theme').'message');
+        }
         if ($keywords) {
             $path = Tool::getEncodeUrl($this->root);
             $response = OneDrive::search($path, $keywords);
@@ -409,7 +420,6 @@ class IndexController extends Controller
         } else {
             $items = [];
         }
-        $limit = $request->get('limit', 20);
         $items = Tool::paginate($items, $limit);
 
         return view(config('olaindex.theme').'search', compact('items'));
