@@ -23,7 +23,7 @@
 
 ## 预览
 
-![预览](https://img02.sogoucdn.com/app/a/100520146/cd2311797c818d8f37bd5a7474080be4)
+![预览](https://img01.sogoucdn.com/app/a/100520146/cd2311797c818d8f37bd5a7474080be4)
  
 ## 演示地址
 
