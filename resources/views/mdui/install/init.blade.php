@@ -47,7 +47,7 @@
                 <label class="mdui-textfield-label" for="redirect_uri">回调地址(redirect_uri)</label>
                 <input type="text" name="redirect_uri" id="redirect_uri" class="mdui-textfield-input"
                        value="https://olaindex.ningkai.wang" required/>
-                <div class="mdui-textfield-error">回调地址不能为空</div>
+                <div class="mdui-textfield-error">回调地址不能为空,确保回调地址格式为此形式 http(s)://you.domain/oauth，使用中转域名无需https协议</div>
             </div>
             <br>
             <a class="mdui-btn mdui-btn-raised mdui-float-left"
