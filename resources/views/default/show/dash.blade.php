@@ -36,7 +36,8 @@
                     </video>
                 </div>
                 <br>
-                <p class="text-danger">如无法播放或格式不受支持，推荐使用 <a href="https://pan.lanzou.com/b112173">potplayer</a> 播放器在线播放
+                <p class="text-danger">如无法播放或格式不受支持，推荐使用 <a href="https://pan.lanzou.com/b112173" target="_blank">potplayer</a>
+                    播放器在线播放
                 </p>
                 <label class="control-label">下载链接</label>
                 <div class="form-group">

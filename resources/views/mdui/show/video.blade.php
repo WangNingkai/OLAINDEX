@@ -22,7 +22,8 @@
             </video>
         </div>
         <br>
-        <p class="text-danger">如无法播放或格式不受支持，推荐下载使用 <a href="https://pan.lanzou.com/b112173">potplayer</a> 播放器在线播放</p>
+        <p class="text-danger">如无法播放或格式不受支持，推荐下载使用 <a href="https://pan.lanzou.com/b112173"
+                                                      target="_blank">potplayer</a> 播放器在线播放</p>
         <div class="mdui-textfield">
             <label class="mdui-textfield-label" for="downloadUrl">下载地址</label>
             <input class="mdui-textfield-input" type="text" id="downloadUrl"
