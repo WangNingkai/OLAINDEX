@@ -55,12 +55,12 @@ class IndexController extends Controller
         $this->root = Tool::config('root', '/');
         $this->show = [
             'stream' => explode(' ', Tool::config('stream')),
-            'image'  => explode(' ', Tool::config('image')),
-            'video'  => explode(' ', Tool::config('video')),
-            'dash'   => explode(' ', Tool::config('dash')),
-            'audio'  => explode(' ', Tool::config('audio')),
-            'code'   => explode(' ', Tool::config('code')),
-            'doc'    => explode(' ', Tool::config('doc')),
+            'image' => explode(' ', Tool::config('image')),
+            'video' => explode(' ', Tool::config('video')),
+            'dash' => explode(' ', Tool::config('dash')),
+            'audio' => explode(' ', Tool::config('audio')),
+            'code' => explode(' ', Tool::config('code')),
+            'doc' => explode(' ', Tool::config('doc')),
         ];
     }
 
@@ -84,18 +84,20 @@ class IndexController extends Controller
      */
     public function list(Request $request)
     {
+        $order = $request->get('orderBy');
+        @list($field, $sortBy) = explode(',', $order);
         $realPath = $request->route()->parameter('query') ?? '/';
         $limit = $request->get('limit', 20);
         if (!is_numeric($limit)) {
             Tool::showMessage('非法请求', false);
 
-            return view(config('olaindex.theme').'message');
+            return view(config('olaindex.theme') . 'message');
         }
         $graphPath = Tool::getOriginPath($realPath);
         $queryPath = trim(Tool::getAbsolutePath($realPath), '/');
         $origin_path = rawurldecode($queryPath);
         $path_array = $origin_path ? explode('/', $origin_path) : [];
-        $pathKey = 'one:path:'.$graphPath;
+        $pathKey = 'one:path:' . $graphPath;
         if (Cache::has($pathKey)) {
             $item = Cache::get($pathKey);
         } else {
@@ -106,31 +108,39 @@ class IndexController extends Controller
             } else {
                 Tool::showMessage($response['msg'], false);
 
-                return view(config('olaindex.theme').'message');
+                return view(config('olaindex.theme') . 'message');
             }
         }
         if (array_has($item, '@microsoft.graph.downloadUrl')) {
             return redirect()->away($item['@microsoft.graph.downloadUrl']);
         }
         // 获取列表
-        $key = 'one:list:'.$graphPath;
+        $key = 'one:list:' . $graphPath;
         if (Cache::has($key)) {
             $origin_items = Cache::get($key);
         } else {
             $response = OneDrive::getChildrenByPath(
                 $graphPath,
                 '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl'
-                .'&expand=thumbnails'
+                . '&expand=thumbnails'
             );
+
             if ($response['errno'] === 0) {
                 $origin_items = $response['data'];
                 Cache::put($key, $origin_items, $this->expires);
             } else {
                 Tool::showMessage($response['msg'], false);
 
-                return view(config('olaindex.theme').'message');
+                return view(config('olaindex.theme') . 'message');
             }
         }
+        $origin_items = collect($origin_items);
+        if (strtolower($sortBy) !== 'desc') {
+            $origin_items = $origin_items->sortBy($field)->toArray();
+        } else {
+            $origin_items = $origin_items->sortByDesc($field)->toArray();
+        }
+        dd($origin_items);
         $hasImage = Tool::hasImages($origin_items);
         // 过滤微软OneNote文件
         $origin_items = array_where($origin_items, function ($value) {
@@ -160,7 +170,7 @@ class IndexController extends Controller
             'hasImage'
         );
 
-        return view(config('olaindex.theme').'one', $data);
+        return view(config('olaindex.theme') . 'one', $data);
     }
 
     /**
@@ -180,7 +190,7 @@ class IndexController extends Controller
         $name = array_pop($absolutePathArr);
         $absolutePath = implode('/', $absolutePathArr);
         $listPath = Tool::getOriginPath($absolutePath);
-        $list = Cache::get('one:list:'.$listPath, '');
+        $list = Cache::get('one:list:' . $listPath, '');
         if ($list && array_key_exists($name, $list)) {
             return $list[$name];
         } else {
@@ -188,13 +198,13 @@ class IndexController extends Controller
 
             // 获取文件
             return Cache::remember(
-                'one:file:'.$graphPath,
+                'one:file:' . $graphPath,
                 $this->expires,
                 function () use ($graphPath) {
                     $response = OneDrive::getItemByPath(
                         $graphPath,
                         '?select=id,eTag,name,size,lastModifiedDateTime,file,image,@microsoft.graph.downloadUrl'
-                        .'&expand=thumbnails'
+                        . '&expand=thumbnails'
                     );
                     if ($response['errno'] === 0) {
                         return $response['data'];
@@ -222,12 +232,12 @@ class IndexController extends Controller
         if (is_null($file) || array_has($file, 'folder')) {
             Tool::showMessage('获取文件失败，请检查路径或稍后重试', false);
 
-            return view(config('olaindex.theme').'message');
+            return view(config('olaindex.theme') . 'message');
         }
         $file['download'] = $file['@microsoft.graph.downloadUrl'];
         foreach ($this->show as $key => $suffix) {
             if (in_array($file['ext'], $suffix)) {
-                $view = 'show.'.$key;
+                $view = 'show.' . $key;
                 // 处理文本文件
                 if (in_array($key, ['stream', 'code'])) {
                     if ($file['size'] > 5 * 1024 * 1024) {
@@ -272,12 +282,12 @@ class IndexController extends Controller
                         $file['thumb']
                     );
                     $file['dash'] = $replace
-                        ."&part=index&format=dash&useScf=True&pretranscode=0&transcodeahead=0";
+                        . "&part=index&format=dash&useScf=True&pretranscode=0&transcodeahead=0";
                 }
                 // 处理微软文档
                 if ($key === 'doc') {
                     $url = "https://view.officeapps.live.com/op/view.aspx?src="
-                        .urlencode($file['@microsoft.graph.downloadUrl']);
+                        . urlencode($file['@microsoft.graph.downloadUrl']);
 
                     return redirect()->away($url);
                 }
@@ -287,7 +297,7 @@ class IndexController extends Controller
                 $path_array = $origin_path ? explode('/', $origin_path) : [];
                 $data = compact('file', 'path_array', 'origin_path');
 
-                return view(config('olaindex.theme').$view, $data);
+                return view(config('olaindex.theme') . $view, $data);
             } else {
                 $last = end($this->show);
                 if ($last === $suffix) {
@@ -310,13 +320,13 @@ class IndexController extends Controller
         if ($realPath === '/') {
             Tool::showMessage('下载失败，请检查路径或稍后重试', false);
 
-            return view(config('olaindex.theme').'message');
+            return view(config('olaindex.theme') . 'message');
         }
         $file = $this->getFileOrCache($realPath);
         if (is_null($file) || array_has($file, 'folder')) {
             Tool::showMessage('下载失败，请检查路径或稍后重试', false);
 
-            return view(config('olaindex.theme').'message');
+            return view(config('olaindex.theme') . 'message');
         }
         $url = $file['@microsoft.graph.downloadUrl'];
 
@@ -357,7 +367,7 @@ class IndexController extends Controller
             $url = $response['data']['url'];
             @list($url, $tmp) = explode('&width=', $url);
             $url .= strpos($url, '?') ? '&' : '?';
-            $thumb = $url."width={$width}&height={$height}";
+            $thumb = $url . "width={$width}&height={$height}";
         } else {
             $thumb = 'https://i.loli.net/2018/12/04/5c05cd3086425.png';
         }
@@ -376,13 +386,13 @@ class IndexController extends Controller
         if ($realPath === '/') {
             Tool::showMessage('获取失败，请检查路径或稍后重试', false);
 
-            return view(config('olaindex.theme').'message');
+            return view(config('olaindex.theme') . 'message');
         }
         $file = $this->getFileOrCache($realPath);
         if (is_null($file) || array_has($file, 'folder')) {
             Tool::showMessage('获取失败，请检查路径或稍后重试', false);
 
-            return view(config('olaindex.theme').'message');
+            return view(config('olaindex.theme') . 'message');
         }
         $download = $file['@microsoft.graph.downloadUrl'];
 
@@ -402,7 +412,7 @@ class IndexController extends Controller
         if (!is_numeric($limit)) {
             Tool::showMessage('非法请求', false);
 
-            return view(config('olaindex.theme').'message');
+            return view(config('olaindex.theme') . 'message');
         }
         if ($keywords) {
             $path = Tool::getEncodeUrl($this->root);
@@ -422,7 +432,7 @@ class IndexController extends Controller
         }
         $items = Tool::paginate($items, $limit);
 
-        return view(config('olaindex.theme').'search', compact('items'));
+        return view(config('olaindex.theme') . 'search', compact('items'));
     }
 
     /**
@@ -459,11 +469,11 @@ class IndexController extends Controller
         $realPath = decrypt(request()->get('realPath'));
         $encryptKey = decrypt(request()->get('encryptKey'));
         $data = [
-            'password'   => encrypt($password),
+            'password' => encrypt($password),
             'encryptKey' => $encryptKey,
-            'expires'    => time() + (int)$this->expires * 60, // 目录密码过期时间
+            'expires' => time() + (int)$this->expires * 60, // 目录密码过期时间
         ];
-        Session::put('password:'.$encryptKey, $data);
+        Session::put('password:' . $encryptKey, $data);
         $arr = Tool::handleEncryptDir(Tool::config('encrypt_path'));
         $directory_password = $arr[$encryptKey];
         if (strcmp($password, $directory_password) === 0) {
@@ -472,7 +482,7 @@ class IndexController extends Controller
             Tool::showMessage('密码错误', false);
 
             return view(
-                config('olaindex.theme').'password',
+                config('olaindex.theme') . 'password',
                 compact('route', 'realPath', 'encryptKey')
             );
         }
