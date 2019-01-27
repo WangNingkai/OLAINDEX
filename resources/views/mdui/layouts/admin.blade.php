@@ -7,8 +7,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>OLAINDEX 管理</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link href="https://cdn.bootcss.com/mdui/0.4.1/css/mdui.min.css" rel="stylesheet">
-    <link href="https://cdn.bootcss.com/limonte-sweetalert2/7.29.2/sweetalert2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@0.4.2/dist/css/mdui.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@7/dist/sweetalert2.min.css">
     @yield('css')
     <script>
         Config = {
@@ -100,12 +100,16 @@
                 <a class="mdui-list-item mdui-ripple"
                    href="{{ route('admin.cache.clear') }}">缓存清理 </a>
                 <a class="mdui-list-item mdui-ripple"
-                   href="{{ route('admin.cache.refresh') }}" onclick="swal('正在刷新，请稍后');">缓存刷新 </a>
+                   href="{{ route('admin.cache.refresh') }}" onclick="mdui.snackbar({ message: '正在刷新缓存，请稍等', position: 'right-top' });">缓存刷新 </a>
             </div>
         </div>
         <a href="{{ route('image') }}" class="mdui-list-item mdui-ripple">
             <i class="mdui-list-item-icon mdui-icon material-icons mdui-text-color-pink">image</i>
             <div class="mdui-list-item-content">图床</div>
+        </a>
+        <a href="{{ route('log-viewer::dashboard') }}" class="mdui-list-item mdui-ripple">
+            <i class="mdui-list-item-icon mdui-icon material-icons mdui-text-color-grey">bug_report</i>
+            <div class="mdui-list-item-content">调试日志</div>
         </a>
         <a href="https://onedrive.live.com" class="mdui-list-item mdui-ripple">
             <i class="mdui-list-item-icon mdui-icon material-icons mdui-text-color-blue">cloud</i>
@@ -119,9 +123,7 @@
 <div class="mdui-container">
     @yield('content')
 </div>
-<script src="https://cdn.bootcss.com/mdui/0.4.1/js/mdui.min.js"></script>
-<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdn.bootcss.com/limonte-sweetalert2/7.29.2/sweetalert2.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/mdui@0.4.2/dist/js/mdui.min.js,npm/jquery@3,npm/sweetalert2@7/dist/sweetalert2.min.js"></script>
 @if (session()->has('alertMessage'))
     <script>
         $(function () {

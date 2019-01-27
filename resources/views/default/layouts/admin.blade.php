@@ -66,8 +66,14 @@
                        aria-haspopup="true" aria-expanded="false"><i class="fa fa-bolt"></i> 缓存</a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" href="{{ route('admin.cache.clear') }}">缓存清理 </a>
-                        <a class="dropdown-item" href="{{ route('admin.cache.refresh') }}" onclick="swal('正在刷新，请稍后');">刷新缓存 </a>
+                        <a class="dropdown-item" href="{{ route('admin.cache.refresh') }}"
+                           onclick="swal('正在刷新缓存，请稍等');">刷新缓存 </a>
                     </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('log-viewer::dashboard') }}" target="_blank"><i
+                            class="fa fa-bug"></i>
+                        调试日志 </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="https://onedrive.live.com" target="_blank"><i class="fa fa-cloud"></i>
@@ -89,7 +95,7 @@
         </div>
     </div>
 </nav>
-<div class="container" style="margin-top: 10px">
+<div class="container mt-3">
     @if (session()->has('alertMessage'))
         <div class="alert alert-dismissible alert-{{ session()->pull('alertType')}}">
             <button type="button" class="close" data-dismiss="alert">&times;</button>

@@ -10,16 +10,13 @@
 @section('content')
 
     <div class="mdui-container-fluid">
-        <div class="mdui-chip mdui-m-t-2 mdui-m-b-2 mdui-hidden-sm-down">
-            <span class="mdui-chip-icon">A</span>
-            <span class="mdui-chip-title">{{ $file['name'] }}</span>
+        <div class="mdui-typo mdui-m-y-2">
+            <div class="mdui-typo-subheading-opacity">{{ $file['name'] }}</div>
         </div>
-        <div class="mudi-center mdui-m-t-1">
+        <div class="mudi-center">
             <pre><code class="language-{{ $file['ext'] === 'sh' ? 'bash' : $file['ext']}}">{{ $file['content'] }}</code></pre>
         </div>
-        <div class="mdui-typo">
-            <hr/>
-        </div>
+        <br>
         <div class="mdui-textfield">
             <label class="mdui-textfield-label" for="downloadUrl">下载地址</label>
             <input class="mdui-textfield-input" type="text" id="downloadUrl"

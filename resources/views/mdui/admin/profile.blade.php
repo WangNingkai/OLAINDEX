@@ -1,6 +1,6 @@
 @extends('mdui.layouts.admin')
 @section('content')
-    <div class="mdui-container-fluid mdui-m-t-2 mdui-m-b-2">
+    <div class="mdui-container-fluid mdui-m-y-2">
 
         <div class="mdui-typo">
             <h1>密码设置</h1>

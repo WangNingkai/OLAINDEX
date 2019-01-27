@@ -8,6 +8,6 @@
             <input type="text" class="form-control" id="email" name="email"
                    value="{{ \App\Helpers\Tool::getBindAccount() }}" disabled>
         </div>
-        <button type="submit" class="btn btn-primary">解绑/绑定</button>
+        <button type="submit" class="btn btn-primary">解绑/绑定账户</button>
     </form>
 @stop

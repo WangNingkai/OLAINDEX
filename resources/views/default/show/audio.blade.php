@@ -1,19 +1,13 @@
 @extends('default.layouts.main')
 @section('title',$file['name'])
 @section('css')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.min.css">
 @stop
 @section('js')
-    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.min.js"></script>
     <script>
-        const ap = new APlayer({
-            container: document.getElementById("aplayer"),
-            audio: [{
-                name: "{{ $file['name'] }}",
-                artist: 'unknown',
-                url: "{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}",
-                cover: "https://i.loli.net/2018/10/28/5bd571ce90e33.png"
-            }]
+        const player = new Plyr('#player', {
+            "iconUrl": "https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.svg",
         });
     </script>
 @stop
@@ -27,11 +21,18 @@
             <div class="text-center"><a href="{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}"
                                         class="btn btn-success"><i
                         class="fa fa-download"></i> 下载</a></div>
-            <hr>
+            <br>
             <div class="text-center">
-                <div id="aplayer"></div>
+                <div id="audio-player">
+                    <audio id="player" crossorigin controls>
+                        <source src="{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}"
+                                type="audio/mp3">
+                        <source src="{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}"
+                                type="audio/ogg">
+                    </audio>
+                </div>
             </div>
-            <hr>
+            <br>
             <label class="control-label">下载链接</label>
             <div class="form-group">
                 <div class="input-group mb-3">

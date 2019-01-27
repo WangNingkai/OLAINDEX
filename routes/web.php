@@ -98,3 +98,13 @@ Route::any('search', 'IndexController@search')->name('search')
     ->middleware('checkAuth', 'throttle:10,2');
 Route::any('search/file/{id}', 'IndexController@searchShow')
     ->name('search.show')->middleware('checkAuth');
+
+Route::get('about', function () {
+    $url
+        = 'https://raw.githubusercontent.com/WangNingkai/OLAINDEX/master/README.md';
+    $content = \App\Helpers\Tool::getFileContent($url);
+    $markdown = \App\Helpers\Tool::markdown2Html($content);
+
+    return response()->view(config('olaindex.theme').'about',
+        compact('markdown'));
+});

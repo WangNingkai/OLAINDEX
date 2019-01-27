@@ -1,7 +1,7 @@
 @extends('mdui.layouts.main')
 @section('js')
-    <script src="https://cdn.bootcss.com/store.js/1.3.20/store.min.js"></script>
-    <script src="https://cdn.bootcss.com/jquery_lazyload/1.9.7/jquery.lazyload.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/store@2/dist/store.everything.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-lazyload@1/jquery.lazyload.min.js"></script>
     <script>
         function getDirect() {
             $("#dl").val('');
@@ -78,7 +78,7 @@
                                     {{ $item['name'] }}
                                 </div>
                                 <div
-                                    class="mdui-col-sm-3 mdui-text-right">{{ date('M m H:i',strtotime($item['lastModifiedDateTime'])) }}</div>
+                                    class="mdui-col-sm-3 mdui-text-right">{{ date('M d H:i',strtotime($item['lastModifiedDateTime'])) }}</div>
                                 <div
                                     class="mdui-col-sm-2 mdui-text-right">{{ array_has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</div>
                             </a>
@@ -109,7 +109,7 @@
                                 </div>
                                 <br/>
                                 <div class="col-date">
-                                    {{ date('M m H:i',strtotime($item['lastModifiedDateTime'])) }}
+                                    {{ date('M d H:i',strtotime($item['lastModifiedDateTime'])) }}
                                 </div>
                             </div>
                         </a>

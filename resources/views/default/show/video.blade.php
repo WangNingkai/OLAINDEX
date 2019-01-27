@@ -4,22 +4,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.min.css">
 @stop
 @section('js')
-    <script>
-        (function (d, p) {
-            var a = new XMLHttpRequest(),
-                b = d.body;
-            a.open("GET", p, true);
-            a.send();
-            a.onload = function () {
-                var c = d.createElement("div");
-                c.style.display = "none";
-                c.innerHTML = a.responseText;
-                b.insertBefore(c, b.childNodes[0]);
-            }
-        })(document, "https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.svg");
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.min.js"></script>
-    <script>const player = new Plyr('#player');</script>
+    <script>
+        const player = new Plyr('#player', {
+            iconUrl: "https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.svg",
+        });
+    </script>
 @stop
 @section('content')
     @include('default.breadcrumb')
@@ -30,14 +20,17 @@
                 <a href="{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}" class="btn btn-success">
                     <i class="fa fa-download"></i>下载</a>
             </div>
-            <hr>
+            <br>
             <div class="text-center">
                 <div id="video-player">
                     <video crossorigin playsinline controls poster="{!! $file['thumb'] !!}" id="player">
                         <source src="{!! $file['download'] !!}" type="video/mp4">
                     </video>
                 </div>
-                <hr>
+                <br>
+                <p class="text-danger">如无法播放或格式不受支持，推荐使用 <a href="https://pan.lanzou.com/b112173" target="_blank">potplayer</a>
+                    播放器在线播放
+                </p>
                 <label class="control-label">下载链接</label>
                 <div class="form-group">
                     <div class="input-group mb-3">
@@ -52,7 +45,6 @@
                 </div>
             </div>
         </div>
-    </div>
     </div>
 @stop
 

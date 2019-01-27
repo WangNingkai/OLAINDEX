@@ -7,6 +7,7 @@ use App\Helpers\OneDrive;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -39,9 +40,9 @@ class ManageController extends Controller
         }
         $field = 'olaindex_img';
         if (!$request->hasFile($field)) {
-            $data = ['code' => 500, 'message' => '上传文件为空'];
+            $data = ['errno' => 400, 'message' => '上传文件为空'];
 
-            return response()->json($data);
+            return response()->json($data, $data['errno']);
         }
         $file = $request->file($field);
         $rule = [$field => 'required|max:4096|image'];
@@ -50,14 +51,10 @@ class ManageController extends Controller
             $rule
         );
         if ($validator->fails()) {
-            $data = ['code' => 500, 'message' => $validator->errors()->first()];
-
-            return response()->json($data);
+            return response($validator->errors()->first(), 400);
         }
         if (!$file->isValid()) {
-            $data = ['code' => 500, 'message' => '文件上传出错'];
-
-            return response()->json($data);
+            return response('文件上传出错', 400);
         }
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
@@ -75,8 +72,8 @@ class ManageController extends Controller
                     .encrypt($response['data']['eTag']);
                 $fileIdentifier = encrypt($sign);
                 $data = [
-                    'code' => 200,
-                    'data' => [
+                    'errno' => 200,
+                    'data'  => [
                         'id'       => $response['data']['id'],
                         'filename' => $response['data']['name'],
                         'size'     => $response['data']['size'],
@@ -87,14 +84,12 @@ class ManageController extends Controller
                 ];
                 @unlink($path);
 
-                return response()->json($data);
+                return response()->json($data, $data['errno']);
             } else {
                 return $response;
             }
         } else {
-            $data = ['code' => 500, 'message' => '无法获取文件内容'];
-
-            return response()->json($data);
+            return response('无法获取文件内容', 400);
         }
     }
 
@@ -113,9 +108,7 @@ class ManageController extends Controller
         $field = 'olaindex_file';
         $target_directory = $request->get('root', '/');
         if (!$request->hasFile($field)) {
-            $data = ['code' => 500, 'message' => '上传文件或目录为空'];
-
-            return response()->json($data);
+            return response('上传文件或目录为空', 400);
         }
         $file = $request->file($field);
         $rule = [$field => 'required|max:4096']; // 上传文件规则，单文件指定大小4M
@@ -124,14 +117,10 @@ class ManageController extends Controller
             $rule
         );
         if ($validator->fails()) {
-            $data = ['code' => 500, 'message' => $validator->errors()->first()];
-
-            return response()->json($data);
+            return response($validator->errors()->first(), 400);
         }
         if (!$file->isValid()) {
-            $data = ['code' => 500, 'message' => '文件上传出错'];
-
-            return response()->json($data);
+            return response('文件上传出错', 400);
         }
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
@@ -142,8 +131,8 @@ class ManageController extends Controller
             $response = OneDrive::uploadByPath($remoteFilePath, $content);
             if ($response['errno'] === 0) {
                 $data = [
-                    'code' => 200,
-                    'data' => [
+                    'errno' => 200,
+                    'data'  => [
                         'id'       => $response['data']['id'],
                         'filename' => $response['data']['name'],
                         'size'     => $response['data']['size'],
@@ -152,14 +141,12 @@ class ManageController extends Controller
                 ];
                 @unlink($path);
 
-                return response()->json($data);
+                return response()->json($data, $data['errno']);
             } else {
                 return $response;
             }
         } else {
-            $data = ['code' => 500, 'message' => '无法获取文件内容'];
-
-            return response()->json($data);
+            return response('无法获取文件内容', 400);
         }
     }
 
@@ -178,14 +165,14 @@ class ManageController extends Controller
 
             return view(config('olaindex.theme').'message');
         }
-        $password = $request->get('password', '12345678');
+        $password = $request->get('password', '');
         $storeFilePath = trim($path, '/').'/.password';
         $remoteFilePath
             = Tool::getOriginPath($storeFilePath); // 远程password保存地址
         $response = OneDrive::uploadByPath($remoteFilePath, $password);
-        $response['errno'] === 0 ? Tool::showMessage('操作成功，请牢记密码！')
-            : Tool::showMessage('加密失败！', false);
-        Artisan::call('cache:clear');
+        $response['errno'] === 0 ? Tool::showMessage('操作成功！')
+            : Tool::showMessage('操作失败，请重试！', false);
+        Cache::forget('one:list:'.Tool::getAbsolutePath($path));
 
         return redirect()->back();
     }
@@ -215,7 +202,7 @@ class ManageController extends Controller
         $response = OneDrive::uploadByPath($remoteFilePath, $content);
         $response['errno'] === 0 ? Tool::showMessage('添加成功！')
             : Tool::showMessage('添加失败！', false);
-        Artisan::call('cache:clear');
+        Cache::forget('one:list:'.Tool::getAbsolutePath($path));
 
         return redirect()->route('home', Tool::getEncodeUrl($path));
     }
@@ -247,7 +234,6 @@ class ManageController extends Controller
         $response['errno'] === 0 ? Tool::showMessage('修改成功！')
             : Tool::showMessage('修改失败！', false);
         Artisan::call('cache:clear');
-
         return redirect()->back();
     }
 
@@ -271,7 +257,7 @@ class ManageController extends Controller
         $response = OneDrive::mkdirByPath($name, $graphPath);
         $response['errno'] === 0 ? Tool::showMessage('新建目录成功！')
             : Tool::showMessage('新建目录失败！', false);
-        Artisan::call('cache:clear');
+        Cache::forget('one:list:'.Tool::getAbsolutePath($path));
 
         return redirect()->back();
     }

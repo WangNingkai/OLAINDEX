@@ -68,7 +68,7 @@
     </div>
 </nav>
 
-<div class="container" style="margin-top: 10px">
+<div class="container mt-3">
     @if (session()->has('alertMessage'))
         <div class="alert alert-dismissible alert-{{ session()->pull('alertType')}}">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -80,8 +80,8 @@
         <div class="row text-center">
             <div class="col-lg-12">
                 <p class="text-muted">
-                    {!! \App\Helpers\Tool::markdown2Html(\App\Helpers\Tool::config('copyright',''),true) !!} Made
-                    by <a href="https://imwnk.cn">IMWNK</a>.
+                    {!! \App\Helpers\Tool::markdown2Html(\App\Helpers\Tool::config('copyright','Designed
+                    by [IMWNK](https://imwnk.cn/) | Powered by [OLAINDEX](https://git.io/OLAINDEX)'),true) !!}.
                 </p>
             </div>
         </div>
@@ -93,14 +93,13 @@
 <script src="https://cdn.jsdelivr.net/npm/fancybox@3/dist/js/jquery.fancybox.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7/dist/sweetalert2.all.min.js"></script>
-<script src="https://cdn.bootcss.com/jquery_lazyload/1.9.7/jquery.lazyload.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-lazyload@1/jquery.lazyload.min.js"></script>
 @yield('js')
 {!! \App\Helpers\Tool::config('statistics') !!}
 <script>
     $(function () {
         $('[data-fancybox="image-list"]').fancybox({
-            type: "image",
-            protect: true
+            type: "image"
         });
         let clipboard = new ClipboardJS('.clipboard');
         clipboard.on('success', function (e) {

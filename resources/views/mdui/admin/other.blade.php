@@ -1,6 +1,6 @@
 @extends('mdui.layouts.admin')
 @section('js')
-    <script src="https://cdn.bootcss.com/axios/0.19.0-beta.1/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.18.0/dist/axios.min.js"></script>
     <script>
         $(function () {
             $("#submit_btn").on("click", function () {
@@ -245,7 +245,7 @@
             <label class="mdui-textfield-label" for="source">源路径</label>
             <input type="text" class="mdui-textfield-input" id="source" name="source">
             <input type="hidden" name="source_id" id="source_id">
-            <div class="mdui-textfield-helper">填写完整 OneDrive 地址</div>
+            <div class="mdui-textfield-helper">移动、复制和创建分享操作，请填写完整OneDrive地址（包括文件/文件夹名），离线下载，填写完整的下载地址。</div>
 
         </div>
         <br>
@@ -253,7 +253,7 @@
             <label class="mdui-textfield-label" for="target">目标路径</label>
             <input type="text" class="mdui-textfield-input" id="target" name="target">
             <input type="hidden" name="target_id" id="target_id">
-            <div class="mdui-textfield-helper">移动文件和离线下载（包括文件名）请填写完整文件地址，创建、删除分享时可不填</div>
+            <div class="mdui-textfield-helper">移动复制操作时，请填写目标文件或文件夹的完整地址（包括文件/文件夹名），离线下载操作请填写完整的下载路径（包括文件/文件夹名）；创建、删除分享时可不填。</div>
         </div>
 
         <br>

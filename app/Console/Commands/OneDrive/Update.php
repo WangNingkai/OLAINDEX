@@ -47,12 +47,48 @@ class Update extends Command
         if (version_compare($version, 'v3.2') < 0) {
             $this->warn('Version less [v3.2] ,Failed！Please delete the config.json and try again later');
         } else {
-            $this->warn('No Updates');
+            if ($version == Constants::LATEST_VERSION) {
+                $this->info('已是最新版本, 无需更新');
+
+                return;
+            }
+            switch ($version) {
+                case 'v3.2':
+                    $result = $this->upTo321();
+                    break;
+                default:
+                    return;
+            }
+            $this->info($result['status'].':'.$result['msg']);
         }
         $this->call('cache:clear');
+        $this->call('config:cache');
         exit;
     }
 
+    public function upTo321()
+    {
+        if (!file_exists(base_path('.env'))) {
+            $this->warn('出错了未检测到 .env 文件');
+            exit();
+        } else {
+            $env_origin = file_get_contents(base_path('.env'));
+            $search_db = [
+                'LOG_CHANNEL=stack',
+            ];
+            $replace_db = [
+                'LOG_CHANNEL=daily',
+            ];
+            $env = str_replace($search_db, $replace_db, $env_origin);
+            file_put_contents(base_path('.env'), $env);
+            $config = Tool::config();
+            $config = array_merge($config, ['app_version' => 'v3.2.1']);
+        }
+        $saved = Tool::saveConfig($config);
+
+        return $saved ? $this->returnStatus('更新成功，version=v3.2.1')
+            : $this->returnStatus('更新失败，数据迁移失败，请手动迁移', false);
+    }
 
     /**
      * 返回状态

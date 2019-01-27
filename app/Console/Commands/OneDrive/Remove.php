@@ -64,7 +64,7 @@ class Remove extends Command
             }
             $id_response
                 = OneDrive::pathToItemId($remote);
-            if ($id_response['code'] === 200) {
+            if ($id_response['errno'] === 0) {
                 $id = $id_response['data']['id'];
             } else {
                 $this->warn('Path Abnormal!');

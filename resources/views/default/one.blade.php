@@ -11,13 +11,6 @@
     <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/jquery.blueimp-gallery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2/js/blueimp-gallery-fullscreen.min.js"></script>
     <script>
-        $(function () {
-            blueimp.Gallery(carouselLinks, {
-                container: '#image-list',
-                carousel: true
-            });
-        });
-
         @if(session()->has('LogInfo'))
         function deleteItem($sign) {
             swal({
@@ -73,8 +66,7 @@
                 </div>
                 <div class="col-4 col-sm-2">
                     @if (session()->has('LogInfo'))
-                        <a class="pull-right dropdown-toggle btn btn-sm btn-primary" href="javascript:void(0)"
-                           id="actionDropdownLink"
+                        <a class="pull-right dropdown-toggle btn btn-sm btn-primary" href="#" id="actionDropdownLink"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">操作</a>
                         <div class="dropdown-menu" aria-labelledby="actionDropdownLink">
                             @if (array_key_exists('README.md', $origin_items))
@@ -98,48 +90,11 @@
                                         class="fa fa-plus-circle"></i> 添加
                                     HEAD</a>
                             @endif
-                            @if (!array_key_exists('.password', $origin_items))
-                                <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal"
-                                   data-target="#lockFolderModal"><i class="fa fa-lock"></i> 加密目录</a>
-                            @endif
                             <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal"
                                data-target="#newFolderModal"><i class="fa fa-plus-circle"></i> 新建目录</a>
                             <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal"
                                data-target="#directLinkModal"><i class="fa fa-link"></i> 导出直链</a>
                         </div>
-                        @if (!array_key_exists('.password', $origin_items))
-                            <div class="modal fade" id="lockFolderModal" tabindex="-1" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <form action="{{ route('admin.lock') }}" method="post">
-                                        @csrf
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title"><i class="fa fa-lock"></i> 加密目录</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <p class="text-danger">确认锁定目录，请输入密码(默认密码 12345678)：</p>
-                                                <div class="form-group">
-                                                    <input type="password" name="password" class="form-control"
-                                                           placeholder="请输入密码" id="lockField" required>
-                                                    <input type="hidden" name="path"
-                                                           value="{{ encrypt($origin_path) }}">
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="submit" class="btn btn-primary">确定</button>
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                                    取消
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        @endif
                         <div class="modal fade" id="newFolderModal" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <form action="{{ route('admin.folder.create') }}" method="post">
@@ -229,7 +184,7 @@
                         </div>
                         <div class="col-sm-2 d-none d-md-block d-md-none">
                             <span
-                                class="pull-right">{{ date('M m H:i',strtotime($item['lastModifiedDateTime'])) }}</span>
+                                class="pull-right">{{ date('M d H:i',strtotime($item['lastModifiedDateTime'])) }}</span>
                         </div>
                         <div class="col-sm-2 d-none d-md-block d-md-none">
                             <span
@@ -281,9 +236,9 @@
                     @foreach($items as $item)
                         @if(array_has($item,'image'))
                             <a href="{{ route('view',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
-                               title="{{ $item['name'] }}" data-gallery="#image-list">
+                               title="{{ $item['name'] }}" data-gallery>
                                 <img class="lazy"
-                                     data-original="{{ array_get($item,'thumbnails.0.small.url')}}"
+                                     data-original="{{ array_get($item,'thumbnails.0.small.url') }}"
                                      src="{{ asset('img/loading.gif') }}"
                                      alt="{{ $item['name'] }}" width="10%" height="10%">
                             </a>

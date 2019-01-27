@@ -50,7 +50,7 @@
 
         <div class="mdui-typo">
             <h1>上传文件
-                <small>此上传方式仅支持小于4MB文件的上传</small>
+                <small>由于接口限制，此上传方式仅支持小于4MB文件的上传</small>
             </h1>
         </div>
 

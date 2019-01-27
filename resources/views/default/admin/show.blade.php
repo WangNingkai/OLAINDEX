@@ -1,7 +1,7 @@
 @extends('default.layouts.admin')
 @section('title','显示设置')
 @section('content')
-    <p class="pull-right text-danger">前台显示的文件后缀, 空格隔开</p>
+    <p class="pull-right text-danger">展示的文件后缀, 以空格分开</p>
     <form action="" method="post">
         @csrf
         <div class="form-group">
@@ -18,7 +18,7 @@
             <label class="form-control-label" for="dash">Dash视频</label>
             <input type="text" class="form-control" id="dash" name="dash"
                    value="{{ \App\Helpers\Tool::config('dash') }}">
-            <span class="form-text text-danger">个人版账户不支持</span>
+            <span class="form-text text-danger">不支持个人版账户</span>
         </div>
         <div class="form-group">
             <label class="form-control-label" for="audio">音频</label>
@@ -35,7 +35,7 @@
                    value="{{ \App\Helpers\Tool::config('code') }}">
         </div>
         <div class="form-group">
-            <label class="form-control-label" for="stream">文本</label>
+            <label class="form-control-label" for="stream">文件流</label>
             <input type="text" class="form-control" id="stream" name="stream"
                    value="{{ \App\Helpers\Tool::config('stream') }}">
         </div>

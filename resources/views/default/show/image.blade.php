@@ -18,7 +18,7 @@
                    class="btn btn-info"><i class="fa fa-eye"></i>
                     点击查看原图</a>
             </div>
-            <hr>
+            <br>
             <label class="control-label">引用链接</label>
             <div class="form-group">
                 <div class="input-group mb-3">

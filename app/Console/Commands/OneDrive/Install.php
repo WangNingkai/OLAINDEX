@@ -4,6 +4,8 @@ namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\Constants;
 use Illuminate\Console\Command;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class Install extends Command
 {
@@ -74,7 +76,15 @@ class Install extends Command
         }
         $this->call('config:cache'); // 生成配置缓存否则报错
         $this->warn('Password：[ 12345678 ]');
-        $this->info('Please run this command to make sure you have the permission [ chmod 777 storage/app/config.json ]');
+        $cmd = ['chmod' ,'777', 'storage/app/config.json'];
+        $process = new Process($cmd);
+        $process->run();
+        if (!$process->isSuccessful()) {
+            $this->info('Please run this command to make sure you have the permission'
+                .'[ chmod 777 storage/app/config.json ]');
+            throw new ProcessFailedException($process);
+        }
+        echo $process->getOutput();
         $this->warn('All Done!');
     }
 }
