@@ -140,7 +140,6 @@ class IndexController extends Controller
         } else {
             $origin_items = $origin_items->sortByDesc($field)->toArray();
         }
-        dd($origin_items);
         $hasImage = Tool::hasImages($origin_items);
         // 过滤微软OneNote文件
         $origin_items = array_where($origin_items, function ($value) {
