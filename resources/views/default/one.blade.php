@@ -224,7 +224,7 @@
         </div>
     </div>
     <div>
-        {{ $items->appends(['limit' => request()->get('limit')])->links('default.page') }}
+        {{ $items->appends(['limit' => request()->get('limit'),'orderBy'=> request()->get('orderBy')])->links('default.page') }}
     </div>
     @if ($hasImage && (int)\App\Helpers\Tool::config('image_view'))
         <div class="card border-light mb-3">

@@ -173,7 +173,7 @@
             @endforeach
         </div>
 
-        {{ $items->appends(['limit' => request()->get('limit')])->links('mdui.page') }}
+            {{ $items->appends(['limit' => request()->get('limit'),'orderBy'=> request()->get('orderBy')])->links('mdui.page') }}
 
         @if (!blank($readme))
             <div class="mdui-typo mdui-shadow-3 mdui-p-a-2 mdui-m-a-2">
