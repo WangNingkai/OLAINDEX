@@ -16,6 +16,11 @@
             </div>
             <br>
             <div class="mdui-textfield mdui-textfield-floating-label">
+                <label class="mdui-textfield-label" for="audio">音频</label>
+                <input type="text" class="mdui-textfield-input" id="audio" name="audio"
+                       value="{{ \App\Helpers\Tool::config('audio','') }}">
+            </div>
+            <div class="mdui-textfield mdui-textfield-floating-label">
                 <label class="mdui-textfield-label" for="video">视频</label>
                 <input type="text" class="mdui-textfield-input" id="video" name="video"
                        value="{{ \App\Helpers\Tool::config('video','') }}">
