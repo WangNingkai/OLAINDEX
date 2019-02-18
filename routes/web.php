@@ -43,7 +43,7 @@ Route::post('password', 'IndexController@handlePassword')->name('password');
 Route::get('thumb/{id}/size/{size}', 'IndexController@thumb')->name('thumb');
 Route::get('thumb/{id}/{width}/{height}', 'IndexController@thumbCrop')
     ->name('thumb_crop');
-Route::view('message', config('olaindex.theme').'message')->name('message');
+Route::view('message', config('olaindex.theme') . 'message')->name('message');
 // 图床
 Route::get('image', 'ManageController@uploadImage')->name('image')
     ->middleware('checkImage');
@@ -78,7 +78,7 @@ Route::prefix('admin')->group(function () {
             ->name('admin.file.create');
         Route::any('edit/{id}', 'ManageController@updateFile')
             ->name('admin.file.update');
-        Route::view('other', config('olaindex.theme').'admin.other')
+        Route::view('other', config('olaindex.theme') . 'admin.other')
             ->name('admin.other');
         Route::post('copy', 'ManageController@copyItem')->name('admin.copy');
         Route::post('move', 'ManageController@moveItem')->name('admin.move');
@@ -99,12 +99,16 @@ Route::any('search', 'IndexController@search')->name('search')
 Route::any('search/file/{id}', 'IndexController@searchShow')
     ->name('search.show')->middleware('checkAuth');
 
-Route::get('about', function () {
-    $url
-        = 'https://raw.githubusercontent.com/WangNingkai/OLAINDEX/master/README.md';
-    $content = \App\Helpers\Tool::getFileContent($url);
-    $markdown = \App\Helpers\Tool::markdown2Html($content);
+if (str_contains(config('app.url'), ['localhost', 'dev.ningkai.wang'])) {
+    Route::get('about', function () {
+        $url
+            = 'https://raw.githubusercontent.com/WangNingkai/OLAINDEX/master/README.md';
+        $content = \App\Helpers\Tool::getFileContent($url);
+        $markdown = \App\Helpers\Tool::markdown2Html($content);
 
-    return response()->view(config('olaindex.theme').'about',
-        compact('markdown'));
-});
+        return response()->view(
+            config('olaindex.theme') . 'about',
+            compact('markdown')
+        );
+    });
+}

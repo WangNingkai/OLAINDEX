@@ -70,7 +70,7 @@ class Tool
      * 操作成功或者失败的提示
      *
      * @param string $message
-     * @param bool   $success
+     * @param bool $success
      */
     public static function showMessage($message = '成功', $success = true)
     {
@@ -93,7 +93,7 @@ class Tool
             $size /= 1024;
         }
 
-        return @round($size, 2).$units[$i];
+        return @round($size, 2) . $units[$i];
     }
 
     /**
@@ -155,7 +155,7 @@ class Tool
         $pathArr = array_slice($pathArr, 0, $key);
         $url = '';
         foreach ($pathArr as $param) {
-            $url .= '/'.$param;
+            $url .= '/' . $param;
         }
 
         return trim($url, '/');
@@ -176,7 +176,7 @@ class Tool
         }
         $url = '';
         foreach ($pathArr as $param) {
-            $url .= '/'.$param;
+            $url .= '/' . $param;
         }
 
         return trim($url, '/');
@@ -203,7 +203,7 @@ class Tool
 
     /**
      * @param string $ext
-     * @param bool   $img
+     * @param bool $img
      *
      * @return string
      */
@@ -319,7 +319,7 @@ class Tool
 
     /**
      * @param string $file
-     * @param array  $array
+     * @param array $array
      *
      * @return bool|int
      */
@@ -341,11 +341,8 @@ class Tool
      *
      * @return string
      */
-    public static function getRequestPath(
-        $path,
-        $isQuery = true,
-        $isFile = false
-    ) {
+    public static function getRequestPath($path, $isQuery = true, $isFile = false)
+    {
         $path = self::getAbsolutePath($path);
         $query_path = trim($path, '/');
         if (!$isQuery) {
@@ -372,10 +369,8 @@ class Tool
      *
      * @return string
      */
-    public static function getOriginPath(
-        $path,
-        $isQuery = true
-    ) {
+    public static function getOriginPath($path, $isQuery = true)
+    {
         $path = self::getAbsolutePath($path);
         $query_path = trim($path, '/');
         if (!$isQuery) {
@@ -417,7 +412,7 @@ class Tool
             }
         }
 
-        return str_replace('//', '/', '/'.implode('/', $absolutes).'/');
+        return str_replace('//', '/', '/' . implode('/', $absolutes) . '/');
     }
 
     /**
@@ -429,7 +424,7 @@ class Tool
      */
     public static function getFileContent($url, $cache = true)
     {
-        $key = 'one:content:'.$url;
+        $key = 'one:content:' . $url;
         if ($cache && Cache::has($key)) {
             $content = Cache::get($key);
             if ($content) {
@@ -441,10 +436,10 @@ class Tool
         $curl->setTimeout(120);
         $curl->setRetry(3);
         $curl->setOpts([
-            CURLOPT_AUTOREFERER    => true,
-            CURLOPT_FAILONERROR    => true,
+            CURLOPT_AUTOREFERER => true,
+            CURLOPT_FAILONERROR => true,
             CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_ENCODING       => 'gzip,deflate',
+            CURLOPT_ENCODING => 'gzip,deflate',
         ]);
         $curl->get($url);
         $curl->close();
@@ -453,11 +448,11 @@ class Tool
                 'Get OneDrive file content error.',
                 [
                     'code' => $curl->errorCode,
-                    'msg'  => $curl->errorMessage,
+                    'msg' => $curl->errorMessage,
                 ]
             );
-            Tool::showMessage('Error: '.$curl->errorCode.': '
-                .$curl->errorMessage, false);
+            Tool::showMessage('Error: ' . $curl->errorCode . ': '
+                . $curl->errorMessage, false);
 
             return '远程获取内容失败，请刷新重试';
         } else {
