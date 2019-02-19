@@ -134,6 +134,7 @@ class IndexController extends Controller
                 return view(config('olaindex.theme') . 'message');
             }
         }
+        // 处理排序
         $origin_items = collect($origin_items);
         if (strtolower($sortBy) !== 'desc') {
             $origin_items = $origin_items->sortBy($field)->toArray();
