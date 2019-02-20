@@ -23,7 +23,7 @@
 
 ## 预览
 
-![预览](https://img01.sogoucdn.com/app/a/100520146/cd2311797c818d8f37bd5a7474080be4)
+![预览](https://i.loli.net/2018/11/11/5be82800ce8b5.png)
  
 ## 演示地址
 
