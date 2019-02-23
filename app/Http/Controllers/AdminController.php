@@ -37,7 +37,7 @@ class AdminController extends Controller
             return redirect()->route('admin.basic');
         }
         if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme').'admin.login');
+            return view(config('olaindex.theme') . 'admin.login');
         }
         $password = $request->get('password');
         if (md5($password) === Tool::config('password')) {
@@ -82,7 +82,7 @@ class AdminController extends Controller
     public function basic(Request $request)
     {
         if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme').'admin.basic');
+            return view(config('olaindex.theme') . 'admin.basic');
         }
         $data = $request->except('_token');
         Tool::updateConfig($data);
@@ -101,7 +101,7 @@ class AdminController extends Controller
     public function show(Request $request)
     {
         if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme').'admin.show');
+            return view(config('olaindex.theme') . 'admin.show');
         }
         $data = $request->except('_token');
         Tool::updateConfig($data);
@@ -120,7 +120,7 @@ class AdminController extends Controller
     public function profile(Request $request)
     {
         if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme').'admin.profile');
+            return view(config('olaindex.theme') . 'admin.profile');
         }
         $old_password = $request->get('old_password');
         $password = $request->get('password');
@@ -182,7 +182,7 @@ class AdminController extends Controller
     public function bind(Request $request)
     {
         if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme').'admin.bind');
+            return view(config('olaindex.theme') . 'admin.bind');
         } else {
             if (!Tool::hasBind()) {
                 return redirect()->route('bind');

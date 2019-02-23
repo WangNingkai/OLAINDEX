@@ -9,7 +9,6 @@ namespace App\Helpers;
  */
 class OneDrive
 {
-
     /**
      * @var GraphRequest
      */
@@ -308,8 +307,8 @@ class OneDrive
     public static function mkdir($itemName, $parentItemId)
     {
         $endpoint = "/me/drive/items/$parentItemId/children";
-        $body = '{"name":"'.$itemName
-            .'","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
+        $body = '{"name":"' . $itemName
+            . '","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
         $response = self::request('post', [$endpoint, $body]);
 
         return $response;
@@ -325,10 +324,10 @@ class OneDrive
     public static function mkdirByPath($itemName, $path)
     {
         $requestPath = self::getRequestPath($path);
-        $endpoint = $requestPath === '/' ? "/me/drive/root/children"
+        $endpoint = $requestPath === '/' ? '/me/drive/root/children'
             : "/me/drive/root{$requestPath}children";
-        $body = '{"name":"'.$itemName
-            .'","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
+        $body = '{"name":"' . $itemName
+            . '","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
         $response = self::request('post', [$endpoint, $body]);
 
         return $response;
@@ -352,7 +351,6 @@ class OneDrive
             return $response;
         }
     }
-
 
     /**
      * @param $path
@@ -416,8 +414,8 @@ class OneDrive
                 $info = explode('/', $param);
                 $res_id = $info[1];
                 $user_info = $info[0];
-                $direct_link = $domain.'personal/'.$user_info
-                    .'/_layouts/15/download.aspx?share='.$res_id;
+                $direct_link = $domain . 'personal/' . $user_info
+                    . '/_layouts/15/download.aspx?share=' . $res_id;
             } elseif (str_contains($web_url, '1drv.ms')) {
                 $req = self::request('get', $web_url);
                 if ($req['errno'] === 0) {
@@ -473,8 +471,8 @@ class OneDrive
     {
         $endpoint = "/me/drive/items/{$itemId}/permissions";
         $response = self::request('get', $endpoint);
-        if ($response ['errno'] === 0) {
-            $data = $response ['data'];
+        if ($response['errno'] === 0) {
+            $data = $response['data'];
 
             return self::response($data['value']);
         } else {
@@ -558,8 +556,8 @@ class OneDrive
                 $graphPath = empty($handledPath) ? '/' : ":/{$handledPath}:/";
                 $endpoint = "/me/drive/root{$graphPath}children";
                 $headers = ['Prefer' => 'respond-async'];
-                $body = '{"@microsoft.graph.sourceUrl":"'.$url.'","name":"'
-                    .pathinfo($remote, PATHINFO_BASENAME).'","file":{}}';
+                $body = '{"@microsoft.graph.sourceUrl":"' . $url . '","name":"'
+                    . pathinfo($remote, PATHINFO_BASENAME) . '","file":{}}';
                 $response = self::request('post', [$endpoint, $body, $headers]);
                 if ($response['errno'] === 0) {
                     $data = [
@@ -713,7 +711,7 @@ class OneDrive
     {
         $requestPath = self::getRequestPath($path);
         $endpoint = $requestPath === '/' ? '/me/drive/root'
-            : '/me/drive/root'.$requestPath;
+            : '/me/drive/root' . $requestPath;
         $response = self::request('get', $endpoint);
         if ($response['errno'] === 0) {
             $data = $response['data'];
@@ -723,7 +721,6 @@ class OneDrive
             return $response;
         }
     }
-
 
     /**
      * Format Response Data
@@ -807,7 +804,7 @@ class OneDrive
             }
         }
 
-        return str_replace('//', '/', '/'.implode('/', $absolutes).'/');
+        return str_replace('//', '/', '/' . implode('/', $absolutes) . '/');
     }
 
     /**
@@ -883,7 +880,7 @@ class OneDrive
      */
     public static function readFileContent($file, $offset, $length)
     {
-        $handler = fopen($file, "rb") ?? die('Failed Get Content');
+        $handler = fopen($file, 'rb') ?? die('Failed Get Content');
         fseek($handler, $offset);
 
         return fread($handler, $length);

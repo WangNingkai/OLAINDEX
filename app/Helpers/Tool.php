@@ -88,7 +88,7 @@ class Tool
      */
     public static function convertSize($size)
     {
-        $units = array(' B', ' KB', ' MB', ' GB', ' TB');
+        $units = [' B', ' KB', ' MB', ' GB', ' TB'];
         for ($i = 0; $size >= 1024 && $i < 4; $i++) {
             $size /= 1024;
         }
@@ -436,10 +436,10 @@ class Tool
         $curl->setTimeout(120);
         $curl->setRetry(3);
         $curl->setOpts([
-            CURLOPT_AUTOREFERER => true,
-            CURLOPT_FAILONERROR => true,
+            CURLOPT_AUTOREFERER    => true,
+            CURLOPT_FAILONERROR    => true,
             CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_ENCODING => 'gzip,deflate',
+            CURLOPT_ENCODING       => 'gzip,deflate',
         ]);
         $curl->get($url);
         $curl->close();
@@ -448,7 +448,7 @@ class Tool
                 'Get OneDrive file content error.',
                 [
                     'code' => $curl->errorCode,
-                    'msg' => $curl->errorMessage,
+                    'msg'  => $curl->errorMessage,
                 ]
             );
             Tool::showMessage('Error: ' . $curl->errorCode . ': '
@@ -594,7 +594,7 @@ class Tool
     public static function fileIcon($ext)
     {
         if (in_array($ext, ['ogg', 'mp3', 'wav'])) {
-            return "audiotrack";
+            return 'audiotrack';
         }
         if (in_array($ext, ['apk'])) {
             return 'android';
@@ -612,7 +612,7 @@ class Tool
             'jpe',
         ])
         ) {
-            return "image";
+            return 'image';
         }
         if (in_array($ext, [
             'mp4',
@@ -629,7 +629,7 @@ class Tool
             'asf',
         ])
         ) {
-            return "ondemand_video";
+            return 'ondemand_video';
         }
         if (in_array($ext, [
             'html',
@@ -648,6 +648,6 @@ class Tool
             return 'code';
         }
 
-        return "insert_drive_file";
+        return 'insert_drive_file';
     }
 }

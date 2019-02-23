@@ -33,7 +33,6 @@ class Copy extends Command
         parent::__construct();
     }
 
-
     /**
      * @throws \ErrorException
      */
@@ -66,21 +65,21 @@ class Copy extends Command
                 } elseif ($status === 'inProgress') {
                     $this->info(
                         'Progress: '
-                        .array_get($resp, 'data.percentageComplete')
+                        . array_get($resp, 'data.percentageComplete')
                     );
                     sleep(3);
                     $done = false;
                 } elseif ($status === 'completed') {
                     $this->info(
                         'Progress: '
-                        .array_get($resp, 'data.percentageComplete')
+                        . array_get($resp, 'data.percentageComplete')
                     );
                     $done = true;
                 } elseif ($status === 'notStarted') {
-                    $this->error('Status:'.$status);
+                    $this->error('Status:' . $status);
                     $done = false;
                 } else {
-                    $this->error('Status:'.$status);
+                    $this->error('Status:' . $status);
                     $done = true;
                 }
             }

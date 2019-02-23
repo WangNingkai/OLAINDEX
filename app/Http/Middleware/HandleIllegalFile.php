@@ -29,7 +29,7 @@ class HandleIllegalFile
         ) {
             Tool::showMessage('非法请求', false);
 
-            return response()->view(config('olaindex.theme').'message');
+            return response()->view(config('olaindex.theme') . 'message');
         }
 
         return $next($request);

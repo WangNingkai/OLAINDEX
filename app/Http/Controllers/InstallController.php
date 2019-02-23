@@ -26,23 +26,21 @@ class InstallController extends Controller
         if (Tool::hasConfig()) {
             Tool::showMessage('已配置相关信息', false);
 
-            return view(config('olaindex.theme').'message');
+            return view(config('olaindex.theme') . 'message');
         }
         $redirect_uri = $request->get('redirect_uri');
         if (!$redirect_uri) {
             Tool::showMessage('重定向地址缺失', false);
 
-            return view(config('olaindex.theme').'message');
+            return view(config('olaindex.theme') . 'message');
         }
-        $ru
-            = 'https://developer.microsoft.com/en-us/graph/quick-start?appID=_appId_&appName=_appName_&redirectUrl='
-            .$redirect_uri.'&platform=option-php';
-        $deepLink
-            = '/quickstart/graphIO?publicClientSupport=false&appName=OLAINDEX&redirectUrl='
-            .$redirect_uri.'&allowImplicitFlow=false&ru='
-            .urlencode($ru);
-        $app_url = "https://apps.dev.microsoft.com/?deepLink="
-            .urlencode($deepLink);
+        $ru = 'https://developer.microsoft.com/en-us/graph/quick-start?appID=_appId_&appName=_appName_&redirectUrl='
+            . $redirect_uri . '&platform=option-php';
+        $deepLink = '/quickstart/graphIO?publicClientSupport=false&appName=OLAINDEX&redirectUrl='
+            . $redirect_uri . '&allowImplicitFlow=false&ru='
+            . urlencode($ru);
+        $app_url = 'https://apps.dev.microsoft.com/?deepLink='
+            . urlencode($deepLink);
 
         return redirect()->away($app_url);
     }
@@ -62,7 +60,7 @@ class InstallController extends Controller
         }
         //  显示基础信息的填写、申请或提交应用信息、返回
         if ($request->isMethod('get')) {
-            return view(config('olaindex.theme').'install.init');
+            return view(config('olaindex.theme') . 'install.init');
         }
         $client_id = $request->get('client_id');
         $client_secret = $request->get('client_secret');
@@ -97,7 +95,7 @@ class InstallController extends Controller
         if (Tool::hasBind()) {
             Tool::showMessage('您已绑定帐号，无法重置', false);
 
-            return view(config('olaindex.theme').'message');
+            return view(config('olaindex.theme') . 'message');
         }
         $data = [
             'client_id'     => '',
@@ -122,18 +120,18 @@ class InstallController extends Controller
         if (Tool::hasBind()) {
             Tool::showMessage('您已绑定帐号', false);
 
-            return view(config('olaindex.theme').'message');
+            return view(config('olaindex.theme') . 'message');
         }
         if ($request->isMethod('post')) {
             if (Tool::hasBind()) {
                 Tool::showMessage('您已绑定帐号，无法重置', false);
 
-                return view(config('olaindex.theme').'message');
+                return view(config('olaindex.theme') . 'message');
             } else {
                 return redirect()->route('oauth');
             }
         } else {
-            return view(config('olaindex.theme').'install.bind');
+            return view(config('olaindex.theme') . 'install.bind');
         }
     }
 }

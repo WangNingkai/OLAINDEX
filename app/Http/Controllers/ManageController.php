@@ -36,7 +36,7 @@ class ManageController extends Controller
     public function uploadImage(Request $request)
     {
         if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme').'image');
+            return view(config('olaindex.theme') . 'image');
         }
         $field = 'olaindex_img';
         if (!$request->hasFile($field)) {
@@ -59,17 +59,14 @@ class ManageController extends Controller
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
             $content = file_get_contents($path);
-            $hostingPath
-                = Tool::getEncodeUrl(Tool::config('image_hosting_path'));
-            $middleName = '/'.date('Y').'/'.date('m').'/'
-                .date('d').'/'.str_random(8).'/';
-            $filePath = trim($hostingPath.$middleName
-                .$file->getClientOriginalName(), '/');
+            $hostingPath = Tool::getEncodeUrl(Tool::config('image_hosting_path'));
+            $middleName = '/' . date('Y') . '/' . date('m') . '/'
+                . date('d') . '/' . str_random(8) . '/';
+            $filePath = trim($hostingPath . $middleName . $file->getClientOriginalName(), '/');
             $remoteFilePath = Tool::getOriginPath($filePath); // 远程图片保存地址
             $response = OneDrive::uploadByPath($remoteFilePath, $content);
             if ($response['errno'] === 0) {
-                $sign = $response['data']['id'].'.'
-                    .encrypt($response['data']['eTag']);
+                $sign = $response['data']['id'] . '.' . encrypt($response['data']['eTag']);
                 $fileIdentifier = encrypt($sign);
                 $data = [
                     'errno' => 200,
@@ -93,7 +90,6 @@ class ManageController extends Controller
         }
     }
 
-
     /**
      * @param Request $request
      *
@@ -103,7 +99,7 @@ class ManageController extends Controller
     public function uploadFile(Request $request)
     {
         if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme').'admin.file');
+            return view(config('olaindex.theme') . 'admin.file');
         }
         $field = 'olaindex_file';
         $target_directory = $request->get('root', '/');
@@ -125,8 +121,7 @@ class ManageController extends Controller
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
             $content = file_get_contents($path);
-            $storeFilePath = trim(Tool::getEncodeUrl($target_directory), '/')
-                .'/'.$file->getClientOriginalName(); // 远程保存地址
+            $storeFilePath = trim(Tool::getEncodeUrl($target_directory), '/') . '/' . $file->getClientOriginalName(); // 远程保存地址
             $remoteFilePath = Tool::getOriginPath($storeFilePath); // 远程文件保存地址
             $response = OneDrive::uploadByPath($remoteFilePath, $content);
             if ($response['errno'] === 0) {
@@ -163,16 +158,14 @@ class ManageController extends Controller
         } catch (DecryptException $e) {
             Tool::showMessage($e->getMessage(), false);
 
-            return view(config('olaindex.theme').'message');
+            return view(config('olaindex.theme') . 'message');
         }
         $password = $request->get('password', '');
-        $storeFilePath = trim($path, '/').'/.password';
-        $remoteFilePath
-            = Tool::getOriginPath($storeFilePath); // 远程password保存地址
+        $storeFilePath = trim($path, '/') . '/.password';
+        $remoteFilePath = Tool::getOriginPath($storeFilePath); // 远程password保存地址
         $response = OneDrive::uploadByPath($remoteFilePath, $password);
-        $response['errno'] === 0 ? Tool::showMessage('操作成功！')
-            : Tool::showMessage('操作失败，请重试！', false);
-        Cache::forget('one:list:'.Tool::getAbsolutePath($path));
+        $response['errno'] === 0 ? Tool::showMessage('操作成功！') : Tool::showMessage('操作失败，请重试！', false);
+        Cache::forget('one:list:' . Tool::getAbsolutePath($path));
 
         return redirect()->back();
     }
@@ -186,7 +179,7 @@ class ManageController extends Controller
     public function createFile(Request $request)
     {
         if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme').'admin.add');
+            return view(config('olaindex.theme') . 'admin.add');
         }
         $name = $request->get('name');
         try {
@@ -194,15 +187,14 @@ class ManageController extends Controller
         } catch (DecryptException $e) {
             Tool::showMessage($e->getMessage(), false);
 
-            return view(config('olaindex.theme').'message');
+            return view(config('olaindex.theme') . 'message');
         }
         $content = $request->get('content');
-        $storeFilePath = trim($path, '/').'/'.$name.'.md';
+        $storeFilePath = trim($path, '/') . '/' . $name . '.md';
         $remoteFilePath = Tool::getOriginPath($storeFilePath); // 远程md保存地址
         $response = OneDrive::uploadByPath($remoteFilePath, $content);
-        $response['errno'] === 0 ? Tool::showMessage('添加成功！')
-            : Tool::showMessage('添加失败！', false);
-        Cache::forget('one:list:'.Tool::getAbsolutePath($path));
+        $response['errno'] === 0 ? Tool::showMessage('添加成功！') : Tool::showMessage('添加失败！', false);
+        Cache::forget('one:list:' . Tool::getAbsolutePath($path));
 
         return redirect()->route('home', Tool::getEncodeUrl($path));
     }
@@ -227,12 +219,11 @@ class ManageController extends Controller
                 $file = '';
             }
 
-            return view(config('olaindex.theme').'admin.edit', compact('file'));
+            return view(config('olaindex.theme') . 'admin.edit', compact('file'));
         }
         $content = $request->get('content');
         $response = OneDrive::upload($id, $content);
-        $response['errno'] === 0 ? Tool::showMessage('修改成功！')
-            : Tool::showMessage('修改失败！', false);
+        $response['errno'] === 0 ? Tool::showMessage('修改成功！') : Tool::showMessage('修改失败！', false);
         Artisan::call('cache:clear');
         return redirect()->back();
     }
@@ -250,14 +241,14 @@ class ManageController extends Controller
         } catch (DecryptException $e) {
             Tool::showMessage($e->getMessage(), false);
 
-            return view(config('olaindex.theme').'message');
+            return view(config('olaindex.theme') . 'message');
         }
         $name = $request->get('name');
         $graphPath = Tool::getOriginPath($path);
         $response = OneDrive::mkdirByPath($name, $graphPath);
         $response['errno'] === 0 ? Tool::showMessage('新建目录成功！')
             : Tool::showMessage('新建目录失败！', false);
-        Cache::forget('one:list:'.Tool::getAbsolutePath($path));
+        Cache::forget('one:list:' . Tool::getAbsolutePath($path));
 
         return redirect()->back();
     }
@@ -275,7 +266,7 @@ class ManageController extends Controller
         } catch (DecryptException $e) {
             Tool::showMessage($e->getMessage(), false);
 
-            return view(config('olaindex.theme').'message');
+            return view(config('olaindex.theme') . 'message');
         }
         $reCode = explode('.', $deCode);
         $id = $reCode[0];
@@ -284,14 +275,14 @@ class ManageController extends Controller
         } catch (DecryptException $e) {
             Tool::showMessage($e->getMessage(), false);
 
-            return view(config('olaindex.theme').'message');
+            return view(config('olaindex.theme') . 'message');
         }
         $response = OneDrive::delete($id, $eTag);
         $response['errno'] === 0 ? Tool::showMessage('文件已删除')
             : Tool::showMessage('文件删除失败', false);
         Artisan::call('cache:clear');
 
-        return view(config('olaindex.theme').'message');
+        return view(config('olaindex.theme') . 'message');
     }
 
     /**
@@ -367,7 +358,6 @@ class ManageController extends Controller
             return $response;
         }
     }
-
 
     /**
      * @param Request $request

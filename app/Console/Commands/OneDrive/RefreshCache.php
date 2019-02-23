@@ -54,7 +54,7 @@ class RefreshCache extends Command
         $response = OneDrive::getChildrenByPath(
             $path,
             '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl'
-            .'&expand=thumbnails'
+            . '&expand=thumbnails'
         );
 
         return $response['errno'] === 0 ? $response['data'] : null;
@@ -72,7 +72,7 @@ class RefreshCache extends Command
         $data = $this->getChildren($path);
         if (is_array($data)) {
             \Illuminate\Support\Facades\Cache::put(
-                'one:list:'.$path,
+                'one:list:' . $path,
                 $data,
                 Tool::config('expires')
             );
@@ -81,7 +81,7 @@ class RefreshCache extends Command
         }
         foreach ((array)$data as $item) {
             if (array_has($item, 'folder')) {
-                $this->getRecursive($path.$item['name'].'/');
+                $this->getRecursive($path . $item['name'] . '/');
             }
         }
     }

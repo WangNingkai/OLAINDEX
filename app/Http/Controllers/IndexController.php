@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Session;
  */
 class IndexController extends Controller
 {
-
     /**
      * 缓存超时时间 建议10分钟以下，否则会导致资源失效
      *
@@ -49,18 +48,17 @@ class IndexController extends Controller
             'checkToken',
             'handleIllegalFile',
         ]);
-        $this->middleware('HandleEncryptDir')
-            ->only(Tool::config('encrypt_option', ['list']));
+        $this->middleware('HandleEncryptDir')->only(Tool::config('encrypt_option', ['list']));
         $this->expires = Tool::config('expires', 10);
         $this->root = Tool::config('root', '/');
         $this->show = [
             'stream' => explode(' ', Tool::config('stream')),
-            'image' => explode(' ', Tool::config('image')),
-            'video' => explode(' ', Tool::config('video')),
-            'dash' => explode(' ', Tool::config('dash')),
-            'audio' => explode(' ', Tool::config('audio')),
-            'code' => explode(' ', Tool::config('code')),
-            'doc' => explode(' ', Tool::config('doc')),
+            'image'  => explode(' ', Tool::config('image')),
+            'video'  => explode(' ', Tool::config('video')),
+            'dash'   => explode(' ', Tool::config('dash')),
+            'audio'  => explode(' ', Tool::config('audio')),
+            'code'   => explode(' ', Tool::config('code')),
+            'doc'    => explode(' ', Tool::config('doc')),
         ];
     }
 
@@ -74,7 +72,6 @@ class IndexController extends Controller
     {
         return $this->list($request);
     }
-
 
     /**
      * @param Request $request
@@ -121,8 +118,7 @@ class IndexController extends Controller
         } else {
             $response = OneDrive::getChildrenByPath(
                 $graphPath,
-                '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl'
-                . '&expand=thumbnails'
+                '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl&expand=thumbnails'
             );
 
             if ($response['errno'] === 0) {
@@ -252,13 +248,13 @@ class IndexController extends Controller
                         if ($key === 'stream') {
                             $fileType
                                 = empty(Constants::FILE_STREAM[$file['ext']])
-                                ? "application/octet-stream"
+                                ? 'application/octet-stream'
                                 : Constants::FILE_STREAM[$file['ext']];
 
                             return response(
                                 $file['content'],
                                 200,
-                                ['Content-type' => $fileType,]
+                                ['Content-type' => $fileType, ]
                             );
                         }
                     }
@@ -271,22 +267,22 @@ class IndexController extends Controller
                 if ($key === 'dash') {
                     if (!strpos(
                         $file['@microsoft.graph.downloadUrl'],
-                        "sharepoint.com"
+                        'sharepoint.com'
                     )
                     ) {
                         return redirect()->away($file['download']);
                     }
                     $replace = str_replace(
-                        "thumbnail",
-                        "videomanifest",
+                        'thumbnail',
+                        'videomanifest',
                         $file['thumb']
                     );
                     $file['dash'] = $replace
-                        . "&part=index&format=dash&useScf=True&pretranscode=0&transcodeahead=0";
+                        . '&part=index&format=dash&useScf=True&pretranscode=0&transcodeahead=0';
                 }
                 // 处理微软文档
                 if ($key === 'doc') {
-                    $url = "https://view.officeapps.live.com/op/view.aspx?src="
+                    $url = 'https://view.officeapps.live.com/op/view.aspx?src='
                         . urlencode($file['@microsoft.graph.downloadUrl']);
 
                     return redirect()->away($url);
@@ -469,9 +465,9 @@ class IndexController extends Controller
         $realPath = decrypt(request()->get('realPath'));
         $encryptKey = decrypt(request()->get('encryptKey'));
         $data = [
-            'password' => encrypt($password),
+            'password'   => encrypt($password),
             'encryptKey' => $encryptKey,
-            'expires' => time() + (int)$this->expires * 60, // 目录密码过期时间
+            'expires'    => time() + (int)$this->expires * 60, // 目录密码过期时间
         ];
         Session::put('password:' . $encryptKey, $data);
         $arr = Tool::handleEncryptDir(Tool::config('encrypt_path'));
