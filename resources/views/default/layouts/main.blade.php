@@ -9,8 +9,7 @@
     <meta name="keywords" content="OLAINDEX,OneDrive,Index,Microsoft OneDrive,Directory Index"/>
     <meta name="description" content="OLAINDEX,Another OneDrive Directory Index"/>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootswatch@4/dist/{{ \App\Helpers\Tool::config('theme','materia') }}/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4/dist/{{ \App\Helpers\Tool::config('theme','materia') }}/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@2/github-markdown.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fancybox@3/dist/css/jquery.fancybox.min.css">
@@ -64,6 +63,16 @@
                     <button class="btn btn-secondary my-2 my-sm-0" type="submit">搜索</button>
                 </form>
             @endif
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="{{ route('logout') }}" class="nav-link"
+                       onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i class="fa fa-sign-out"></i> 退出</a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="invisible">
+                        @csrf
+                    </form>
+                </li>
+
+            </ul>
         </div>
     </div>
 </nav>

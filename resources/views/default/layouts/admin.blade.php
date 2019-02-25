@@ -7,8 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootswatch@4/dist/{{ \App\Helpers\Tool::config('theme','materia') }}/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4/dist/{{ \App\Helpers\Tool::config('theme','materia') }}/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@7/dist/sweetalert2.min.css">
     @yield('css')
@@ -83,10 +82,8 @@
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a href="{{ route('logout') }}" class="nav-link"
-                       onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i
-                            class="fa fa-sign-out"></i> 退出</a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                          class="invisible">
+                       onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i class="fa fa-sign-out"></i> 退出</a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="invisible">
                         @csrf
                     </form>
                 </li>

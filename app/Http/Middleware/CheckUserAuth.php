@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Session;
 
-class CheckAuth
+class CheckUserAuth
 {
     /**
      * 处理登陆
@@ -17,10 +17,10 @@ class CheckAuth
      */
     public function handle($request, Closure $next)
     {
-        if (!Session::has('LogInfo')) {
-            return redirect()->route('admin.login');
+        if (!Session::has('index_log_info')) {
+            return redirect()->route('login');
         }
-        Session::put('LogInfo.LastActivityTime', time());
+        Session::put('index_log_info.LastActivityTime', time());
 
         return $next($request);
     }

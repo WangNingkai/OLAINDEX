@@ -115,8 +115,7 @@ class OauthController extends Controller
                             'msg'  => $curl->errorMessage,
                         ]
                     );
-                    $msg = 'Error: ' . $curl->errorCode . ': ' . $curl->errorMessage
-                        . "\n";
+                    $msg = 'Error: ' . $curl->errorCode . ': ' . $curl->errorMessage . "\n";
                     Tool::showMessage($msg, false);
 
                     return view(config('olaindex.theme') . 'message');
@@ -124,9 +123,7 @@ class OauthController extends Controller
                     $token = collect($curl->response)->toArray();
                     $access_token = $token['access_token'];
                     $refresh_token = $token['refresh_token'];
-                    $expires = (int)$token['expires_in'] != 0 ? time()
-                        + $token['expires_in']
-                        : 0;
+                    $expires = (int)$token['expires_in'] != 0 ? time() + $token['expires_in'] : 0;
                     $data = [
                         'access_token'         => $access_token,
                         'refresh_token'        => $refresh_token,
@@ -152,7 +149,7 @@ class OauthController extends Controller
     public function authorizeLogin($url = '')
     {
         // 跳转授权登录
-//        $state = str_random(32);
+        // $state = str_random(32);
         $state = urlencode($url ? 'http://' . $url : config('app.url')); // 添加中转
         Session::put('state', $state);
         $values = [
@@ -215,9 +212,7 @@ class OauthController extends Controller
             $token = collect($curl->response)->toArray();
             $access_token = $token['access_token'];
             $refresh_token = $token['refresh_token'];
-            $expires = (int)$token['expires_in'] != 0 ? time()
-                + $token['expires_in']
-                : 0;
+            $expires = (int)$token['expires_in'] != 0 ? time() + $token['expires_in'] : 0;
             $data = [
                 'access_token'         => $access_token,
                 'refresh_token'        => $refresh_token,

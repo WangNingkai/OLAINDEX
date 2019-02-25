@@ -21,7 +21,12 @@ class AdminController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('checkAuth')->except('login');
+        $this->middleware('checkAuth')->except(['login', 'showLoginForm']);
+    }
+
+    public function showLoginForm()
+    {
+        return view(config('olaindex.theme') . 'admin.login');
     }
 
     /**
@@ -36,9 +41,7 @@ class AdminController extends Controller
         if (Session::has('LogInfo')) {
             return redirect()->route('admin.basic');
         }
-        if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme') . 'admin.login');
-        }
+
         $password = $request->get('password');
         if (md5($password) === Tool::config('password')) {
             $logInfo = [
@@ -69,7 +72,7 @@ class AdminController extends Controller
         $request->session()->invalidate();
         Tool::showMessage('已退出');
 
-        return redirect()->route('home');
+        return redirect()->route('login');
     }
 
     /**
@@ -132,7 +135,8 @@ class AdminController extends Controller
 
             return redirect()->back();
         }
-        if ($password !== $password_confirm || $old_password === ''
+        if ($password !== $password_confirm
+            || $old_password === ''
             || $old_password === ''
         ) {
             Tool::showMessage('两次密码不一致', false);

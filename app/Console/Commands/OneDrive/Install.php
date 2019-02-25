@@ -33,7 +33,6 @@ class Install extends Command
         parent::__construct();
     }
 
-
     /**
      * Execute Command
      */
@@ -61,8 +60,8 @@ class Install extends Command
             'APP_URL=http://localhost:8000',
         ];
         $replace_db = [
-            'APP_KEY='.str_random(32),
-            'APP_URL='.$app_url,
+            'APP_KEY=' . str_random(32),
+            'APP_URL=' . $app_url,
         ];
         $envExample = file_get_contents(base_path('.env.example'));
         $env = str_replace($search_db, $replace_db, $envExample);
@@ -76,12 +75,11 @@ class Install extends Command
         }
         $this->call('config:cache'); // 生成配置缓存否则报错
         $this->warn('Password：[ 12345678 ]');
-        $cmd = ['chmod' ,'777', 'storage/app/config.json'];
+        $cmd = ['chmod', '777', 'storage/app/config.json'];
         $process = new Process($cmd);
         $process->run();
         if (!$process->isSuccessful()) {
-            $this->info('Please run this command to make sure you have the permission'
-                .'[ chmod 777 storage/app/config.json ]');
+            $this->info('Please run this command to make sure you have the permission[ chmod 777 storage/app/config.json ]');
             throw new ProcessFailedException($process);
         }
         echo $process->getOutput();

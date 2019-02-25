@@ -46,6 +46,7 @@ class IndexController extends Controller
         $this->middleware([
             'checkInstall',
             'checkToken',
+            'checkUserAuth',
             'handleIllegalFile',
         ]);
         $this->middleware('HandleEncryptDir')->only(Tool::config('encrypt_option', ['list']));

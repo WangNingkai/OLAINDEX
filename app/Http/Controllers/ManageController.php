@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Validator;
 
 /**
  * 管理员 OneDriveGraph 操作
@@ -46,10 +45,7 @@ class ManageController extends Controller
         }
         $file = $request->file($field);
         $rule = [$field => 'required|max:4096|image'];
-        $validator = Validator::make(
-            request()->all(),
-            $rule
-        );
+        $validator = $request->validate($rule);
         if ($validator->fails()) {
             return response($validator->errors()->first(), 400);
         }
@@ -108,10 +104,7 @@ class ManageController extends Controller
         }
         $file = $request->file($field);
         $rule = [$field => 'required|max:4096']; // 上传文件规则，单文件指定大小4M
-        $validator = Validator::make(
-            request()->all(),
-            $rule
-        );
+        $validator = $request->validate($rule);
         if ($validator->fails()) {
             return response($validator->errors()->first(), 400);
         }

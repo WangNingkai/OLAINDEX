@@ -26,6 +26,12 @@
     "copyright": "",
     "statistics": "",
     "password": "25d55ad283aa400af464c76d713c07ad",
+    "users": [
+        {
+            "email": "gaara1759@gmail.com",
+            "password": "7e34b48e45578d4a1d2a49abaacb37f8"
+        }
+    ],
     "encrypt_path": "",
     "encrypt_option": [
         "list",
