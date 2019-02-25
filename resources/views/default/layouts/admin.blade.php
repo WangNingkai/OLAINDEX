@@ -82,12 +82,11 @@
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a href="{{ route('admin.logout') }}" class="nav-link"
-                       onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i class="fa fa-sign-out"></i> 退出</a>
+                       onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i class="fa fa-sign-out"></i> 管理员退出</a>
                     <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" class="invisible">
                         @csrf
                     </form>
                 </li>
-
             </ul>
         </div>
     </div>

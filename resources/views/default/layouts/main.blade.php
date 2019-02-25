@@ -63,6 +63,7 @@
                     <button class="btn btn-secondary my-2 my-sm-0" type="submit">搜索</button>
                 </form>
             @endif
+            @if (session()->has('index_log_info'))
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a href="{{ route('logout') }}" class="nav-link"
@@ -71,8 +72,8 @@
                         @csrf
                     </form>
                 </li>
-
             </ul>
+            @endif
         </div>
     </div>
 </nav>

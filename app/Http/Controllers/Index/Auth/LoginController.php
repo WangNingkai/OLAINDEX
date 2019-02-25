@@ -56,7 +56,7 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         $request->session()->forget('index_log_info');
-        Tool::showMessage('已退出');
+        Tool::showMessage('用户已退出');
 
         return redirect()->route('login');
     }

@@ -70,7 +70,7 @@ class AdminController extends Controller
     public function logout(Request $request)
     {
         $request->session()->forget('LogInfo');
-        Tool::showMessage('已退出');
+        Tool::showMessage('管理员已退出');
 
         return redirect()->route('login');
     }
