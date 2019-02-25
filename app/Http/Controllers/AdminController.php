@@ -69,7 +69,7 @@ class AdminController extends Controller
      */
     public function logout(Request $request)
     {
-        $request->session()->invalidate();
+        $request->session()->forget('LogInfo');
         Tool::showMessage('已退出');
 
         return redirect()->route('login');
