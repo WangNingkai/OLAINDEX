@@ -3,7 +3,6 @@
 use Arcanedev\LogViewer\Contracts\Utilities\Filesystem;
 
 return [
-
     /* -----------------------------------------------------------------
      |  Log files storage path
      | -----------------------------------------------------------------
@@ -156,5 +155,4 @@ return [
         '^#\d+',
         '^Stack trace:',
     ],
-
 ];

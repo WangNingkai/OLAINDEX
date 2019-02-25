@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'theme' => env('THEME', 'default').'.',
+    'theme' => env('THEME', 'default') . '.',
 ];
