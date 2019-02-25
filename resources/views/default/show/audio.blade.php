@@ -1,13 +1,13 @@
 @extends('default.layouts.main')
 @section('title',$file['name'])
 @section('css')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.min.css">
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.5.2/plyr.css">
 @stop
 @section('js')
-    <script src="https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.min.js"></script>
+    <script src="https://cdn.plyr.io/3.5.2/plyr.js"></script>
     <script>
         const player = new Plyr('#player', {
-            "iconUrl": "https://cdn.jsdelivr.net/npm/plyr@3/dist/plyr.svg",
+            iconUrl: "https://cdn.plyr.io/3.5.2/plyr.svg",
         });
     </script>
 @stop

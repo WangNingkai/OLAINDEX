@@ -1,6 +1,6 @@
 @extends('mdui.layouts.main')
 @section('css')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dropzone@5/dist/dropzone.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dropzone@5.5.1/dist/dropzone.min.css">
     <style>
         .dropzone {
             border: 2px dashed #ccc;
@@ -20,7 +20,7 @@
     </style>
 @stop
 @section('js')
-    <script src="https://cdn.jsdelivr.net/npm/dropzone@5/dist/dropzone.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dropzone@5.5.1/dist/dropzone.min.js"></script>
     <script>
         Dropzone.options.imageDropzone = {
             url: Config.routes.upload_image,
