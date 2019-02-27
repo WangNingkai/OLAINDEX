@@ -16,6 +16,10 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
+        if (Session::has('index_log_info')) {
+            return redirect()->route($this->getRedirect());
+        }
+
         return view('auth.login');
     }
 
