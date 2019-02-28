@@ -40,7 +40,7 @@
             {!! $markdown !!}
 
         </div>
-        @if (str_contains(config('app.url'),['localhost','dev.ningkai.wang']))
+        @if (\Illuminate\Support\Str::contains(config('app.url'),['localhost','dev.ningkai.wang']))
             <script src="https://utteranc.es/client.js"
                     repo="WangNingkai/OLAINDEX"
                     issue-term="pathname"

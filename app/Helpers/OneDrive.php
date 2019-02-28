@@ -2,6 +2,9 @@
 
 namespace App\Helpers;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+
 /**
  * Class OneDrive
  *
@@ -119,7 +122,7 @@ class OneDrive
         $response = self::request('get', $endpoint);
 
         if ($response['errno'] === 0) {
-            $response_data = array_get($response, 'data');
+            $response_data = Arr::get($response, 'data');
             $data = self::getNextLinkList($response_data);
 
             $format = self::formatArray($data);
@@ -146,7 +149,7 @@ class OneDrive
             : "/me/drive/root{$requestPath}children{$query}";
         $response = self::request('get', $endpoint);
         if ($response['errno'] === 0) {
-            $response_data = array_get($response, 'data');
+            $response_data = Arr::get($response, 'data');
             $data = self::getNextLinkList($response_data);
 
             $format = self::formatArray($data);
@@ -168,7 +171,7 @@ class OneDrive
      */
     public static function getNextLinkList($list, &$result = [])
     {
-        if (array_has($list, '@odata.nextLink')) {
+        if (Arr::has($list, '@odata.nextLink')) {
             $od = new self();
             $baseLength = strlen($od->baseUrl) + strlen($od->apiVersion);
             $endpoint = substr($list['@odata.nextLink'], $baseLength);
@@ -203,7 +206,7 @@ class OneDrive
         $endpoint = "/me/drive/items/{$itemId}{$query}";
         $response = self::request('get', $endpoint);
         if ($response['errno'] === 0) {
-            $data = array_get($response, 'data');
+            $data = Arr::get($response, 'data');
 
             $format = self::formatArray($data, false);
 
@@ -228,7 +231,7 @@ class OneDrive
         $endpoint = "/me/drive/root{$requestPath}{$query}";
         $response = self::request('get', $endpoint);
         if ($response['errno'] === 0) {
-            $data = array_get($response, 'data');
+            $data = Arr::get($response, 'data');
 
             $format = self::formatArray($data, false);
 
@@ -249,7 +252,7 @@ class OneDrive
     {
         $drive = self::getDrive();
         if ($drive['errno'] === 0) {
-            $driveId = array_get($drive, 'data.id');
+            $driveId = Arr::get($drive, 'data.id');
             $endpoint = "/me/drive/items/{$itemId}/copy";
             $body = json_encode([
                 'parentReference' => [
@@ -260,7 +263,7 @@ class OneDrive
             $response = self::request('post', [$endpoint, $body], false);
             if ($response['errno'] === 0) {
                 $data = [
-                    'redirect' => array_get($response, 'headers.Location'),
+                    'redirect' => Arr::get($response, 'headers.Location'),
                 ];
 
                 return self::response($data);
@@ -289,7 +292,7 @@ class OneDrive
             ],
         ];
         if ($itemName) {
-            $content = array_add($content, 'name', $itemName);
+            $content = Arr::add($content, 'name', $itemName);
         }
         $body = json_encode($content);
 
@@ -368,7 +371,7 @@ class OneDrive
             : "/me/drive/root{$graphPath}search(q='{$query}')";
         $response = self::request('get', $endpoint);
         if ($response['errno'] === 0) {
-            $response_data = array_get($response, 'data');
+            $response_data = Arr::get($response, 'data');
             $data = self::getNextLinkList($response_data);
 
             $format = self::formatArray($data);
@@ -408,17 +411,17 @@ class OneDrive
 
         if ($response['errno'] === 0) {
             $data = $response['data'];
-            $web_url = array_get($data, 'link.webUrl');
-            if (str_contains($web_url, ['sharepoint.com', 'sharepoint.cn'])) {
+            $web_url = Arr::get($data, 'link.webUrl');
+            if (Str::contains($web_url, ['sharepoint.com', 'sharepoint.cn'])) {
                 $parse = parse_url($web_url);
                 $domain = "{$parse['scheme']}://{$parse['host']}/";
-                $param = str_after($parse['path'], 'personal/');
+                $param = Str::after($parse['path'], 'personal/');
                 $info = explode('/', $param);
                 $res_id = $info[1];
                 $user_info = $info[0];
                 $direct_link = $domain.'personal/'.$user_info
                     .'/_layouts/15/download.aspx?share='.$res_id;
-            } elseif (str_contains($web_url, '1drv.ms')) {
+            } elseif (Str::contains($web_url, '1drv.ms')) {
                 $req = self::request('get', $web_url);
                 if ($req['errno'] === 0) {
                     $direct_link = str_replace(
@@ -452,10 +455,10 @@ class OneDrive
         $response = self::getPermission($itemId);
         if ($response['errno'] === 0) {
             $data = $response['data'];
-            $permission = array_first($data, function ($value) {
+            $permission = Arr::first($data, function ($value) {
                 return $value['roles'][0] === 'read';
             });
-            $permissionId = array_get($permission, 'id');
+            $permissionId = Arr::get($permission, 'id');
 
             return self::deletePermission($itemId, $permissionId);
         } else {
@@ -677,7 +680,7 @@ class OneDrive
             }
             $path = $item['parentReference']['path'];
             if (starts_with($path, '/drive/root:')) {
-                $path = str_after($path, '/drive/root:');
+                $path = Str::after($path, '/drive/root:');
             }
             if (!$start) {
                 $pathArr = $path === '' ? [] : explode('/', $path);
@@ -738,7 +741,7 @@ class OneDrive
         if ($isList) {
             $items = [];
             foreach ($response as $item) {
-                if (array_has($item, 'file')) {
+                if (Arr::has($item, 'file')) {
                     $item['ext'] = strtolower(
                         pathinfo(
                             $item['name'],

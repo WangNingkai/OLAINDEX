@@ -5,6 +5,7 @@ namespace App\Console\Commands\OneDrive;
 use App\Helpers\OneDrive;
 use App\Helpers\Tool;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 
 class ListItem extends Command
@@ -87,13 +88,11 @@ class ListItem extends Command
     {
         $list = [];
         foreach ($data as $item) {
-            $type = array_has($item, 'folder') ? 'd' : '-';
+            $type = Arr::has($item, 'folder') ? 'd' : '-';
             $size = Tool::convertSize($item['size']);
             $time = date('M m H:i', strtotime($item['lastModifiedDateTime']));
-            $folder = array_has($item, 'folder')
-                ? array_get($item, 'folder.childCount')
-                : '1';
-            $owner = array_get($item, 'createdBy.user.displayName');
+            $folder = Arr::has($item, 'folder') ? Arr::get($item, 'folder.childCount'): '1';
+            $owner = Arr::get($item, 'createdBy.user.displayName');
             if ($this->option('all')) {
                 $content = [
                     $type,

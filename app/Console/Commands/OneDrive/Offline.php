@@ -4,6 +4,7 @@ namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\OneDrive;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 
 class Offline extends Command
 {
@@ -42,26 +43,26 @@ class Offline extends Command
         $url = $this->argument('url');
         $response = OneDrive::uploadUrl($remote, $url);
         if ($response['errno'] === 200) {
-            $redirect = array_get($response, 'data.redirect');
+            $redirect = Arr::get($response, 'data.redirect');
             $this->info('progress link: '.$redirect);
             $done = false;
             while (!$done) {
                 $result = OneDrive::request('get', $redirect, false);
-                $status = array_get($result, 'data.status');
+                $status = Arr::get($result, 'data.status');
                 if ($status === 'failed') {
-                    $this->error(array_get($result, 'data.error.message'));
+                    $this->error(Arr::get($result, 'data.error.message'));
                     $done = true;
                 } elseif ($status === 'inProgress') {
                     $this->info(
                         'Progress: '
-                        .array_get($result, 'data.percentageComplete')
+                        .Arr::get($result, 'data.percentageComplete')
                     );
                     sleep(3);
                     $done = false;
                 } elseif ($status === 'completed') {
                     $this->info(
                         'Progress: '
-                        .array_get($result, 'data.percentageComplete')
+                        .Arr::get($result, 'data.percentageComplete')
                     );
                     $done = true;
                 } elseif ($status === 'notStarted') {

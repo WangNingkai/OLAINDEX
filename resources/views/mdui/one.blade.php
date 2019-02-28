@@ -67,7 +67,7 @@
                 @endif
 
                 @foreach($items as $item)
-                    @if(array_has($item,'folder'))
+                    @if( \Illuminate\Support\Arr::has($item,'folder'))
                         <li class="mdui-list-item mdui-ripple">
                             <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}">
                                 <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
@@ -77,7 +77,7 @@
                                 <div
                                     class="mdui-col-sm-3 mdui-text-right">{{ date('M d H:i',strtotime($item['lastModifiedDateTime'])) }}</div>
                                 <div
-                                    class="mdui-col-sm-2 mdui-text-right">{{ array_has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</div>
+                                    class="mdui-col-sm-2 mdui-text-right">{{  \Illuminate\Support\Arr::has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</div>
                             </a>
                         </li>
                     @else
@@ -91,11 +91,11 @@
                                 <div
                                     class="mdui-col-sm-3 mdui-text-right">{{ date('M d H:i',strtotime($item['lastModifiedDateTime'])) }}</div>
                                 <div
-                                    class="mdui-col-sm-2 mdui-text-right">{{ array_has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</div>
+                                    class="mdui-col-sm-2 mdui-text-right">{{  \Illuminate\Support\Arr::has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</div>
                             </a>
                         </li>
                     @endif
-                    @if(array_has($item,'file'))
+                    @if( \Illuminate\Support\Arr::has($item,'file'))
                         <a class="dl_url mdui-hidden"
                            href="{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"></a>
                     @endif
@@ -124,7 +124,7 @@
                 </div>
             @endif
             @foreach($items as $item)
-                @if(array_has($item,'folder'))
+                @if( \Illuminate\Support\Arr::has($item,'folder'))
                     <div class="mdui-col">
                         <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}">
                             <div class="col-icon">
@@ -150,7 +150,7 @@
                             <div class="col-icon">
                                 @if(in_array($item['ext'],explode(' ',\App\Helpers\Tool::config('image'))))
                                     <img class="lazy"
-                                         data-original="{{ array_get($item,'thumbnails.0.small.url') }}"
+                                         data-original="{{  \Illuminate\Support\Arr::get($item,'thumbnails.0.small.url') }}"
                                          src="{{ asset('img/loading.gif') }}" alt="">
                                 @else
                                     <img
