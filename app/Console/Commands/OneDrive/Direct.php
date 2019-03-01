@@ -4,6 +4,7 @@ namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\OneDrive;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 
 class Direct extends Command
 {
@@ -39,10 +40,8 @@ class Direct extends Command
         $this->call('od:refresh');
         $this->info('Please waiting...');
         $remote = $this->argument('remote');
-        $_remote
-            = OneDrive::pathToItemId($remote);
-        $remote_id = $_remote['errno'] === 0 ? array_get($_remote, 'data.id')
-            : exit('Remote Path Abnormal');
+        $_remote = OneDrive::pathToItemId($remote);
+        $remote_id = $_remote['errno'] === 0 ? Arr::get($_remote, 'data.id') : exit('Remote Path Abnormal');
         $response = OneDrive::createShareLink($remote_id);
         $response['errno'] === 0
             ? $this->info("Success! Direct Link:\n{$response['data']['redirect']}")

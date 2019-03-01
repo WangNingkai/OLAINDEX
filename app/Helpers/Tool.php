@@ -6,6 +6,7 @@ use App\Http\Controllers\OauthController;
 use Curl\Curl;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
@@ -285,7 +286,7 @@ class Tool
      */
     public static function config($key = '', $default = '')
     {
-        $config = Cache::remember('config', 1440, function () {
+        $config = Cache::remember('config', 1440 * 60, function () {
             $file = storage_path('app/config.json');
             if (!file_exists($file)) {
                 copy(
@@ -297,7 +298,7 @@ class Tool
             return self::readJson($file);
         });
 
-        return $key ? (array_has($config, $key) ? (array_get($config, $key)
+        return $key ? (Arr::has($config, $key) ? (array_get($config, $key)
             ?: $default) : $default) : $config;
     }
 

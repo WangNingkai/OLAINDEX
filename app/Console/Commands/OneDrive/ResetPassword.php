@@ -4,6 +4,7 @@ namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\Tool;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 
 class ResetPassword extends Command
 {
@@ -37,7 +38,7 @@ class ResetPassword extends Command
      */
     public function handle()
     {
-        $password = str_random(8);
+        $password = Str::random(8);
         Tool::updateConfig(['password' => md5($password)]);
         $this->info("New Password:[ {$password} ]");
     }

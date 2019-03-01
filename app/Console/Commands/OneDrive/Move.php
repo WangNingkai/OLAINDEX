@@ -4,6 +4,7 @@ namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\OneDrive;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 
 class Move extends Command
 {
@@ -43,11 +44,11 @@ class Move extends Command
         $this->info('Please waiting...');
         $origin = $this->argument('origin');
         $_origin = OneDrive::pathToItemId($origin);
-        $origin_id = $_origin['errno'] === 0 ? array_get($_origin, 'data.id')
+        $origin_id = $_origin['errno'] === 0 ? Arr::get($_origin, 'data.id')
             : exit('Origin Path Abnormal');
         $target = $this->argument('target');
         $_target = OneDrive::pathToItemId($target);
-        $target_id = $_origin['errno'] === 0 ? array_get($_target, 'data.id')
+        $target_id = $_origin['errno'] === 0 ? Arr::get($_target, 'data.id')
             : exit('Target Path Abnormal');
         $rename = $this->option('rename') ?? '';
         $response = OneDrive::move($origin_id, $target_id, $rename);

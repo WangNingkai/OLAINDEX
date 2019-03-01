@@ -4,6 +4,7 @@ namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\OneDrive;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 
 class Copy extends Command
 {
@@ -43,15 +44,15 @@ class Copy extends Command
         $this->call('od:refresh');
         $origin = $this->argument('origin');
         $_origin = OneDrive::pathToItemId($origin);
-        $origin_id = $_origin['errno'] === 0 ? array_get($_origin, 'data.id')
+        $origin_id = $_origin['errno'] === 0 ? Arr::get($_origin, 'data.id')
             : exit('Origin Path Abnormal');
         $target = $this->argument('target');
         $_target = OneDrive::pathToItemId($target);
-        $target_id = $_origin['errno'] === 0 ? array_get($_target, 'data.id')
+        $target_id = $_origin['errno'] === 0 ? Arr::get($_target, 'data.id')
             : exit('Target Path Abnormal');
         $response = OneDrive::copy($origin_id, $target_id);
         if ($response['errno'] === 0) {
-            $redirect = array_get($response, 'data.redirect');
+            $redirect = Arr::get($response, 'data.redirect');
             $done = false;
             while (!$done) {
                 $resp = OneDrive::request(
@@ -59,21 +60,21 @@ class Copy extends Command
                     $redirect,
                     false
                 );
-                $status = array_get($resp, 'data.status');
+                $status = Arr::get($resp, 'data.status');
                 if ($status === 'failed') {
-                    $this->error(array_get($resp, 'data.error.message'));
+                    $this->error(Arr::get($resp, 'data.error.message'));
                     $done = true;
                 } elseif ($status === 'inProgress') {
                     $this->info(
                         'Progress: '
-                        .array_get($resp, 'data.percentageComplete')
+                        .Arr::get($resp, 'data.percentageComplete')
                     );
                     sleep(3);
                     $done = false;
                 } elseif ($status === 'completed') {
                     $this->info(
                         'Progress: '
-                        .array_get($resp, 'data.percentageComplete')
+                        .Arr::get($resp, 'data.percentageComplete')
                     );
                     $done = true;
                 } elseif ($status === 'notStarted') {

@@ -34,7 +34,7 @@
         <a href="{{ route('home') }}" target="_blank" class="mdui-typo-headline mdui-hidden-xs">OLAINDEX</a>
         <div class="mdui-toolbar-spacer"></div>
         <a href="{{ route('admin.bind') }}" class="mdui-btn"><i
-                class="mdui-icon material-icons">face</i> {{ str_before(\App\Helpers\Tool::getBindAccount(),'@')  }}</a>
+                class="mdui-icon material-icons">face</i> {{ \Illuminate\Support\Str::before(\App\Helpers\Tool::getBindAccount(),'@')  }}</a>
         <a onclick="event.preventDefault();document.getElementById('logout-form').submit();"
            href="javascript:void(0)" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">exit_to_app</i></a>
         <form id="logout-form" action="{{ route('logout') }}" method="POST"

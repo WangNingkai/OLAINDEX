@@ -5,6 +5,7 @@ namespace App\Console\Commands\OneDrive;
 use App\Helpers\Tool;
 use App\Helpers\OneDrive;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 
 class UploadFile extends Command
 {
@@ -62,7 +63,7 @@ class UploadFile extends Command
     {
         $content = file_get_contents($local);
         $file_name = basename($local);
-        $response = OneDrive::uploadByPath($remote.$file_name, $content);
+        $response = OneDrive::uploadByPath($remote . $file_name, $content);
         $response['errno'] === 0 ? $this->info('Upload Success!')
             : $this->warn('Failed!');
     }
@@ -80,9 +81,9 @@ class UploadFile extends Command
         $file_size = OneDrive::readFileSize($local);
         $file_name = basename($local);
         $target_path = Tool::getAbsolutePath($remote);
-        $url_response = OneDrive::createUploadSession($target_path.$file_name);
+        $url_response = OneDrive::createUploadSession($target_path . $file_name);
         if ($url_response['errno'] === 0) {
-            $url = array_get($url_response, 'data.uploadUrl');
+            $url = Arr::get($url_response, 'data.uploadUrl');
         } else {
             $this->warn($url_response['msg']);
             exit;
@@ -106,7 +107,7 @@ class UploadFile extends Command
                     $this->info("length: {$data['nextExpectedRanges'][0]}");
                     $ranges = explode('-', $data['nextExpectedRanges'][0]);
                     $offset = intval($ranges[0]);
-                    $status = @floor($offset / $file_size * 100).'%';
+                    $status = @floor($offset / $file_size * 100) . '%';
                     $this->info("success. progress:{$status}");
                     $done = false;
                 } elseif (!empty($data['@content.downloadUrl'])

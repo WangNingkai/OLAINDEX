@@ -4,6 +4,7 @@ namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\OneDrive;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 
 class Share extends Command
 {
@@ -41,7 +42,7 @@ class Share extends Command
         $remote = $this->argument('remote');
         $_remote
             = OneDrive::pathToItemId($remote);
-        $remote_id = $_remote['errno'] === 0 ? array_get($_remote, 'data.id')
+        $remote_id = $_remote['errno'] === 0 ? Arr::get($_remote, 'data.id')
             : exit('Remote Path Abnormal');
         $response = OneDrive::createShareLink($remote_id);
         if ($response['errno'] === 0) {

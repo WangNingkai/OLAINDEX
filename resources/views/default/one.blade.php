@@ -171,7 +171,7 @@
                 <li class="list-group-item list-group-item-action">
                     <div class="row">
                         <div class="col-8 col-sm-6" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
-                            @if(array_has($item,'folder'))
+                            @if( \Illuminate\Support\Arr::has($item,'folder'))
                                 <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                    title="{{ $item['name'] }}">
                                     <i class="fa fa-folder"></i> {{ $item['name'] }}
@@ -189,12 +189,12 @@
                         </div>
                         <div class="col-sm-2 d-none d-md-block d-md-none">
                             <span
-                                class="pull-right">{{ array_has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</span>
+                                class="pull-right">{{ \Illuminate\Support\Arr::has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</span>
                         </div>
                         <div class="col-4 col-sm-2">
                             <span class="pull-right">
-                                @if(!array_has($item,'folder'))
-                                    @if(array_has($item,'image'))
+                                @if(! \Illuminate\Support\Arr::has($item,'folder'))
+                                    @if( \Illuminate\Support\Arr::has($item,'image'))
                                         <a href="{{ route('view',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                            data-fancybox="image-list"><i
                                                 class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
@@ -235,11 +235,11 @@
             <div class="card-body">
                 <div id="links">
                     @foreach($items as $item)
-                        @if(array_has($item,'image'))
+                        @if( \Illuminate\Support\Arr::has($item,'image'))
                             <a href="{{ route('view',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
                                title="{{ $item['name'] }}" data-gallery>
                                 <img class="lazy"
-                                     data-original="{{ array_get($item,'thumbnails.0.small.url') }}"
+                                     data-original="{{  \Illuminate\Support\Arr::get($item,'thumbnails.0.small.url') }}"
                                      src="{{ asset('img/loading.gif') }}"
                                      alt="{{ $item['name'] }}" width="10%" height="10%">
                             </a>
