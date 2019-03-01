@@ -2,6 +2,12 @@
 @section('title',$file['name'])
 @section('css')
     <link rel="stylesheet" href="https://cdn.plyr.io/3.5.2/plyr.css">
+    <style>
+        .blank-div {
+            width: 100%;
+            height: 150px
+        }
+    </style>
 @stop
 @section('js')
     <script src="https://cdn.plyr.io/3.5.2/plyr.js"></script>
@@ -18,6 +24,7 @@
             {{ $file['name'] }}
         </div>
         <div class="card-body">
+            <div class="blank-div"></div>
             <div class="text-center"><a href="{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}"
                                         class="btn btn-success"><i
                         class="fa fa-download"></i> 下载</a></div>
