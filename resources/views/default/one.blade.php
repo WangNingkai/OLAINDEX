@@ -2,15 +2,15 @@
 @section('title',\App\Helpers\Tool::config('name','OLAINDEX'))
 @section('css')
     <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/blueimp-gallery@2.33.0/css/blueimp-gallery-indicator.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/blueimp-gallery@2.33.0/css/blueimp-gallery.min.css">
+          href="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/css/blueimp-gallery-indicator.min.css">
+    <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/css/blueimp-gallery.min.css">
 @stop
 @section('js')
-    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2.33.0/js/blueimp-helper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2.33.0/js/blueimp-gallery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2.33.0/js/blueimp-gallery-indicator.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2.33.0/js/jquery.blueimp-gallery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2.33.0/js/blueimp-gallery-fullscreen.min.js"></script>
+    <script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/blueimp-helper.min.js"></script>
+    <script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/blueimp-gallery.min.js"></script>
+    <script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/blueimp-gallery-indicator.min.js"></script>
+    <script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/jquery.blueimp-gallery.min.js"></script>
+    <script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/blueimp-gallery-fullscreen.min.js"></script>
     <script>
         @if(session()->has('LogInfo'))
         function deleteItem($sign) {

@@ -1,6 +1,6 @@
 @extends('mdui.layouts.admin')
 @section('js')
-    <script src="https://cdn.jsdelivr.net/npm/axios@0.18.0/dist/axios.min.js"></script>
+    <script src="https://cdnjs.loli.net/ajax/libs/axios/0.18.0/axios.js"></script>
     <script>
         $(function () {
             $("#submit_btn").on("click", function () {

@@ -1,6 +1,12 @@
 @extends('mdui.layouts.main')
 @section('css')
     <link rel="stylesheet" href="https://cdn.plyr.io/3.5.2/plyr.css">
+    <style>
+        .blank-div {
+            width: 100%;
+            height: 250px
+        }
+    </style>
 @stop
 @section('js')
     <script src="https://cdn.plyr.io/3.5.2/plyr.js"></script>
@@ -13,6 +19,7 @@
 @section('content')
 
     <div class="mdui-container-fluid">
+        <div class="blank-div"></div>
         <div class="mdui-typo mdui-m-y-2">
             <div class="mdui-typo-subheading-opacity">{{ $file['name'] }}</div>
         </div>
