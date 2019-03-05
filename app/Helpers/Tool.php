@@ -536,7 +536,7 @@ class Tool
                 function () {
                     $response = OneDrive::getMe();
                     if ($response['errno'] == 0) {
-                        return array_get($response, 'data.userPrincipalName');
+                        return Arr::get($response, 'data.userPrincipalName');
                     } else {
                         return '';
                     }
