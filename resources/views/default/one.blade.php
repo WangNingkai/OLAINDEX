@@ -222,6 +222,18 @@
                     </div>
                 </li>
             @endforeach
+            <li class="list-group-item list-group-item-action border-0">
+                <div class="row">
+                    <div class="col-8 col-sm-6" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
+                            <span class="text-muted font-weight-light">
+                                共 {{ $parent_item['folder']['childCount'] }} 个项目
+                                @if(session()->has('LogInfo'))
+                                    {{ \App\Helpers\Tool::convertSize($parent_item['size']) }}
+                                @endif
+                            </span>
+                    </div>
+                </div>
+            </li>
         </div>
     </div>
     <div>
