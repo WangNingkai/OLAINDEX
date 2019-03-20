@@ -79,11 +79,7 @@ class GraphRequest
      * @return $this
      * @throws \ErrorException
      */
-    public function request(
-        $method,
-        $param,
-        $token = false
-    )
+    public function request($method, $param, $token = false)
     {
         if (is_array($param)) {
             @list($endpoint, $requestBody, $requestHeaders, $timeout) = $param;
