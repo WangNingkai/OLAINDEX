@@ -83,7 +83,8 @@ class GraphRequest
         $method,
         $param,
         $token = false
-    ) {
+    )
+    {
         if (is_array($param)) {
             @list($endpoint, $requestBody, $requestHeaders, $timeout) = $param;
             $this->requestBody = $requestBody ?? '';
@@ -97,21 +98,21 @@ class GraphRequest
         }
         if (!$token) {
             $this->headers = array_merge([
-                'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer '.$this->accessToken,
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $this->accessToken,
             ], $this->headers);
             if (stripos($this->endpoint, "http") !== 0) {
-                $this->endpoint = $this->apiVersion.$this->endpoint;
+                $this->endpoint = $this->apiVersion . $this->endpoint;
             }
         }
         $this->requestType = strtoupper($method);
         $options = [
-            CURLOPT_CUSTOMREQUEST  => $this->requestType,
+            CURLOPT_CUSTOMREQUEST => $this->requestType,
             //            CURLOPT_HEADER => true,
-            CURLOPT_AUTOREFERER    => true,
-            CURLOPT_FAILONERROR    => true,
+            CURLOPT_AUTOREFERER => true,
+            CURLOPT_FAILONERROR => true,
             CURLOPT_FOLLOWLOCATION => false,
-            CURLOPT_ENCODING       => 'gzip,deflate',
+            CURLOPT_ENCODING => 'gzip,deflate',
         ];
         if ($this->requestBody) {
             $options = Arr::add($options, CURLOPT_POST, true);
@@ -126,6 +127,7 @@ class GraphRequest
         } else {
             $curl = new Curl();
         }
+        $curl->setUserAgent('ISV|OLAINDEX|OLAINDEX/3.2.1');
         $curl->setHeaders($this->headers);
         $curl->setRetry(3);
         $curl->setConnectTimeout(5);
@@ -139,12 +141,12 @@ class GraphRequest
                 'Get OneDrive source content error.',
                 [
                     'errno' => $curl->errorCode,
-                    'msg'   => $curl->errorMessage,
+                    'msg' => $curl->errorMessage,
                 ]
             );
             $this->responseError = json_encode([
                 'errno' => $curl->errorCode,
-                'msg'   => $curl->errorMessage,
+                'msg' => $curl->errorMessage,
             ]);
 
             return $this;
@@ -164,7 +166,7 @@ class GraphRequest
     public function setAccessToken($accessToken)
     {
         $this->accessToken = $accessToken;
-        $this->headers['Authorization'] = 'Bearer '.$this->accessToken;
+        $this->headers['Authorization'] = 'Bearer ' . $this->accessToken;
 
         return $this;
     }
