@@ -143,6 +143,21 @@ class Tool
         );
     }
 
+    public static function getOrderByStatus($field)
+    {
+        $order = request()->get('orderBy');
+        @list($search_field, $sortBy) = explode(',', $order);
+        if ($field !== $search_field) {
+            return true;
+        } else {
+            if (strtolower($sortBy) !== 'desc') {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
     /**
      * 获取包屑导航url
      *

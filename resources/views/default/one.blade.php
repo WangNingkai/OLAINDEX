@@ -57,13 +57,33 @@
         <div class="card-header">
             <div class="row">
                 <div class="col-8 col-sm-6">
-                    文件
+                    文件&nbsp;
+                    @if(\App\Helpers\Tool::getOrderByStatus('name'))
+                        <a href="?orderBy=name,asc"><i class="fa fa-arrow-down"></i></a>
+                    @else
+                        <a href="?orderBy=name,desc"><i class="fa fa-arrow-up"></i></a>
+
+                    @endif
                 </div>
                 <div class="col-sm-2 d-none d-md-block d-md-none">
-                    <span class="pull-right">修改日期</span>
+                    <span class="pull-right">
+                        修改日期&nbsp;
+                        @if(\App\Helpers\Tool::getOrderByStatus('lastModifiedDateTime'))
+                            <a href="?orderBy=lastModifiedDateTime,asc"><i class="fa fa-arrow-down"></i></a>
+                        @else
+                            <a href="?orderBy=lastModifiedDateTime,desc"><i class="fa fa-arrow-up"></i></a>
+                        @endif
+                    </span>
                 </div>
                 <div class="col-sm-2 d-none d-md-block d-md-none">
-                    <span class="pull-right">大小</span>
+                    <span class="pull-right">
+                        大小&nbsp;
+                        @if(\App\Helpers\Tool::getOrderByStatus('size'))
+                            <a href="?orderBy=size,asc"><i class="fa fa-arrow-down"></i></a>
+                        @else
+                            <a href="?orderBy=size,desc"><i class="fa fa-arrow-up"></i></a>
+                        @endif
+                    </span>
                 </div>
                 <div class="col-4 col-sm-2">
                     @if (session()->has('LogInfo'))

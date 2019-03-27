@@ -49,9 +49,33 @@
         <div class="mdui-row list-view mdui-hidden">
             <ul class="mdui-list">
                 <li class="mdui-list-item th">
-                    <div class="mdui-col-xs-12 mdui-col-sm-7">文件</div>
-                    <div class="mdui-col-sm-3 mdui-text-right">修改时间</div>
-                    <div class="mdui-col-sm-2 mdui-text-right">大小</div>
+                    <div class="mdui-col-xs-12 mdui-col-sm-7">
+                        文件
+                        @if(\App\Helpers\Tool::getOrderByStatus('name'))
+                            <a href="?orderBy=name,asc"><i class="fa fa-arrow-down"></i></a>
+                        @else
+                            <a href="?orderBy=name,desc"><i class="fa fa-arrow-up"></i></a>
+
+                        @endif
+                    </div>
+                    <div class="mdui-col-sm-3 mdui-text-right">
+                        修改时间
+                        @if(\App\Helpers\Tool::getOrderByStatus('lastModifiedDateTime'))
+                            <a href="?orderBy=lastModifiedDateTime,asc"><i class="fa fa-arrow-down"></i></a>
+                        @else
+                            <a href="?orderBy=lastModifiedDateTime,desc"><i class="fa fa-arrow-up"></i></a>
+
+                        @endif
+                    </div>
+                    <div class="mdui-col-sm-2 mdui-text-right">
+                        大小
+                        @if(\App\Helpers\Tool::getOrderByStatus('size'))
+                            <a href="?orderBy=size,asc"><i class="fa fa-arrow-down"></i></a>
+                        @else
+                            <a href="?orderBy=size,desc"><i class="fa fa-arrow-up"></i></a>
+
+                        @endif
+                    </div>
                 </li>
                 @if(!blank($path_array))
                     <li class="mdui-list-item mdui-ripple">
