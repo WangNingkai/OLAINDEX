@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use Curl\Curl;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 
 class GraphRequest
@@ -112,8 +113,8 @@ class GraphRequest
             CURLOPT_ENCODING       => 'gzip,deflate',
         ];
         if ($this->requestBody) {
-            $options = array_add($options, CURLOPT_POST, true);
-            $options = array_add(
+            $options = Arr::add($options, CURLOPT_POST, true);
+            $options = Arr::add(
                 $options,
                 CURLOPT_POSTFIELDS,
                 $this->requestBody

@@ -6,6 +6,7 @@ use App\Http\Controllers\OauthController;
 use Curl\Curl;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
@@ -140,6 +141,21 @@ class Tool
             Paginator::resolveCurrentPage(),
             ['path' => Paginator::resolveCurrentPath()]
         );
+    }
+
+    public static function getOrderByStatus($field)
+    {
+        $order = request()->get('orderBy');
+        @list($search_field, $sortBy) = explode(',', $order);
+        if ($field !== $search_field) {
+            return true;
+        } else {
+            if (strtolower($sortBy) !== 'desc') {
+                return false;
+            } else {
+                return true;
+            }
+        }
     }
 
     /**
@@ -285,7 +301,7 @@ class Tool
      */
     public static function config($key = '', $default = '')
     {
-        $config = Cache::remember('config', 1440, function () {
+        $config = Cache::remember('config', 1440 * 60, function () {
             $file = storage_path('app/config.json');
             if (!file_exists($file)) {
                 copy(
@@ -297,7 +313,7 @@ class Tool
             return self::readJson($file);
         });
 
-        return $key ? (array_has($config, $key) ? (array_get($config, $key)
+        return $key ? (Arr::has($config, $key) ? (array_get($config, $key)
             ?: $default) : $default) : $config;
     }
 
@@ -535,7 +551,7 @@ class Tool
                 function () {
                     $response = OneDrive::getMe();
                     if ($response['errno'] == 0) {
-                        return array_get($response, 'data.userPrincipalName');
+                        return Arr::get($response, 'data.userPrincipalName');
                     } else {
                         return '';
                     }

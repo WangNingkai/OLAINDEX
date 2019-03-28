@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Helpers\Tool;
 use Closure;
+use Illuminate\Support\Str;
 
 class HotlinkProtection
 {
@@ -28,7 +29,7 @@ class HotlinkProtection
                 abort(403);
             }
             //判断 $_SERVER['HTTP_REFERER'] 是不是处于白名单
-            if (str_contains($request->server('HTTP_REFERER'), $whiteList)) {
+            if (Str::contains($request->server('HTTP_REFERER'), $whiteList)) {
                 return $next($request);
             } else {
                 abort(403);

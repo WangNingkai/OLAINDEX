@@ -5,6 +5,7 @@ namespace App\Console\Commands\OneDrive;
 use App\Helpers\Tool;
 use App\Helpers\OneDrive;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 
 class Find extends Command
 {
@@ -78,13 +79,13 @@ class Find extends Command
     {
         $list = [];
         foreach ($data as $item) {
-            $type = array_has($item, 'folder') ? 'd' : '-';
+            $type = Arr::has($item, 'folder') ? 'd' : '-';
             $size = Tool::convertSize($item['size']);
             $time = date('M m H:i', strtotime($item['lastModifiedDateTime']));
-            $folder = array_has($item, 'folder')
-                ? array_get($item, 'folder.childCount')
+            $folder = Arr::has($item, 'folder')
+                ? Arr::get($item, 'folder.childCount')
                 : '1';
-            $owner = array_get($item, 'createdBy.user.displayName');
+            $owner = Arr::get($item, 'createdBy.user.displayName');
             if ($id = $this->option('id')) {
                 $response = OneDrive::itemIdToPath($item['id']);
                 $path = $response['errno'] === 0 ? $response['data']['path']

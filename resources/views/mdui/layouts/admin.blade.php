@@ -7,8 +7,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>OLAINDEX 管理</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@0.4.2/dist/css/mdui.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@7.33.1/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/mdui/0.4.2/css/mdui.min.css">
+    <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.css">
     @yield('css')
     <script>
         Config = {
@@ -34,7 +34,7 @@
         <a href="{{ route('home') }}" target="_blank" class="mdui-typo-headline mdui-hidden-xs">OLAINDEX</a>
         <div class="mdui-toolbar-spacer"></div>
         <a href="{{ route('admin.bind') }}" class="mdui-btn"><i
-                class="mdui-icon material-icons">face</i> {{ str_before(\App\Helpers\Tool::getBindAccount(),'@')  }}</a>
+                class="mdui-icon material-icons">face</i> {{ \Illuminate\Support\Str::before(\App\Helpers\Tool::getBindAccount(),'@')  }}</a>
         <a onclick="event.preventDefault();document.getElementById('logout-form').submit();"
            href="javascript:void(0)" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">exit_to_app</i></a>
         <form id="logout-form" action="{{ route('logout') }}" method="POST"
@@ -123,8 +123,9 @@
 <div class="mdui-container">
     @yield('content')
 </div>
-<script
-    src="https://cdn.jsdelivr.net/combine/npm/mdui@0.4.2/dist/js/mdui.min.js,npm/jquery@3,npm/sweetalert2@7.33.1/dist/sweetalert2.min.js"></script>
+<script src="https://cdnjs.loli.net/ajax/libs/mdui/0.4.2/js/mdui.min.js"></script>
+<script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.loli.net/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.all.min.js"></script>
 @if (session()->has('alertMessage'))
     <script>
         $(function () {

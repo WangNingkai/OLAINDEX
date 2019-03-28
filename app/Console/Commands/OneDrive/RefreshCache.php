@@ -5,6 +5,7 @@ namespace App\Console\Commands\OneDrive;
 use App\Helpers\OneDrive;
 use App\Helpers\Tool;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 
 class RefreshCache extends Command
 {
@@ -80,7 +81,7 @@ class RefreshCache extends Command
             exit('Cache Error!');
         }
         foreach ((array)$data as $item) {
-            if (array_has($item, 'folder')) {
+            if (Arr::has($item, 'folder')) {
                 $this->getRecursive($path . $item['name'] . '/');
             }
         }

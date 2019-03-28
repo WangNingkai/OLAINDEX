@@ -6,6 +6,7 @@ use App\Helpers\Constants;
 use App\Helpers\Tool;
 use Curl\Curl;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
@@ -99,7 +100,7 @@ class OauthController extends Controller
                     'grant_type'    => 'authorization_code',
                 ];
                 if (Tool::config('account_type', 'com') === 'cn') {
-                    $form_params = array_add(
+                    $form_params = Arr::add(
                         $form_params,
                         'resource',
                         Constants::REST_ENDPOINT_21V
@@ -187,7 +188,7 @@ class OauthController extends Controller
             'grant_type'    => 'refresh_token',
         ];
         if (Tool::config('account_type', 'com') === 'cn') {
-            $form_params = array_add(
+            $form_params = Arr::add(
                 $form_params,
                 'resource',
                 Constants::REST_ENDPOINT_21V

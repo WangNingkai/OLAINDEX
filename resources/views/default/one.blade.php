@@ -2,15 +2,15 @@
 @section('title',\App\Helpers\Tool::config('name','OLAINDEX'))
 @section('css')
     <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/blueimp-gallery@2.33.0/css/blueimp-gallery-indicator.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/blueimp-gallery@2.33.0/css/blueimp-gallery.min.css">
+          href="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/css/blueimp-gallery-indicator.min.css">
+    <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/css/blueimp-gallery.min.css">
 @stop
 @section('js')
-    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2.33.0/js/blueimp-helper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2.33.0/js/blueimp-gallery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2.33.0/js/blueimp-gallery-indicator.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2.33.0/js/jquery.blueimp-gallery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/blueimp-gallery@2.33.0/js/blueimp-gallery-fullscreen.min.js"></script>
+    <script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/blueimp-helper.min.js"></script>
+    <script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/blueimp-gallery.min.js"></script>
+    <script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/blueimp-gallery-indicator.min.js"></script>
+    <script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/jquery.blueimp-gallery.min.js"></script>
+    <script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/blueimp-gallery-fullscreen.min.js"></script>
     <script>
         @if(session()->has('LogInfo'))
         function deleteItem($sign) {
@@ -57,13 +57,33 @@
         <div class="card-header">
             <div class="row">
                 <div class="col-8 col-sm-6">
-                    文件
+                    文件&nbsp;
+                    @if(\App\Helpers\Tool::getOrderByStatus('name'))
+                        <a href="?orderBy=name,asc"><i class="fa fa-arrow-down"></i></a>
+                    @else
+                        <a href="?orderBy=name,desc"><i class="fa fa-arrow-up"></i></a>
+
+                    @endif
                 </div>
                 <div class="col-sm-2 d-none d-md-block d-md-none">
-                    <span class="pull-right">修改日期</span>
+                    <span class="pull-right">
+                        修改日期&nbsp;
+                        @if(\App\Helpers\Tool::getOrderByStatus('lastModifiedDateTime'))
+                            <a href="?orderBy=lastModifiedDateTime,asc"><i class="fa fa-arrow-down"></i></a>
+                        @else
+                            <a href="?orderBy=lastModifiedDateTime,desc"><i class="fa fa-arrow-up"></i></a>
+                        @endif
+                    </span>
                 </div>
                 <div class="col-sm-2 d-none d-md-block d-md-none">
-                    <span class="pull-right">大小</span>
+                    <span class="pull-right">
+                        大小&nbsp;
+                        @if(\App\Helpers\Tool::getOrderByStatus('size'))
+                            <a href="?orderBy=size,asc"><i class="fa fa-arrow-down"></i></a>
+                        @else
+                            <a href="?orderBy=size,desc"><i class="fa fa-arrow-up"></i></a>
+                        @endif
+                    </span>
                 </div>
                 <div class="col-4 col-sm-2">
                     @if (session()->has('LogInfo'))
@@ -171,7 +191,7 @@
                 <li class="list-group-item list-group-item-action">
                     <div class="row">
                         <div class="col-8 col-sm-6" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
-                            @if(array_has($item,'folder'))
+                            @if( \Illuminate\Support\Arr::has($item,'folder'))
                                 <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                    title="{{ $item['name'] }}">
                                     <i class="fa fa-folder"></i> {{ $item['name'] }}
@@ -189,12 +209,12 @@
                         </div>
                         <div class="col-sm-2 d-none d-md-block d-md-none">
                             <span
-                                class="pull-right">{{ array_has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</span>
+                                class="pull-right">{{ \Illuminate\Support\Arr::has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</span>
                         </div>
                         <div class="col-4 col-sm-2">
                             <span class="pull-right">
-                                @if(!array_has($item,'folder'))
-                                    @if(array_has($item,'image'))
+                                @if(! \Illuminate\Support\Arr::has($item,'folder'))
+                                    @if( \Illuminate\Support\Arr::has($item,'image'))
                                         <a href="{{ route('view',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                            data-fancybox="image-list"><i
                                                 class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
@@ -222,6 +242,18 @@
                     </div>
                 </li>
             @endforeach
+            <li class="list-group-item list-group-item-action border-0">
+                <div class="row">
+                    <div class="col-8 col-sm-6" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
+                            <span class="text-muted font-weight-light">
+                                共 {{ $parent_item['folder']['childCount'] }} 个项目
+                                @if(session()->has('LogInfo'))
+                                    {{ \App\Helpers\Tool::convertSize($parent_item['size']) }}
+                                @endif
+                            </span>
+                    </div>
+                </div>
+            </li>
         </div>
     </div>
     <div>
@@ -235,11 +267,11 @@
             <div class="card-body">
                 <div id="links">
                     @foreach($items as $item)
-                        @if(array_has($item,'image'))
+                        @if( \Illuminate\Support\Arr::has($item,'image'))
                             <a href="{{ route('view',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
                                title="{{ $item['name'] }}" data-gallery>
                                 <img class="lazy"
-                                     data-original="{{ array_get($item,'thumbnails.0.small.url') }}"
+                                     data-original="{{  \Illuminate\Support\Arr::get($item,'thumbnails.0.small.url') }}"
                                      src="{{ asset('img/loading.gif') }}"
                                      alt="{{ $item['name'] }}" width="10%" height="10%">
                             </a>

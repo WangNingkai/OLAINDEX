@@ -23,7 +23,7 @@
             </div>
             <br>
             <div class="mdui-textfield mdui-textfield-floating-label">
-                <label class="mdui-textfield-label" for="expires">缓存时间(分钟)</label>
+                <label class="mdui-textfield-label" for="expires">缓存时间(秒)</label>
                 <input type="text" class="mdui-textfield-input" id="expires" name="expires"
                        value="{{ \App\Helpers\Tool::config('expires',0) }}">
                 <div class="mdui-textfield-helper">建议缓存时间小于60分钟，否则会导致缓存失效</div>

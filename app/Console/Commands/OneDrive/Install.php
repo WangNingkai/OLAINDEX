@@ -4,6 +4,7 @@ namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\Constants;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
@@ -60,7 +61,7 @@ class Install extends Command
             'APP_URL=http://localhost:8000',
         ];
         $replace_db = [
-            'APP_KEY=' . str_random(32),
+            'APP_KEY=' . Str::random(32),
             'APP_URL=' . $app_url,
         ];
         $envExample = file_get_contents(base_path('.env.example'));
@@ -79,7 +80,8 @@ class Install extends Command
         $process = new Process($cmd);
         $process->run();
         if (!$process->isSuccessful()) {
-            $this->info('Please run this command to make sure you have the permission[ chmod 777 storage/app/config.json ]');
+            $this->info('Please run this command to make sure you have the permission'
+                . '[ chmod 777 storage/app/config.json ]');
             throw new ProcessFailedException($process);
         }
         echo $process->getOutput();

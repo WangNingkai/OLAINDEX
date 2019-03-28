@@ -6,8 +6,10 @@ use App\Helpers\Constants;
 use App\Helpers\OneDrive;
 use App\Helpers\Tool;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 
 /**
  * OneDriveGraph 索引
@@ -109,7 +111,7 @@ class IndexController extends Controller
                 return view(config('olaindex.theme') . 'message');
             }
         }
-        if (array_has($item, '@microsoft.graph.downloadUrl')) {
+        if (Arr::has($item, '@microsoft.graph.downloadUrl')) {
             return redirect()->away($item['@microsoft.graph.downloadUrl']);
         }
         // 获取列表
@@ -140,8 +142,8 @@ class IndexController extends Controller
         }
         $hasImage = Tool::hasImages($origin_items);
         // 过滤微软OneNote文件
-        $origin_items = array_where($origin_items, function ($value) {
-            return !array_has($value, 'package.type');
+        $origin_items = Arr::where($origin_items, function ($value) {
+            return !Arr::has($value, 'package.type');
         });
         // 处理 head/readme
         $head = array_key_exists('HEAD.md', $origin_items)
@@ -151,13 +153,15 @@ class IndexController extends Controller
             ? Tool::markdown2Html(Tool::getFileContent($origin_items['README.md']['@microsoft.graph.downloadUrl']))
             : '';
         if (!Session::has('LogInfo')) {
-            $origin_items = array_except(
+            $origin_items = Arr::except(
                 $origin_items,
                 ['README.md', 'HEAD.md', '.password', '.deny']
             );
         }
         $items = Tool::paginate($origin_items, $limit);
+        $parent_item = $item;
         $data = compact(
+            'parent_item',
             'items',
             'origin_items',
             'origin_path',
@@ -181,7 +185,7 @@ class IndexController extends Controller
     {
         $absolutePath = Tool::getAbsolutePath($realPath);
         $absolutePathArr = explode('/', $absolutePath);
-        $absolutePathArr = array_where($absolutePathArr, function ($value) {
+        $absolutePathArr = Arr::where($absolutePathArr, function ($value) {
             return $value !== '';
         });
         $name = array_pop($absolutePathArr);
@@ -226,7 +230,7 @@ class IndexController extends Controller
             return redirect()->route('home');
         }
         $file = $this->getFileOrCache($realPath);
-        if (is_null($file) || array_has($file, 'folder')) {
+        if (is_null($file) || Arr::has($file, 'folder')) {
             Tool::showMessage('获取文件失败，请检查路径或稍后重试', false);
 
             return view(config('olaindex.theme') . 'message');
@@ -262,7 +266,7 @@ class IndexController extends Controller
                 }
                 // 处理缩略图
                 if (in_array($key, ['image', 'dash', 'video'])) {
-                    $file['thumb'] = array_get($file, 'thumbnails.0.large.url');
+                    $file['thumb'] = Arr::get($file, 'thumbnails.0.large.url');
                 }
                 // dash视频流
                 if ($key === 'dash') {
@@ -320,7 +324,7 @@ class IndexController extends Controller
             return view(config('olaindex.theme') . 'message');
         }
         $file = $this->getFileOrCache($realPath);
-        if (is_null($file) || array_has($file, 'folder')) {
+        if (is_null($file) || Arr::has($file, 'folder')) {
             Tool::showMessage('下载失败，请检查路径或稍后重试', false);
 
             return view(config('olaindex.theme') . 'message');
@@ -386,7 +390,7 @@ class IndexController extends Controller
             return view(config('olaindex.theme') . 'message');
         }
         $file = $this->getFileOrCache($realPath);
-        if (is_null($file) || array_has($file, 'folder')) {
+        if (is_null($file) || Arr::has($file, 'folder')) {
             Tool::showMessage('获取失败，请检查路径或稍后重试', false);
 
             return view(config('olaindex.theme') . 'message');
@@ -416,9 +420,9 @@ class IndexController extends Controller
             $response = OneDrive::search($path, $keywords);
             if ($response['errno'] === 0) {
                 // 过滤结果中的文件夹\过滤微软OneNote文件
-                $items = array_where($response['data'], function ($value) {
-                    return !array_has($value, 'folder')
-                        && !array_has($value, 'package.type');
+                $items = Arr::where($response['data'], function ($value) {
+                    return !Arr::has($value, 'folder')
+                        && !Arr::has($value, 'package.type');
                 });
             } else {
                 Tool::showMessage('搜索失败', true);
@@ -444,7 +448,7 @@ class IndexController extends Controller
         if ($response['errno'] === 0) {
             $originPath = $response['data']['path'];
             if (trim($this->root, '/') != '') {
-                $path = str_after($originPath, $this->root);
+                $path = Str::after($originPath, $this->root);
             } else {
                 $path = $originPath;
             }

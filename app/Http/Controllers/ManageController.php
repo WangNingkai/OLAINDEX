@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 /**
  * 管理员 OneDriveGraph 操作
@@ -55,14 +56,17 @@ class ManageController extends Controller
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
             $content = file_get_contents($path);
-            $hostingPath = Tool::getEncodeUrl(Tool::config('image_hosting_path'));
+            $hostingPath
+                = Tool::getEncodeUrl(Tool::config('image_hosting_path'));
             $middleName = '/' . date('Y') . '/' . date('m') . '/'
-                . date('d') . '/' . str_random(8) . '/';
-            $filePath = trim($hostingPath . $middleName . $file->getClientOriginalName(), '/');
+                . date('d') . '/' . Str::random(8) . '/';
+            $filePath = trim($hostingPath . $middleName
+                . $file->getClientOriginalName(), '/');
             $remoteFilePath = Tool::getOriginPath($filePath); // 远程图片保存地址
             $response = OneDrive::uploadByPath($remoteFilePath, $content);
             if ($response['errno'] === 0) {
-                $sign = $response['data']['id'] . '.' . encrypt($response['data']['eTag']);
+                $sign = $response['data']['id'] . '.'
+                    . encrypt($response['data']['eTag']);
                 $fileIdentifier = encrypt($sign);
                 $data = [
                     'errno' => 200,
@@ -114,7 +118,8 @@ class ManageController extends Controller
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
             $content = file_get_contents($path);
-            $storeFilePath = trim(Tool::getEncodeUrl($target_directory), '/') . '/' . $file->getClientOriginalName(); // 远程保存地址
+            $storeFilePath = trim(Tool::getEncodeUrl($target_directory), '/')
+                . '/' . $file->getClientOriginalName(); // 远程保存地址
             $remoteFilePath = Tool::getOriginPath($storeFilePath); // 远程文件保存地址
             $response = OneDrive::uploadByPath($remoteFilePath, $content);
             if ($response['errno'] === 0) {
@@ -157,7 +162,8 @@ class ManageController extends Controller
         $storeFilePath = trim($path, '/') . '/.password';
         $remoteFilePath = Tool::getOriginPath($storeFilePath); // 远程password保存地址
         $response = OneDrive::uploadByPath($remoteFilePath, $password);
-        $response['errno'] === 0 ? Tool::showMessage('操作成功！') : Tool::showMessage('操作失败，请重试！', false);
+        $response['errno'] === 0 ? Tool::showMessage('操作成功！')
+            : Tool::showMessage('操作失败，请重试！', false);
         Cache::forget('one:list:' . Tool::getAbsolutePath($path));
 
         return redirect()->back();
