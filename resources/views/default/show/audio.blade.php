@@ -1,19 +1,41 @@
 @extends('default.layouts.main')
 @section('title',$file['name'])
 @section('css')
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.5.2/plyr.css">
-    <style>
-        .blank-div {
-            width: 100%;
-            height: 200px
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/aplayer/1.10.1/APlayer.min.css">
 @stop
 @section('js')
-    <script src="https://cdn.plyr.io/3.5.2/plyr.js"></script>
+    <script src="https://cdnjs.loli.net/ajax/libs/aplayer/1.10.1/APlayer.min.js"></script>
     <script>
-        const player = new Plyr('#player', {
-            iconUrl: "https://cdn.plyr.io/3.5.2/plyr.svg",
+        $(function () {
+            const ap = new APlayer({
+                container: document.getElementById('audio-player'),
+                audio: [{
+                    name: '{{ $file['name'] }}',
+                    artist: '{{ $file['name'] }}',
+                    url: "{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}",
+                    cover: 'cover.jpg'
+                }]
+            });
+            // 防止出现401 token过期
+            ap.on('error', function () {
+                console.log('获取资源错误，开始重新加载！');
+                let last = dp.audio.currentTime;
+                ap.audio.src = "{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}";
+                ap.audio.load();
+                ap.audio.currentTime = last;
+                ap.play();
+            });
+            // 如果是播放状态 & 没有播放完 每25分钟重载视频防止卡死
+            setInterval(function () {
+                if (!ap.audio.paused && !ap.audio.ended) {
+                    console.log('开始重新加载！');
+                    let last = ap.audio.currentTime;
+                    ap.audio.src = "{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}";
+                    ap.audio.load();
+                    ap.audio.currentTime = last;
+                    ap.play();
+                }
+            }, 1000 * 60 * 25)
         });
     </script>
 @stop
@@ -30,14 +52,7 @@
                         class="fa fa-download"></i> 下载</a></div>
             <br>
             <div class="text-center">
-                <div id="audio-player">
-                    <audio id="player" crossorigin controls>
-                        <source src="{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}"
-                                type="audio/mp3">
-                        <source src="{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}"
-                                type="audio/ogg">
-                    </audio>
-                </div>
+                <div id="audio-player"></div>
             </div>
             <br>
             <label class="control-label">下载链接</label>
