@@ -113,7 +113,7 @@
                                     {{ $item['name'] }}
                                 </div>
                                 <div
-                                    class="mdui-col-sm-3 mdui-text-right">{{ date('M d H:i',strtotime($item['lastModifiedDateTime'])) }}</div>
+                                    class="mdui-col-sm-3 mdui-text-right">{{ Carbon\Carbon::parse($item['lastModifiedDateTime'])->diffForHumans() }}</div>
                                 <div
                                     class="mdui-col-sm-2 mdui-text-right">{{  \Illuminate\Support\Arr::has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</div>
                             </a>
@@ -162,7 +162,7 @@
                                 </div>
                                 <br/>
                                 <div class="col-date">
-                                    {{ date('M d H:i',strtotime($item['lastModifiedDateTime'])) }}
+                                    {{ Carbon\Carbon::parse($item['lastModifiedDateTime'])->diffForHumans() }}
                                 </div>
                             </div>
                         </a>
@@ -188,7 +188,7 @@
                                 </div>
                                 <br/>
                                 <div class="col-date">
-                                    {{ date('M d H:i',strtotime($item['lastModifiedDateTime'])) }}
+                                    {{ Carbon\Carbon::parse($item['lastModifiedDateTime'])->diffForHumans() }}
                                 </div>
                             </div>
                         </a>
