@@ -37,7 +37,7 @@
                 class="mdui-icon material-icons">face</i> {{ \Illuminate\Support\Str::before(\App\Helpers\Tool::getBindAccount(),'@')  }}</a>
         <a onclick="event.preventDefault();document.getElementById('logout-form').submit();"
            href="javascript:void(0)" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">exit_to_app</i></a>
-        <form id="logout-form" action="{{ route('logout') }}" method="POST"
+        <form id="logout-form" action="{{ route('admin.logout') }}" method="POST"
               class="mdui-hidden">
             @csrf
         </form>

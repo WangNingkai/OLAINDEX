@@ -55,7 +55,6 @@
                             <a href="?orderBy=name,asc"><i class="fa fa-arrow-down"></i></a>
                         @else
                             <a href="?orderBy=name,desc"><i class="fa fa-arrow-up"></i></a>
-
                         @endif
                     </div>
                     <div class="mdui-col-sm-3 mdui-text-right">
@@ -64,7 +63,6 @@
                             <a href="?orderBy=lastModifiedDateTime,asc"><i class="fa fa-arrow-down"></i></a>
                         @else
                             <a href="?orderBy=lastModifiedDateTime,desc"><i class="fa fa-arrow-up"></i></a>
-
                         @endif
                     </div>
                     <div class="mdui-col-sm-2 mdui-text-right">
@@ -73,7 +71,6 @@
                             <a href="?orderBy=size,asc"><i class="fa fa-arrow-down"></i></a>
                         @else
                             <a href="?orderBy=size,desc"><i class="fa fa-arrow-up"></i></a>
-
                         @endif
                     </div>
                 </li>

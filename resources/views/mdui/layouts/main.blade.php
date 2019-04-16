@@ -28,6 +28,13 @@
 <div class="mdui-appbar  mdui-appbar-fixed mdui-color-theme">
     <div class="mdui-toolbar mdui-color-theme mdui-container" style="position: relative">
         <a href="{{ route('home') }}" class="mdui-typo-headline">{{ \App\Helpers\Tool::config('name') }}</a>
+        @if (session()->has('index_log_info'))
+        <a href="{{ route('logout') }}" class="mdui-typo-title" onclick="event.preventDefault();document.getElementById('logout-form').submit();"> 退出
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="invisible">
+                @csrf
+            </form>
+        </a>
+        @endif
         <div class="mdui-toolbar-spacer"></div>
         @if(in_array(request()->route()->getName(),['home','search']))
             <label class="mdui-switch" mdui-tooltip="{content: '切换视图'}" style="position: absolute;right: 0">
