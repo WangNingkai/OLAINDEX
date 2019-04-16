@@ -99,11 +99,11 @@ class Login extends Command
                 );
                 $cache_expires = $this->ask('cache expires (s)');
                 $data = [
-                    'client_id' => $client_id,
+                    'client_id'     => $client_id,
                     'client_secret' => $client_secret,
-                    'redirect_uri' => $redirect_uri,
-                    'account_type' => $account_type,
-                    'expires' => $cache_expires,
+                    'redirect_uri'  => $redirect_uri,
+                    'account_type'  => $account_type,
+                    'expires'       => $cache_expires,
                 ];
                 Tool::updateConfig($data);
                 $this->info('Configuration completed!');
@@ -112,9 +112,9 @@ class Login extends Command
             exit('Already out!');
         }
         $values = [
-            'client_id' => $this->client_id,
-            'redirect_uri' => $this->redirect_uri,
-            'scope' => $this->scopes,
+            'client_id'     => $this->client_id,
+            'redirect_uri'  => $this->redirect_uri,
+            'scope'         => $this->scopes,
             'response_type' => 'code',
         ];
         $query = http_build_query($values, '', '&', PHP_QUERY_RFC3986);
@@ -122,11 +122,11 @@ class Login extends Command
         $this->info("Please copy this link to your browser to open.\n{$authorizationUrl}");
         $code = $this->ask('Please enter the code obtained by the browser.');
         $form_params = [
-            'client_id' => $this->client_id,
+            'client_id'     => $this->client_id,
             'client_secret' => $this->client_secret,
-            'redirect_uri' => $this->redirect_uri,
-            'code' => $code,
-            'grant_type' => 'authorization_code',
+            'redirect_uri'  => $this->redirect_uri,
+            'code'          => $code,
+            'grant_type'    => 'authorization_code',
         ];
         if (Tool::config('account_type', 'com') === 'cn') {
             $form_params = Arr::add(
@@ -142,7 +142,7 @@ class Login extends Command
                 'OneDriveGraph Login Err',
                 [
                     'code' => $curl->errorCode,
-                    'msg' => $curl->errorMessage,
+                    'msg'  => $curl->errorMessage,
                 ]
             );
             $msg = 'Error: ' . $curl->errorCode . ': ' . $curl->errorMessage . "\n";
@@ -155,8 +155,8 @@ class Login extends Command
             $expires = $token['expires_in'] != 0 ? time() + $token['expires_in']
                 : 0;
             $data = [
-                'access_token' => $access_token,
-                'refresh_token' => $refresh_token,
+                'access_token'         => $access_token,
+                'refresh_token'        => $refresh_token,
                 'access_token_expires' => $expires,
             ];
             Tool::updateConfig($data);

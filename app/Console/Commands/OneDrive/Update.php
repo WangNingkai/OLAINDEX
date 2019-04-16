@@ -40,7 +40,7 @@ class Update extends Command
     public function handle()
     {
         $this->info(Constants::LOGO);
-        $this->info('Current Version  ['.Tool::config('app_version').']');
+        $this->info('Current Version  [' . Tool::config('app_version') . ']');
         // 获取当前版本,默认开发版
         $this->warn('Start updating...');
         $version = Tool::config('app_version', 'v3.2');
@@ -59,7 +59,7 @@ class Update extends Command
                 default:
                     return;
             }
-            $this->info($result['status'].':'.$result['msg']);
+            $this->info($result['status'] . ':' . $result['msg']);
         }
         $this->call('cache:clear');
         $this->call('config:cache');
