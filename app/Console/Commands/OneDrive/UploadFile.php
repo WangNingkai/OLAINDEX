@@ -17,8 +17,8 @@ class UploadFile extends Command
     protected $signature = 'od:upload
                             {local : Local Path}
                             {remote : Remote Path}
+                            {--folder : Upload File Folder}
                             {--chuck=5242880 : Chuck Size(byte) }';
-
     /**
      * The console command description.
      *
@@ -45,6 +45,17 @@ class UploadFile extends Command
         $local = $this->argument('local');
         $remote = $this->argument('remote');
         $chuck = $this->option('chuck');
+        $folder = $this->option('folder');
+
+        if (!empty($folder)) {
+            $this->uploadFolder($local, $remote, $chuck);
+        } else {
+            $this->uploadFile($local, $remote, $chuck);
+        }
+    }
+
+    public function uploadFile($local, $remote, $chuck)
+    {
         $file_size = OneDrive::readFileSize($local);
         if ($file_size < 4194304) {
             return $this->upload($local, $remote);
@@ -132,5 +143,73 @@ class UploadFile extends Command
                 break;
             }
         }
+    }
+
+    /**
+     * upload file folder
+     *
+     * @param     $local
+     * @param     $remote
+     * @param int $chunk
+     * @return void
+     */
+    public function uploadFolder($local, $remote = '/', $chunk)
+    {
+        $local = realpath($local);
+        $remote = $this->getAbsolutePath($remote);
+        $this->folderToUpload($local, $remote, $chunk);
+    }
+
+    /**
+     * Recursively get the file path
+     *
+     * @param     $local
+     * @param     $remote
+     * @param int $chunk
+     * @return void
+     */
+    public function folderToUpload($local, $remote, $chunk)
+    {
+        $files = scandir($local);
+
+        foreach ($files as $file) {
+            if ($file == '.' || $file == '..') {
+                continue;
+            }
+
+            if (is_dir($local . '/' . $file)) {
+                $this->folderToUpload($local . '/' . $file, $remote . $file . '/', $chunk);
+            } else {
+                $localfile = realpath($local . '/' . $file);
+                $remotefile = $remote . $file;
+                $this->uploadFile($localfile, $remotefile, $chunk);
+            }
+        }
+    }
+
+    /**
+     * get file absolute path
+     *
+     * @param [type] $path
+     * @return void
+     */
+    public function getAbsolutePath($path)
+    {
+        $path = str_replace(['/', '\\', '//'], '/', $path);
+        $parts = array_filter(explode('/', $path), 'strlen');
+        $absolutes = [];
+
+        foreach ($parts as $part) {
+            if ('.' == $part) {
+                continue;
+            }
+            if ('..' == $part) {
+                array_pop($absolutes);
+            } else {
+                $absolutes[] = $part;
+            }
+        }
+
+        return str_replace('//', '/', '/' . implode('/', $absolutes) . '/');
     }
 }
