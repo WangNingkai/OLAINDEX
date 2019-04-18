@@ -28,8 +28,9 @@ EOF;
 
     const SCOPES = 'offline_access user.read files.readwrite.all';
 
-    const FILE_ICON
-        = [
+    const ARCHIVE_EXTENSION = ['app'];
+
+    const FILE_ICON = [
             'stream'  => ['fa-file-text-o', 'text', ['txt', 'log']],
             'image'   => [
                 'fa-file-image-o',
@@ -107,8 +108,7 @@ EOF;
             'exe'     => ['fa-windows', 'exe', ['exe', 'msi']],
         ];
 
-    const SITE_THEME
-        = [
+    const SITE_THEME = [
             'Cerulean'  => 'cerulean',
             'Cosmo'     => 'cosmo',
             'Cyborg'    => 'cyborg',
@@ -132,8 +132,7 @@ EOF;
             'Yeti'      => 'yeti',
         ];
 
-    const FILE_STREAM
-        = [
+    const FILE_STREAM = [
             'chm'     => 'application/octet-stream',
             'ppt'     => 'application/vnd.ms-powerpoint',
             'xls'     => 'application/vnd.ms-excel',

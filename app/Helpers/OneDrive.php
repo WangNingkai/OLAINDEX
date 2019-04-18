@@ -4,6 +4,8 @@ namespace App\Helpers;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Chumper\Zipper\Zipper;
+use Carbon\Carbon;
 
 /**
  * Class OneDrive
@@ -870,6 +872,45 @@ class OneDrive
         fclose($file);
 
         return $size;
+    }
+
+    public static function compressedFile($path, $archive)
+    {
+        if (!file_exists($path)) {
+            return false;
+        }
+
+        $pathInfo = pathinfo($path);
+
+        if (isset($pathInfo['extension']) && in_array($pathInfo['extension'], Arr::get(Constants::FILE_ICON, 'zip.2'))) {
+            return $path;
+        }
+
+        if (in_array($pathInfo['extension'], Constants::ARCHIVE_EXTENSION) || $archive) {
+            $temp = self::getTempFile($pathInfo);
+            $old_memory_limit = ini_get('memory_limit');
+            ini_set('memory_limit', '-1');
+            $zipper = new Zipper();
+            $zipper->make($temp)->add($path)->close();
+            ini_set('memory_limit', $old_memory_limit);
+
+            return $temp;
+        }
+
+        return $path;
+    }
+
+    public static function getTempFile($pathInfo)
+    {
+        $tempPath = sys_get_temp_dir() . '/';
+
+        $tempPath .= Arr::get($pathInfo, 'filename', Carbon::now()->format('YmdHis') . Str::random(4));
+
+        if (!empty($extension = Arr::get($pathInfo, 'extension'))) {
+            $tempPath .= '.' . $extension;
+        }
+
+        return $tempPath . '.zip';
     }
 
     /**

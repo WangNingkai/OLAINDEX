@@ -18,7 +18,8 @@ class UploadFile extends Command
                             {local : Local Path}
                             {remote : Remote Path}
                             {--folder : Upload File Folder}
-                            {--chuck=5242880 : Chuck Size(byte) }';
+                            {--archive : Archive File}
+                            {--chuck=104857600 : Chuck Size(byte)}';
     /**
      * The console command description.
      *
@@ -46,6 +47,12 @@ class UploadFile extends Command
         $remote = $this->argument('remote');
         $chuck = $this->option('chuck');
         $folder = $this->option('folder');
+        $archive = !empty($this->option('archive')) ? true : false;
+
+        $local = OneDrive::compressedFile($local, $archive);
+        if (!$local) {
+            return $this->error('file not found!');
+        }
 
         if (!empty($folder)) {
             $this->uploadFolder($local, $remote, $chuck);
@@ -75,8 +82,13 @@ class UploadFile extends Command
         $content = file_get_contents($local);
         $file_name = basename($local);
         $response = OneDrive::uploadByPath($remote . $file_name, $content);
-        $response['errno'] === 0 ? $this->info('Upload Success!')
-            : $this->warn('Failed!');
+
+        if ($response['errno'] === 0) {
+            $this->info('Upload Success!');
+            @unlink($local);
+        } else {
+            $this->warn('Failed!');
+        }
     }
 
     /**
@@ -126,6 +138,7 @@ class UploadFile extends Command
                 ) {
                     $this->info('Upload Success!');
                     $done = true;
+                    @unlink($local);
                 } else {
                     $retry++;
                     if ($retry <= 3) {

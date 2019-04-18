@@ -25,6 +25,7 @@
         "ext-mbstring": "*",
         "ext-openssl": "*",
         "arcanedev/log-viewer": "^4.6",
+        "chumper/zipper": "^1.0",
         "fideloper/proxy": "^4.0",
         "guzzlehttp/psr7": "^1.5",
         "laravel/framework": "5.8.*",

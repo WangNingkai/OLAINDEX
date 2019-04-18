@@ -120,3 +120,9 @@ Email : [imwnk@live.com](mailto:imwnk@live.com)
 3. 如使用本应用，请保留底部版权，并分享给更多人，谢谢。
 
 ---
+
+### .env 文件修改需要清除缓存
+
+```
+php artisan config:cache
+```
