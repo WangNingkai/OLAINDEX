@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\OneDrive;
 
-use App\Helpers\OneDrive;
+use App\Service\OneDrive;
 use App\Helpers\Tool;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;

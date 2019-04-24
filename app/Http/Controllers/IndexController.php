@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Constants;
-use App\Helpers\OneDrive;
+use App\Service\OneDrive;
 use App\Helpers\Tool;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -253,9 +253,9 @@ class IndexController extends Controller
                         );
                         if ($key === 'stream') {
                             $fileType
-                                = empty(Constants::FILE_STREAM[$file['ext']])
+                                = empty(Constants::$fileStream[$file['ext']])
                                 ? "application/octet-stream"
-                                : Constants::FILE_STREAM[$file['ext']];
+                                : Constants::$fileStream[$file['ext']];
 
                             return response(
                                 $file['content'],

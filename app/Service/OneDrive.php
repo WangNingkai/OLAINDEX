@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Helpers;
+namespace App\Service;
 
+use App\Helpers\Constants;
+use App\Helpers\Tool;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
@@ -53,11 +55,8 @@ class OneDrive
      * @return mixed
      * @throws \ErrorException
      */
-    public static function request(
-        $method,
-        $param,
-        $token = false
-    ) {
+    public static function request($method, $param, $token = false)
+    {
         $od = new self();
         $response = $od->graph->request(
             $method,
@@ -69,10 +68,10 @@ class OneDrive
             $response = json_decode($response->getResponse(), true);
 
             return [
-                'errno'   => 0,
-                'msg'     => 'OK',
+                'errno' => 0,
+                'msg' => 'OK',
                 'headers' => $headers,
-                'data'    => $response,
+                'data' => $response,
             ];
         } else {
             return json_decode($response->getResponseError(), true);
@@ -257,7 +256,7 @@ class OneDrive
             $body = json_encode([
                 'parentReference' => [
                     'driveId' => $driveId,
-                    'id'      => $parentItemId,
+                    'id' => $parentItemId,
                 ],
             ]);
             $response = self::request('post', [$endpoint, $body], false);
@@ -311,8 +310,8 @@ class OneDrive
     public static function mkdir($itemName, $parentItemId)
     {
         $endpoint = "/me/drive/items/$parentItemId/children";
-        $body = '{"name":"'.$itemName
-            .'","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
+        $body = '{"name":"' . $itemName
+            . '","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
         $response = self::request('post', [$endpoint, $body]);
 
         return $response;
@@ -330,8 +329,8 @@ class OneDrive
         $requestPath = self::getRequestPath($path);
         $endpoint = $requestPath === '/' ? "/me/drive/root/children"
             : "/me/drive/root{$requestPath}children";
-        $body = '{"name":"'.$itemName
-            .'","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
+        $body = '{"name":"' . $itemName
+            . '","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
         $response = self::request('post', [$endpoint, $body]);
 
         return $response;
@@ -419,8 +418,8 @@ class OneDrive
                 $info = explode('/', $param);
                 $res_id = $info[1];
                 $user_info = $info[0];
-                $direct_link = $domain.'personal/'.$user_info
-                    .'/_layouts/15/download.aspx?share='.$res_id;
+                $direct_link = $domain . 'personal/' . $user_info
+                    . '/_layouts/15/download.aspx?share=' . $res_id;
             } elseif (Str::contains($web_url, '1drv.ms')) {
                 $req = self::request('get', $web_url);
                 if ($req['errno'] === 0) {
@@ -561,8 +560,8 @@ class OneDrive
                 $graphPath = empty($handledPath) ? '/' : ":/{$handledPath}:/";
                 $endpoint = "/me/drive/root{$graphPath}children";
                 $headers = ['Prefer' => 'respond-async'];
-                $body = '{"@microsoft.graph.sourceUrl":"'.$url.'","name":"'
-                    .pathinfo($remote, PATHINFO_BASENAME).'","file":{}}';
+                $body = '{"@microsoft.graph.sourceUrl":"' . $url . '","name":"'
+                    . pathinfo($remote, PATHINFO_BASENAME) . '","file":{}}';
                 $response = self::request('post', [$endpoint, $body, $headers]);
                 if ($response['errno'] === 0) {
                     $data = [
@@ -613,7 +612,8 @@ class OneDrive
         $file,
         $offset,
         $length = 5242880
-    ) {
+    )
+    {
         $file_size = self::readFileSize($file);
         $content_length = (($offset + $length) > $file_size) ? ($file_size
             - $offset) : $length;
@@ -622,7 +622,7 @@ class OneDrive
         $content = self::readFileContent($file, $offset, $length);
         $headers = [
             'Content-Length' => $content_length,
-            'Content-Range'  => "bytes {$offset}-{$end}/{$file_size}",
+            'Content-Range' => "bytes {$offset}-{$end}/{$file_size}",
         ];
         $requestBody = $content;
         $response = self::request(
@@ -716,7 +716,7 @@ class OneDrive
     {
         $requestPath = self::getRequestPath($path);
         $endpoint = $requestPath === '/' ? '/me/drive/root'
-            : '/me/drive/root'.$requestPath;
+            : '/me/drive/root' . $requestPath;
         $response = self::request('get', $endpoint);
         if ($response['errno'] === 0) {
             $data = $response['data'];
@@ -810,7 +810,7 @@ class OneDrive
             }
         }
 
-        return str_replace('//', '/', '/'.implode('/', $absolutes).'/');
+        return str_replace('//', '/', '/' . implode('/', $absolutes) . '/');
     }
 
     /**
@@ -892,12 +892,18 @@ class OneDrive
         return fread($handler, $length);
     }
 
+    /**
+     * @param $data
+     * @param int $errno
+     * @param string $msg
+     * @return array
+     */
     public static function response($data, $errno = 0, $msg = 'ok')
     {
         return [
             'errno' => $errno,
-            'msg'   => $msg,
-            'data'  => $data,
+            'msg' => $msg,
+            'data' => $data,
         ];
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helpers;
+namespace App\Service;
 
 use Curl\Curl;
 use Illuminate\Support\Arr;

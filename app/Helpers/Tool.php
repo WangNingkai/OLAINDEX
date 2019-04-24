@@ -144,6 +144,26 @@ class Tool
     }
 
     /**
+     * 状态排序
+     * @param $field
+     * @return bool
+     */
+    public static function getOrderByStatus($field)
+    {
+        $order = request()->get('orderBy');
+        @list($search_field, $sortBy) = explode(',', $order);
+        if ($field !== $search_field) {
+            return true;
+        } else {
+            if (strtolower($sortBy) !== 'desc') {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    /**
      * 获取包屑导航url
      *
      * @param $key
@@ -203,6 +223,7 @@ class Tool
     }
 
     /**
+     * 获取扩展文件标示
      * @param string $ext
      * @param bool $img
      *
@@ -298,11 +319,12 @@ class Tool
             return self::readJson($file);
         });
 
-        return $key ? (Arr::has($config, $key) ? (array_get($config, $key)
+        return $key ? (Arr::has($config, $key) ? (Arr::get($config, $key)
             ?: $default) : $default) : $config;
     }
 
     /**
+     * 读取json文件
      * @param string $file
      *
      * @return array|bool
@@ -319,6 +341,7 @@ class Tool
     }
 
     /**
+     * 写入json文件
      * @param string $file
      * @param array $array
      *
@@ -365,6 +388,7 @@ class Tool
     }
 
     /**
+     * 获取请求初始路径
      * @param      $path
      * @param bool $isQuery
      *
@@ -417,6 +441,7 @@ class Tool
     }
 
     /**
+     * 获取链接文本内容
      * @param      $url
      * @param bool $cache
      *
@@ -471,6 +496,7 @@ class Tool
     }
 
     /**
+     * 获取网盘信息
      * @param string $key
      *
      * @return mixed|string
@@ -506,6 +532,7 @@ class Tool
     }
 
     /**
+     * 刷新token
      * @return bool
      * @throws \ErrorException
      */
@@ -524,6 +551,7 @@ class Tool
     }
 
     /**
+     * 获取绑定账号
      * @return mixed|string
      * @throws \ErrorException
      */
@@ -536,7 +564,7 @@ class Tool
                 function () {
                     $response = OneDrive::getMe();
                     if ($response['errno'] == 0) {
-                        return array_get($response, 'data.userPrincipalName');
+                        return Arr::get($response, 'data.userPrincipalName');
                     } else {
                         return '';
                     }
@@ -574,6 +602,7 @@ class Tool
     }
 
     /**
+     * 长度排序
      * @param $a
      * @param $b
      *
@@ -588,6 +617,7 @@ class Tool
     }
 
     /**
+     * 文件icon
      * @param $ext
      *
      * @return string

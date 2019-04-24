@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\OneDrive;
 
-use App\Helpers\OneDrive;
+use App\Service\OneDrive;
 use Illuminate\Console\Command;
 
 class Download extends Command

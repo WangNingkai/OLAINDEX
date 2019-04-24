@@ -59,11 +59,11 @@ class OauthController extends Controller
         $this->client_secret = Tool::config('client_secret');
         $this->redirect_uri = Tool::config('redirect_uri');
         $this->authorize_url = Tool::config('account_type', 'com') === 'com'
-            ? Constants::AUTHORITY_URL.Constants::AUTHORIZE_ENDPOINT
-            : Constants::AUTHORITY_URL_21V.Constants::AUTHORIZE_ENDPOINT_21V;
+            ? Constants::AUTHORITY_URL . Constants::AUTHORIZE_ENDPOINT
+            : Constants::AUTHORITY_URL_21V . Constants::AUTHORIZE_ENDPOINT_21V;
         $this->access_token_url = Tool::config('account_type', 'com') === 'com'
-            ? Constants::AUTHORITY_URL.Constants::TOKEN_ENDPOINT
-            : Constants::AUTHORITY_URL_21V.Constants::TOKEN_ENDPOINT_21V;
+            ? Constants::AUTHORITY_URL . Constants::TOKEN_ENDPOINT
+            : Constants::AUTHORITY_URL_21V . Constants::TOKEN_ENDPOINT_21V;
         $this->scopes = Constants::SCOPES;
     }
 
@@ -89,16 +89,16 @@ class OauthController extends Controller
                     Tool::showMessage('Invalid state', false);
                     Session::forget('state');
 
-                    return view(config('olaindex.theme').'message');
+                    return view(config('olaindex.theme') . 'message');
                 }
                 Session::forget('state'); // 兼容下次登陆
                 $code = $request->get('code');
                 $form_params = [
-                    'client_id'     => $this->client_id,
+                    'client_id' => $this->client_id,
                     'client_secret' => $this->client_secret,
-                    'redirect_uri'  => $this->redirect_uri,
-                    'code'          => $code,
-                    'grant_type'    => 'authorization_code',
+                    'redirect_uri' => $this->redirect_uri,
+                    'code' => $code,
+                    'grant_type' => 'authorization_code',
                 ];
                 if (Tool::config('account_type', 'com') === 'cn') {
                     $form_params = Arr::add(
@@ -114,14 +114,14 @@ class OauthController extends Controller
                         'OneDrive Login Err',
                         [
                             'code' => $curl->errorCode,
-                            'msg'  => $curl->errorMessage,
+                            'msg' => $curl->errorMessage,
                         ]
                     );
-                    $msg = 'Error: '.$curl->errorCode.': '.$curl->errorMessage
-                        ."\n";
+                    $msg = 'Error: ' . $curl->errorCode . ': ' . $curl->errorMessage
+                        . "\n";
                     Tool::showMessage($msg, false);
 
-                    return view(config('olaindex.theme').'message');
+                    return view(config('olaindex.theme') . 'message');
                 } else {
                     $token = collect($curl->response)->toArray();
                     $access_token = $token['access_token'];
@@ -130,8 +130,8 @@ class OauthController extends Controller
                         + $token['expires_in']
                         : 0;
                     $data = [
-                        'access_token'         => $access_token,
-                        'refresh_token'        => $refresh_token,
+                        'access_token' => $access_token,
+                        'refresh_token' => $refresh_token,
                         'access_token_expires' => $expires,
                     ];
                     Tool::updateConfig($data);
@@ -142,7 +142,7 @@ class OauthController extends Controller
         } else {
             Tool::showMessage('Invalid Request', false);
 
-            return view(config('olaindex.theme').'message');
+            return view(config('olaindex.theme') . 'message');
         }
     }
 
@@ -155,17 +155,17 @@ class OauthController extends Controller
     {
         // 跳转授权登录
 //        $state = str_random(32);
-        $state = urlencode($url ? 'http://'.$url : config('app.url')); // 添加中转
+        $state = urlencode($url ? 'http://' . $url : config('app.url')); // 添加中转
         Session::put('state', $state);
         $values = [
-            'client_id'     => $this->client_id,
-            'redirect_uri'  => $this->redirect_uri,
-            'scope'         => $this->scopes,
+            'client_id' => $this->client_id,
+            'redirect_uri' => $this->redirect_uri,
+            'scope' => $this->scopes,
             'response_type' => 'code',
-            'state'         => $state,
+            'state' => $state,
         ];
         $query = http_build_query($values, '', '&', PHP_QUERY_RFC3986);
-        $authorizationUrl = $this->authorize_url."?{$query}";
+        $authorizationUrl = $this->authorize_url . "?{$query}";
 
         return redirect()->away($authorizationUrl);
     }
@@ -185,11 +185,11 @@ class OauthController extends Controller
         }
         $existingRefreshToken = Tool::config('refresh_token');
         $form_params = [
-            'client_id'     => $this->client_id,
+            'client_id' => $this->client_id,
             'client_secret' => $this->client_secret,
-            'redirect_uri'  => $this->redirect_uri,
+            'redirect_uri' => $this->redirect_uri,
             'refresh_token' => $existingRefreshToken,
-            'grant_type'    => 'refresh_token',
+            'grant_type' => 'refresh_token',
         ];
         if (Tool::config('account_type', 'com') === 'cn') {
             $form_params = Arr::add(
@@ -205,13 +205,13 @@ class OauthController extends Controller
                 'OneDrive Refresh Token Err',
                 [
                     'code' => $curl->errorCode,
-                    'msg'  => $curl->errorMessage,
+                    'msg' => $curl->errorMessage,
                 ]
             );
 
             return json_encode([
                 'code' => $curl->errorCode,
-                'msg'  => $curl->errorMessage,
+                'msg' => $curl->errorMessage,
             ]);
         } else {
             $token = collect($curl->response)->toArray();
@@ -221,8 +221,8 @@ class OauthController extends Controller
                 + $token['expires_in']
                 : 0;
             $data = [
-                'access_token'         => $access_token,
-                'refresh_token'        => $refresh_token,
+                'access_token' => $access_token,
+                'refresh_token' => $refresh_token,
                 'access_token_expires' => $expires,
             ];
             Tool::updateConfig($data);
