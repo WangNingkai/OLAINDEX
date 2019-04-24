@@ -12,6 +12,5 @@ Homestead.yaml
 npm-debug.log
 yarn-error.log
 .env
-composer.lock
 .phpunit.result.cache
 .php_cs.cache

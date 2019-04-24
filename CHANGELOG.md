@@ -7,6 +7,16 @@
 / /_/ / /___/ ___ |_/ // /|  / /_/ / /___ /   |
 \____/_____/_/  |_/___/_/ |_/_____/_____//_/|_|
 ```
+
+## 2019.03
+
+- 添加前端排序 orderBy={field},asc 正序
+             orderBy={field},desc 倒序
+- field 支持 id/name/size/lastModifiedDateTime
+
+- 优化长视频401问题
+
+
 ## 2019.01.27
 
 - 添加链接排序 orderBy={field},asc 正序

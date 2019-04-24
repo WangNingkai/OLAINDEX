@@ -97,7 +97,7 @@ class Login extends Command
                     'redirect_uri',
                     Constants::DEFAULT_REDIRECT_URI
                 );
-                $cache_expires = $this->ask('cache expires (min)');
+                $cache_expires = $this->ask('cache expires (s)');
                 $data = [
                     'client_id' => $client_id,
                     'client_secret' => $client_secret,

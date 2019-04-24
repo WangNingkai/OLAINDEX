@@ -162,7 +162,9 @@ class IndexController extends Controller
             );
         }
         $items = Tool::paginate($origin_items, $limit);
+        $parent_item = $item;
         $data = compact(
+            'parent_item',
             'items',
             'origin_items',
             'origin_path',

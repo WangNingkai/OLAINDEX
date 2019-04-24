@@ -1,14 +1,46 @@
 @extends('mdui.layouts.main')
+@section('title',$file['name'])
 @section('css')
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.5.2/plyr.css">
+    <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/dplayer/1.25.0/DPlayer.min.css">
 @stop
 @section('js')
-    <script src="https://cdn.plyr.io/3.5.2/plyr.js"></script>
+    <script src="https://cdnjs.loli.net/ajax/libs/dplayer/1.25.0/DPlayer.min.js"></script>
     <script>
-        const player = new Plyr('#player', {
-            iconUrl: "https://cdn.plyr.io/3.5.2/plyr.svg",
+        $(function () {
+            const dp = new DPlayer({
+                container: document.getElementById('video-player'),
+                lang: 'zh-cn',
+                video: {
+                    url: "{!! $file['download'] !!}",
+                    pic: "{!! $file['thumb'] !!}",
+                    type: 'auto'
+                },
+                autoplay: true
+            });
+            // 防止出现401 token过期
+            dp.on('error', function () {
+                console.log('获取资源错误，开始重新加载！');
+                let last = dp.video.currentTime;
+                dp.video.src = "{!! $file['download'] !!}";
+                dp.video.load();
+                dp.video.currentTime = last;
+                dp.play();
+            });
+            // 如果是播放状态 & 没有播放完 每25分钟重载视频防止卡死
+            setInterval(function () {
+                if (!dp.video.paused && !dp.video.ended) {
+                    console.log('开始重新加载！');
+                    let last = dp.video.currentTime;
+                    dp.video.src = "{!! $file['download'] !!}";
+                    dp.video.load();
+                    dp.video.currentTime = last;
+                    dp.play();
+                }
+            }, 1000 * 60 * 25)
         });
+
     </script>
+
 @stop
 @section('content')
 
@@ -16,11 +48,7 @@
         <div class="mdui-typo mdui-m-y-2">
             <div class="mdui-typo-subheading-opacity">{{ $file['name'] }}</div>
         </div>
-        <div class="mudi-center" id="video-player">
-            <video crossorigin playsinline controls poster="{!! $file['thumb'] !!}" id="player">
-                <source src="{!! $file['download'] !!}" type="video/mp4">
-            </video>
-        </div>
+        <div class="mudi-center" id="video-player"></div>
         <br>
         <p class="text-danger">如无法播放或格式不受支持，推荐下载使用 <a href="https://pan.lanzou.com/b112173"
                                                       target="_blank">potplayer</a> 播放器在线播放</p>
