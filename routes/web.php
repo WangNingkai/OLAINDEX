@@ -52,6 +52,7 @@ Route::get('image', 'ManageController@uploadImage')->name('image')
 Route::post('image/upload', 'ManageController@uploadImage')
     ->name('image.upload')->middleware('throttle:10,2', 'checkImage');
 Route::get('file/delete/{sign}', 'ManageController@deleteItem')->name('delete');
+
 // 后台设置管理
 Route::any('login', 'AdminController@login')->name('login');
 Route::post('logout', 'AdminController@logout')->name('logout');

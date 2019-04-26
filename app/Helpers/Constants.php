@@ -63,13 +63,13 @@ EOF;
 
     const FILE_ICON
         = [
-            'stream'  => ['fa-file-text-o', 'text', ['txt', 'log']],
-            'image'   => [
+            'stream' => ['fa-file-text-o', 'text', ['txt', 'log']],
+            'image' => [
                 'fa-file-image-o',
                 'image',
                 ['bmp', 'jpg', 'jpeg', 'png', 'gif', 'ico', 'jpe'],
             ],
-            'video'   => [
+            'video' => [
                 'fa-file-video-o',
                 'video',
                 [
@@ -88,8 +88,8 @@ EOF;
                     'flv',
                 ],
             ],
-            'audio'   => ['fa-file-audio-o', 'music', ['ogg', 'mp3', 'wav']],
-            'code'    => [
+            'audio' => ['fa-file-audio-o', 'music', ['ogg', 'mp3', 'wav']],
+            'code' => [
                 'fa-file-code-o',
                 'code',
                 [
@@ -106,7 +106,7 @@ EOF;
                     'php',
                 ],
             ],
-            'doc'     => [
+            'doc' => [
                 'fa-file-word-o',
                 'doc',
                 [
@@ -130,39 +130,39 @@ EOF;
                     'xlsx',
                 ],
             ],
-            'pdf'     => ['fa-file-pdf-o', 'pdf', ['pdf']],
-            'zip'     => [
+            'pdf' => ['fa-file-pdf-o', 'pdf', ['pdf']],
+            'zip' => [
                 'fa-file-archive-o',
                 'zip',
                 ['zip', '7z', 'rar', 'bz', 'gz'],
             ],
             'android' => ['fa-android', 'app', ['apk']],
-            'exe'     => ['fa-windows', 'exe', ['exe', 'msi']],
+            'exe' => ['fa-windows', 'exe', ['exe', 'msi']],
         ];
 
     const SITE_THEME
         = [
-            'Cerulean'  => 'cerulean',
-            'Cosmo'     => 'cosmo',
-            'Cyborg'    => 'cyborg',
-            'Darkly'    => 'darkly',
-            'Flatly'    => 'flatly',
-            'Journal'   => 'journal',
-            'Litera'    => 'litera',
-            'Lumen'     => 'lumen',
-            'Materia'   => 'materia',
-            'Lux'       => 'lux',
-            'Minty'     => 'minty',
-            'Pulse'     => 'pulse',
+            'Cerulean' => 'cerulean',
+            'Cosmo' => 'cosmo',
+            'Cyborg' => 'cyborg',
+            'Darkly' => 'darkly',
+            'Flatly' => 'flatly',
+            'Journal' => 'journal',
+            'Litera' => 'litera',
+            'Lumen' => 'lumen',
+            'Materia' => 'materia',
+            'Lux' => 'lux',
+            'Minty' => 'minty',
+            'Pulse' => 'pulse',
             'Sandstone' => 'sandstone',
-            'Simplex'   => 'simplex',
-            'Sketchy'   => 'sketchy',
-            'Slate'     => 'slate',
-            'Solar'     => 'solar',
-            'Spacelab'  => 'spacelab',
+            'Simplex' => 'simplex',
+            'Sketchy' => 'sketchy',
+            'Slate' => 'slate',
+            'Solar' => 'solar',
+            'Spacelab' => 'spacelab',
             'Superhero' => 'superhero',
-            'United'    => 'united',
-            'Yeti'      => 'yeti',
+            'United' => 'united',
+            'Yeti' => 'yeti',
         ];
 
     public static $fileStream = [
