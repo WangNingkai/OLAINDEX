@@ -152,8 +152,6 @@ class IndexController extends Controller
             }
             return $children;
         })->toArray();
-
-        dd($origin_items);
         $hasImage = Tool::hasImages($origin_items);
         // 过滤微软OneNote文件
         $origin_items = Arr::where($origin_items, function ($value) {
