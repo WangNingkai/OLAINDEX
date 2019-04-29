@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
+use App\Helpers\Tool;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,7 +26,7 @@ Route::prefix('install')->group(function () {
 });
 // 索引
 Route::any('/', function () {
-    $redirect = (int)\App\Helpers\Tool::config('image_home', 0) ? 'image'
+    $redirect = (int)Tool::config('image_home', 0) ? 'image'
         : 'home';
 
     return redirect()->route($redirect);
@@ -99,12 +101,12 @@ Route::any('search', 'IndexController@search')->name('search')
 Route::any('search/file/{id}', 'IndexController@searchShow')
     ->name('search.show')->middleware('checkAuth');
 
-if (str_contains(config('app.url'), ['localhost', 'dev.ningkai.wang'])) {
+if (Str::contains(config('app.url'), ['localhost', 'dev.ningkai.wang'])) {
     Route::get('about', function () {
         $url
             = 'https://raw.githubusercontent.com/WangNingkai/OLAINDEX/master/README.md';
-        $content = \App\Helpers\Tool::getFileContent($url);
-        $markdown = \App\Helpers\Tool::markdown2Html($content);
+        $content = Tool::getFileContent($url);
+        $markdown = Tool::markdown2Html($content);
 
         return response()->view(
             config('olaindex.theme') . 'about',
