@@ -886,7 +886,7 @@ class OneDrive
             return $path;
         }
 
-        if (in_array($pathInfo['extension'], Constants::ARCHIVE_EXTENSION) || $archive) {
+        if (in_array(Arr::get($pathInfo, 'extension'), Constants::ARCHIVE_EXTENSION) || $archive) {
             $temp = self::getTempFile($pathInfo);
             $old_memory_limit = ini_get('memory_limit');
             ini_set('memory_limit', '-1');
