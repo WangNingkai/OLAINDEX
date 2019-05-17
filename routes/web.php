@@ -1,6 +1,7 @@
 <?php
 
 use App\Helpers\Tool;
+use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
