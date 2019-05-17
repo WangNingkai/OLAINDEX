@@ -47,7 +47,6 @@ class LoginController extends Controller
                 'LastActivityTime' => time(),
             ];
             Session::put('index_log_info', $logInfo);
-            $request->session()->regenerate();
 
             return redirect()->route($redirect);
         } else {
