@@ -186,7 +186,7 @@ class UploadFile extends Command
         $files = scandir($local);
 
         foreach ($files as $file) {
-            if ($file == '.' || $file == '..' || $file == '.DS_Store') {
+            if (in_array($file, ['.', '..', '.DS_Store'])) {
                 continue;
             }
 
@@ -194,8 +194,6 @@ class UploadFile extends Command
                 $this->folderToUpload($local . '/' . $file, $remote . $file . '/', $chunk);
             } else {
                 $localfile = realpath($local . '/' . $file);
-                // $remotefile = $remote . $file;
-                // echo '$local:' . $localfile . ' | ' . '$remote:' . $remotefile . PHP_EOL;
                 $this->uploadFile($localfile, $remote, $chunk);
             }
         }
@@ -217,6 +215,7 @@ class UploadFile extends Command
             if ('.' == $part) {
                 continue;
             }
+
             if ('..' == $part) {
                 array_pop($absolutes);
             } else {
