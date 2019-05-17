@@ -415,6 +415,7 @@ class IndexController extends Controller
 
             return view(config('olaindex.theme') . 'message');
         }
+
         if ($keywords) {
             $path = Tool::getEncodeUrl($this->root);
             $response = OneDrive::search($path, $keywords);
@@ -445,16 +446,17 @@ class IndexController extends Controller
     public function searchShow($id)
     {
         $response = OneDrive::itemIdToPath($id, Tool::config('root'));
-        if ($response['errno'] === 0) {
-            $originPath = $response['data']['path'];
-            if (trim($this->root, '/') != '') {
-                $path = Str::after($originPath, $this->root);
-            } else {
-                $path = $originPath;
-            }
-        } else {
+
+        if ($response['errno'] !== 0) {
             Tool::showMessage('获取连接失败', false);
-            $path = '/';
+            return redirect()->route('show', '/');
+        }
+
+        $originPath = $response['data']['path'];
+        $path = $originPath;
+
+        if (trim($this->root, '/') != '') {
+            $path = Str::after($originPath, $this->root);
         }
 
         return redirect()->route('show', $path);

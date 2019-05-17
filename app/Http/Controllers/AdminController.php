@@ -125,25 +125,26 @@ class AdminController extends Controller
         if (!$request->isMethod('post')) {
             return view(config('olaindex.theme') . 'admin.profile');
         }
-        $old_password = $request->get('old_password');
-        $password = $request->get('password');
-        $password_confirm = $request->get('password_confirm');
-        if (md5($old_password) !== Tool::config('password')
-            || $old_password === ''
-        ) {
+
+        $data = $request->validate([
+            'old_password'     => 'required|string',
+            'password'         => 'required|string',
+            'password_confirm' => 'required|string',
+        ]);
+
+        if (md5($data['old_password']) !== Tool::config('password')) {
             Tool::showMessage('请确保原密码的准确性！', false);
 
             return redirect()->back();
         }
-        if ($password !== $password_confirm
-            || $old_password === ''
-            || $old_password === ''
-        ) {
+
+        if ($data['password'] !== $data['password_confirm']) {
             Tool::showMessage('两次密码不一致', false);
 
             return redirect()->back();
         }
-        $data = ['password' => md5($password)];
+
+        $data = ['password' => md5($data['password'])];
         Tool::updateConfig($data);
         Tool::showMessage('保存成功！');
 
@@ -187,23 +188,23 @@ class AdminController extends Controller
     {
         if (!$request->isMethod('post')) {
             return view(config('olaindex.theme') . 'admin.bind');
-        } else {
-            if (!Tool::hasBind()) {
-                return redirect()->route('bind');
-            }
-            $data = [
-                'access_token'         => '',
-                'refresh_token'        => '',
-                'access_token_expires' => 0,
-                'root'                 => '/',
-                'image_hosting'        => 0,
-                'image_hosting_path'   => '',
-            ];
-            Tool::updateConfig($data);
-            Cache::forget('one:account');
-            Tool::showMessage('保存成功！');
+        }
 
+        if (!Tool::hasBind()) {
             return redirect()->route('bind');
         }
+        $data = [
+            'access_token'         => '',
+            'refresh_token'        => '',
+            'access_token_expires' => 0,
+            'root'                 => '/',
+            'image_hosting'        => 0,
+            'image_hosting_path'   => '',
+        ];
+        Tool::updateConfig($data);
+        Cache::forget('one:account');
+        Tool::showMessage('保存成功！');
+
+        return redirect()->route('bind');
     }
 }
