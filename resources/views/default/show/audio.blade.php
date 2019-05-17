@@ -1,5 +1,5 @@
 @extends('default.layouts.main')
-@section('title',$file['name'])
+@section('title', $file['name'])
 @section('css')
     <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/aplayer/1.10.1/APlayer.min.css">
 @stop
