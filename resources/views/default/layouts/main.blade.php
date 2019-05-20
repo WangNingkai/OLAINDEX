@@ -9,6 +9,7 @@
     <meta name="keywords" content="OLAINDEX,OneDrive,Index,Microsoft OneDrive,Directory Index"/>
     <meta name="description" content="OLAINDEX,Another OneDrive Directory Index"/>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ url('/favicon.ico') }}">
     <link rel="stylesheet" href="https://fonts.loli.net/css?family=Lato:400,700,400italic">
     <link rel="stylesheet"
           href="https://cdnjs.loli.net/ajax/libs/bootswatch/4.3.1/{{ \App\Helpers\Tool::config('theme','materia') }}/bootstrap.min.css">
