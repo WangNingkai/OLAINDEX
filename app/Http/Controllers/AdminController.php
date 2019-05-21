@@ -114,6 +114,14 @@ class AdminController extends Controller
     }
 
     /**
+     * 密码设置视图
+     */
+    public function showProfile()
+    {
+        return view(config('olaindex.theme') . 'admin.profile');
+    }
+
+    /**
      * 密码设置
      *
      * @param Request $request
@@ -122,29 +130,15 @@ class AdminController extends Controller
      */
     public function profile(Request $request)
     {
-        if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme') . 'admin.profile');
-        }
-
         $data = $request->validate([
             'old_password'     => 'required|string',
-            'password'         => 'required|string',
-            'password_confirm' => 'required|string',
+            'password'         => 'required|string|different:old_password',
+            'password_confirm' => 'required|string|same:password',
         ]);
 
-        if (md5($data['old_password']) !== Tool::config('password')) {
-            Tool::showMessage('请确保原密码的准确性！', false);
-
-            return redirect()->back();
-        }
-
-        if ($data['password'] !== $data['password_confirm']) {
-            Tool::showMessage('两次密码不一致', false);
-
-            return redirect()->back();
-        }
-
-        $data = ['password' => md5($data['password'])];
+        $data = [
+            'password' => md5($data['password'])
+        ];
         Tool::updateConfig($data);
         Tool::showMessage('保存成功！');
 

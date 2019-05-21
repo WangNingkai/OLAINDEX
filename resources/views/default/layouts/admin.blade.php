@@ -50,7 +50,7 @@
                     <div class="dropdown-menu">
                         <a class="dropdown-item" href="{{ route('admin.basic') }}">基础设置 </a>
                         <a class="dropdown-item" href="{{ route('admin.show') }}">显示设置 </a>
-                        <a class="dropdown-item" href="{{ route('admin.profile') }}">密码设置 </a>
+                        <a class="dropdown-item" href="{{ route('admin.profile.show') }}">密码设置 </a>
                         <a class="dropdown-item" href="{{ route('admin.bind') }}">绑定设置 </a>
                     </div>
                 </li>
