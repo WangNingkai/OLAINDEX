@@ -251,8 +251,7 @@ class IndexController extends Controller
                             false
                         );
                         if ($key === 'stream') {
-                            $fileType
-                                = empty(Constants::FILE_STREAM[$file['ext']])
+                            $fileType = empty(Constants::FILE_STREAM[$file['ext']])
                                 ? 'application/octet-stream'
                                 : Constants::FILE_STREAM[$file['ext']];
 
@@ -344,10 +343,10 @@ class IndexController extends Controller
     public function thumb($id, $size)
     {
         $response = OneDrive::thumbnails($id, $size);
+        $url = 'https://i.loli.net/2018/12/04/5c05cd3086425.png';
+
         if ($response['errno'] === 0) {
             $url = $response['data']['url'];
-        } else {
-            $url = 'https://i.loli.net/2018/12/04/5c05cd3086425.png';
         }
 
         return redirect()->away($url);
@@ -364,13 +363,13 @@ class IndexController extends Controller
     public function thumbCrop($id, $width, $height)
     {
         $response = OneDrive::thumbnails($id, 'large');
+        $thumb = 'https://i.loli.net/2018/12/04/5c05cd3086425.png';
+
         if ($response['errno'] === 0) {
             $url = $response['data']['url'];
             @list($url, $tmp) = explode('&width=', $url);
             $url .= strpos($url, '?') ? '&' : '?';
             $thumb = $url . "width={$width}&height={$height}";
-        } else {
-            $thumb = 'https://i.loli.net/2018/12/04/5c05cd3086425.png';
         }
 
         return redirect()->away($thumb);

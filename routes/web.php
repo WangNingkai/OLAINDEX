@@ -59,7 +59,8 @@ Route::group(['prefix' => 'admin'], function () {
     Route::any('/', 'AdminController@basic')->name('admin.basic');
     Route::any('bind', 'AdminController@bind')->name('admin.bind');
     Route::any('show', 'AdminController@show')->name('admin.show');
-    Route::any('profile', 'AdminController@profile')->name('admin.profile');
+    Route::get('profile', 'AdminController@showProfile')->name('admin.profile.show');
+    Route::post('profile', 'AdminController@profile')->name('admin.profile.post');
     Route::any('clear', 'AdminController@clear')->name('admin.cache.clear');
     Route::any('refresh', 'AdminController@refresh')->name('admin.cache.refresh');
     // 文件夹操作
