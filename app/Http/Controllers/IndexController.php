@@ -159,7 +159,7 @@ class IndexController extends Controller
         }
 
         $origin_items = ItemResource::collection(collect($origin_items));
-        $items = Tool::paginate($origin_items->toArray(request()), Arr::get($data, 'limit', 2));
+        $items = Tool::paginate($origin_items->toArray(request()), Arr::get($data, 'limit', 20));
         $parent_item = $item;
         $data = compact(
             'parent_item',
