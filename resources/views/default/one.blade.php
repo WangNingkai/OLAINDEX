@@ -44,6 +44,7 @@
     </script>
 @stop
 @section('content')
+    @includeWhen($errors->isNotEmpty(), 'default.widgets.errors')
     @include('default.breadcrumb')
     @if (!blank($head))
         <div class="card border-light mb-3">
@@ -58,30 +59,29 @@
             <div class="row">
                 <div class="col-8 col-sm-6">
                     文件&nbsp;
-                    @if(\App\Helpers\Tool::getOrderByStatus('name'))
-                        <a href="?orderBy=name,asc"><i class="fa fa-arrow-down"></i></a>
+                    @if(getOrderByStatus('name'))
+                        <a href="?by=name&sort=asc"><i class="fa fa-arrow-down"></i></a>
                     @else
-                        <a href="?orderBy=name,desc"><i class="fa fa-arrow-up"></i></a>
-
+                        <a href="?by=name&sort=desc"><i class="fa fa-arrow-up"></i></a>
                     @endif
                 </div>
                 <div class="col-sm-2 d-none d-md-block d-md-none">
                     <span class="pull-right">
                         修改日期&nbsp;
-                        @if(\App\Helpers\Tool::getOrderByStatus('lastModifiedDateTime'))
-                            <a href="?orderBy=lastModifiedDateTime,asc"><i class="fa fa-arrow-down"></i></a>
+                        @if(getOrderByStatus('lastModifiedDateTime'))
+                            <a href="?by=lastModifiedDateTime&sort=asc"><i class="fa fa-arrow-down"></i></a>
                         @else
-                            <a href="?orderBy=lastModifiedDateTime,desc"><i class="fa fa-arrow-up"></i></a>
+                            <a href="?by=lastModifiedDateTime&sort=desc"><i class="fa fa-arrow-up"></i></a>
                         @endif
                     </span>
                 </div>
                 <div class="col-sm-2 d-none d-md-block d-md-none">
                     <span class="pull-right">
                         大小&nbsp;
-                        @if(\App\Helpers\Tool::getOrderByStatus('size'))
-                            <a href="?orderBy=size,asc"><i class="fa fa-arrow-down"></i></a>
+                        @if(getOrderByStatus('size'))
+                            <a href="?by=size&sort=asc"><i class="fa fa-arrow-down"></i></a>
                         @else
-                            <a href="?orderBy=size,desc"><i class="fa fa-arrow-up"></i></a>
+                            <a href="?by=size&sort=desc"><i class="fa fa-arrow-up"></i></a>
                         @endif
                     </span>
                 </div>
@@ -184,7 +184,7 @@
         <div class="list-group item-list">
             @if(!blank($path_array))
                 <li class="list-group-item list-group-item-action"><a
-                        href="{{ route('home',\App\Helpers\Tool::getEncodeUrl(\App\Helpers\Tool::getParentUrl($path_array))) }}"><i
+                        href="{{ route('home',\App\Helpers\Tool::getEncodeUrl(getParentUrl($path_array))) }}"><i
                             class="fa fa-level-up"></i> 返回上一层</a></li>
             @endif
             @foreach($items as $item)
@@ -192,24 +192,24 @@
                     <div class="row">
                         <div class="col-8 col-sm-6" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
                             @if( Arr::has($item,'folder'))
-                                <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
+                                <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path . '/'. $item['name'] : $item['name'])) }}"
                                    title="{{ $item['name'] }}">
                                     <i class="fa fa-folder"></i> {{ $item['name'] }}
                                 </a>
                             @else
-                                <a href="{{ route('show',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
+                                <a href="{{ route('show',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path . '/' . $item['name'] : $item['name'])) }}"
                                    title="{{ $item['name'] }}">
-                                    <i class="fa {{ \App\Helpers\Tool::getExtIcon($item['ext'] ?? '') }}"></i> {{ $item['name'] }}
+                                    <i class="fa {{ getExtIcon($item['ext'] ?? '') }}"></i> {{ $item['name'] }}
                                 </a>
                             @endif
                         </div>
                         <div class="col-sm-2 d-none d-md-block d-md-none">
                             <span
-                                class="pull-right">{{ Carbon\Carbon::parse($item['lastModifiedDateTime'])->diffForHumans() }}</span>
+                                class="pull-right">{{ $item['lastModifiedDateTime'] }}</span>
                         </div>
                         <div class="col-sm-2 d-none d-md-block d-md-none">
                             <span
-                                class="pull-right">{{ Arr::has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</span>
+                                class="pull-right">{{ $item['size'] }}</span>
                         </div>
                         <div class="col-4 col-sm-2">
                             <span class="pull-right">
@@ -220,7 +220,7 @@
                                                 class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
                                     @endif
                                     @if(session()->has('LogInfo') && \App\Helpers\Tool::canEdit($item) )
-                                        <a href="{{ route('admin.file.update',$item['id']) }}"><i
+                                        <a href="{{ route('admin.file.update', $item['id']) }}"><i
                                                 class="fa fa-pencil"></i></a>&nbsp;&nbsp;
                                     @endif
                                     <a class="download_url"
@@ -232,7 +232,7 @@
                                        title="{{ $item['name'] }}"><i class="fa fa-folder-open"></i></a>&nbsp;&nbsp;
                                 @endif
                                 @if (session()->has('LogInfo'))
-                                    <a onclick="deleteItem('{{ encrypt($item['id'] . '.' . encrypt($item['eTag'])) }}')"
+                                    <a onclick="deleteItem('{{ encrypt($item['id'] . '.' . $item['eTag']) }}')"
                                        href="javascript:void(0)"><i class="fa fa-trash"
                                                                     title="删除"></i></a>&nbsp;
                                     &nbsp;
@@ -248,7 +248,7 @@
                             <span class="text-muted font-weight-light">
                                 共 {{ $parent_item['folder']['childCount'] }} 个项目
                                 @if(session()->has('LogInfo'))
-                                    {{ \App\Helpers\Tool::convertSize($parent_item['size']) }}
+                                    {{ convertSize($parent_item['size']) }}
                                 @endif
                             </span>
                     </div>
@@ -257,7 +257,11 @@
         </div>
     </div>
     <div>
-        {{ $items->appends(['limit' => request()->get('limit'),'orderBy'=> request()->get('orderBy')])->links('default.page') }}
+        {{ $items->appends([
+            'limit' => request()->get('limit'),
+            'by'    => request()->get('by'),
+            'sort'  => request()->get('sort'),
+        ])->links() }}
     </div>
     @if ($hasImage && (int)\App\Helpers\Tool::config('image_view'))
         <div class="card border-light mb-3">
@@ -271,7 +275,7 @@
                             <a href="{{ route('view',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
                                title="{{ $item['name'] }}" data-gallery>
                                 <img class="lazy"
-                                     data-original="{{  Arr::get($item,'thumbnails.0.small.url') }}"
+                                     data-original="{{ Arr::get($item,'thumbnails.0.small.url') }}"
                                      src="{{ asset('img/loading.gif') }}"
                                      alt="{{ $item['name'] }}" width="10%" height="10%">
                             </a>
@@ -290,13 +294,6 @@
             </div>
         </div>
     @endif
-    @if (!blank($readme))
-        <div class="card border-light mb-3">
-            <div class="card-header"><i class="fa fa-bookmark"></i> README</div>
-            <div class="card-body markdown-body">
-                {!! $readme !!}
-            </div>
-        </div>
-    @endif
+    @includeWhen(!blank($readme), 'default.widgets.readme')
 @stop
 

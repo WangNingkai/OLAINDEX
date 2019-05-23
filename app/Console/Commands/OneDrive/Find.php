@@ -80,7 +80,7 @@ class Find extends Command
         $list = [];
         foreach ($data as $item) {
             $type = Arr::has($item, 'folder') ? 'd' : '-';
-            $size = Tool::convertSize($item['size']);
+            $size = convertSize($item['size']);
             $time = date('M m H:i', strtotime($item['lastModifiedDateTime']));
             $folder = Arr::has($item, 'folder')
                 ? Arr::get($item, 'folder.childCount')

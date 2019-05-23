@@ -94,7 +94,7 @@
         <div class="row text-center">
             <div class="col-lg-12">
                 <p class="text-muted">
-                    {!! \App\Helpers\Tool::markdown2Html(\App\Helpers\Tool::config('copyright','Designed
+                    {!! markdown2Html(\App\Helpers\Tool::config('copyright','Designed
                     by [IMWNK](https://imwnk.cn/) | Powered by [OLAINDEX](https://git.io/OLAINDEX)'),true) !!}.
                 </p>
             </div>

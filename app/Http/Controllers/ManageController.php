@@ -211,8 +211,7 @@ class ManageController extends Controller
             $response = OneDrive::getItem($id);
             if ($response['errno'] === 0) {
                 $file = $response['data'];
-                $file['content']
-                    = Tool::getFileContent($file['@microsoft.graph.downloadUrl']);
+                $file['content'] = getFileContent($file['@microsoft.graph.downloadUrl']);
             } else {
                 Tool::showMessage('获取文件失败', false);
                 $file = '';
