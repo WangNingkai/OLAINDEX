@@ -3,12 +3,10 @@
 namespace App\Helpers;
 
 use App\Http\Controllers\OauthController;
-use Curl\Curl;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class Tool
@@ -81,43 +79,6 @@ class Tool
     }
 
     /**
-     *文件大小转换
-     *
-     * @param string $size 原始大小
-     *
-     * @return string 转换大小
-     */
-    public static function convertSize($size)
-    {
-        $units = [' B', ' KB', ' MB', ' GB', ' TB'];
-        for ($i = 0; $size >= 1024 && $i < 4; $i++) {
-            $size /= 1024;
-        }
-
-        return @round($size, 2) . $units[$i];
-    }
-
-    /**
-     * markdown转html
-     *
-     * @param      $markdown
-     * @param bool $line
-     *
-     * @return mixed|string
-     */
-    public static function markdown2Html($markdown, $line = false)
-    {
-        $parser = new \Parsedown();
-        if (!$line) {
-            $html = $parser->text($markdown);
-        } else {
-            $html = $parser->line($markdown);
-        }
-
-        return $html;
-    }
-
-    /**
      * 数组分页
      *
      * @param $items
@@ -130,7 +91,6 @@ class Tool
         $pageStart = request()->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
-
         // Get only the items you need using array_slice
         $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
 
@@ -141,61 +101,6 @@ class Tool
             Paginator::resolveCurrentPage(),
             ['path' => Paginator::resolveCurrentPath()]
         );
-    }
-
-    public static function getOrderByStatus($field)
-    {
-        $order = request()->get('orderBy');
-        @list($search_field, $sortBy) = explode(',', $order);
-        if ($field !== $search_field) {
-            return true;
-        } else {
-            if (strtolower($sortBy) !== 'desc') {
-                return false;
-            } else {
-                return true;
-            }
-        }
-    }
-
-    /**
-     * 获取包屑导航url
-     *
-     * @param $key
-     * @param $pathArr
-     *
-     * @return string
-     */
-    public static function getBreadcrumbUrl($key, $pathArr)
-    {
-        $pathArr = array_slice($pathArr, 0, $key);
-        $url = '';
-        foreach ($pathArr as $param) {
-            $url .= '/' . $param;
-        }
-
-        return trim($url, '/');
-    }
-
-    /**
-     * 获取父级url
-     *
-     * @param $pathArr
-     *
-     * @return string
-     */
-    public static function getParentUrl($pathArr)
-    {
-        array_pop($pathArr);
-        if (count($pathArr) === 0) {
-            return '';
-        }
-        $url = '';
-        foreach ($pathArr as $param) {
-            $url .= '/' . $param;
-        }
-
-        return trim($url, '/');
     }
 
     /**
@@ -215,28 +120,6 @@ class Tool
         }
 
         return @implode('/', $url);
-    }
-
-    /**
-     * @param string $ext
-     * @param bool $img
-     *
-     * @return string
-     */
-    public static function getExtIcon($ext = '', $img = false)
-    {
-        $patterns = Constants::FILE_ICON;
-        $icon = '';
-        foreach ($patterns as $key => $suffix) {
-            if (in_array($ext, $suffix[2])) {
-                $icon = $img ? $suffix[1] : $suffix[0];
-                break;
-            } else {
-                $icon = $img ? 'file' : 'fa-file-text-o';
-            }
-        }
-
-        return $icon;
     }
 
     /**
@@ -432,60 +315,6 @@ class Tool
     }
 
     /**
-     * @param      $url
-     * @param bool $cache
-     *
-     * @return \Illuminate\Http\JsonResponse|mixed|null
-     * @throws \ErrorException
-     */
-    public static function getFileContent($url, $cache = true)
-    {
-        $key = 'one:content:' . $url;
-        if ($cache && Cache::has($key)) {
-            $content = Cache::get($key);
-            if ($content) {
-                return $content;
-            }
-        }
-        $curl = new Curl();
-        $curl->setConnectTimeout(5);
-        $curl->setTimeout(120);
-        $curl->setRetry(3);
-        $curl->setOpts([
-            CURLOPT_AUTOREFERER    => true,
-            CURLOPT_FAILONERROR    => true,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_ENCODING       => 'gzip,deflate',
-        ]);
-        $curl->get($url);
-        $curl->close();
-        if ($curl->error) {
-            Log::error(
-                'Get OneDrive file content error.',
-                [
-                    'code' => $curl->errorCode,
-                    'msg'  => $curl->errorMessage,
-                ]
-            );
-            Tool::showMessage('Error: ' . $curl->errorCode . ': '
-                . $curl->errorMessage, false);
-
-            return '远程获取内容失败，请刷新重试';
-        } else {
-            $content = $curl->rawResponse;
-            if ($cache) {
-                Cache::put(
-                    $key,
-                    $content,
-                    self::config('expires')
-                );
-            }
-
-            return $content;
-        }
-    }
-
-    /**
      * @param string $key
      *
      * @return mixed|string
@@ -503,7 +332,7 @@ class Tool
                         $quota = $response['data']['quota'];
                         foreach ($quota as $k => $item) {
                             if (!is_string($item)) {
-                                $quota[$k] = Tool::convertSize($item);
+                                $quota[$k] = convertSize($item);
                             }
                         }
 
@@ -600,70 +429,5 @@ class Tool
         $countB = count(explode('/', self::getAbsolutePath($b)));
 
         return $countB - $countA;
-    }
-
-    /**
-     * @param $ext
-     *
-     * @return string
-     */
-    public static function fileIcon($ext)
-    {
-        if (in_array($ext, ['ogg', 'mp3', 'wav'])) {
-            return 'audiotrack';
-        }
-        if (in_array($ext, ['apk'])) {
-            return 'android';
-        }
-        if (in_array($ext, ['pdf'])) {
-            return 'picture_as_pdf';
-        }
-        if (in_array($ext, [
-            'bmp',
-            'jpg',
-            'jpeg',
-            'png',
-            'gif',
-            'ico',
-            'jpe',
-        ])
-        ) {
-            return 'image';
-        }
-        if (in_array($ext, [
-            'mp4',
-            'mkv',
-            'webm',
-            'avi',
-            'mpg',
-            'mpeg',
-            'rm',
-            'rmvb',
-            'mov',
-            'wmv',
-            'mkv',
-            'asf',
-        ])
-        ) {
-            return 'ondemand_video';
-        }
-        if (in_array($ext, [
-            'html',
-            'htm',
-            'css',
-            'go',
-            'java',
-            'js',
-            'json',
-            'txt',
-            'sh',
-            'md',
-            'php',
-        ])
-        ) {
-            return 'code';
-        }
-
-        return 'insert_drive_file';
     }
 }

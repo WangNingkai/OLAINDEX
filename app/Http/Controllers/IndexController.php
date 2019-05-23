@@ -10,6 +10,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use App\Http\Resources\ItemResource;
 
 /**
  * OneDriveGraph 索引
@@ -84,15 +85,13 @@ class IndexController extends Controller
      */
     public function list(Request $request)
     {
-        $order = $request->get('orderBy');
-        @list($field, $sortBy) = explode(',', $order);
         $realPath = $request->route()->parameter('query') ?? '/';
-        $limit = $request->get('limit', 20);
-        if (!is_numeric($limit)) {
-            Tool::showMessage('非法请求', false);
+        $data = $request->validate([
+            'by'    => 'string|in:name,lastModifiedDateTime,size',
+            'sort'  => 'string|in:asc,desc',
+            'limit' => 'integer'
+        ]);
 
-            return view(config('olaindex.theme') . 'message');
-        }
         $graphPath = Tool::getOriginPath($realPath);
         $queryPath = trim(Tool::getAbsolutePath($realPath), '/');
         $origin_path = rawurldecode($queryPath);
@@ -135,10 +134,10 @@ class IndexController extends Controller
         }
         // 处理排序
         $origin_items = collect($origin_items);
-        if (strtolower($sortBy) !== 'desc') {
-            $origin_items = $origin_items->sortBy($field)->toArray();
+        if (strtolower(Arr::get($data, 'sort', 'desc')) !== 'desc') {
+            $origin_items = $origin_items->sortBy(Arr::get($data, 'by', 'name'))->toArray();
         } else {
-            $origin_items = $origin_items->sortByDesc($field)->toArray();
+            $origin_items = $origin_items->sortByDesc(Arr::get($data, 'by', 'name'))->toArray();
         }
         $hasImage = Tool::hasImages($origin_items);
         // 过滤微软OneNote文件
@@ -147,10 +146,10 @@ class IndexController extends Controller
         });
         // 处理 head/readme
         $head = array_key_exists('HEAD.md', $origin_items)
-            ? Tool::markdown2Html(Tool::getFileContent($origin_items['HEAD.md']['@microsoft.graph.downloadUrl']))
+            ? markdown2Html(getFileContent($origin_items['HEAD.md']['@microsoft.graph.downloadUrl']))
             : '';
         $readme = array_key_exists('README.md', $origin_items)
-            ? Tool::markdown2Html(Tool::getFileContent($origin_items['README.md']['@microsoft.graph.downloadUrl']))
+            ? markdown2Html(getFileContent($origin_items['README.md']['@microsoft.graph.downloadUrl']))
             : '';
         if (!Session::has('LogInfo')) {
             $origin_items = Arr::except(
@@ -158,7 +157,9 @@ class IndexController extends Controller
                 ['README.md', 'HEAD.md', '.password', '.deny']
             );
         }
-        $items = Tool::paginate($origin_items, $limit);
+
+        $origin_items = ItemResource::collection(collect($origin_items));
+        $items = Tool::paginate($origin_items->toArray(request()), Arr::get($data, 'limit', 2));
         $parent_item = $item;
         $data = compact(
             'parent_item',
@@ -246,7 +247,7 @@ class IndexController extends Controller
 
                         return redirect()->back();
                     } else {
-                        $file['content'] = Tool::getFileContent(
+                        $file['content'] = getFileContent(
                             $file['@microsoft.graph.downloadUrl'],
                             false
                         );

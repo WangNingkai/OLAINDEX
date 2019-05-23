@@ -1,6 +1,7 @@
 @extends('default.layouts.main')
 @section('title','搜索：'.request()->get('keywords'))
 @section('content')
+    @includeWhen($errors->isNotEmpty(), 'default.widgets.errors')
     @if (blank($items))
         <div class="card border-light mb-3">
             <div class="card-body">
@@ -33,15 +34,15 @@
                                  style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
                                 <a href="{{ route('search.show',$item['id']) }}"
                                    title="{{ $item['name'] }}">
-                                    <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i> {{ $item['name'] }}
+                                    <i class="fa {{ getExtIcon($item['ext']) }}"></i> {{ $item['name'] }}
                                 </a>
                             </div>
                             <div class="col-sm-2 d-none d-md-block d-md-none">
                                 <span
-                                    class="pull-right">{{ date('M d H:i',strtotime($item['lastModifiedDateTime'])) }}</span>
+                                    class="pull-right">{{ Carbon\Carbon::parse($item['lastModifiedDateTime'])->diffForHumans() }}</span>
                             </div>
                             <div class="col-sm-2 d-none d-md-block d-md-none">
-                                <span class="pull-right">{{ \App\Helpers\Tool::convertSize($item['size']) }}</span>
+                                <span class="pull-right">{{ convertSize($item['size']) }}</span>
                             </div>
                             <div class="col-4 col-sm-2">
                                 <span class="pull-right">
@@ -56,7 +57,7 @@
             </div>
         </div>
         <div class="text-center">
-            {{ $items->appends(['keywords' => request()->get('keywords'),'limit' => request()->get('limit')])->links('default.page') }}
+            {{ $items->appends(['keywords' => request()->get('keywords'),'limit' => request()->get('limit')])->links() }}
         </div>
     @endif
 @stop

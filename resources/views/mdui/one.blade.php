@@ -51,32 +51,32 @@
                 <li class="mdui-list-item th">
                     <div class="mdui-col-xs-12 mdui-col-sm-7">
                         文件
-                        @if(\App\Helpers\Tool::getOrderByStatus('name'))
-                            <a href="?orderBy=name,asc"><i class="fa fa-arrow-down"></i></a>
+                        @if(getOrderByStatus('name'))
+                            <a href="?by=name&sort=asc"><i class="fa fa-arrow-down"></i></a>
                         @else
-                            <a href="?orderBy=name,desc"><i class="fa fa-arrow-up"></i></a>
+                            <a href="?by=name&sort=desc"><i class="fa fa-arrow-up"></i></a>
                         @endif
                     </div>
                     <div class="mdui-col-sm-3 mdui-text-right">
                         修改时间
-                        @if(\App\Helpers\Tool::getOrderByStatus('lastModifiedDateTime'))
-                            <a href="?orderBy=lastModifiedDateTime,asc"><i class="fa fa-arrow-down"></i></a>
+                        @if(getOrderByStatus('lastModifiedDateTime'))
+                            <a href="?by=lastModifiedDateTime&sort=asc"><i class="fa fa-arrow-down"></i></a>
                         @else
-                            <a href="?orderBy=lastModifiedDateTime,desc"><i class="fa fa-arrow-up"></i></a>
+                            <a href="?by=lastModifiedDateTime&sort=desc"><i class="fa fa-arrow-up"></i></a>
                         @endif
                     </div>
                     <div class="mdui-col-sm-2 mdui-text-right">
                         大小
-                        @if(\App\Helpers\Tool::getOrderByStatus('size'))
-                            <a href="?orderBy=size,asc"><i class="fa fa-arrow-down"></i></a>
+                        @if(getOrderByStatus('size'))
+                            <a href="?by=size&sort=asc"><i class="fa fa-arrow-down"></i></a>
                         @else
-                            <a href="?orderBy=size,desc"><i class="fa fa-arrow-up"></i></a>
+                            <a href="?by=size&sort=desc"><i class="fa fa-arrow-up"></i></a>
                         @endif
                     </div>
                 </li>
                 @if(!blank($path_array))
                     <li class="mdui-list-item mdui-ripple">
-                        <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl(\App\Helpers\Tool::getParentUrl($path_array))) }}">
+                        <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl(getParentUrl($path_array))) }}">
                             <div class="mdui-col-xs-12 mdui-col-sm-7">
                                 <i class="mdui-icon material-icons">subdirectory_arrow_left</i>
                                 返回上一层
@@ -96,9 +96,9 @@
                                     {{ $item['name'] }}
                                 </div>
                                 <div
-                                    class="mdui-col-sm-3 mdui-text-right">{{ Carbon\Carbon::parse($item['lastModifiedDateTime'])->diffForHumans() }}</div>
+                                    class="mdui-col-sm-3 mdui-text-right">{{ $item['lastModifiedDateTime'] }}</div>
                                 <div
-                                    class="mdui-col-sm-2 mdui-text-right">{{  Arr::has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</div>
+                                    class="mdui-col-sm-2 mdui-text-right">{{ $item['size'] }}</div>
                             </a>
                         </li>
                     @else
@@ -106,13 +106,13 @@
                             <a href="{{ route('show',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                target="_blank">
                                 <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
-                                    <i class="mdui-icon material-icons">{{ \App\Helpers\Tool::fileIcon($item['ext']) }}</i>
+                                    <i class="mdui-icon material-icons">{{ fileIcon($item['ext']) }}</i>
                                     {{ $item['name'] }}
                                 </div>
                                 <div
-                                    class="mdui-col-sm-3 mdui-text-right">{{ Carbon\Carbon::parse($item['lastModifiedDateTime'])->diffForHumans() }}</div>
+                                    class="mdui-col-sm-3 mdui-text-right">{{ $item['lastModifiedDateTime'] }}</div>
                                 <div
-                                    class="mdui-col-sm-2 mdui-text-right">{{  Arr::has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</div>
+                                    class="mdui-col-sm-2 mdui-text-right">{{  $item['size'] }}</div>
                             </a>
                         </li>
                     @endif
@@ -128,7 +128,7 @@
             class="mdui-m-t-3 thumb-view mdui-row-xs-3 mdui-row-sm-4 mdui-row-md-5 mdui-row-lg-6 mdui-row-xl-7 mdui-grid-list mdui-hidden">
             @if(!blank($path_array))
                 <div class="mdui-col">
-                    <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl(\App\Helpers\Tool::getParentUrl($path_array))) }}">
+                    <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl(getParentUrl($path_array))) }}">
                         <div class="col-icon">
                             <img src="{{ asset('img/return.png') }}" class="mdui-p-a-1" alt="">
                         </div>
@@ -159,7 +159,7 @@
                                 </div>
                                 <br/>
                                 <div class="col-date">
-                                    {{ Carbon\Carbon::parse($item['lastModifiedDateTime'])->diffForHumans() }}
+                                    {{ $item['lastModifiedDateTime'] }}
                                 </div>
                             </div>
                         </a>
@@ -169,13 +169,13 @@
                         <a target="_blank"
                            href="{{ route('show',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}">
                             <div class="col-icon">
-                                @if(in_array($item['ext'],explode(' ',\App\Helpers\Tool::config('image'))))
+                                @if(in_array($item['ext'], explode(' ', \App\Helpers\Tool::config('image'))))
                                     <img class="lazy"
                                          data-original="{{  Arr::get($item,'thumbnails.0.small.url') }}"
                                          src="{{ asset('img/loading.gif') }}" alt="">
                                 @else
                                     <img
-                                        src="{{ asset('img/'.\App\Helpers\Tool::getExtIcon($item['ext'],true).'.png') }}"
+                                        src="{{ asset('img/' . getExtIcon($item['ext'], true) . '.png') }}"
                                         alt="">
                                 @endif
                             </div>
@@ -185,7 +185,7 @@
                                 </div>
                                 <br/>
                                 <div class="col-date">
-                                    {{ Carbon\Carbon::parse($item['lastModifiedDateTime'])->diffForHumans() }}
+                                    {{ $item['lastModifiedDateTime'] }}
                                 </div>
                             </div>
                         </a>

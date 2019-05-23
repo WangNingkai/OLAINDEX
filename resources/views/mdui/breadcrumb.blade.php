@@ -7,7 +7,7 @@
             @if (!blank($value))
                 <i class="mdui-icon material-icons mdui-icon-dark  mdui-m-a-0">chevron_right</i>
                 <a
-                    href="{{ route('home',\App\Helpers\Tool::getEncodeUrl(\App\Helpers\Tool::getBreadcrumbUrl($key + 1,$path_array))) }}">{{ str_limit($value,20) }}</a>
+                    href="{{ route('home',\App\Helpers\Tool::getEncodeUrl(getBreadcrumbUrl($key + 1,$path_array))) }}">{{ str_limit($value,20) }}</a>
             @endif
         @endif
     @endforeach

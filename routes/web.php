@@ -1,6 +1,5 @@
 <?php
 
-use App\Helpers\Tool;
 use Illuminate\Support\Str;
 
 /*
@@ -98,8 +97,8 @@ Route::any('search/file/{id}', 'IndexController@searchShow')->name('search.show'
 if (Str::contains(config('app.url'), ['localhost', 'dev.ningkai.wang'])) {
     Route::get('about', function () {
         $url = 'https://raw.githubusercontent.com/WangNingkai/OLAINDEX/master/README.md';
-        $content = Tool::getFileContent($url);
-        $markdown = Tool::markdown2Html($content);
+        $content = getFileContent($url);
+        $markdown = markdown2Html($content);
 
         return response()->view(
             config('olaindex.theme') . 'about',

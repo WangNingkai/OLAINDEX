@@ -150,6 +150,7 @@ return [
         'available' => '可用的',
 
         // B
+        'by' => '方式',
 
         // C
         'city'    => '城市',
@@ -182,6 +183,7 @@ return [
 
         // L
         'last_name' => '姓',
+        'limit'     => '限制',
 
         // M
         'mobile' => '手机',
@@ -205,6 +207,7 @@ return [
         'second' => '秒',
         'sex'    => '性别',
         'size'   => '大小',
+        'sort'   => '排序',
 
         // T
         'time'  => '时间',
@@ -220,7 +223,7 @@ return [
         // X
 
         // Y
-        'year'                  => '年',
+        'year' => '年',
 
         // Z
     ],
