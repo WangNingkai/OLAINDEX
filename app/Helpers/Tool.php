@@ -196,7 +196,7 @@ class Tool
             return self::readJson($file);
         });
 
-        return $key ? (Arr::has($config, $key) ? (array_get($config, $key)
+        return $key ? (Arr::has($config, $key) ? (Arr::get($config, $key)
             ?: $default) : $default) : $config;
     }
 
