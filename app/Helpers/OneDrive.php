@@ -118,6 +118,7 @@ class OneDrive
      */
     public static function getChildren($itemId = '', $query = '')
     {
+        $query = self::getQuery($query);
         $endpoint = $itemId ? "/me/drive/items/{$itemId}/children{$query}"
             : "/me/drive/root/children{$query}";
         $response = self::request('get', $endpoint);
@@ -145,6 +146,7 @@ class OneDrive
      */
     public static function getChildrenByPath($path = '/', $query = '')
     {
+        $query = self::getQuery($query);
         $requestPath = self::getRequestPath($path);
         $endpoint = $requestPath === '/' ? "/me/drive/root/children{$query}"
             : "/me/drive/root{$requestPath}children{$query}";
@@ -204,6 +206,7 @@ class OneDrive
      */
     public static function getItem($itemId, $query = '')
     {
+        $query = self::getQuery($query);
         $endpoint = "/me/drive/items/{$itemId}{$query}";
         $response = self::request('get', $endpoint);
         if ($response['errno'] === 0) {
@@ -228,6 +231,7 @@ class OneDrive
      */
     public static function getItemByPath($path, $query = '')
     {
+        $query = self::getQuery($query);
         $requestPath = self::getRequestPath($path);
         $endpoint = "/me/drive/root{$requestPath}{$query}";
         $response = self::request('get', $endpoint);
@@ -928,6 +932,15 @@ class OneDrive
         fseek($handler, $offset);
 
         return fread($handler, $length);
+    }
+
+    public static function getQuery($query)
+    {
+        if (is_array($query)) {
+            return array_pop($query);
+        }
+
+        return $query;
     }
 
     public static function response($data, $errno = 0, $msg = 'ok')

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use App\Http\Resources\ItemResource;
+use App\Services\CacheService;
 
 /**
  * OneDriveGraph 索引
@@ -53,7 +54,7 @@ class IndexController extends Controller
             'handleIllegalFile',
         ]);
         $this->middleware('HandleEncryptDir')->only(Tool::config('encrypt_option', ['list']));
-        $this->expires = Tool::config('expires', 10);
+        $this->expires = Tool::config('expires', 600);
         $this->root = Tool::config('root', '/');
         $this->show = [
             'stream' => explode(' ', Tool::config('stream')),
@@ -97,41 +98,18 @@ class IndexController extends Controller
         $origin_path = rawurldecode($queryPath);
         $path_array = $origin_path ? explode('/', $origin_path) : [];
         $pathKey = 'one:path:' . $graphPath;
-        if (Cache::has($pathKey)) {
-            $item = Cache::get($pathKey);
-        } else {
-            $response = OneDrive::getItemByPath($graphPath);
-            if ($response['errno'] === 0) {
-                $item = $response['data'];
-                Cache::put($pathKey, $item, $this->expires);
-            } else {
-                Tool::showMessage($response['msg'], false);
+        $item = (new CacheService('getItemByPath', $graphPath))->get($pathKey);
 
-                return view(config('olaindex.theme') . 'message');
-            }
-        }
         if (Arr::has($item, '@microsoft.graph.downloadUrl')) {
             return redirect()->away($item['@microsoft.graph.downloadUrl']);
         }
+
         // 获取列表
         $key = 'one:list:' . $graphPath;
-        if (Cache::has($key)) {
-            $origin_items = Cache::get($key);
-        } else {
-            $response = OneDrive::getChildrenByPath(
-                $graphPath,
-                '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl&expand=thumbnails'
-            );
+        $origin_items = (new CacheService('getChildrenByPath', $graphPath))->get($key, [
+            '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl&expand=thumbnails'
+        ]);
 
-            if ($response['errno'] === 0) {
-                $origin_items = $response['data'];
-                Cache::put($key, $origin_items, $this->expires);
-            } else {
-                Tool::showMessage($response['msg'], false);
-
-                return view(config('olaindex.theme') . 'message');
-            }
-        }
         // 处理排序
         $origin_items = collect($origin_items);
 
@@ -141,12 +119,14 @@ class IndexController extends Controller
             $origin_items = $origin_items->sortByDesc(Arr::get($data, 'by', 'name'));
         }
 
-        $origin_items->toArray();
+        $origin_items = $origin_items->toArray();
+
         $hasImage = Tool::hasImages($origin_items);
         // 过滤微软OneNote文件
         $origin_items = Arr::where($origin_items, function ($value) {
             return !Arr::has($value, 'package.type');
         });
+
         // 处理 head/readme
         $head = array_key_exists('HEAD.md', $origin_items)
             ? markdown2Html(getFileContent($origin_items['HEAD.md']['@microsoft.graph.downloadUrl']))
@@ -196,28 +176,14 @@ class IndexController extends Controller
         $absolutePath = implode('/', $absolutePathArr);
         $listPath = Tool::getOriginPath($absolutePath);
         $list = Cache::get('one:list:' . $listPath, '');
+        $graphPath = Tool::getOriginPath($realPath);
+
         if ($list && array_key_exists($name, $list)) {
             return $list[$name];
         } else {
-            $graphPath = Tool::getOriginPath($realPath);
-
-            // 获取文件
-            return Cache::remember(
-                'one:file:' . $graphPath,
-                $this->expires,
-                function () use ($graphPath) {
-                    $response = OneDrive::getItemByPath(
-                        $graphPath,
-                        '?select=id,eTag,name,size,lastModifiedDateTime,file,image,@microsoft.graph.downloadUrl'
-                        . '&expand=thumbnails'
-                    );
-                    if ($response['errno'] === 0) {
-                        return $response['data'];
-                    } else {
-                        return null;
-                    }
-                }
-            );
+            return (new CacheService('getItemByPath', $graphPath))->get('one:file:' . $graphPath, [
+                '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl&expand=thumbnails'
+            ]);
         }
     }
 
@@ -262,7 +228,7 @@ class IndexController extends Controller
                             return response(
                                 $file['content'],
                                 200,
-                                ['Content-type' => $fileType, ]
+                                ['Content-type' => $fileType]
                             );
                         }
                     }
