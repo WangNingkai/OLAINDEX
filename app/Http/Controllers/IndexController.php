@@ -25,7 +25,7 @@ class IndexController extends Controller
      *
      * @var int|mixed|string
      */
-    public $expires = 10;
+    public $expires = 600;
 
     /**
      * 根目录
@@ -134,11 +134,14 @@ class IndexController extends Controller
         }
         // 处理排序
         $origin_items = collect($origin_items);
+
         if (strtolower(Arr::get($data, 'sort', 'desc')) !== 'desc') {
-            $origin_items = $origin_items->sortBy(Arr::get($data, 'by', 'name'))->toArray();
+            $origin_items = $origin_items->sortBy(Arr::get($data, 'by', 'name'));
         } else {
-            $origin_items = $origin_items->sortByDesc(Arr::get($data, 'by', 'name'))->toArray();
+            $origin_items = $origin_items->sortByDesc(Arr::get($data, 'by', 'name'));
         }
+
+        $origin_items->toArray();
         $hasImage = Tool::hasImages($origin_items);
         // 过滤微软OneNote文件
         $origin_items = Arr::where($origin_items, function ($value) {
