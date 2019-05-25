@@ -1,6 +1,7 @@
 @extends('default.layouts.admin')
 @section('title','显示设置')
 @section('content')
+    @includeWhen($errors->isNotEmpty(), 'default.widgets.errors')
     <p class="pull-right text-danger">展示的文件后缀, 以空格分开</p>
     <form action="" method="post">
         @csrf

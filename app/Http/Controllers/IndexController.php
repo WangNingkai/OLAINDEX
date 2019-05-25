@@ -377,30 +377,25 @@ class IndexController extends Controller
      */
     public function search(Request $request)
     {
-        $keywords = $request->get('keywords');
-        $limit = $request->get('limit', 20);
-        if (!is_numeric($limit)) {
-            Tool::showMessage('非法请求', false);
+        $data = $request->validate([
+            'keywords' => 'required|string',
+            'limit'    => 'integer'
+        ]);
 
-            return view(config('olaindex.theme') . 'message');
-        }
+        $limit = Arr::get($data, 'limit', 20);
+        $items = [];
+        $path = Tool::getEncodeUrl($this->root);
+        $response = OneDrive::search($path, $data['keywords']);
 
-        if ($keywords) {
-            $path = Tool::getEncodeUrl($this->root);
-            $response = OneDrive::search($path, $keywords);
-            if ($response['errno'] === 0) {
-                // 过滤结果中的文件夹\过滤微软OneNote文件
-                $items = Arr::where($response['data'], function ($value) {
-                    return !Arr::has($value, 'folder')
-                        && !Arr::has($value, 'package.type');
-                });
-            } else {
-                Tool::showMessage('搜索失败', true);
-                $items = [];
-            }
+        if ($response['errno'] === 0) {
+            // 过滤结果中的文件夹\过滤微软OneNote文件
+            $items = Arr::where($response['data'], function ($value) {
+                return !Arr::has($value, 'folder') && !Arr::has($value, 'package.type');
+            });
         } else {
-            $items = [];
+            Tool::showMessage('搜索失败', true);
         }
+
         $items = Tool::paginate($items, $limit);
 
         return view(config('olaindex.theme') . 'search', compact('items'));
