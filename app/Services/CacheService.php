@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use App\Helpers\Tool;
 use App\Helpers\OneDrive;
 use Illuminate\Support\Facades\Cache;
-use App\Helpers\Tool;
 
 class CacheService
 {
@@ -31,7 +31,10 @@ class CacheService
             $this->error('没有该方法: ' . $this->method);
         }
 
-        $response = call_user_func_array([$this->onedrive, $this->method], array_merge([$this->path], $params));
+        $response = call_user_func_array(
+            [$this->onedrive, $this->method],
+            array_merge([$this->path], $params)
+        );
 
         if ($response['errno'] === 0) {
             $item = $response['data'];

@@ -93,8 +93,9 @@ chown -R www:www *
 
 ---
 
-### .env 文件修改需要清除缓存
+### .env 修改需要清除缓存，routes 文件同样
 
 ```
 php artisan config:cache
+php artisan route:cache
 ```

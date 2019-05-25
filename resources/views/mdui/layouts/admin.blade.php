@@ -68,7 +68,7 @@
                    href="{{ route('admin.basic') }}">基础设置 </a>
                 <a class="mdui-list-item mdui-ripple @if(request()->routeIs('admin.show')) mdui-list-item-active @endif"
                    href="{{ route('admin.show') }}">显示设置 </a>
-                <a class="mdui-list-item mdui-ripple @if(request()->routeIs('admin.profile')) mdui-list-item-active @endif"
+                <a class="mdui-list-item mdui-ripple @if(request()->routeIs('admin.profile.show')) mdui-list-item-active @endif"
                    href="{{ route('admin.profile.show') }}">密码设置 </a>
                 <a class="mdui-list-item mdui-ripple @if(request()->routeIs('admin.bind')) mdui-list-item-active @endif"
                    href="{{ route('admin.bind') }}">绑定设置 </a>

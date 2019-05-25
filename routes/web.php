@@ -55,10 +55,12 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('login', 'AdminController@login')->name('admin.login');
     Route::post('logout', 'AdminController@logout')->name('admin.logout');
     // 基础设置
-    Route::any('/', 'AdminController@basic')->name('admin.basic');
+    Route::view('/', config('olaindex.theme') . 'admin.basic')->name('admin.basic');
+    Route::post('/', 'AdminController@basic')->name('admin.basic.post');
     Route::any('bind', 'AdminController@bind')->name('admin.bind');
-    Route::any('show', 'AdminController@show')->name('admin.show');
-    Route::view('profile', 'AdminController@showProfile')->name('admin.profile.show');
+    Route::view('show', config('olaindex.theme') . 'admin.show')->name('admin.show');
+    Route::post('show', 'AdminController@settings')->name('admin.settings');
+    Route::view('profile', config('olaindex.theme') . 'admin.profile')->name('admin.profile.show');
     Route::post('profile', 'AdminController@profile')->name('admin.profile.post');
     Route::any('clear', 'AdminController@clear')->name('admin.cache.clear');
     Route::any('refresh', 'AdminController@refresh')->name('admin.cache.refresh');
@@ -91,8 +93,8 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('url/upload', 'ManageController@uploadUrl')->name('admin.url.upload');
 });
 // 搜索
-Route::any('search', 'IndexController@search')->name('search')->middleware('checkAuth', 'throttle:10,2');
-Route::any('search/file/{id}', 'IndexController@searchShow')->name('search.show')->middleware('checkAuth');
+Route::get('search', 'IndexController@search')->name('search')->middleware('checkAuth', 'throttle:10,2');
+Route::get('search/file/{id}', 'IndexController@searchShow')->name('search.show')->middleware('checkAuth');
 
 if (Str::contains(config('app.url'), ['localhost', 'dev.ningkai.wang'])) {
     Route::get('about', function () {

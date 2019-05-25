@@ -1,6 +1,7 @@
 @extends('default.layouts.admin')
 @section('title','基础设置')
 @section('content')
+    @includeWhen($errors->isNotEmpty(), 'default.widgets.errors')
     <form action="" method="post">
         @csrf
         <div class="form-group">

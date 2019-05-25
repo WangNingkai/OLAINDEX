@@ -147,24 +147,32 @@ return [
         // A
         'address'   => '地址',
         'age'       => '年龄',
+        'audio'     => '音频',
         'available' => '可用的',
 
         // B
         'by' => '方式',
 
         // C
-        'city'    => '城市',
-        'content' => '内容',
-        'country' => '国家',
+        'city'      => '城市',
+        'code'      => '代码',
+        'content'   => '内容',
+        'country'   => '国家',
+        'copyright' => '版权',
 
         // D
-        'description' => '描述',
         'date'        => '日期',
         'day'         => '天',
+        'dash'        => 'dash视频',
+        'description' => '描述',
+        'doc'         => '文档',
 
         // E
-        'email'   => '邮箱',
-        'excerpt' => '摘要',
+        'email'          => '邮箱',
+        'excerpt'        => '摘要',
+        'expires'        => '缓存过期时间',
+        'encrypt_path'   => '加密',
+        'encrypt_option' => '加密选项',
 
         // F
         'first_name' => '名',
@@ -173,9 +181,15 @@ return [
         'gender' => '性别',
 
         // H
-        'hour' => '时',
+        'hour'               => '时',
+        'hotlink_protection' => '防盗链',
 
         // I
+        'image'              => '图片',
+        'image_view'         => '看图模式',
+        'image_home'         => '图床首页',
+        'image_hosting'      => '图床',
+        'image_hosting_path' => '图床保存地址',
 
         // J
 
@@ -202,14 +216,18 @@ return [
         'phone'                 => '电话',
 
         // R
+        'root' => '根目录',
 
         // S
-        'second' => '秒',
-        'sex'    => '性别',
-        'size'   => '大小',
-        'sort'   => '排序',
+        'second'     => '秒',
+        'sex'        => '性别',
+        'size'       => '大小',
+        'sort'       => '排序',
+        'stream'     => '文件流',
+        'statistics' => '统计代码',
 
         // T
+        'theme' => '主题',
         'time'  => '时间',
         'title' => '标题',
 
@@ -217,6 +235,7 @@ return [
         'username' => '用户名',
 
         // V
+        'video' => '视频',
 
         // W
 

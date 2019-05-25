@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
+use App\Helpers\Constants;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
@@ -84,10 +85,26 @@ class AdminController extends Controller
      */
     public function basic(Request $request)
     {
-        if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme') . 'admin.basic');
-        }
-        $data = $request->except('_token');
+        $data = $request->validate([
+            'name'               => 'sometimes|nullable|string',
+            'theme'              => 'sometimes|nullable|string|in:' . implode(',', Constants::SITE_THEME),
+            'root'               => 'sometimes|nullable|string',
+            'expires'            => 'sometimes|nullable|string',
+            'encrypt_path'       => 'sometimes|nullable|string',
+            'encrypt_option'     => 'sometimes|required|array',
+            'encrypt_option.*'   => 'sometimes|nullable|string',
+            'image_view'         => 'sometimes|boolean',
+            'image_hosting'      => 'sometimes|in:0,1,2',
+            'image_home'         => 'sometimes|boolean',
+            'image_hosting_path' => 'sometimes|nullable|string',
+            'hotlink_protection' => 'sometimes|nullable|string',
+            'copyright'          => 'sometimes|nullable|string',
+            'statistics'         => 'sometimes|nullable|string',
+        ]);
+
+        $data = array_filter($data, function ($item) {
+            return !is_null($item);
+        });
         Tool::updateConfig($data);
         Tool::showMessage('保存成功！');
 
@@ -101,24 +118,23 @@ class AdminController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
-    public function show(Request $request)
+    public function settings(Request $request)
     {
-        if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme') . 'admin.show');
-        }
-        $data = $request->except('_token');
+        $data = $request->validate([
+            'video'  => 'sometimes|nullable|string',
+            'audio'  => 'sometimes|nullable|string',
+            'image'  => 'sometimes|nullable|string',
+            'dash'   => 'sometimes|nullable|string',
+            'code'   => 'sometimes|nullable|string',
+            'doc'    => 'sometimes|nullable|string',
+            'stream' => 'sometimes|nullable|string'
+        ]);
+
+        $data = array_filter($data);
         Tool::updateConfig($data);
         Tool::showMessage('保存成功！');
 
         return redirect()->back();
-    }
-
-    /**
-     * 密码设置视图
-     */
-    public function showProfile()
-    {
-        return view(config('olaindex.theme') . 'admin.profile');
     }
 
     /**
