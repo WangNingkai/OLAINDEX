@@ -15,7 +15,7 @@
 
 ## 简介
 
-一款 `OneDrive` 目录文件索引应用，基于优雅的 `PHP` 框架 `Laravel5.7` 搭建，并通过 `Microsoft Graph` 接口获取数据展示，支持多类型帐号登录，多种主题显示，简单而强大。
+一款 `OneDrive` 目录文件索引应用，基于优雅的 `PHP` 框架 `Laravel5.8` 搭建，并通过 `Microsoft Graph` 接口获取数据展示，支持多类型帐号登录，多种主题显示，简单而强大。
 
 ## 项目地址
 
@@ -33,7 +33,7 @@
 
 - OneDrive 目录查看索引分页查看；
 - 支持代码、图片、文本文件即时预览、图片列表栏展示；
-- 支持音视频播放（兼容大部分格式），视频播放采用 Plyr.js，音乐播放采用 Aplayer；
+- 支持音视频播放（兼容大部分格式），视频播放采用 DPlayer.js，音乐播放采用 Aplayer；
 - 支持自定义创建文件夹、文件夹加密、文件/文件夹删除、文件/文件夹的复制与移动；
 - 支持文件搜索、文件上传、文件直链分享与删除、文件直链一键下载；
 - 支持管理 readme/head 说明文件；
@@ -77,39 +77,11 @@ chown -R www:www *
 
 ## 分支说明
 
-- release: 稳定版
+- master: 稳定版
 
-- master: 开发版
+- develop: 开发版
 
 - test: 测试版（不推荐使用）
-
-## 捐赠
-
-项目开发纯属个人爱好，如果你喜欢此项目，欢迎捐赠。
-
-同时捐赠可以获得一次安装技术服务。
-
-另可根据需求提供付费定制服务。
-
-**捐赠 ： [https://pay.ningkai.wang](https://pay.ningkai.wang)**
-
-## 问题反馈
-
-> 进行任何操作前请先阅读 [《提问的智慧》](https://github.com/ruby-china/How-To-Ask-Questions-The-Smart-Way/blob/master/README-zh_CN.md)
-
-当前获取帮助有三种方式：
-
-1. 通过 [GitHub issue](https://github.com/WangNingkai/OLAINDEX/issues) 提交问题（仅限问题反馈）
-2. 通过 [个人博客](https://imwnk.cn) 评论留言 或者 [关于&反馈](https://olaindex.ningkai.wang)  页面最下角留言
-3. 通过个人邮箱联系（每周不定时查看）
-
-无论采用哪种方式，请务必注意自己的言行举止，尊重他人，遵守最基本的社区行为规范。
-在求(伸)助(手)前请确保已经仔细 [Github Wiki](https://github.com/WangNingkai/OLAINDEX/wiki) 内的所有说明。
-使用 [GitHub issue](https://github.com/WangNingkai/OLAINDEX/issues) 提交问题时请确保提供信息完整准确，否则不予跟进。
-
-Blog : [https://imwnk.cn](https://imwnk.cn)
-
-Email : [imwnk@live.com](mailto:imwnk@live.com)
 
 ### 其他：
 
