@@ -25,11 +25,6 @@ class AdminController extends Controller
         $this->middleware('checkAuth')->except(['login', 'showLoginForm']);
     }
 
-    public function showLoginForm()
-    {
-        return view(config('olaindex.theme') . 'admin.login');
-    }
-
     /**
      * 登录
      *

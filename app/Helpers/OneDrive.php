@@ -936,7 +936,7 @@ class OneDrive
 
     public static function getQuery($query)
     {
-        if (is_array($query)) {
+        if (is_array($query) && !empty($query)) {
             return array_pop($query);
         }
 
