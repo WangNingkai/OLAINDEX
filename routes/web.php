@@ -51,7 +51,7 @@ Route::get('file/delete/{sign}', 'ManageController@deleteItem')->name('delete');
 
 // 后台设置管理
 Route::group(['prefix' => 'admin'], function () {
-    Route::get('login', 'AdminController@showLoginForm')->name('admin.login');
+    Route::view('login', config('olaindex.theme') . 'admin.login')->name('admin.login');
     Route::post('login', 'AdminController@login')->name('admin.login');
     Route::post('logout', 'AdminController@logout')->name('admin.logout');
     // 基础设置
