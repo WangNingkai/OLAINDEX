@@ -52,15 +52,18 @@ Route::get('file/delete/{sign}', 'ManageController@deleteItem')->name('delete');
 // 后台设置管理
 Route::group(['prefix' => 'admin'], function () {
     Route::view('login', config('olaindex.theme') . 'admin.login')->name('admin.login');
+    Route::middleware('checkAuth')->group(function () {
+        Route::view('/', config('olaindex.theme') . 'admin.basic')->name('admin.basic');
+        Route::view('show', config('olaindex.theme') . 'admin.show')->name('admin.show');
+        Route::view('profile', config('olaindex.theme') . 'admin.profile')->name('admin.profile.show');
+    });
+
     Route::post('login', 'AdminController@login')->name('admin.login');
     Route::post('logout', 'AdminController@logout')->name('admin.logout');
     // 基础设置
-    Route::view('/', config('olaindex.theme') . 'admin.basic')->name('admin.basic');
     Route::post('/', 'AdminController@basic')->name('admin.basic.post');
     Route::any('bind', 'AdminController@bind')->name('admin.bind');
-    Route::view('show', config('olaindex.theme') . 'admin.show')->name('admin.show');
     Route::post('show', 'AdminController@settings')->name('admin.settings');
-    Route::view('profile', config('olaindex.theme') . 'admin.profile')->name('admin.profile.show');
     Route::post('profile', 'AdminController@profile')->name('admin.profile.post');
     Route::any('clear', 'AdminController@clear')->name('admin.cache.clear');
     Route::any('refresh', 'AdminController@refresh')->name('admin.cache.refresh');
