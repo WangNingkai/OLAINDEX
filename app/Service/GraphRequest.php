@@ -5,7 +5,7 @@ namespace App\Service;
 use Curl\Curl;
 use Illuminate\Support\Arr;
 use ErrorException;
-use Illuminate\Support\Facades\Log;
+use Log;
 
 class GraphRequest
 {

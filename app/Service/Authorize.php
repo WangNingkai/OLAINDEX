@@ -8,7 +8,7 @@ use App\Entities\ClientConfigEntity;
 use Curl\Curl;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
+use Log;
 use ErrorException;
 
 class Authorize

@@ -1,8 +1,6 @@
 <?php
 
 use App\Models\Setting;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Cache;
 
 if (!function_exists('word_time')) {
     /**
@@ -57,7 +55,7 @@ if (!function_exists('setting')) {
      */
     function setting($key = '', $default = '')
     {
-        $setting = Cache::remember('setting', 60 * 60, static function () {
+        $setting = \Cache::remember('setting', 60 * 60, static function () {
             $setting = Setting::all()->toArray();
             $configData = [];
             foreach ($setting as $detail) {

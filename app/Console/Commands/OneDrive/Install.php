@@ -4,10 +4,8 @@ namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\Constants;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
+use DB;
 use Illuminate\Support\Str;
-use Symfony\Component\Process\Process;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class Install extends Command
 {
