@@ -24,8 +24,7 @@ class ManageController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('checkAuth')->except(['uploadImage', 'deleteItem']);
-        $this->middleware('checkToken');
+        $this->middleware('auth')->except(['uploadImage', 'deleteItem']);
     }
 
     /**

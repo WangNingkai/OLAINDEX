@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="page-header mb-4">
-        <h1>控制台</h1>
+        <h1>Dashboard</h1>
     </div>
 
     <div class="row">
@@ -38,7 +38,7 @@
 
 @section('scripts')
     <script>
-        $(function () {
+        $(function() {
             new Chart(document.getElementById("stats-doughnut-chart"), {
                 type: 'doughnut',
                 data: {!! $chartData !!},

@@ -25,9 +25,8 @@ class Tool
             && !empty(self::config('redirect_uri'))
         ) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -42,9 +41,8 @@ class Tool
             && !empty(self::config('access_token_expires'))
         ) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -87,7 +85,7 @@ class Tool
      *
      * @return string 转换大小
      */
-    public static function convertSize($size)
+    public static function convertSize($size): string
     {
         $units = array(' B', ' KB', ' MB', ' GB', ' TB');
         for ($i = 0; $size >= 1024 && $i < 4; $i++) {

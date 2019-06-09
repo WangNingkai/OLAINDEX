@@ -12,8 +12,7 @@
                 <div class="row">
                     @foreach($percents as $level => $item)
                         <div class="col-md-4">
-                            <div
-                                class="info-box level level-{{ $level }} {{ $item['count'] === 0 ? 'level-empty' : '' }}">
+                            <div class="info-box level level-{{ $level }} {{ $item['count'] === 0 ? 'level-empty' : '' }}">
                                 <span class="info-box-icon">
                                     {!! log_styler()->icon($level) !!}
                                 </span>
@@ -38,7 +37,7 @@
 
 @section('scripts')
     <script>
-        $(function () {
+        $(function() {
             new Chart($('canvas#stats-doughnut-chart'), {
                 type: 'doughnut',
                 data: {!! $chartData !!},

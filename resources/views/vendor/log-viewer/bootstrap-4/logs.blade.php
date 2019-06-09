@@ -2,14 +2,14 @@
 
 @section('content')
     <div class="page-header mb-4">
-        <h1>目录</h1>
+        <h1>Logs</h1>
     </div>
 
     <div class="table-responsive">
         <table class="table table-sm table-hover">
             <thead>
-            <tr>
-                @foreach($headers as $key => $header)
+                <tr>
+                    @foreach($headers as $key => $header)
                     <th scope="col" class="{{ $key == 'date' ? 'text-left' : 'text-center' }}">
                         @if ($key == 'date')
                             <span class="badge badge-info">{{ $header }}</span>
@@ -19,13 +19,13 @@
                             </span>
                         @endif
                     </th>
-                @endforeach
-                <th scope="col" class="text-right">操作</th>
-            </tr>
+                    @endforeach
+                    <th scope="col" class="text-right">Actions</th>
+                </tr>
             </thead>
             <tbody>
-            @if ($rows->count() > 0)
-                @foreach($rows as $date => $row)
+                @if ($rows->count() > 0)
+                    @foreach($rows as $date => $row)
                     <tr>
                         @foreach($row as $key => $value)
                             <td class="{{ $key == 'date' ? 'text-left' : 'text-center' }}">
@@ -52,14 +52,14 @@
                             </a>
                         </td>
                     </tr>
-                @endforeach
-            @else
-                <tr>
-                    <td colspan="11" class="text-center">
-                        <span class="badge badge-secondary">{{ trans('log-viewer::general.empty-logs') }}</span>
-                    </td>
-                </tr>
-            @endif
+                    @endforeach
+                @else
+                    <tr>
+                        <td colspan="11" class="text-center">
+                            <span class="badge badge-secondary">{{ trans('log-viewer::general.empty-logs') }}</span>
+                        </td>
+                    </tr>
+                @endif
             </tbody>
         </table>
     </div>
@@ -77,7 +77,7 @@
                 <input type="hidden" name="date" value="">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">删除日志文件</h5>
+                        <h5 class="modal-title">DELETE LOG FILE</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -86,9 +86,8 @@
                         <p></p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-sm btn-secondary mr-auto" data-dismiss="modal">取消</button>
-                        <button type="submit" class="btn btn-sm btn-danger" data-loading-text="Loading&hellip;">删除
-                        </button>
+                        <button type="button" class="btn btn-sm btn-secondary mr-auto" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-sm btn-danger" data-loading-text="Loading&hellip;">DELETE FILE</button>
                     </div>
                 </div>
             </form>
@@ -100,40 +99,41 @@
     <script>
         $(function () {
             var deleteLogModal = $('div#delete-log-modal'),
-                deleteLogForm = $('form#delete-log-form'),
-                submitBtn = deleteLogForm.find('button[type=submit]');
+                deleteLogForm  = $('form#delete-log-form'),
+                submitBtn      = deleteLogForm.find('button[type=submit]');
 
-            $("a[href='#delete-log-modal']").on('click', function (event) {
+            $("a[href='#delete-log-modal']").on('click', function(event) {
                 event.preventDefault();
                 var date = $(this).data('log-date');
                 deleteLogForm.find('input[name=date]').val(date);
                 deleteLogModal.find('.modal-body p').html(
-                    '你确定 <span class="badge badge-danger">删除</span> 此日志文件吗 <span class="badge badge-primary">' + date + '</span> ?'
+                    'Are you sure you want to <span class="badge badge-danger">DELETE</span> this log file <span class="badge badge-primary">' + date + '</span> ?'
                 );
 
                 deleteLogModal.modal('show');
             });
 
-            deleteLogForm.on('submit', function (event) {
+            deleteLogForm.on('submit', function(event) {
                 event.preventDefault();
                 submitBtn.button('loading');
 
                 $.ajax({
-                    url: $(this).attr('action'),
-                    type: $(this).attr('method'),
+                    url:      $(this).attr('action'),
+                    type:     $(this).attr('method'),
                     dataType: 'json',
-                    data: $(this).serialize(),
-                    success: function (data) {
+                    data:     $(this).serialize(),
+                    success: function(data) {
                         submitBtn.button('reset');
                         if (data.result === 'success') {
                             deleteLogModal.modal('hide');
                             location.reload();
-                        } else {
+                        }
+                        else {
                             alert('AJAX ERROR ! Check the console !');
                             console.error(data);
                         }
                     },
-                    error: function (xhr, textStatus, errorThrown) {
+                    error: function(xhr, textStatus, errorThrown) {
                         alert('AJAX ERROR ! Check the console !');
                         console.error(errorThrown);
                         submitBtn.button('reset');
@@ -143,7 +143,7 @@
                 return false;
             });
 
-            deleteLogModal.on('hidden.bs.modal', function () {
+            deleteLogModal.on('hidden.bs.modal', function() {
                 deleteLogForm.find('input[name=date]').val('');
                 deleteLogModal.find('.modal-body p').html('');
             });

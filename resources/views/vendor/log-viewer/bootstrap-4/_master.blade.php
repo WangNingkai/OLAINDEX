@@ -3,13 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="调试日志">
-    <title>调试日志</title>
+    <meta name="description" content="LogViewer">
+    <meta name="author" content="ARCANEDEV">
+    <title>LogViewer - Created by ARCANEDEV</title>
     {{-- Styles --}}
-    <link href="https://lib.baomitu.com/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet"
-          href="https://fonts.lug.ustc.edu.cn/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700|Source+Sans+Pro:400,600' rel='stylesheet' type='text/css'>
     <style>
         html {
             position: relative;
@@ -66,7 +66,7 @@
             min-height: 70px;
             background: #fff;
             width: 100%;
-            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
             border-radius: .25rem;
         }
 
@@ -81,12 +81,11 @@
             border-radius: 2px 0 0 2px;
             display: block;
             float: left;
-            height: 70px;
-            width: 70px;
+            height: 70px; width: 70px;
             text-align: center;
             font-size: 40px;
             line-height: 70px;
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0,0,0,0.2);
         }
 
         .box .box-content {
@@ -108,7 +107,7 @@
         }
 
         .box .box-content .progress {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0,0,0,0.2);
             margin: 5px -10px 5px -10px;
         }
 
@@ -169,7 +168,7 @@
         }
 
         .badge.badge-level-alert,
-        .box.level-alert {
+        .box.level-alert  {
             background-color: {{ log_styler()->color('alert') }};
         }
 
@@ -214,60 +213,54 @@
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-md navbar-dark sticky-top bg-dark p-0">
-    <a href="{{ route('log-viewer::dashboard') }}" class="navbar-brand mr-0">
-        <i class="fa fa-fw fa-book"></i> 调试日志
-    </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item {{ Route::is('log-viewer::dashboard') ? 'active' : '' }}">
-                <a href="{{ route('log-viewer::dashboard') }}" class="nav-link">
-                    <i class="fa fa-dashboard"></i> 控制台
-                </a>
-            </li>
-            <li class="nav-item {{ Route::is('log-viewer::logs.list') ? 'active' : '' }}">
-                <a href="{{ route('log-viewer::logs.list') }}" class="nav-link">
-                    <i class="fa fa-archive"></i> 目录
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ route('admin.basic') }}" class="nav-link">
-                    <i class="fa fa-home"></i> 返回
-                </a>
-            </li>
-        </ul>
-    </div>
-</nav>
+    <nav class="navbar navbar-expand-md navbar-dark sticky-top bg-dark p-0">
+        <a href="{{ route('log-viewer::dashboard') }}" class="navbar-brand mr-0">
+            <i class="fa fa-fw fa-book"></i> LogViewer
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item {{ Route::is('log-viewer::dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('log-viewer::dashboard') }}" class="nav-link">
+                        <i class="fa fa-dashboard"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item {{ Route::is('log-viewer::logs.list') ? 'active' : '' }}">
+                    <a href="{{ route('log-viewer::logs.list') }}" class="nav-link">
+                        <i class="fa fa-archive"></i> Logs
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
-<div class="container-fluid">
-    <main role="main" class="pt-3">
-        @yield('content')
-    </main>
-</div>
-
-{{-- Footer --}}
-<footer class="main-footer">
     <div class="container-fluid">
-        <p class="text-muted pull-left">
-            LogViewer - <span class="badge badge-info">version {{ log_viewer()->version() }}</span>
-        </p>
-        <p class="text-muted pull-right">
-            Created with <i class="fa fa-heart"></i> by ARCANEDEV <sup>&copy;</sup>
-        </p>
+        <main role="main" class="pt-3">
+            @yield('content')
+        </main>
     </div>
-</footer>
 
-{{-- Scripts --}}
-<script src="https://lib.baomitu.com/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://lib.baomitu.com/popper.js/1.14.4/popper.min.js"></script>
-<script src="https://lib.baomitu.com/twitter-bootstrap/4.1.3/js/bootstrap.min.js"></script>
-<script src="https://lib.baomitu.com/Chart.js/2.7.2/Chart.min.js"></script>
+    {{-- Footer --}}
+    <footer class="main-footer">
+        <div class="container-fluid">
+            <p class="text-muted pull-left">
+                LogViewer - <span class="badge badge-info">version {{ log_viewer()->version() }}</span>
+            </p>
+            <p class="text-muted pull-right">
+                Created with <i class="fa fa-heart"></i> by ARCANEDEV <sup>&copy;</sup>
+            </p>
+        </div>
+    </footer>
 
-@yield('modals')
-@yield('scripts')
+    {{-- Scripts --}}
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+
+    @yield('modals')
+    @yield('scripts')
 </body>
 </html>

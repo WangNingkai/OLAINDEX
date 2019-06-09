@@ -4,39 +4,29 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use App\Helpers\Tool;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
 // 授权
 Route::get('/oauth', 'OauthController@oauth')->name('oauth');
+
 // 安装
-Route::prefix('install')->group(function () {
+Route::prefix('install')->group(static function () {
     Route::any('/', 'InstallController@install')->name('_1stInstall');
     Route::any('apply', 'InstallController@apply')->name('apply');
     Route::any('reset', 'InstallController@reset')->name('reset');
     Route::any('bind', 'InstallController@bind')->name('bind');
 });
+
 // 索引
-Route::any('/', function () {
-    $redirect = (int)Tool::config('image_home', 0) ? 'image'
-        : 'home';
+Route::any('/', static function () {
+    $redirect = (int)Tool::config('image_home', 0) ? 'image' : 'home';
 
     return redirect()->route($redirect);
 });
-Route::prefix('home')->group(function () {
-    Route::get('{query?}', 'IndexController@list')->where('query', '.*')
-        ->name('home');
+
+Route::prefix('home')->group(static function () {
+    Route::get('{query?}', 'IndexController@list')->where('query', '.*')->name('home');
 });
-Route::get('show/{query}', 'IndexController@show')->where('query', '.*')
-    ->name('show');
+
+Route::get('show/{query}', 'IndexController@show')->where('query', '.*')->name('show');
 Route::get('down/{query}', 'IndexController@download')->where('query', '.*')
     ->name('download')->middleware('hotlinkProtection');
 Route::get('view/{query}', 'IndexController@view')->where('query', '.*')
@@ -52,9 +42,14 @@ Route::get('image', 'ManageController@uploadImage')->name('image')
 Route::post('image/upload', 'ManageController@uploadImage')
     ->name('image.upload')->middleware('throttle:10,2', 'checkImage');
 Route::get('file/delete/{sign}', 'ManageController@deleteItem')->name('delete');
+
 // 后台设置管理
-Route::any('login', 'AdminController@login')->name('login');
-Route::post('logout', 'AdminController@logout')->name('logout');
+//Route::any('login', 'AdminController@login')->name('login');
+//Route::post('logout', 'AdminController@logout')->name('logout');
+
+Route::get('login', 'LoginController@showLoginForm')->name('login');
+Route::post('login', 'LoginController@login');
+Route::post('logout', 'LoginController@logout')->name('logout');
 
 Route::prefix('admin')->group(function () {
     // 基础设置

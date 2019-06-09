@@ -67,21 +67,21 @@ class Copy extends Command
                 } elseif ($status === 'inProgress') {
                     $this->info(
                         'Progress: '
-                        .Arr::get($resp, 'data.percentageComplete')
+                        . Arr::get($resp, 'data.percentageComplete')
                     );
                     sleep(3);
                     $done = false;
                 } elseif ($status === 'completed') {
                     $this->info(
                         'Progress: '
-                        .Arr::get($resp, 'data.percentageComplete')
+                        . Arr::get($resp, 'data.percentageComplete')
                     );
                     $done = true;
                 } elseif ($status === 'notStarted') {
-                    $this->error('Status:'.$status);
+                    $this->error('Status:' . $status);
                     $done = false;
                 } else {
-                    $this->error('Status:'.$status);
+                    $this->error('Status:' . $status);
                     $done = true;
                 }
             }
