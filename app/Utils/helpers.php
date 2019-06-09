@@ -1,5 +1,9 @@
 <?php
 
+use App\Models\Setting;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
+
 if (!function_exists('word_time')) {
     /**
      * 把日期或者时间戳转为距离现在的时间
@@ -41,5 +45,29 @@ if (!function_exists('is_json')) {
     {
         json_decode($json, true);
         return (json_last_error() === JSON_ERROR_NONE);
+    }
+}
+
+if (!function_exists('setting')) {
+    /**
+     * 获取设置
+     * @param $key
+     * @param string $default
+     * @return mixed
+     */
+    function setting($key = '', $default = '')
+    {
+        $setting = Cache::remember('setting', 60 * 60, static function () {
+            $setting = Setting::all()->toArray();
+            $configData = [];
+            foreach ($setting as $detail) {
+                $configData[$detail['name']] = $detail['value'];
+            }
+            return $configData;
+        });
+        $setting = collect($setting);
+
+        return $key ? $setting->get($key, $default) : $setting;
+
     }
 }

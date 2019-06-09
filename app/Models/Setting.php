@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\HelperModel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * App\Models\Setting
@@ -56,30 +57,6 @@ class Setting extends Model
         $this->attributes['value'] = is_array($value) ? json_encode($value) : $value;
     }
 
-
-    public static function get($key, $default = '')
-    {
-        $result = self::query()->where('name', $key)->value('value');
-        return $result ?: $default;
-
-    }
-
-
-    public static function set($key, $value)
-    {
-        return self::query()->updateOrCreate(['name' => $key], ['value' => $value]);
-    }
-
-    public static function getAll(): array
-    {
-        $config = self::all()->toArray();
-        $configData = [];
-        foreach ($config as $detail) {
-            $configData[$detail['name']] = $detail['value'];
-        }
-        return $configData;
-    }
-
     public static function batchUpdate($data)
     {
         $editData = [];
@@ -105,6 +82,9 @@ class Setting extends Model
 
         $model = new self;
         $model->updateBatch($editData);
+
+        Cache::forget('setting');
+
         return $data;
     }
 

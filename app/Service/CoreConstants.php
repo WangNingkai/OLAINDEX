@@ -4,6 +4,8 @@
 namespace App\Service;
 
 
+use App\Models\Setting;
+
 class CoreConstants
 {
 
@@ -46,9 +48,9 @@ EOF;
     {
         $config = [
             self::ACCOUNT_COM => [
-                'client_id' => config('onedrive.client_id'),
-                'client_secret' => config('onedrive.client_secret'),
-                'redirect_uri' => config('onedrive.redirect_uri', self::DEFAULT_REDIRECT_URI),
+                'client_id' => setting('client_id'),
+                'client_secret' => setting('client_secret'),
+                'redirect_uri' => setting('redirect_uri', self::DEFAULT_REDIRECT_URI),
                 'authorize_url' => self::AUTHORITY_URL,
                 'authorize_endpoint' => self::AUTHORIZE_ENDPOINT,
                 'token_endpoint' => self::TOKEN_ENDPOINT,
@@ -57,9 +59,9 @@ EOF;
                 'scopes' => self::SCOPES
             ],
             self::ACCOUNT_CN => [
-                'client_id' => config('onedrive.client_id_v21'),
-                'client_secret' => config('onedrive.client_secret_v21'),
-                'redirect_uri' => config('onedrive.redirect_uri', self::DEFAULT_REDIRECT_URI),
+                'client_id' => setting('client_id_v21'),
+                'client_secret' => setting('client_secret_v21'),
+                'redirect_uri' => setting('redirect_uri', self::DEFAULT_REDIRECT_URI),
                 'authorize_url' => self::AUTHORITY_URL_21V,
                 'authorize_endpoint' => self::AUTHORIZE_ENDPOINT_21V,
                 'token_endpoint' => self::TOKEN_ENDPOINT_21V,
