@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use App\Helpers\Tool;
 use Closure;
 
-class CheckInstall
+class VerifyInstallation
 {
     /**
      * 处理验证安装

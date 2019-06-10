@@ -47,8 +47,8 @@ class IndexController extends Controller
     public function __construct()
     {
         $this->middleware([
-            'checkInstall',
-            'checkToken',
+            'verify.installation',
+            'verify.token',
             'handleIllegalFile',
         ]);
         $this->middleware('HandleEncryptDir')

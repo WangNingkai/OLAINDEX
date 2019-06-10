@@ -7,13 +7,6 @@ use App\Helpers\Tool;
 // 授权
 Route::get('/oauth', 'OauthController@oauth')->name('oauth');
 
-// 安装
-Route::prefix('install')->group(static function () {
-    Route::any('/', 'InstallController@install')->name('_1stInstall');
-    Route::any('apply', 'InstallController@apply')->name('apply');
-    Route::any('reset', 'InstallController@reset')->name('reset');
-    Route::any('bind', 'InstallController@bind')->name('bind');
-});
 
 // 索引
 Route::any('/', static function () {
@@ -36,12 +29,13 @@ Route::get('thumb/{id}/size/{size}', 'IndexController@thumb')->name('thumb');
 Route::get('thumb/{id}/{width}/{height}', 'IndexController@thumbCrop')
     ->name('thumb_crop');
 Route::view('message', config('olaindex.theme') . 'message')->name('message');
+
+
 // 图床
-Route::get('image', 'ManageController@uploadImage')->name('image')
-    ->middleware('checkImage');
-Route::post('image/upload', 'ManageController@uploadImage')
-    ->name('image.upload')->middleware('throttle:10,2', 'checkImage');
+Route::get('image', 'ManageController@uploadImage')->name('image')->middleware('checkImage');
+Route::post('image/upload', 'ManageController@uploadImage')->name('image.upload')->middleware('throttle:10,2', 'checkImage');
 Route::get('file/delete/{sign}', 'ManageController@deleteItem')->name('delete');
+
 
 // 后台设置管理
 //Route::any('login', 'AdminController@login')->name('login');
@@ -52,6 +46,15 @@ Route::post('login', 'LoginController@login');
 Route::post('logout', 'LoginController@logout')->name('logout');
 
 Route::prefix('admin')->group(function () {
+
+    // 安装
+    Route::prefix('install')->group(static function () {
+        Route::any('/', 'InstallController@install')->name('_1stInstall');
+        Route::any('apply', 'InstallController@apply')->name('apply');
+        Route::any('reset', 'InstallController@reset')->name('reset');
+        Route::any('bind', 'InstallController@bind')->name('bind');
+    });
+
     // 基础设置
     Route::any('/', 'AdminController@basic')->name('admin.basic');
     Route::any('bind', 'AdminController@bind')->name('admin.bind');

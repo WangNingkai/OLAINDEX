@@ -46,7 +46,7 @@ class Install extends Command
         $this->info('chmod -R 755 storage/* && chown -R www:www *');
         // sqlite数据库文件检测
         if (!file_exists(base_path('database/database.sqlite'))) {
-            $this->warn('Missing the Database File');
+            $this->warn('Missing the Database File.');
             copy(
                 base_path('database/database.sample.sqlite'),
                 base_path('database/database.sqlite')

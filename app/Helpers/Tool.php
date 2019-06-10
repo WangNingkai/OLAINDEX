@@ -18,15 +18,9 @@ class Tool
      *
      * @return bool
      */
-    public static function hasConfig()
+    public static function hasConfig(): bool
     {
-        if (!empty(self::config('client_id'))
-            && !empty(self::config('client_secret'))
-            && !empty(self::config('redirect_uri'))
-        ) {
-            return true;
-        }
-        return false;
+        return setting('client_id') && setting('client_secret') && setting('redirect_uri');
     }
 
     /**
@@ -34,25 +28,19 @@ class Tool
      *
      * @return bool
      */
-    public static function hasBind()
+    public static function hasBind(): bool
     {
-        if (!empty(self::config('access_token'))
-            && !empty(self::config('refresh_token'))
-            && !empty(self::config('access_token_expires'))
-        ) {
-            return true;
-        }
-        return false;
+        return setting('access_token') && setting('refresh_token') && setting('access_token_expires');
     }
 
     /**
-     * 判断列表是否含有图片
+     * 判断资源列表是否含有图片
      *
      * @param $items
      *
      * @return bool
      */
-    public static function hasImages($items)
+    public static function hasImages($items): bool
     {
         $hasImage = false;
         foreach ($items as $item) {
@@ -61,7 +49,6 @@ class Tool
                 break;
             }
         }
-
         return $hasImage;
     }
 

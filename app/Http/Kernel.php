@@ -17,7 +17,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\CheckForMaintenanceMode::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
-        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+//        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\TrustProxies::class,
     ];
 
@@ -61,9 +61,9 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
-        'checkToken' => \App\Http\Middleware\CheckAccessToken::class,
+        'verify.token' => \App\Http\Middleware\VerifyAccessToken::class,
         'checkImage' => \App\Http\Middleware\CheckImage::class,
-        'checkInstall' => \App\Http\Middleware\CheckInstall::class,
+        'verify.installation' => \App\Http\Middleware\VerifyInstallation::class,
         'hotlinkProtection' => \App\Http\Middleware\HotlinkProtection::class,
         'handleIllegalFile' => \App\Http\Middleware\HandleIllegalFile::class,
         'HandleEncryptDir' => \App\Http\Middleware\HandleEncryptDir::class,

@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
 use App\Jobs\RefreshCache;
+use Illuminate\Http\Request;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 use App\Models\Setting;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Artisan;
 use Auth;
 use Cache;
@@ -33,7 +36,7 @@ class AdminController extends Controller
      * 基础设置
      *
      * @param Request $request
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @return Factory|RedirectResponse|View
      */
     public function basic(Request $request)
     {
@@ -41,9 +44,7 @@ class AdminController extends Controller
             return view(config('olaindex.theme') . 'admin.basic');
         }
         $data = $request->except('_token');
-
         Setting::batchUpdate($data);
-
         Tool::showMessage('保存成功！');
 
         return redirect()->back();
@@ -53,7 +54,7 @@ class AdminController extends Controller
      * 显示设置
      *
      * @param Request $request
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @return Factory|RedirectResponse|View
      */
     public function show(Request $request)
     {
@@ -61,6 +62,7 @@ class AdminController extends Controller
             return view(config('olaindex.theme') . 'admin.show');
         }
         $data = $request->except('_token');
+
         Setting::batchUpdate($data);
         Tool::showMessage('保存成功！');
 
@@ -72,13 +74,14 @@ class AdminController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @return Factory|RedirectResponse|View
      */
     public function profile(Request $request)
     {
         if (!$request->isMethod('post')) {
             return view(config('olaindex.theme') . 'admin.profile');
         }
+        /* @var $user User */
         $user = Auth::user();
         $oldPassword = $request->get('old_password');
         $password = $request->get('password');
@@ -108,12 +111,11 @@ class AdminController extends Controller
     /**
      * 缓存清理
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
-    public function clear()
+    public function clear(): RedirectResponse
     {
         Artisan::call('cache:clear');
-
         Tool::showMessage('清理成功');
 
         return redirect()->route('admin.basic');
@@ -122,15 +124,13 @@ class AdminController extends Controller
     /**
      * 刷新缓存
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
-    public function refresh()
+    public function refresh(): RedirectResponse
     {
         // todo:后台异步任务
 //        Artisan::call('od:cache');
-
         RefreshCache::dispatch()->delay(Carbon::now()->addSeconds(5))->onQueue('olaindex');
-
         Tool::showMessage('后台正在刷新，请继续其它任务...');
 
         return redirect()->route('admin.basic');
@@ -141,29 +141,28 @@ class AdminController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @return Factory|RedirectResponse|View
      */
     public function bind(Request $request)
     {
         if (!$request->isMethod('post')) {
             return view(config('olaindex.theme') . 'admin.bind');
-        } else {
-            if (!Tool::hasBind()) {
-                return redirect()->route('bind');
-            }
-            $data = [
-                'access_token' => '',
-                'refresh_token' => '',
-                'access_token_expires' => 0,
-                'root' => '/',
-                'image_hosting' => 0,
-                'image_hosting_path' => '',
-            ];
-            Tool::updateConfig($data);
-            Cache::forget('one:account');
-            Tool::showMessage('保存成功！');
-
+        }
+        if (!Tool::hasBind()) {
             return redirect()->route('bind');
         }
+        $data = [
+            'access_token' => '',
+            'refresh_token' => '',
+            'access_token_expires' => 0,
+            'root' => '/',
+            'image_hosting' => 0,
+            'image_hosting_path' => '',
+        ];
+        Tool::updateConfig($data);
+        Cache::forget('one:account');
+        Tool::showMessage('保存成功！');
+
+        return redirect()->route('bind');
     }
 }

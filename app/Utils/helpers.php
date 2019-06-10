@@ -57,15 +57,13 @@ if (!function_exists('setting')) {
     {
         $setting = \Cache::remember('setting', 60 * 60, static function () {
             $setting = Setting::all()->toArray();
-            $configData = [];
+            $data = [];
             foreach ($setting as $detail) {
-                $configData[$detail['name']] = $detail['value'];
+                $data[$detail['name']] = $detail['value'];
             }
-            return $configData;
+            return $data;
         });
         $setting = collect($setting);
-
         return $key ? $setting->get($key, $default) : $setting;
-
     }
 }

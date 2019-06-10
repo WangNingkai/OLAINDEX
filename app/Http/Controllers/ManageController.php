@@ -25,6 +25,7 @@ class ManageController extends Controller
     public function __construct()
     {
         $this->middleware('auth')->except(['uploadImage', 'deleteItem']);
+        $this->middleware('verify.token');
     }
 
     /**

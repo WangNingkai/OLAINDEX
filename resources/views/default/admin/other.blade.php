@@ -42,7 +42,7 @@
     <button type="submit" id="submit_btn" class="btn btn-primary">提交</button>
 @stop
 @section('js')
-    <script src="https://cdnjs.loli.net/ajax/libs/axios/0.18.0/axios.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.19.0/axios.min.js"></script>
     <script>
         $(function () {
             $("#submit_btn").on("click", function () {
