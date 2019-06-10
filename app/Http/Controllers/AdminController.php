@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\Tool;
+use App\Utils\Tool;
 use App\Jobs\RefreshCache;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\View\Factory;

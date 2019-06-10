@@ -3,8 +3,11 @@
 
 namespace App\Utils;
 
+use App\Models\Setting;
+use App\Service\OneDrive;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Arr;
 use Session;
 use Parsedown;
 
@@ -128,9 +131,7 @@ class Tool
 
     /**
      * 绝对路径转换
-     *
      * @param $path
-     *
      * @return mixed
      */
     public static function getAbsolutePath($path)
@@ -150,5 +151,34 @@ class Tool
         }
 
         return str_replace('//', '/', '/' . implode('/', $absolutes) . '/');
+    }
+
+    /**
+     * 刷新账户信息
+     * @param $account
+     * @throws \ErrorException
+     */
+    public static function refreshAccount($account): void
+    {
+        $response = OneDrive::getInstance($account)->getDriveInfo();
+        if ($response['errno'] === 0) {
+            $extend = Arr::get($response, 'data');
+            $account_email = Arr::get($extend, 'owner.user.email', '');
+            $data = [
+                'account_email' => $account_email,
+                'account_state' => '正常',
+                'account_extend' => $extend
+            ];
+        } else {
+            $response = OneDrive::getInstance($account)->getAccountInfo();
+            $extend = Arr::get($response, 'data');
+            $account_email = $response['errno'] === 0 ? Arr::get($extend, 'userPrincipalName') : '';
+            $data = [
+                'account_email' => $account_email,
+                'account_state' => '暂时无法使用',
+                'account_extend' => $extend
+            ];
+        }
+        Setting::batchUpdate($data);
     }
 }

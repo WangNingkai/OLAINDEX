@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\Tool;
+use App\Utils\Tool;
 use App\Models\Setting;
 use App\Service\Authorize;
 use Illuminate\Http\Request;
@@ -67,6 +67,7 @@ class OauthController extends Controller
                 'access_token_expires' => $expires,
             ];
             Setting::batchUpdate($data);
+            //todo:刷新账户信息
 
             return redirect()->route('home');
         }
@@ -115,8 +116,8 @@ class OauthController extends Controller
             'access_token_expires' => date('Y-m-d H:i:s', $expires),
         ];
         Log::info('refresh_token', $data);
-
         Setting::batchUpdate($data);
+        //todo:刷新账户信息
         if ($redirect) {
             $redirect = Session::get('refresh_redirect') ?? '/';
 

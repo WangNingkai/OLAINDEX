@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Traits\HelperModel;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
+use Cache;
 
 /**
  * App\Models\Setting
