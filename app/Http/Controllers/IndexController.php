@@ -137,12 +137,21 @@ class IndexController extends Controller
             }
         }
         // 处理排序
-        $origin_items = collect($origin_items);
+        $origin_items_base = collect($origin_items);
         if (strtolower($sortBy) !== 'desc') {
-            $origin_items = $origin_items->sortBy($field)->toArray();
+            $origin_items = $origin_items_base->sortBy($field)->toArray();
         } else {
-            $origin_items = $origin_items->sortByDesc($field)->toArray();
+            $origin_items = $origin_items_base->sortByDesc($field)->toArray();
         }
+        // 文件夹排序
+        $origin_items = collect($origin_items)->sortByDesc(function ($item, $key) {
+            if (!isset($item['folder'])) {
+                $children = -1;
+            } else {
+                $children = $item['folder']['childCount'];
+            }
+            return $children;
+        })->toArray();
         $hasImage = Tool::hasImages($origin_items);
         // 过滤微软OneNote文件
         $origin_items = Arr::where($origin_items, function ($value) {
