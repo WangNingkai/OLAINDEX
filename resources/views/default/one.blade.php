@@ -219,7 +219,7 @@
                                            data-fancybox="image-list"><i
                                                 class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
                                     @endif
-                                    @if(session()->has('LogInfo') && \App\Helpers\Tool::canEdit($item) )
+                                    @if(Auth::user() && \App\Helpers\Tool::canEdit($item) )
                                         <a href="{{ route('admin.file.update',$item['id']) }}"><i
                                                 class="fa fa-pencil"></i></a>&nbsp;&nbsp;
                                     @endif

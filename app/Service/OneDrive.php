@@ -19,22 +19,16 @@ class OneDrive
      */
     private static $instances = [];
 
-
-    /* @var Account $account */
-    private $account;
-
-
     /* @var GraphRequest $graph */
     private $graph;
 
-
     /**
-     * @param Account $account
+     * @param $account
      * @return OneDrive
      */
-    public static function getInstance(Account $account): OneDrive
+    public static function getInstance($account): OneDrive
     {
-        $account_id = $account->id;
+        $account_id = Arr::get($account, 'id', 0);
         if (!array_key_exists($account_id, self::$instances)) {
             self::$instances[$account_id] = new self($account);
         }
@@ -43,7 +37,7 @@ class OneDrive
 
     /**
      * OneDrive constructor.
-     * @param Account $account
+     * @param $account
      */
     private function __construct($account)
     {
@@ -55,12 +49,11 @@ class OneDrive
      */
     private function initRequest($account): void
     {
-        $this->account = $account;
-        $accountType = $account->account_type;
+        $accountType = Arr::get($account, 'account_type', 'com');
         $clientConfig = new ClientConfigEntity(CoreConstants::getClientConfig($accountType));
         $baseUrl = $clientConfig->graph_endpoint;
         $apiVersion = $clientConfig->api_version;
-        $accessToken = $account->access_token;
+        $accessToken = Arr::get($account, 'accessToken', '');
         $this->graph = (new GraphRequest())
             ->setAccessToken($accessToken)
             ->setBaseUrl($baseUrl)
@@ -306,7 +299,6 @@ class OneDrive
         $endpoint = "/me/drive/items/$parentItemId/children";
         $body = '{"name":"' . $itemName . '","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
         return $this->request('post', [$endpoint, $body]);
-
     }
 
     /**
@@ -321,11 +313,11 @@ class OneDrive
     public function mkdirByPath($itemName, $path)
     {
         $requestPath = $this->getRequestPath($path);
-        $endpoint = $requestPath === '/' ? "/me/drive/root/children"
+        $endpoint = $requestPath === '/' ? '/me/drive/root/children'
             : "/me/drive/root{$requestPath}children";
         $body = '{"name":"' . $itemName . '","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
-        return $this->request('post', [$endpoint, $body]);
 
+        return $this->request('post', [$endpoint, $body]);
     }
 
     /**
@@ -355,7 +347,7 @@ class OneDrive
      * @param $query
      *
      * @return array|mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
     public function search($path, $query)
     {
@@ -595,12 +587,7 @@ class OneDrive
      * @return mixed
      * @throws ErrorException
      */
-    public function uploadToSession(
-        $url,
-        $file,
-        $offset,
-        $length = 5242880
-    )
+    public function uploadToSession($url, $file, $offset, $length = 5242880)
     {
         $file_size = $this->readFileSize($file);
         $content_length = (($offset + $length) > $file_size) ? ($file_size
@@ -670,7 +657,7 @@ class OneDrive
             // 兼容根目录
             if ($path === '') {
                 $pathArr = [];
-            } else if ($start) {
+            } elseif ($start) {
                 $pathArr = explode('/', $path);
             } else {
                 $pathArr = explode('/', $path);
@@ -877,7 +864,7 @@ class OneDrive
      */
     public function readFileContent($file, $offset, $length)
     {
-        $handler = fopen($file, 'rb') ?? die('Failed Get Content');
+        $handler = fopen($file, 'rb') or die('Failed Get Content');
         fseek($handler, $offset);
         return fread($handler, $length);
     }

@@ -61,11 +61,13 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
+        // todo:完善路由
         'verify.token' => \App\Http\Middleware\VerifyAccessToken::class,
-        'checkImage' => \App\Http\Middleware\CheckImage::class,
+        'verify.image' => \App\Http\Middleware\VerifyImageHost::class,
         'verify.installation' => \App\Http\Middleware\VerifyInstallation::class,
-        'hotlinkProtection' => \App\Http\Middleware\HotlinkProtection::class,
-        'handleIllegalFile' => \App\Http\Middleware\HandleIllegalFile::class,
-        'HandleEncryptDir' => \App\Http\Middleware\HandleEncryptDir::class,
+        'hotlink.protection' => \App\Http\Middleware\HotlinkProtection::class,
+        'handle.illegal' => \App\Http\Middleware\HandleIllegalFile::class,
+        'Handle.encrypt' => \App\Http\Middleware\HandleEncryptDir::class,
+        'Handle.hide' => \App\Http\Middleware\HandleHideDir::class,
     ];
 }

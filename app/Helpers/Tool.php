@@ -128,19 +128,20 @@ class Tool
         );
     }
 
-    public static function getOrderByStatus($field)
+    /**
+     * 获取排序状态
+     *
+     * @param $field
+     * @return bool
+     */
+    public static function getOrderByStatus($field): bool
     {
         $order = request()->get('orderBy');
         @list($search_field, $sortBy) = explode(',', $order);
         if ($field !== $search_field) {
             return true;
-        } else {
-            if (strtolower($sortBy) !== 'desc') {
-                return false;
-            } else {
-                return true;
-            }
         }
+        return strtolower($sortBy) === 'desc';
     }
 
     /**
@@ -151,7 +152,7 @@ class Tool
      *
      * @return string
      */
-    public static function getBreadcrumbUrl($key, $pathArr)
+    public static function getBreadcrumbUrl($key, $pathArr): string
     {
         $pathArr = array_slice($pathArr, 0, $key);
         $url = '';
@@ -169,7 +170,7 @@ class Tool
      *
      * @return string
      */
-    public static function getParentUrl($pathArr)
+    public static function getParentUrl($pathArr): string
     {
         array_pop($pathArr);
         if (count($pathArr) === 0) {
@@ -190,7 +191,7 @@ class Tool
      *
      * @return string
      */
-    public static function getEncodeUrl($path)
+    public static function getEncodeUrl($path): string
     {
         $url = [];
         foreach (explode('/', $path) as $key => $value) {
@@ -208,17 +209,16 @@ class Tool
      *
      * @return string
      */
-    public static function getExtIcon($ext = '', $img = false)
+    public static function getExtIcon($ext = '', $img = false): string
     {
         $patterns = Constants::FILE_ICON;
         $icon = '';
         foreach ($patterns as $key => $suffix) {
-            if (in_array($ext, $suffix[2])) {
+            if (in_array($ext, $suffix[2], false)) {
                 $icon = $img ? $suffix[1] : $suffix[0];
                 break;
-            } else {
-                $icon = $img ? 'file' : 'fa-file-text-o';
             }
+            $icon = $img ? 'file' : 'fa-file-text-o';
         }
 
         return $icon;
@@ -231,18 +231,15 @@ class Tool
      *
      * @return bool
      */
-    public static function canEdit($file)
+    public static function canEdit($file): bool
     {
-        $code = explode(' ', self::config('code'));
-        $stream = explode(' ', self::config('stream'));
+        $code = explode(' ', setting('code'));
+        $stream = explode(' ', setting('stream'));
         $canEditExt = array_merge($code, $stream);
-        $isText = in_array($file['ext'], $canEditExt);
+        $isText = in_array($file['ext'], $canEditExt, false);
         $isBigFile = $file['size'] > 5 * 1024 * 1024 ?: false;
-        if (!$isBigFile && $isText) {
-            return true;
-        } else {
-            return false;
-        }
+
+        return !$isBigFile && $isText;
     }
 
     /**
@@ -284,7 +281,7 @@ class Tool
      *
      * @return string|array
      */
-    public static function config($key = '', $default = '')
+    /*public static function config($key = '', $default = '')
     {
         $config = Cache::remember('config', 1440 * 60, function () {
             $file = storage_path('app/config.json');
@@ -300,7 +297,7 @@ class Tool
 
         return $key ? (Arr::has($config, $key) ? (array_get($config, $key)
             ?: $default) : $default) : $config;
-    }
+    }*/
 
     /**
      * @param string $file
@@ -342,7 +339,7 @@ class Tool
      *
      * @return string
      */
-    public static function getRequestPath($path, $isQuery = true, $isFile = false)
+    public static function getRequestPath($path, $isQuery = true, $isFile = false): string
     {
         $path = self::getAbsolutePath($path);
         $query_path = trim($path, '/');
@@ -350,10 +347,9 @@ class Tool
             return $query_path;
         }
         $query_path = self::getEncodeUrl(rawurldecode($query_path));
-        $root = trim(self::getEncodeUrl(self::config('root')), '/');
+        $root = trim(self::getEncodeUrl(setting('root')), '/');
         if ($query_path) {
-            $request_path = empty($root) ? ":/{$query_path}:/"
-                : ":/{$root}/{$query_path}:/";
+            $request_path = empty($root) ? ":/{$query_path}:/" : ":/{$root}/{$query_path}:/";
         } else {
             $request_path = empty($root) ? '/' : ":/{$root}:/";
         }
@@ -365,12 +361,14 @@ class Tool
     }
 
     /**
+     * 获取初始文件路径
+     *
      * @param      $path
      * @param bool $isQuery
      *
      * @return string
      */
-    public static function getOriginPath($path, $isQuery = true)
+    public static function getOriginPath($path, $isQuery = true): string
     {
         $path = self::getAbsolutePath($path);
         $query_path = trim($path, '/');
@@ -378,7 +376,7 @@ class Tool
             return $query_path;
         }
         $query_path = self::getEncodeUrl(rawurldecode($query_path));
-        $root = trim(self::getEncodeUrl(self::config('root')), '/');
+        $root = trim(self::getEncodeUrl(setting('root')), '/');
         if ($query_path) {
             $request_path = empty($root) ?
                 $query_path
@@ -594,13 +592,13 @@ class Tool
      */
     public static function fileIcon($ext)
     {
-        if (in_array($ext, ['ogg', 'mp3', 'wav'])) {
-            return "audiotrack";
+        if (in_array($ext, ['ogg', 'mp3', 'wav'], false)) {
+            return 'audiotrack';
         }
-        if (in_array($ext, ['apk'])) {
+        if (in_array($ext, ['apk'], false)) {
             return 'android';
         }
-        if (in_array($ext, ['pdf'])) {
+        if (in_array($ext, ['pdf'], false)) {
             return 'picture_as_pdf';
         }
         if (in_array($ext, [
@@ -613,7 +611,7 @@ class Tool
             'jpe',
         ])
         ) {
-            return "image";
+            return 'image';
         }
         if (in_array($ext, [
             'mp4',
@@ -630,7 +628,7 @@ class Tool
             'asf',
         ])
         ) {
-            return "ondemand_video";
+            return 'ondemand_video';
         }
         if (in_array($ext, [
             'html',
@@ -649,6 +647,6 @@ class Tool
             return 'code';
         }
 
-        return "insert_drive_file";
+        return 'insert_drive_file';
     }
 }

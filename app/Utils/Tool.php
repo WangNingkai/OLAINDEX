@@ -85,4 +85,70 @@ class Tool
             ['path' => Paginator::resolveCurrentPath()]
         );
     }
+
+
+    /**
+     * 判断密钥配置
+     *
+     * @return bool
+     */
+    public static function hasConfig(): bool
+    {
+        return setting('client_id') && setting('client_secret') && setting('redirect_uri');
+    }
+
+    /**
+     * 判断账号绑定
+     *
+     * @return bool
+     */
+    public static function hasBind(): bool
+    {
+        return setting('access_token') && setting('refresh_token') && setting('access_token_expires');
+    }
+
+    /**
+     * 判断资源列表是否含有图片
+     *
+     * @param $items
+     *
+     * @return bool
+     */
+    public static function hasImages($items): bool
+    {
+        $hasImage = false;
+        foreach ($items as $item) {
+            if (isset($item['image'])) {
+                $hasImage = true;
+                break;
+            }
+        }
+        return $hasImage;
+    }
+
+    /**
+     * 绝对路径转换
+     *
+     * @param $path
+     *
+     * @return mixed
+     */
+    public static function getAbsolutePath($path)
+    {
+        $path = str_replace(['/', '\\', '//'], '/', $path);
+        $parts = array_filter(explode('/', $path), 'strlen');
+        $absolutes = [];
+        foreach ($parts as $part) {
+            if ('.' === $part) {
+                continue;
+            }
+            if ('..' === $part) {
+                array_pop($absolutes);
+            } else {
+                $absolutes[] = $part;
+            }
+        }
+
+        return str_replace('//', '/', '/' . implode('/', $absolutes) . '/');
+    }
 }

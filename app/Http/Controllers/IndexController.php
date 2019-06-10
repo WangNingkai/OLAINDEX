@@ -53,16 +53,16 @@ class IndexController extends Controller
         ]);
         $this->middleware('HandleEncryptDir')
             ->only(Tool::config('encrypt_option', ['list']));
-        $this->expires = Tool::config('expires', 10);
-        $this->root = Tool::config('root', '/');
+        $this->expires = setting('expires', 10);
+        $this->root = setting('root', '/');
         $this->show = [
-            'stream' => explode(' ', Tool::config('stream')),
-            'image' => explode(' ', Tool::config('image')),
-            'video' => explode(' ', Tool::config('video')),
-            'dash' => explode(' ', Tool::config('dash')),
-            'audio' => explode(' ', Tool::config('audio')),
-            'code' => explode(' ', Tool::config('code')),
-            'doc' => explode(' ', Tool::config('doc')),
+            'stream' => explode(' ', setting('stream')),
+            'image' => explode(' ', setting('image')),
+            'video' => explode(' ', setting('video')),
+            'dash' => explode(' ', setting('dash')),
+            'audio' => explode(' ', setting('audio')),
+            'code' => explode(' ', setting('code')),
+            'doc' => explode(' ', setting('doc')),
         ];
     }
 

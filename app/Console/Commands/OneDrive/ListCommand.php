@@ -75,7 +75,6 @@ Available commands:
   od:rm        Delete Item
   od:share     ShareLink For File
   od:switch    Switch Type
-  od:update    Update App
   od:upload    UploadFile File
   od:whereis   Find The Item's Remote Path
 

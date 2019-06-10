@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service;
-
 
 use App\Entities\ClientConfigEntity;
 use Curl\Curl;
