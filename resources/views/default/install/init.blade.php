@@ -1,4 +1,4 @@
-@extends('default.default.layouts.common')
+@extends('default.layouts.common')
 @section('title','初始化安装')
 @section('content')
     <div class="card border-light mb-3">

@@ -460,6 +460,7 @@ class Tool
     public static function refreshToken()
     {
         $expires = setting('access_token_expires', 0);
+        $expires = strtotime($expires);
         $hasExpired = $expires - time() <= 0;
         if ($hasExpired) {
             $oauth = new OauthController();

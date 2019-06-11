@@ -1,4 +1,4 @@
-@extends('default.default.layouts.common')
+@extends('default.layouts.common')
 @section('title','绑定帐号')
 @section('content')
     <div class="card border-light mb-3">
@@ -14,7 +14,7 @@
             <div class="form-group">
                 <label class="form-control-label" for="client_secret">client_secret </label>
                 <input type="text" class="form-control" id="client_secret" name="client_secret"
-                       value="{{ substr_replace(setting('client_secret'),"*****",3,5)}}"
+                       value="{{ substr_replace(setting('client_secret'),'*****',3,5)}}"
                        disabled>
             </div>
             <div class="form-group">

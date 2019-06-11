@@ -82,7 +82,6 @@ class IndexController extends Controller
         return $this->list($request);
     }
 
-
     /**
      * 列表
      * @param Request $request
@@ -98,6 +97,7 @@ class IndexController extends Controller
         $queryPath = trim(Tool::getAbsolutePath($requestPath), '/');
         $originPath = rawurldecode($queryPath);
         $pathArray = $originPath ? explode('/', $originPath) : [];
+        // 获取路径缓存
         $pathKey = 'one:path:' . $graphPath;
         if (Cache::has($pathKey)) {
             $item = Cache::get($pathKey);
@@ -105,6 +105,9 @@ class IndexController extends Controller
             $response = OneDrive::getInstance(one_account())->getItemByPath($graphPath);
             if ($response['errno'] === 0) {
                 $item = $response['data'];
+                if (!Arr::has($item, 'folder')) {
+                    return $this->show($request);
+                }
                 Cache::put($pathKey, $item, $this->expires);
             } else {
                 Tool::showMessage($response['msg'], false);
@@ -212,7 +215,6 @@ class IndexController extends Controller
             return $list[$name];
         }
         $graphPath = Tool::getOriginPath($realPath);
-
         // 获取文件
         return Cache::remember(
             'one:file:' . $graphPath,
@@ -271,22 +273,21 @@ class IndexController extends Controller
                         return response($file['content'], 200, ['Content-type' => $fileType,]);
                     }
                 }
+
                 // 处理缩略图
                 if (in_array($key, ['image', 'dash', 'video'])) {
                     $file['thumb'] = Arr::get($file, 'thumbnails.0.large.url');
                 }
+
                 // dash视频流
                 if ($key === 'dash') {
-                    if (!strpos(
-                        $file['@microsoft.graph.downloadUrl'],
-                        'sharepoint.com'
-                    )
-                    ) {
+                    if (!strpos($file['@microsoft.graph.downloadUrl'], 'sharepoint.com')) {
                         return redirect()->away($file['download']);
                     }
                     $replace = str_replace('thumbnail', 'videomanifest', $file['thumb']);
                     $file['dash'] = $replace . '&part=index&format=dash&useScf=True&pretranscode=0&transcodeahead=0';
                 }
+
                 // 处理微软文档
                 if ($key === 'doc') {
                     $url = 'https://view.officeapps.live.com/op/view.aspx?src='
@@ -299,10 +300,6 @@ class IndexController extends Controller
                 $data = compact('file', 'pathArray', 'originPath');
 
                 return view(config('olaindex.theme') . $view, $data);
-            }
-            $last = end($this->show);
-            if ($last === $suffix) {
-                break;
             }
         }
 

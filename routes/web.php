@@ -6,16 +6,16 @@ use App\Helpers\Tool;
 // 授权
 Route::get('/oauth', 'OauthController@oauth')->name('oauth');
 
-// 索引
-Route::any('/', static function () {
-    $redirect = (int)setting('image_home', 0) ? 'image' : 'home';
-    return redirect()->route($redirect);
-});
-
-
 // 缩略图
 Route::get('thumb/{id}/size/{size}', 'IndexController@thumb')->name('thumb');
 Route::get('thumb/{id}/{width}/{height}', 'IndexController@thumbCrop')->name('thumb_crop');
+
+// 搜索
+Route::any('search', 'IndexController@search')
+    ->name('search');
+Route::any('search/file/{id}', 'IndexController@searchShow')
+    ->name('search.show');
+
 
 // 加密
 Route::post('password', 'IndexController@handlePassword')->name('password');
@@ -31,8 +31,7 @@ Route::post('image', 'ImageController@upload')->name('image.upload');
 //删除
 Route::get('file/delete/{sign}', 'ManageController@deleteItem')->name('delete');
 
-// 后台设置管理
-//登陆
+//后台设置管理
 Route::get('login', 'LoginController@showLoginForm')->name('login');
 Route::post('login', 'LoginController@login');
 Route::post('logout', 'LoginController@logout')->name('logout');
@@ -84,11 +83,6 @@ Route::prefix('admin')->group(static function () {
     Route::post('url/upload', 'ManageController@uploadUrl')
         ->name('admin.url.upload');
 });
-// 搜索
-Route::any('search', 'IndexController@search')
-    ->name('search');
-Route::any('search/file/{id}', 'IndexController@searchShow')
-    ->name('search.show');
 
 if (Str::contains(config('app.url'), ['localhost', 'dev.ningkai.wang'])) {
     Route::get('about', static function () {
@@ -104,9 +98,15 @@ if (Str::contains(config('app.url'), ['localhost', 'dev.ningkai.wang'])) {
     });
 }
 
+
 $showOriginPath = setting('origin_path', 1);
 
 if (!$showOriginPath) {
+    // 索引
+    Route::any('/', static function () {
+        $redirect = (int)setting('image_home', 0) ? 'image' : 'home';
+        return redirect()->route($redirect);
+    });
     //列表
     Route::prefix('home')->group(static function () {
         Route::get('{query?}', 'IndexController@list')->where('query', '.*')->name('home');
@@ -124,5 +124,18 @@ if (!$showOriginPath) {
     Route::get('view/{query}', 'IndexController@download')
         ->where('query', '.*')
         ->name('view');
+} else {
+    //展示
+    Route::get('s/{query}', 'IndexController@show')
+        ->where('query', '.*')
+        ->name('show');
+    // 下载
+    Route::get('d/{query?}', 'IndexController@download')
+        ->where('query', '.*')
+        ->name('download');
+    //看图
+    Route::get('v/{query?}', 'IndexController@download')
+        ->where('query', '.*')
+        ->name('view');
+    Route::get('{query?}', 'IndexController@list')->where('query', '.*')->name('home');
 }
-

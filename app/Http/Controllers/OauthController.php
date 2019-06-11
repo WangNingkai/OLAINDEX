@@ -102,11 +102,6 @@ class OauthController extends Controller
      */
     public function refreshToken($redirect = true)
     {
-        $expires = setting('access_token_expires', 0);
-        $hasExpired = $expires - time() <= 0;
-        if (!$hasExpired) {
-            return response()->json(['code' => 400, 'msg' => 'Bad Request']);
-        }
         $existingRefreshToken = setting('refresh_token');
         $token = Authorize::getInstance(setting('account_type'))->refreshAccessToken($existingRefreshToken);
 
