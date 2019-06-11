@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Http\Controllers\OauthController;
+use App\Utils\Extension;
 use Curl\Curl;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
@@ -211,7 +212,7 @@ class Tool
      */
     public static function getExtIcon($ext = '', $img = false): string
     {
-        $patterns = Constants::FILE_ICON;
+        $patterns = Extension::FILE_ICON;
         $icon = '';
         foreach ($patterns as $key => $suffix) {
             if (in_array($ext, $suffix[2], false)) {

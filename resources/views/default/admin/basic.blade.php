@@ -11,7 +11,7 @@
         <div class="form-group">
             <label class="form-control-label" for="theme">站点主题</label>
             <select class="custom-select" name="theme" id="theme">
-                @foreach( \App\Helpers\Constants::$themes as $name => $theme)
+                @foreach( \App\Utils\Extension::THEME as $name => $theme)
                     <option value="{{ $theme }}" @if(setting('theme') === $theme) selected @endif>{{ $name }}</option>
                 @endforeach
             </select>

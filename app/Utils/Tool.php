@@ -4,12 +4,17 @@
 namespace App\Utils;
 
 use App\Models\Setting;
+use App\Service\CoreConstants;
 use App\Service\OneDrive;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Arr;
+use Curl\Curl;
 use Session;
+use Cache;
 use Parsedown;
+use Log;
+use ErrorException;
 
 class Tool
 {
@@ -130,6 +135,54 @@ class Tool
     }
 
     /**
+     * 处理url
+     *
+     * @param $path
+     *
+     * @return string
+     */
+    public static function encodeUrl($path): string
+    {
+        $url = [];
+        foreach (explode('/', $path) as $key => $value) {
+            if (empty(!$value)) {
+                $url[] = rawurlencode($value);
+            }
+        }
+
+        return @implode('/', $url);
+    }
+
+
+    /**
+     * 获取初始文件路径
+     *
+     * @param      $path
+     * @param bool $isQuery
+     *
+     * @return string
+     */
+    public static function getOriginPath($path, $isQuery = true): string
+    {
+        $path = self::getAbsolutePath($path);
+        $query_path = trim($path, '/');
+        if (!$isQuery) {
+            return $query_path;
+        }
+        $query_path = self::encodeUrl(rawurldecode($query_path));
+        $root = trim(self::encodeUrl(setting('root')), '/');
+        if ($query_path) {
+            $request_path = empty($root) ?
+                $query_path
+                : "{$root}/{$query_path}";
+        } else {
+            $request_path = empty($root) ? '/' : $root;
+        }
+
+        return self::getAbsolutePath($request_path);
+    }
+
+    /**
      * 绝对路径转换
      * @param $path
      * @return mixed
@@ -156,7 +209,7 @@ class Tool
     /**
      * 刷新账户信息
      * @param $account
-     * @throws \ErrorException
+     * @throws ErrorException
      */
     public static function refreshAccount($account): void
     {
@@ -180,5 +233,53 @@ class Tool
             ];
         }
         Setting::batchUpdate($data);
+    }
+
+    /**
+     * 获取远程文件内容
+     * @param $url
+     * @param bool $cache
+     * @return mixed|string|null
+     * @throws ErrorException
+     */
+    public static function getFileContent($url, $cache = true)
+    {
+        $key = 'one:content:' . $url;
+        if ($cache && Cache::has($key)) {
+            $content = Cache::get($key);
+            if ($content) {
+                return $content;
+            }
+        }
+        $curl = new Curl();
+        $curl->setConnectTimeout(CoreConstants::DEFAULT_CONNECT_TIMEOUT);
+        $curl->setTimeout(CoreConstants::DEFAULT_TIMEOUT);
+        $curl->setRetry(CoreConstants::DEFAULT_RETRY);
+        $curl->setOpts([
+            CURLOPT_AUTOREFERER => true,
+            CURLOPT_FAILONERROR => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_ENCODING => 'gzip,deflate',
+        ]);
+        $curl->get($url);
+        $curl->close();
+        if ($curl->error) {
+            Log::error(
+                'Get Remote file content error.',
+                [
+                    'code' => $curl->errorCode,
+                    'msg' => $curl->errorMessage,
+                ]
+            );
+            self::showMessage('Error: ' . $curl->errorCode . ': ' . $curl->errorMessage, false);
+
+            return '远程获取内容失败，请刷新重试';
+        }
+        $content = $curl->rawResponse;
+        if ($cache) {
+            Cache::put($key, $content, setting('expires'));
+        }
+
+        return $content;
     }
 }

@@ -32,8 +32,8 @@ Route::view('message', config('olaindex.theme') . 'message')->name('message');
 
 
 // 图床
-Route::get('image', 'ManageController@uploadImage')->name('image')->middleware('checkImage');
-Route::post('image/upload', 'ManageController@uploadImage')->name('image.upload')->middleware('throttle:10,2', 'checkImage');
+Route::get('image', 'ManageController@uploadImage')->name('image');
+Route::post('image/upload', 'ManageController@uploadImage')->name('image.upload');
 Route::get('file/delete/{sign}', 'ManageController@deleteItem')->name('delete');
 
 
@@ -61,13 +61,12 @@ Route::prefix('admin')->group(function () {
     Route::any('show', 'AdminController@show')->name('admin.show');
     Route::any('profile', 'AdminController@profile')->name('admin.profile');
     Route::any('clear', 'AdminController@clear')->name('admin.cache.clear');
-    Route::any('refresh', 'AdminController@refresh')
-        ->name('admin.cache.refresh');
+    Route::any('refresh', 'AdminController@refresh')->name('admin.cache.refresh');
+
     // 文件夹操作
     Route::prefix('folder')->group(function () {
         Route::post('lock', 'ManageController@lockFolder')->name('admin.lock');
-        Route::post('create', 'ManageController@createFolder')
-            ->name('admin.folder.create');
+        Route::post('create', 'ManageController@createFolder')->name('admin.folder.create');
     });
     // 文件操作
     Route::prefix('file')->group(function () {
