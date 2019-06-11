@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Helpers\Tool;
+use App\Utils\Tool;
 use Closure;
 
 class VerifyInstallation

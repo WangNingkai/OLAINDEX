@@ -33,7 +33,7 @@
                                  style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
                                 <a href="{{ route('search.show',$item['id']) }}"
                                    title="{{ $item['name'] }}">
-                                    <i class="fa {{\App\Helpers\Tool::getExtIcon($item['ext'])}}"></i> {{ $item['name'] }}
+                                    <i class="fa {{\App\Utils\Tool::getExtIcon($item['ext'])}}"></i> {{ $item['name'] }}
                                 </a>
                             </div>
                             <div class="col-sm-2 d-none d-md-block d-md-none">
@@ -41,7 +41,7 @@
                                     class="pull-right">{{ date('M d H:i',strtotime($item['lastModifiedDateTime'])) }}</span>
                             </div>
                             <div class="col-sm-2 d-none d-md-block d-md-none">
-                                <span class="pull-right">{{ \App\Helpers\Tool::convertSize($item['size']) }}</span>
+                                <span class="pull-right">{{ \App\Utils\Tool::convertSize($item['size']) }}</span>
                             </div>
                             <div class="col-4 col-sm-2">
                                 <span class="pull-right">

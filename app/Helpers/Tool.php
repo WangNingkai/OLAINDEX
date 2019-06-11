@@ -14,57 +14,6 @@ use Illuminate\Support\Facades\Session;
 
 class Tool
 {
-    /**
-     * 判断密钥配置
-     *
-     * @return bool
-     */
-    public static function hasConfig(): bool
-    {
-        return setting('client_id') && setting('client_secret') && setting('redirect_uri');
-    }
-
-    /**
-     * 判断账号绑定
-     *
-     * @return bool
-     */
-    public static function hasBind(): bool
-    {
-        return setting('access_token') && setting('refresh_token') && setting('access_token_expires');
-    }
-
-    /**
-     * 判断资源列表是否含有图片
-     *
-     * @param $items
-     *
-     * @return bool
-     */
-    public static function hasImages($items): bool
-    {
-        $hasImage = false;
-        foreach ($items as $item) {
-            if (isset($item['image'])) {
-                $hasImage = true;
-                break;
-            }
-        }
-        return $hasImage;
-    }
-
-    /**
-     * 操作成功或者失败的提示
-     *
-     * @param string $message
-     * @param bool $success
-     */
-    public static function showMessage($message = '成功', $success = true)
-    {
-        $alertType = $success ? 'success' : 'danger';
-        Session::put('alertMessage', $message);
-        Session::put('alertType', $alertType);
-    }
 
     /**
      *文件大小转换

@@ -13,7 +13,7 @@
                     <input type="password" class="form-control" id="password" name="password" required>
                     <input type="hidden" name="encryptKey" value="{{ encrypt($encryptKey) }}">
                     <input type="hidden" name="route" value="{{ encrypt($route) }}">
-                    <input type="hidden" name="realPath" value="{{ encrypt($realPath) }}">
+                    <input type="hidden" name="realPath" value="{{ encrypt($requestPath) }}">
                 </div>
                 <button type="submit" class="btn btn-primary">确认</button>
             </form>

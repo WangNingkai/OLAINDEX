@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use App\Helpers\Tool;
+use App\Utils\Tool;
 use Closure;
 
-class HandleIllegalFile
+class HandleForbidFile
 {
     /**
      * 处理非法文件

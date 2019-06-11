@@ -66,7 +66,7 @@ class Kernel extends HttpKernel
         'verify.image' => \App\Http\Middleware\VerifyImageHost::class,
         'verify.installation' => \App\Http\Middleware\VerifyInstallation::class,
         'hotlink.protection' => \App\Http\Middleware\HotlinkProtection::class,
-        'handle.illegal' => \App\Http\Middleware\HandleIllegalFile::class,
+        'handle.forbid' => \App\Http\Middleware\HandleForbidFile::class,
         'Handle.encrypt' => \App\Http\Middleware\HandleEncryptDir::class,
         'Handle.hide' => \App\Http\Middleware\HandleHideDir::class,
     ];

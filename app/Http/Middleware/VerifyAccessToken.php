@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use App\Helpers\Tool;
+use App\Utils\Tool;
 use App\Http\Controllers\OauthController;
 use Closure;
-use Illuminate\Support\Facades\Session;
+use Session;
 
 class VerifyAccessToken
 {

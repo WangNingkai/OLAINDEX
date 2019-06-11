@@ -135,6 +135,102 @@ class Tool
     }
 
     /**
+     * 获取排序状态
+     *
+     * @param $field
+     * @return bool
+     */
+    public static function getOrderByStatus($field): bool
+    {
+        $order = request()->get('orderBy');
+        @list($search_field, $sortBy) = explode(',', $order);
+        if ($field !== $search_field) {
+            return true;
+        }
+        return strtolower($sortBy) === 'desc';
+    }
+
+    /**
+     * 获取包屑导航url
+     *
+     * @param $key
+     * @param $pathArr
+     *
+     * @return string
+     */
+    public static function getBreadcrumbUrl($key, $pathArr): string
+    {
+        $pathArr = array_slice($pathArr, 0, $key);
+        $url = '';
+        foreach ($pathArr as $param) {
+            $url .= '/' . $param;
+        }
+
+        return trim($url, '/');
+    }
+
+    /**
+     * 获取父级url
+     *
+     * @param $pathArr
+     *
+     * @return string
+     */
+    public static function getParentUrl($pathArr): string
+    {
+        array_pop($pathArr);
+        if (count($pathArr) === 0) {
+            return '';
+        }
+        $url = '';
+        foreach ($pathArr as $param) {
+            $url .= '/' . $param;
+        }
+
+        return trim($url, '/');
+    }
+
+    /**
+     * 获取扩展图标
+     * @param string $ext
+     * @param bool $img
+     *
+     * @return string
+     */
+    public static function getExtIcon($ext = '', $img = false): string
+    {
+        $patterns = Extension::FILE_ICON;
+        $icon = '';
+        foreach ($patterns as $key => $suffix) {
+            if (in_array($ext, $suffix[2], false)) {
+                $icon = $img ? $suffix[1] : $suffix[0];
+                break;
+            }
+            $icon = $img ? 'file' : 'fa-file-text-o';
+        }
+
+        return $icon;
+    }
+
+    /**
+     * 文件是否可编辑
+     *
+     * @param $file
+     *
+     * @return bool
+     */
+    public static function canEdit($file): bool
+    {
+        $code = explode(' ', setting('code'));
+        $stream = explode(' ', setting('stream'));
+        $canEditExt = array_merge($code, $stream);
+        $isText = in_array($file['ext'], $canEditExt, false);
+        $isBigFile = $file['size'] > 5 * 1024 * 1024 ?: false;
+
+        return !$isBigFile && $isText;
+    }
+
+    /**
      * 处理url
      *
      * @param $path

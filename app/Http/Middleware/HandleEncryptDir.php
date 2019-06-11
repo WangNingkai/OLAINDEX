@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use App\Helpers\Tool;
+use App\Utils\Tool;
 use Closure;
-use Illuminate\Support\Facades\Session;
+use Session;
 use Illuminate\Support\Str;
 
 class HandleEncryptDir
