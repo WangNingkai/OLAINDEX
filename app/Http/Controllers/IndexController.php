@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use Cache;
+use Session;
+use ErrorException;
 use App\Helpers\Constants;
 use App\Helpers\OneDrive;
 use App\Helpers\Tool;
-use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
+use Illuminate\Http\Request;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 /**
  * OneDriveGraph 索引
@@ -49,10 +53,9 @@ class IndexController extends Controller
         $this->middleware([
             'verify.installation',
             'verify.token',
-            'handleIllegalFile',
+            'handle.illegal',
         ]);
-        $this->middleware('HandleEncryptDir')
-            ->only(Tool::config('encrypt_option', ['list']));
+        $this->middleware('handle.encrypt')->only(setting('encrypt_option', ['list']));
         $this->expires = setting('expires', 10);
         $this->root = setting('root', '/');
         $this->show = [
@@ -69,7 +72,7 @@ class IndexController extends Controller
     /**
      * @param Request $request
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @return Factory|RedirectResponse|View
      * @throws \ErrorException
      */
     public function home(Request $request)
@@ -81,8 +84,8 @@ class IndexController extends Controller
     /**
      * @param Request $request
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     * @throws \ErrorException
+     * @return Factory|RedirectResponse|View
+     * @throws ErrorException
      */
     public function list(Request $request)
     {
@@ -233,7 +236,7 @@ class IndexController extends Controller
      * @param Request $request
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     * @throws \ErrorException
+     * @throws ErrorException
      */
     public function show(Request $request)
     {

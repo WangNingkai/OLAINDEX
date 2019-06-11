@@ -13,7 +13,6 @@ use App\Models\User;
 use Carbon\Carbon;
 use Artisan;
 use Auth;
-use Cache;
 use Hash;
 
 /**
@@ -158,9 +157,11 @@ class AdminController extends Controller
             'root' => '/',
             'image_hosting' => 0,
             'image_hosting_path' => '',
+            'account_email' => '',
+            'account_state' => '暂时无法使用',
+            'account_extend' => ''
         ];
-        Tool::updateConfig($data);
-        Cache::forget('one:account');
+        Setting::batchUpdate($data);
         Tool::showMessage('保存成功！');
 
         return redirect()->route('bind');

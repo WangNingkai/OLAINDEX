@@ -3,10 +3,9 @@
 namespace App\Service;
 
 use App\Entities\ClientConfigEntity;
-use App\models\Account;
-use ErrorException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use ErrorException;
 
 /**
  * Class OneDrive
@@ -28,7 +27,7 @@ class OneDrive
      */
     public static function getInstance($account): OneDrive
     {
-        $account_id = Arr::get($account, 'id', 0);
+        $account_id = Arr::get($account, 'account_email', 0);
         if (!array_key_exists($account_id, self::$instances)) {
             self::$instances[$account_id] = new self($account);
         }
@@ -45,7 +44,7 @@ class OneDrive
     }
 
     /**
-     * @param Account $account
+     * @param $account
      */
     private function initRequest($account): void
     {
@@ -53,7 +52,7 @@ class OneDrive
         $clientConfig = new ClientConfigEntity(CoreConstants::getClientConfig($accountType));
         $baseUrl = $clientConfig->graph_endpoint;
         $apiVersion = $clientConfig->api_version;
-        $accessToken = Arr::get($account, 'accessToken', '');
+        $accessToken = Arr::get($account, 'access_token', '');
         $this->graph = (new GraphRequest())
             ->setAccessToken($accessToken)
             ->setBaseUrl($baseUrl)

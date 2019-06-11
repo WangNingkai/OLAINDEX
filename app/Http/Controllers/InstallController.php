@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Utils\Tool;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 /**
  * 初始化安装操作
@@ -25,9 +28,9 @@ class InstallController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
-    public function apply(Request $request)
+    public function apply(Request $request): RedirectResponse
     {
         // 感谢 donwa 提供的方法
         if (Tool::hasConfig()) {
@@ -46,7 +49,7 @@ class InstallController extends Controller
         $deepLink = '/quickstart/graphIO?publicClientSupport=false&appName=OLAINDEX&redirectUrl='
             . $redirect_uri . '&allowImplicitFlow=false&ru='
             . urlencode($ru);
-        $app_url = "https://apps.dev.microsoft.com/?deepLink=" . urlencode($deepLink);
+        $app_url = 'https://apps.dev.microsoft.com/?deepLink=' . urlencode($deepLink);
 
         return redirect()->away($app_url);
     }
@@ -56,7 +59,7 @@ class InstallController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @return Factory|RedirectResponse|View
      */
     public function install(Request $request)
     {
@@ -92,9 +95,9 @@ class InstallController extends Controller
     /**
      * 重置安装
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
-    public function reset()
+    public function reset(): RedirectResponse
     {
         if (Tool::hasBind()) {
             Tool::showMessage('您已绑定帐号，无法重置', false);
@@ -117,7 +120,7 @@ class InstallController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @return Factory|RedirectResponse|View
      */
     public function bind(Request $request)
     {

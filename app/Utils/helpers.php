@@ -67,3 +67,21 @@ if (!function_exists('setting')) {
         return $key ? $setting->get($key, $default) : $setting;
     }
 }
+
+
+if (!function_exists('one_account')) {
+
+    /**
+     * 获取绑定OneDrive用户信息
+     *
+     * @return array
+     */
+    function one_account()
+    {
+        return [
+            'account_type' => setting('account_type'),
+            'access_token' => setting('access_token'),
+            'account_email' => setting('account_email'),
+        ];
+    }
+}

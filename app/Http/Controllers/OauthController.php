@@ -7,6 +7,10 @@ use App\Models\Setting;
 use App\Service\Authorize;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\View\View;
+use ErrorException;
 use Log;
 use Session;
 
@@ -30,8 +34,8 @@ class OauthController extends Controller
     /**
      * @param Request $request
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     * @throws \ErrorException
+     * @return Factory|RedirectResponse|View
+     * @throws ErrorException
      */
     public function oauth(Request $request)
     {
@@ -67,7 +71,7 @@ class OauthController extends Controller
                 'access_token_expires' => $expires,
             ];
             Setting::batchUpdate($data);
-            //todo:刷新账户信息
+            Tool::refreshAccount(one_account());
 
             return redirect()->route('home');
         }
@@ -78,9 +82,9 @@ class OauthController extends Controller
 
     /**
      * @param string $url
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
-    public function authorizeLogin($url = '')
+    public function authorizeLogin($url = ''): RedirectResponse
     {
         // 跳转授权登录
         // $state = str_random(32);
@@ -93,8 +97,8 @@ class OauthController extends Controller
 
     /**
      * @param bool $redirect
-     * @return false|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|string
-     * @throws \ErrorException
+     * @return false|Factory|RedirectResponse|View|string
+     * @throws ErrorException
      */
     public function refreshToken($redirect = true)
     {
@@ -117,9 +121,9 @@ class OauthController extends Controller
         ];
         Log::info('refresh_token', $data);
         Setting::batchUpdate($data);
-        //todo:刷新账户信息
+        Tool::refreshAccount(one_account());
         if ($redirect) {
-            $redirect = Session::get('refresh_redirect') ?? '/';
+            $redirect = Session::get('refresh_redirect', '/');
 
             return redirect()->away($redirect);
         }

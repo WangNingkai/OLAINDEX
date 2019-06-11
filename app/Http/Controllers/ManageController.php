@@ -6,9 +6,9 @@ use App\Helpers\Tool;
 use App\Helpers\OneDrive;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Encryption\DecryptException;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Validator;
+use Artisan;
+use Cache;
+use Validator;
 use Illuminate\Support\Str;
 
 /**
