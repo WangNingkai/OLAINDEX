@@ -10,7 +10,7 @@
                     <input name="password" class="mdui-textfield-input" type="password" id="password" required/>
                     <input type="hidden" name="encryptKey" value="{{ encrypt($encryptKey) }}">
                     <input type="hidden" name="route" value="{{ encrypt($route) }}">
-                    <input type="hidden" name="realPath" value="{{ encrypt($requestPath) }}">
+                    <input type="hidden" name="requestPath" value="{{ encrypt($requestPath) }}">
                 </div>
                 <br>
                 <button type="submit" class="mdui-center mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme">

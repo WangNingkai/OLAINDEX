@@ -378,4 +378,43 @@ class Tool
 
         return $content;
     }
+
+    /**
+     * 解析加密目录
+     *
+     * @param $str
+     *
+     * @return array
+     */
+    public static function handleEncryptItem($str): array
+    {
+        $str = str_replace(PHP_EOL, '', $str);
+        $str = trim($str, ',');
+        $encryptPathArr = explode('|', $str);
+        $all = [];
+        foreach ($encryptPathArr as $encryptPathDir) {
+            [$pathItem, $password] = explode(':', $encryptPathDir);
+            $pathItem = explode(',', $pathItem);
+            $pathItem = array_map(static function ($value) {
+                return 'p-' . $value;
+            }, $pathItem);
+            $pathArray = array_fill_keys($pathItem, $password);
+            $all = collect($all)->merge($pathArray)->toArray();
+        }
+        uksort($all, [self::class, 'lenSort']);
+        return $all;
+    }
+
+    /**
+     * @param $a
+     * @param $b
+     *
+     * @return int
+     */
+    public static function lenSort($a, $b): int
+    {
+        $countA = count(explode('/', self::getAbsolutePath($a)));
+        $countB = count(explode('/', self::getAbsolutePath($b)));
+        return $countB - $countA;
+    }
 }

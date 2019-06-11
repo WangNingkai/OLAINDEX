@@ -27,18 +27,23 @@
             <input type="text" class="form-control" id="expires" name="expires" value="{{ setting('expires') }}">
             <span class="form-text text-danger">建议缓存时间小于60分钟，否则会导致缓存失效</span>
         </div>
-
-        {{--<div class="form-group">
-            <label for="encrypt_path">加密</label>
+        <div class="form-group">
+            <label for="hide_path">目录隐藏</label>
+            <textarea class="form-control" id="hide_path" name="hide_path"
+                      rows="5">{{ setting('hide_path') }}</textarea>
+            <span class="form-text text-danger">填写需要隐藏的文件或文件夹路径</span>
+        </div>
+        <div class="form-group">
+            <label for="encrypt_path">目录加密</label>
             <textarea class="form-control" id="encrypt_path" name="encrypt_path"
                       rows="5">{{ setting('encrypt_path') }}</textarea>
-            <span class="form-text text-danger">填写需要加密的文件或文件夹路径，格式如： /path1/xxx/ /path2/xxx/ password1,/path3/xxx/ /path4/xxx/ password2 (以OneDrive根目录为基础)</span>
+            <span class="form-text text-danger">填写需要加密的文件或文件夹路径，加密的目录使用英文“,”隔开；“:”后是每个加密组的密码，每个组加密使用英文“|”隔开，格式如： /path1,/path2:password1|/path3,/path4:password2|... (以OneDrive根目录为基础)</span>
         </div>
         <div class="form-group">
             <label for="">加密选项</label>
             <div class="custom-control custom-checkbox">
                 <input type="checkbox" class="custom-control-input" id="c1" name="encrypt_option[]" value="list"
-                       @if(in_array('list',json_decode($setting->encrypt_option,true),false)) checked @endif>
+                       @if(in_array('list',json_decode(setting('encrypt_option',[]),true),false)) checked @endif>
                 <label class="custom-control-label" for="c1">加密目录列表</label>
             </div>
 
@@ -59,7 +64,7 @@
                 <label class="custom-control-label" for="c4">加密图片查看页</label>
             </div>
             <span class="form-text text-danger">选择需要加密强度，默认加密列表</span>
-        </div>--}}
+        </div>
         <div class="form-group">
             <label class="form-control-label">是否看图模式</label>
             <div class="custom-control custom-radio">

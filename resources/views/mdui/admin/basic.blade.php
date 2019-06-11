@@ -19,7 +19,8 @@
                 <label class="mdui-textfield-label" for="root">OneDrive根目录</label>
                 <input type="text" class="mdui-textfield-input" id="root" name="root"
                        value="{{ setting('root') }}" required>
-                <div class="mdui-textfield-helper">目录索引起始文件夹地址，文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ | 否则无法索引。</div>
+                <div class="mdui-textfield-helper">目录索引起始文件夹地址，文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ | 否则无法索引。
+                </div>
             </div>
             <br>
             <div class="mdui-textfield mdui-textfield-floating-label">
@@ -29,11 +30,20 @@
                 <div class="mdui-textfield-helper">建议缓存时间小于60分钟，否则会导致缓存失效</div>
             </div>
             <br>
-            {{--<div class="mdui-textfield mdui-textfield-floating-label">
-                <label class="mdui-textfield-label" for="encrypt_path">加密</label>
+            <div class="mdui-textfield mdui-textfield-floating-label">
+                <label class="mdui-textfield-label" for="hide_path">隐藏目录</label>
+                <textarea name="encrypt_path" id="hide_path" class="mdui-textfield-input"
+                          rows="3">{{ setting('hide_path') }}</textarea>
+                <div class="mdui-textfield-helper">填写需要隐藏的文件或文件夹路径
+                </div>
+            </div>
+            <br>
+            <div class="mdui-textfield mdui-textfield-floating-label">
+                <label class="mdui-textfield-label" for="encrypt_path">加密目录</label>
                 <textarea name="encrypt_path" id="encrypt_path" class="mdui-textfield-input"
-                          rows="3">{{ setting('encrypt_path','') }}</textarea>
-                <div class="mdui-textfield-helper">填写需要加密的文件或文件夹路径，格式如： /path1/xxx/ /path2/xxx/ password1,/path3/xxx/ /path4/xxx/ password2 (以OneDrive根目录为基础)
+                          rows="3">{{ setting('encrypt_path') }}</textarea>
+                <div class="mdui-textfield-helper">填写需要加密的文件或文件夹路径，加密的目录使用英文“,”隔开；“:”后是每个加密组的密码，每个组加密使用英文“|”隔开，格式如：
+                    /path1,/path2:password1|/path3,/path4:password2|... (以OneDrive根目录为基础)
                 </div>
             </div>
             <br>
@@ -41,29 +51,29 @@
             <br>
             <label class="mdui-checkbox">
                 <input type="checkbox" name="encrypt_option[]" value="list"
-                       @if(in_array('list',setting('encrypt_option',[]))) checked @endif/>
+                       @if(in_array('list',setting('encrypt_option',[]),false)) checked @endif/>
                 <i class="mdui-checkbox-icon"></i>
                 加密目录列表
             </label> &nbsp; &nbsp;
             <label class="mdui-checkbox">
                 <input type="checkbox" name="encrypt_option[]" value="show"
-                       @if(in_array('show',setting('encrypt_option',[]))) checked @endif/>
+                       @if(in_array('show',setting('encrypt_option',[]),false)) checked @endif/>
                 <i class="mdui-checkbox-icon"></i>
                 加密文件预览
             </label> &nbsp; &nbsp;
             <label class="mdui-checkbox">
                 <input type="checkbox" name="encrypt_option[]" value="download"
-                       @if(in_array('download',setting('encrypt_option',[]))) checked @endif/>
+                       @if(in_array('download',setting('encrypt_option',[]),false)) checked @endif/>
                 <i class="mdui-checkbox-icon"></i>
                 加密文件下载
             </label> &nbsp; &nbsp;
             <label class="mdui-checkbox">
                 <input type="checkbox" name="encrypt_option[]" value="view"
-                       @if(in_array('view',setting('encrypt_option',[]))) checked @endif/>
+                       @if(in_array('view',setting('encrypt_option',[]),false)) checked @endif/>
                 <i class="mdui-checkbox-icon"></i>
                 加密图片查看页
             </label> &nbsp; &nbsp;
-            <br>--}}
+            <br>
             <br>
             <label for="image_hosting" class="mdui-textfield-label">是否开启图床</label> &nbsp; &nbsp;
             <br>

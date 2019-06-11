@@ -22,21 +22,20 @@ class HandleEncryptDir
         $route = $request->route()->getName();
         $requestPath = $request->route()->parameter('query', '/');
 
-//        $encryptDir = Tool::handleEncryptDir(setting('encrypt_path'));
-        $encryptDir = [];
-
+        $encryptDir = Tool::handleEncryptItem(setting('encrypt_path'));
 
         if (blank($encryptDir)) {
             return $next($request);
         }
         foreach ($encryptDir as $key => $item) {
+            [$prefix, $key] = explode('-', $key);
             if (Str::startsWith(Tool::getAbsolutePath($requestPath), $key)) {
                 $encryptKey = $key;
                 if (Session::has('password:' . $key)) {
                     $data = Session::get('password:' . $key);
                     $encryptKey = $data['encryptKey'];
                     if (time() > $data['expires'] ||
-                        strcmp($encryptDir[$encryptKey], decrypt($data['password'])) !== 0) {
+                        strcmp($encryptDir[$prefix . '-' . $encryptKey], decrypt($data['password'])) !== 0) {
                         Session::forget($key);
                         Tool::showMessage('密码已过期', false);
 

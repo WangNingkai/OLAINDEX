@@ -52,7 +52,7 @@ class IndexController extends Controller
     public function __construct()
     {
         $this->middleware(['verify.installation', 'verify.token', 'handle.forbid',]);
-//        $this->middleware('handle.encrypt')->only(setting('encrypt_option', ['list']));
+        $this->middleware('handle.encrypt')->only(setting('encrypt_option', ['list']));
         $this->middleware('hotlink.protection')->only(['show', 'download', 'thumb', 'thumbCrop']);
         $this->middleware('throttle:' . setting('search_throttle'))->only(['search', 'searchShow']);
 
@@ -450,10 +450,9 @@ class IndexController extends Controller
         ];
         Session::put('password:' . $encryptKey, $data);
 
-        //todo:处理加密目录
-        $arr = $this->handleEncrypt(setting('encrypt_path'));
+        $arr = Tool::handleEncryptItem(setting('encrypt_path'));
 
-        $directory_password = $arr[$encryptKey];
+        $directory_password = $arr['p-' . $encryptKey];
         if (strcmp($password, $directory_password) === 0) {
             return redirect()->route($route, Tool::encodeUrl($requestPath));
         }
