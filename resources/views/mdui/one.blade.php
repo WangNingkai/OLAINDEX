@@ -51,7 +51,7 @@
                 <li class="mdui-list-item th">
                     <div class="mdui-col-xs-12 mdui-col-sm-7">
                         文件
-                        @if(\App\Helpers\Tool::getOrderByStatus('name'))
+                        @if(\App\Utils\Tool::getOrderByStatus('name'))
                             <a href="?orderBy=name,asc"><i class="fa fa-arrow-down"></i></a>
                         @else
                             <a href="?orderBy=name,desc"><i class="fa fa-arrow-up"></i></a>
@@ -60,7 +60,7 @@
                     </div>
                     <div class="mdui-col-sm-3 mdui-text-right">
                         修改时间
-                        @if(\App\Helpers\Tool::getOrderByStatus('lastModifiedDateTime'))
+                        @if(\App\Utils\Tool::getOrderByStatus('lastModifiedDateTime'))
                             <a href="?orderBy=lastModifiedDateTime,asc"><i class="fa fa-arrow-down"></i></a>
                         @else
                             <a href="?orderBy=lastModifiedDateTime,desc"><i class="fa fa-arrow-up"></i></a>
@@ -69,7 +69,7 @@
                     </div>
                     <div class="mdui-col-sm-2 mdui-text-right">
                         大小
-                        @if(\App\Helpers\Tool::getOrderByStatus('size'))
+                        @if(\App\Utils\Tool::getOrderByStatus('size'))
                             <a href="?orderBy=size,asc"><i class="fa fa-arrow-down"></i></a>
                         @else
                             <a href="?orderBy=size,desc"><i class="fa fa-arrow-up"></i></a>
@@ -77,9 +77,9 @@
                         @endif
                     </div>
                 </li>
-                @if(!blank($path_array))
+                @if(!blank($pathArray))
                     <li class="mdui-list-item mdui-ripple">
-                        <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl(\App\Helpers\Tool::getParentUrl($path_array))) }}">
+                        <a href="{{ route('home',\App\Utils\Tool::encodeUrl(\App\Utils\Tool::getParentUrl($pathArray))) }}">
                             <div class="mdui-col-xs-12 mdui-col-sm-7">
                                 <i class="mdui-icon material-icons">subdirectory_arrow_left</i>
                                 返回上一层
@@ -93,7 +93,7 @@
                 @foreach($items as $item)
                     @if( \Illuminate\Support\Arr::has($item,'folder'))
                         <li class="mdui-list-item mdui-ripple">
-                            <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}">
+                            <a href="{{ route('home',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}">
                                 <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
                                     <i class="mdui-icon material-icons">folder_open</i>
                                     {{ $item['name'] }}
@@ -101,27 +101,27 @@
                                 <div
                                     class="mdui-col-sm-3 mdui-text-right">{{ date('M d H:i',strtotime($item['lastModifiedDateTime'])) }}</div>
                                 <div
-                                    class="mdui-col-sm-2 mdui-text-right">{{  \Illuminate\Support\Arr::has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</div>
+                                    class="mdui-col-sm-2 mdui-text-right">{{  \Illuminate\Support\Arr::has($item,'folder')? '-' : \App\Utils\Tool::convertSize($item['size']) }}</div>
                             </a>
                         </li>
                     @else
                         <li class="mdui-list-item file mdui-ripple">
-                            <a href="{{ route('show',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
+                            <a href="{{ route('show',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}"
                                target="_blank">
                                 <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
-                                    <i class="mdui-icon material-icons">{{ \App\Helpers\Tool::fileIcon($item['ext']) }}</i>
+                                    <i class="mdui-icon material-icons">{{ \App\Utils\Tool::fileIcon($item['ext']) }}</i>
                                     {{ $item['name'] }}
                                 </div>
                                 <div
                                     class="mdui-col-sm-3 mdui-text-right">{{ date('M d H:i',strtotime($item['lastModifiedDateTime'])) }}</div>
                                 <div
-                                    class="mdui-col-sm-2 mdui-text-right">{{  \Illuminate\Support\Arr::has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</div>
+                                    class="mdui-col-sm-2 mdui-text-right">{{  \Illuminate\Support\Arr::has($item,'folder')? '-' : \App\Utils\Tool::convertSize($item['size']) }}</div>
                             </a>
                         </li>
                     @endif
                     @if( \Illuminate\Support\Arr::has($item,'file'))
                         <a class="dl_url mdui-hidden"
-                           href="{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"></a>
+                           href="{{ route('download',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}"></a>
                     @endif
                 @endforeach
             </ul>
@@ -129,9 +129,9 @@
 
         <div
             class="mdui-m-t-3 thumb-view mdui-row-xs-3 mdui-row-sm-4 mdui-row-md-5 mdui-row-lg-6 mdui-row-xl-7 mdui-grid-list mdui-hidden">
-            @if(!blank($path_array))
+            @if(!blank($pathArray))
                 <div class="mdui-col">
-                    <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl(\App\Helpers\Tool::getParentUrl($path_array))) }}">
+                    <a href="{{ route('home',\App\Utils\Tool::encodeUrl(\App\Utils\Tool::getParentUrl($pathArray))) }}">
                         <div class="col-icon">
                             <img src="{{ asset('img/return.png') }}" class="mdui-p-a-1" alt="">
                         </div>
@@ -150,7 +150,7 @@
             @foreach($items as $item)
                 @if( \Illuminate\Support\Arr::has($item,'folder'))
                     <div class="mdui-col">
-                        <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}">
+                        <a href="{{ route('home',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}">
                             <div class="col-icon">
                                 <img
                                     src="{{ asset('img/folder.png') }}"
@@ -170,15 +170,15 @@
                 @else
                     <div class="mdui-col file">
                         <a target="_blank"
-                           href="{{ route('show',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}">
+                           href="{{ route('show',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}">
                             <div class="col-icon">
-                                @if(in_array($item['ext'],explode(' ',\App\Helpers\Tool::config('image'))))
+                                @if(in_array($item['ext'],explode(' ',setting('image'))))
                                     <img class="lazy"
                                          data-original="{{  \Illuminate\Support\Arr::get($item,'thumbnails.0.small.url') }}"
                                          src="{{ asset('img/loading.gif') }}" alt="">
                                 @else
                                     <img
-                                        src="{{ asset('img/'.\App\Helpers\Tool::getExtIcon($item['ext'],true).'.png') }}"
+                                        src="{{ asset('img/'.\App\Utils\Tool::getExtIcon($item['ext'],true).'.png') }}"
                                         alt="">
                                 @endif
                             </div>
@@ -209,7 +209,7 @@
             </div>
         @endif
 
-        @if (session()->has('LogInfo'))
+        @auth
             <div class="mdui-fab-wrapper" mdui-fab>
                 <button class="mdui-fab mdui-ripple mdui-color-theme-accent">
                     <i class="mdui-icon material-icons">add</i>
@@ -217,17 +217,17 @@
                 </button>
                 <div class="mdui-fab-dial">
                     <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-green"
-                       href="@if (array_key_exists('HEAD.md', $origin_items))
-                       {{ route('admin.file.update',$origin_items['HEAD.md']['id']) }}
+                       href="@if (array_key_exists('HEAD.md', $originItems))
+                       {{ route('admin.file.update',$originItems['HEAD.md']['id']) }}
                        @else
-                       {{ route('admin.file.create',['name' => 'HEAD', 'path' => encrypt($origin_path)]) }}
+                       {{ route('admin.file.create',['name' => 'HEAD', 'path' => encrypt($originPath)]) }}
                        @endif"
                        target="_blank"><i class="mdui-icon material-icons">bookmark</i></a>
                     <a class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-green"
-                       href="@if (array_key_exists('README.md', $origin_items))
-                       {{ route('admin.file.update',$origin_items['README.md']['id']) }}
+                       href="@if (array_key_exists('README.md', $originItems))
+                       {{ route('admin.file.update',$originItems['README.md']['id']) }}
                        @else
-                       {{ route('admin.file.create',['name' => 'README', 'path' => encrypt($origin_path)]) }}
+                       {{ route('admin.file.create',['name' => 'README', 'path' => encrypt($originPath)]) }}
                        @endif"
                        target="_blank"><i class="mdui-icon material-icons">face</i></a>
                     <a href="javascript:void(0)" class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-red"><i
@@ -250,7 +250,7 @@
                             <label class="mdui-textfield-label" for="folderName">请输入目录名称</label>
                             <input name="name" class="mdui-textfield-input" type="text" id="folderName"
                                    required/>
-                            <input type="hidden" name="path" value="{{ encrypt($origin_path) }}">
+                            <input type="hidden" name="path" value="{{ encrypt($originPath) }}">
                         </div>
                     </div>
                     <div class="mdui-dialog-actions">
@@ -265,7 +265,7 @@
                 <div class="mdui-dialog-content">
                     <div class="mdui-dialog-title">导出直链</div>
                     <p class="mdui-text-color-red">
-                        链接将在 {{ date('m/d/Y H:i', \App\Helpers\Tool::config('access_token_expires')) }}
+                        链接将在 {{ setting('access_token_expires')  }}
                         后失效</p>
                     <div class="mdui-textfield">
                         <label class="mdui-textfield-label" for="dl">链接</label>
@@ -278,7 +278,7 @@
                 </div>
             </div>
 
-        @endif
+        @endauth
 
     </div>
 @stop

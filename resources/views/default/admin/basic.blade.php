@@ -111,6 +111,33 @@
             <span class="form-text text-danger">文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ |。</span>
         </div>
         <div class="form-group">
+            <label class="form-control-label" for="image_upload_throttle">图床上传频次限制</label>
+            <input type="text" class="form-control" id="image_upload_throttle" name="image_upload_throttle"
+                   value="{{ setting('image_upload_throttle') }}">
+            <span class="form-text text-danger">重试等待时间默认是1分钟（格式：5,10，每10分钟最多上传5次；5 每分钟最多上传5次）</span>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="search_throttle">搜索频次限制</label>
+            <input type="text" class="form-control" id="search_throttle" name="search_throttle"
+                   value="{{ setting('search_throttle') }}">
+            <span class="form-text text-danger">重试等待时间默认是1分钟（格式：5,10，每10分钟最多搜索5次；5 每分钟最多搜索5次）</span>
+        </div>
+
+        <div class="form-group">
+            <label class="form-control-label">路径兼容模式</label>
+            <div class="custom-control custom-radio">
+                <input type="radio" id="origin_path1" name="origin_path" class="custom-control-input"
+                       @if((int)setting('origin_path',0) === 1) checked @endif value="1">
+                <label class="custom-control-label" for="origin_path1">是</label>
+            </div>
+            <div class="custom-control custom-radio">
+                <input type="radio" id="origin_path0" name="origin_path" class="custom-control-input"
+                       @if((int)setting('origin_path',0) === 0) checked @endif value="0">
+                <label class="custom-control-label" for="origin_path0">否</label>
+            </div>
+        </div>
+
+        <div class="form-group">
             <label class="form-control-label" for="hotlink_protection">防盗链</label>
             <input type="text" class="form-control" id="hotlink_protection" name="hotlink_protection"
                    value="{{ setting('hotlink_protection') }}">

@@ -17,7 +17,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 /**
- * OneDriveGraph 索引
+ * OneDrive 目录索引
  * Class IndexController
  *
  * @package App\Http\Controllers
@@ -54,7 +54,7 @@ class IndexController extends Controller
         $this->middleware(['verify.installation', 'verify.token', 'handle.forbid',]);
 //        $this->middleware('handle.encrypt')->only(setting('encrypt_option', ['list']));
         $this->middleware('hotlink.protection')->only(['show', 'download', 'thumb', 'thumbCrop']);
-        $this->middleware('throttle:10,2')->only(['search', 'searchShow']);
+        $this->middleware('throttle:' . setting('search_throttle'))->only(['search', 'searchShow']);
 
 
         $this->expires = setting('expires', 1800);
@@ -71,6 +71,7 @@ class IndexController extends Controller
     }
 
     /**
+     * 首页
      * @param Request $request
      *
      * @return Factory|RedirectResponse|View
@@ -83,6 +84,7 @@ class IndexController extends Controller
 
 
     /**
+     * 列表
      * @param Request $request
      *
      * @return Factory|RedirectResponse|View
@@ -435,6 +437,7 @@ class IndexController extends Controller
     }
 
     /**
+     * 处理加密文档
      * @return Factory|RedirectResponse|View|void
      */
     public function handlePassword()
@@ -464,7 +467,6 @@ class IndexController extends Controller
             compact('route', 'requestPath', 'encryptKey')
         );
     }
-
 
     /*处理加密资源*/
     public function handleEncrypt($itemArray)

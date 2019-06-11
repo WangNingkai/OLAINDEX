@@ -20,6 +20,7 @@ class ImageController extends Controller
     public function __construct()
     {
         $this->middleware(['verify.installation', 'verify.token', 'verify.image']);
+        $this->middleware('throttle:' . setting('image_upload_throttle', 5))->only('upload');
     }
 
     /**

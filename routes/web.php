@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Str;
 use App\Helpers\Tool;
 
@@ -11,23 +12,7 @@ Route::any('/', static function () {
     return redirect()->route($redirect);
 });
 
-//列表
-Route::prefix('home')->group(static function () {
-    Route::get('{query?}', 'IndexController@list')->where('query', '.*')->name('home');
-});
 
-//展示
-Route::get('show/{query}', 'IndexController@show')
-    ->where('query', '.*')
-    ->name('show');
-// 下载
-Route::get('down/{query}', 'IndexController@download')
-    ->where('query', '.*')
-    ->name('download');
-//看图
-Route::get('view/{query}', 'IndexController@download')
-    ->where('query', '.*')
-    ->name('view');
 // 缩略图
 Route::get('thumb/{id}/size/{size}', 'IndexController@thumb')->name('thumb');
 Route::get('thumb/{id}/{width}/{height}', 'IndexController@thumbCrop')->name('thumb_crop');
@@ -118,3 +103,26 @@ if (Str::contains(config('app.url'), ['localhost', 'dev.ningkai.wang'])) {
         );
     });
 }
+
+$showOriginPath = setting('origin_path', 1);
+
+if (!$showOriginPath) {
+    //列表
+    Route::prefix('home')->group(static function () {
+        Route::get('{query?}', 'IndexController@list')->where('query', '.*')->name('home');
+    });
+
+    //展示
+    Route::get('show/{query}', 'IndexController@show')
+        ->where('query', '.*')
+        ->name('show');
+    // 下载
+    Route::get('down/{query}', 'IndexController@download')
+        ->where('query', '.*')
+        ->name('download');
+    //看图
+    Route::get('view/{query}', 'IndexController@download')
+        ->where('query', '.*')
+        ->name('view');
+}
+
