@@ -1,52 +1,61 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use Route;
 use Illuminate\Support\Str;
 use App\Helpers\Tool;
 
 // 授权
 Route::get('/oauth', 'OauthController@oauth')->name('oauth');
 
-
 // 索引
 Route::any('/', static function () {
-    $redirect = (int)Tool::config('image_home', 0) ? 'image' : 'home';
-
+    $redirect = (int)setting('image_home', 0) ? 'image' : 'home';
     return redirect()->route($redirect);
 });
 
+//列表
 Route::prefix('home')->group(static function () {
     Route::get('{query?}', 'IndexController@list')->where('query', '.*')->name('home');
 });
 
-Route::get('show/{query}', 'IndexController@show')->where('query', '.*')->name('show');
-Route::get('down/{query}', 'IndexController@download')->where('query', '.*')
-    ->name('download')->middleware('hotlinkProtection');
-Route::get('view/{query}', 'IndexController@view')->where('query', '.*')
-    ->name('view')->middleware('hotlinkProtection');
-Route::post('password', 'IndexController@handlePassword')->name('password');
+//展示
+Route::get('show/{query}', 'IndexController@show')
+    ->where('query', '.*')
+    ->name('show');
+// 下载
+Route::get('down/{query}', 'IndexController@download')
+    ->where('query', '.*')
+    ->name('download');
+//看图
+Route::get('view/{query}', 'IndexController@download')
+    ->where('query', '.*')
+    ->name('view');
+// 缩略图
 Route::get('thumb/{id}/size/{size}', 'IndexController@thumb')->name('thumb');
-Route::get('thumb/{id}/{width}/{height}', 'IndexController@thumbCrop')
-    ->name('thumb_crop');
+Route::get('thumb/{id}/{width}/{height}', 'IndexController@thumbCrop')->name('thumb_crop');
+
+// 加密
+Route::post('password', 'IndexController@handlePassword')->name('password');
+
+//消息
 Route::view('message', config('olaindex.theme') . 'message')->name('message');
 
 
 // 图床
-Route::get('image', 'ManageController@uploadImage')->name('image');
-Route::post('image/upload', 'ManageController@uploadImage')->name('image.upload');
+Route::get('image', 'ImageControllerController@index')->name('image');
+Route::post('image', 'ImageControllerController@upload')->name('image.upload');
+
+//删除
 Route::get('file/delete/{sign}', 'ManageController@deleteItem')->name('delete');
 
-
 // 后台设置管理
-//Route::any('login', 'AdminController@login')->name('login');
-//Route::post('logout', 'AdminController@logout')->name('logout');
-
+//登陆
 Route::get('login', 'LoginController@showLoginForm')->name('login');
 Route::post('login', 'LoginController@login');
 Route::post('logout', 'LoginController@logout')->name('logout');
 
-Route::prefix('admin')->group(function () {
-
+// 操作
+Route::prefix('admin')->group(static function () {
     // 安装
     Route::prefix('install')->group(static function () {
         Route::any('/', 'InstallController@install')->name('_1stInstall');
@@ -64,15 +73,15 @@ Route::prefix('admin')->group(function () {
     Route::any('refresh', 'AdminController@refresh')->name('admin.cache.refresh');
 
     // 文件夹操作
-    Route::prefix('folder')->group(function () {
+    Route::prefix('folder')->group(static function () {
         Route::post('lock', 'ManageController@lockFolder')->name('admin.lock');
         Route::post('create', 'ManageController@createFolder')->name('admin.folder.create');
     });
     // 文件操作
-    Route::prefix('file')->group(function () {
+    Route::prefix('file')->group(static function () {
         Route::get('/', 'ManageController@uploadFile')->name('admin.file');
         Route::post('upload', 'ManageController@uploadFile')
-            ->name('admin.file.upload')->middleware('throttle:10,2');
+            ->name('admin.file.upload');
         Route::any('add', 'ManageController@createFile')
             ->name('admin.file.create');
         Route::any('edit/{id}', 'ManageController@updateFile')
@@ -93,13 +102,13 @@ Route::prefix('admin')->group(function () {
         ->name('admin.url.upload');
 });
 // 搜索
-Route::any('search', 'IndexController@search')->name('search')
-    ->middleware('checkAuth', 'throttle:10,2');
+Route::any('search', 'IndexController@search')
+    ->name('search');
 Route::any('search/file/{id}', 'IndexController@searchShow')
-    ->name('search.show')->middleware('checkAuth');
+    ->name('search.show');
 
 if (Str::contains(config('app.url'), ['localhost', 'dev.ningkai.wang'])) {
-    Route::get('about', function () {
+    Route::get('about', static function () {
         $url
             = 'https://raw.githubusercontent.com/WangNingkai/OLAINDEX/master/README.md';
         $content = Tool::getFileContent($url);

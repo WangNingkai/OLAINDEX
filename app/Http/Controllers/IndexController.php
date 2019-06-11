@@ -53,6 +53,9 @@ class IndexController extends Controller
     {
         $this->middleware(['verify.installation', 'verify.token', 'handle.illegal',]);
         $this->middleware('handle.encrypt')->only(setting('encrypt_option', ['list']));
+        $this->middleware('hotlink.protection')->only(['show', 'download', 'thumb', 'thumbCrop']);
+        $this->middleware('throttle:10,2')->only(['search', 'searchShow']);
+
 
         $this->expires = setting('expires', 1800);
         $this->root = setting('root', '/');

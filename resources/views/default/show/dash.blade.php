@@ -1,11 +1,11 @@
 @extends('default.layouts.main')
 @section('title',$file['name'])
 @section('css')
-    <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/dplayer/1.25.0/DPlayer.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/dplayer/1.25.0/DPlayer.min.css">
 @stop
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/dashjs/dist/dash.all.min.js"></script>
-    <script src="https://cdnjs.loli.net/ajax/libs/dplayer/1.25.0/DPlayer.min.js"></script>
+    <script src="https://cdn.bootcss.com/dplayer/1.25.0/DPlayer.min.js"></script>
     <script>
         const dp = new DPlayer({
             container: document.getElementById('dash-player'),
