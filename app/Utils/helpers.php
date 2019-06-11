@@ -107,6 +107,7 @@ if (!function_exists('refresh_token')) {
     function refresh_token()
     {
         $expires = setting('access_token_expires', 0);
+        $expires = strtotime($expires);
         $hasExpired = $expires - time() <= 0;
         if ($hasExpired) {
             $oauth = new OauthController();

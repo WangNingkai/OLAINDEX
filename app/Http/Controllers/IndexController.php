@@ -51,8 +51,8 @@ class IndexController extends Controller
      */
     public function __construct()
     {
-        $this->middleware(['verify.installation', 'verify.token', 'handle.illegal',]);
-        $this->middleware('handle.encrypt')->only(setting('encrypt_option', ['list']));
+        $this->middleware(['verify.installation', 'verify.token', 'handle.forbid',]);
+//        $this->middleware('handle.encrypt')->only(setting('encrypt_option', ['list']));
         $this->middleware('hotlink.protection')->only(['show', 'download', 'thumb', 'thumbCrop']);
         $this->middleware('throttle:10,2')->only(['search', 'searchShow']);
 

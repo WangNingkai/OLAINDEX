@@ -12,7 +12,7 @@
     <script src="https://cdn.bootcss.com/libs/blueimp-gallery/2.33.0/js/jquery.blueimp-gallery.min.js"></script>
     <script src="https://cdn.bootcss.com/libs/blueimp-gallery/2.33.0/js/blueimp-gallery-fullscreen.min.js"></script>
     <script>
-        @if(session()->has('LogInfo'))
+        @auth
         function deleteItem($sign) {
             swal({
                 title: '确定删除吗？',
@@ -40,7 +40,7 @@
                 $("#dl").val(origin + url);
             });
         }
-        @endif
+        @endauth
     </script>
 @stop
 @section('content')
@@ -96,7 +96,7 @@
                                         class="fa fa-pencil-square-o"></i> 编辑 README</a>
                             @else
                                 <a class="dropdown-item"
-                                   href="{{ route('admin.file.create',['name' => 'README', 'path' => encrypt($origin_path)]) }}"><i
+                                   href="{{ route('admin.file.create',['name' => 'README', 'path' => encrypt($originPath)]) }}"><i
                                         class="fa fa-plus-circle"></i> 添加
                                     README</a>
                             @endif
@@ -107,7 +107,7 @@
 
                             @else
                                 <a class="dropdown-item"
-                                   href="{{ route('admin.file.create',['name' => 'HEAD', 'path' => encrypt($origin_path)]) }}"><i
+                                   href="{{ route('admin.file.create',['name' => 'HEAD', 'path' => encrypt($originPath)]) }}"><i
                                         class="fa fa-plus-circle"></i> 添加
                                     HEAD</a>
                             @endif
@@ -133,7 +133,7 @@
                                             <div class="form-group">
                                                 <input type="text" name="name" class="form-control" placeholder="请输入目录名"
                                                        required>
-                                                <input type="hidden" name="path" value="{{ encrypt($origin_path) }}">
+                                                <input type="hidden" name="path" value="{{ encrypt($originPath) }}">
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -156,7 +156,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <p class="text-danger">
-                                            链接将在 {{ date('m/d/Y H:i', setting('access_token_expires')) }}
+                                            链接将在 {{ setting('access_token_expires') }}
                                             后失效</p>
                                         <p><a href="javascript:void(0)"
                                               style="text-decoration: none" data-toggle="tooltip"
@@ -175,7 +175,7 @@
                                 </div>
                             </div>
                         </div>
-                    @else
+                    @elseauth
                         <span class="pull-right">操作</span>
                     @endauth
                 </div>
@@ -192,12 +192,12 @@
                     <div class="row">
                         <div class="col-8 col-sm-6" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
                             @if( \Illuminate\Support\Arr::has($item,'folder'))
-                                <a href="{{ route('home',\App\Utils\Tool::encodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
+                                <a href="{{ route('home',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}"
                                    title="{{ $item['name'] }}">
                                     <i class="fa fa-folder"></i> {{ $item['name'] }}
                                 </a>
                             @else
-                                <a href="{{ route('show',\App\Utils\Tool::encodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
+                                <a href="{{ route('show',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}"
                                    title="{{ $item['name'] }}">
                                     <i class="fa {{ \App\Utils\Tool::getExtIcon($item['ext'] ?? '') }}"></i> {{ $item['name'] }}
                                 </a>
@@ -215,7 +215,7 @@
                             <span class="pull-right">
                                 @if(! \Illuminate\Support\Arr::has($item,'folder'))
                                     @if( \Illuminate\Support\Arr::has($item,'image'))
-                                        <a href="{{ route('view',\App\Utils\Tool::encodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
+                                        <a href="{{ route('view',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}"
                                            data-fancybox="image-list"><i
                                                 class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
                                     @endif
@@ -224,19 +224,19 @@
                                                 class="fa fa-pencil"></i></a>&nbsp;&nbsp;
                                     @endif
                                     <a class="download_url"
-                                       href="{{ route('download',\App\Utils\Tool::encodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"><i
+                                       href="{{ route('download',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}"><i
                                             class="fa fa-download"
                                             title="下载"></i></a>&nbsp;&nbsp;
                                 @else
-                                    <a href="{{ route('home',\App\Utils\Tool::encodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
+                                    <a href="{{ route('home',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}"
                                        title="{{ $item['name'] }}"><i class="fa fa-folder-open"></i></a>&nbsp;&nbsp;
                                 @endif
-                                @if (session()->has('LogInfo'))
+                                @auth
                                     <a onclick="deleteItem('{{ encrypt($item['id'] . '.' . encrypt($item['eTag'])) }}')"
                                        href="javascript:void(0)"><i class="fa fa-trash"
                                                                     title="删除"></i></a>&nbsp;
                                     &nbsp;
-                                @endif
+                                @endauth
                             </span>
                         </div>
                     </div>
@@ -247,9 +247,9 @@
                     <div class="col-8 col-sm-6" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
                             <span class="text-muted font-weight-light">
                                 共 {{ $parent_item['folder']['childCount'] }} 个项目
-                                @if(session()->has('LogInfo'))
+                                @auth
                                     {{ \App\Utils\Tool::convertSize($parent_item['size']) }}
-                                @endif
+                                @endauth
                             </span>
                     </div>
                 </div>
@@ -268,7 +268,7 @@
                 <div id="links">
                     @foreach($items as $item)
                         @if( \Illuminate\Support\Arr::has($item,'image'))
-                            <a href="{{ route('view',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
+                            <a href="{{ route('view',$originPath ? $originPath.'/'.$item['name'] : $item['name']) }}"
                                title="{{ $item['name'] }}" data-gallery>
                                 <img class="lazy"
                                      data-original="{{  \Illuminate\Support\Arr::get($item,'thumbnails.0.small.url') }}"

@@ -24,6 +24,7 @@ class VerifyAccessToken
             return redirect()->route('bind');
         }
         $expires = setting('access_token_expires', 0);
+        $expires = strtotime($expires);
         $hasExpired = $expires - time() <= 0;
         if ($hasExpired) {
             $current = url()->current();

@@ -1,4 +1,4 @@
-@extends('default.default.layouts.common')
+@extends('default.layouts.common')
 @section('title','登录')
 @section('content')
     <div class="row justify-content-center">

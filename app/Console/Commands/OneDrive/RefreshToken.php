@@ -38,6 +38,7 @@ class RefreshToken extends Command
     public function handle()
     {
         $expires = setting('access_token_expires', 0);
+        $expires = strtotime($expires);
         $hasExpired = $expires - time() <= 0;
         if (!$hasExpired) {
             return;

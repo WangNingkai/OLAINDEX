@@ -40,8 +40,8 @@ Route::view('message', config('olaindex.theme') . 'message')->name('message');
 
 
 // 图床
-Route::get('image', 'ImageControllerController@index')->name('image');
-Route::post('image', 'ImageControllerController@upload')->name('image.upload');
+Route::get('image', 'ImageController@index')->name('image');
+Route::post('image', 'ImageController@upload')->name('image.upload');
 
 //删除
 Route::get('file/delete/{sign}', 'ManageController@deleteItem')->name('delete');

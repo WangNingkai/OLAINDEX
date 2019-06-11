@@ -20,33 +20,37 @@ class HandleEncryptDir
     public function handle($request, Closure $next)
     {
         $route = $request->route()->getName();
-        $realPath = $request->route()->parameter('query') ?? '/';
-        $encryptDir = Tool::handleEncryptDir(Tool::config('encrypt_path'));
+        $requestPath = $request->route()->parameter('query', '/');
+
+//        $encryptDir = Tool::handleEncryptDir(setting('encrypt_path'));
+        $encryptDir = [];
+
+
+        if (blank($encryptDir)) {
+            return $next($request);
+        }
         foreach ($encryptDir as $key => $item) {
-            if (Str::startsWith(Tool::getAbsolutePath($realPath), $key)) {
+            if (Str::startsWith(Tool::getAbsolutePath($requestPath), $key)) {
                 $encryptKey = $key;
                 if (Session::has('password:' . $key)) {
                     $data = Session::get('password:' . $key);
                     $encryptKey = $data['encryptKey'];
-                    if (strcmp($encryptDir[$encryptKey], decrypt($data['password'])) !== 0
-                        || time() > $data['expires']
-                    ) {
+                    if (time() > $data['expires'] ||
+                        strcmp($encryptDir[$encryptKey], decrypt($data['password'])) !== 0) {
                         Session::forget($key);
                         Tool::showMessage('密码已过期', false);
 
                         return response()->view(
                             config('olaindex.theme') . 'password',
-                            compact('route', 'realPath', 'encryptKey')
+                            compact('route', 'requestPath', 'encryptKey')
                         );
-                    } else {
-                        return $next($request);
                     }
-                } else {
-                    return response()->view(
-                        config('olaindex.theme') . 'password',
-                        compact('route', 'realPath', 'encryptKey')
-                    );
+                    return $next($request);
                 }
+                return response()->view(
+                    config('olaindex.theme') . 'password',
+                    compact('route', 'requestPath', 'encryptKey')
+                );
             }
         }
 
