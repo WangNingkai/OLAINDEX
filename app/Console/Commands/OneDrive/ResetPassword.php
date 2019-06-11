@@ -3,6 +3,7 @@
 namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\Tool;
+use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
@@ -39,7 +40,11 @@ class ResetPassword extends Command
     public function handle()
     {
         $password = Str::random(8);
-        Tool::updateConfig(['password' => md5($password)]);
+
+        User::query()->update([
+            'name' => 'admin',
+            'password' => bcrypt($password),
+        ]);
         $this->info("New Password:[ {$password} ]");
     }
 }

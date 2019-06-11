@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\OneDrive;
 
-use App\Helpers\Tool;
-use App\Helpers\OneDrive;
+use App\Utils\Tool;
+use App\Service\OneDrive;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 
@@ -50,9 +50,9 @@ class Find extends Command
         $offset = $this->option('offset');
         $length = $this->option('limit');
         if ($id = $this->option('id')) {
-            $response = OneDrive::getItem($id);
+            $response = OneDrive::getInstance(one_account())->getItem($id);
         } else {
-            $response = OneDrive::search($remote, $keywords);
+            $response = OneDrive::getInstance(one_account())->search($remote, $keywords);
         }
         $data = $response['errno'] === 0 ? $response['data'] : [];
         if (!$data) {
@@ -87,7 +87,7 @@ class Find extends Command
                 : '1';
             $owner = Arr::get($item, 'createdBy.user.displayName');
             if ($id = $this->option('id')) {
-                $response = OneDrive::itemIdToPath($item['id']);
+                $response = OneDrive::getInstance(one_account())->itemIdToPath($item['id']);
                 $path = $response['errno'] === 0 ? $response['data']['path']
                     : 'Failed Fetch Path!';
                 $content = [

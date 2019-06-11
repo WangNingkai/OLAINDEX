@@ -127,8 +127,6 @@ class AdminController extends Controller
      */
     public function refresh(): RedirectResponse
     {
-        // todo:后台异步任务
-//        Artisan::call('od:cache');
         RefreshCache::dispatch()->delay(Carbon::now()->addSeconds(5))->onQueue('olaindex');
         Tool::showMessage('后台正在刷新，请继续其它任务...');
 

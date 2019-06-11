@@ -510,16 +510,15 @@ class Tool
      */
     public static function refreshToken()
     {
-        $expires = Tool::config('access_token_expires', 0);
-        $hasExpired = $expires - time() <= 0 ? true : false;
+        $expires = setting('access_token_expires', 0);
+        $hasExpired = $expires - time() <= 0;
         if ($hasExpired) {
             $oauth = new OauthController();
             $res = json_decode($oauth->refreshToken(false), true);
 
             return $res['code'] === 200;
-        } else {
-            return true;
         }
+        return true;
     }
 
     /**

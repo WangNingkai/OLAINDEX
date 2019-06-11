@@ -33,16 +33,14 @@ class Reset extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
      */
     public function handle()
     {
         if ($this->option('force')) {
-            return $this->reset();
-        } else {
-            if ($this->confirm('Reset will erase all data, continue?')) {
-                return $this->reset();
-            }
+            $this->reset();
+        }
+        if ($this->confirm('Reset will erase all data, continue?')) {
+            $this->reset();
         }
     }
 
@@ -52,10 +50,7 @@ class Reset extends Command
     public function reset()
     {
         $this->call('cache:clear');
-        copy(
-            storage_path('app/example.config.json'),
-            storage_path('app/config.json')
-        );
+        $this->call('migrate:reset');
         $this->info('Reset Completed！');
     }
 }

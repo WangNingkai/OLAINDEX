@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\OneDrive;
 
-use App\Helpers\Constants;
+use App\Service\CoreConstants;
 use Illuminate\Console\Command;
 use DB;
 use Illuminate\Support\Str;
@@ -39,7 +39,7 @@ class Install extends Command
      */
     public function handle()
     {
-        $this->info(Constants::LOGO);
+        $this->info(CoreConstants::LOGO);
         // 初始化操作
         $this->call('cache:clear');
         $this->warn('Please make sure you have rights to configure!');

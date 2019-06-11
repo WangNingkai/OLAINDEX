@@ -1,6 +1,4 @@
 <?php
-
-use Route;
 use Illuminate\Support\Str;
 use App\Helpers\Tool;
 

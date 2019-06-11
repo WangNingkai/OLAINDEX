@@ -1,37 +1,10 @@
 <?php
 
+use App\Http\Controllers\OauthController;
 use App\Models\Setting;
+use App\Service\OneDrive;
+use App\Utils\Tool;
 
-if (!function_exists('word_time')) {
-    /**
-     * 把日期或者时间戳转为距离现在的时间
-     *
-     * @param $time
-     * @return bool|string
-     */
-    function word_time($time)
-    {
-// 如果是日期格式的时间;则先转为时间戳
-        if (!is_int($time)) {
-            $time = strtotime($time);
-        }
-        $int = time() - $time;
-        if ($int <= 2) {
-            $str = sprintf('刚刚', $int);
-        } elseif ($int < 60) {
-            $str = sprintf('%d秒前', $int);
-        } elseif ($int < 3600) {
-            $str = sprintf('%d分钟前', floor($int / 60));
-        } elseif ($int < 86400) {
-            $str = sprintf('%d小时前', floor($int / 3600));
-        } elseif ($int < 1728000) {
-            $str = sprintf('%d天前', floor($int / 86400));
-        } else {
-            $str = date('Y-m-d H:i:s', $time);
-        }
-        return $str;
-    }
-}
 if (!function_exists('is_json')) {
     /**
      * 判断字符串是否是json
@@ -74,14 +47,74 @@ if (!function_exists('one_account')) {
     /**
      * 获取绑定OneDrive用户信息
      *
-     * @return array
+     * @param string $key
+     * @return \Illuminate\Support\Collection|mixed
      */
-    function one_account()
+    function one_account($key = '')
     {
-        return [
+        $account = collect([
             'account_type' => setting('account_type'),
             'access_token' => setting('access_token'),
             'account_email' => setting('account_email'),
-        ];
+        ]);
+        return $key ? $account->get($key, '') : $account;
     }
 }
+
+
+if (!function_exists('one_info')) {
+
+    /**
+     * 获取绑定OneDrive信息
+     * @param string $key
+     * @return array|\Illuminate\Support\Collection|mixed
+     * @throws ErrorException
+     */
+    function one_info($key = '')
+    {
+        if (refresh_token()) {
+            $quota = Cache::remember(
+                'one:quota',
+                setting('expires'),
+                static function () {
+                    $response = OneDrive::getInstance(one_account())->getDriveInfo();
+                    if ($response['errno'] === 0) {
+                        $quota = $response['data']['quota'];
+                        foreach ($quota as $k => $item) {
+                            if (!is_string($item)) {
+                                $quota[$k] = Tool::convertSize($item);
+                            }
+                        }
+                        return $quota;
+                    }
+                    return [];
+                }
+            );
+            $info = collect($quota);
+            return $key ? $info->get($key, '') : $info;
+        }
+        return [];
+    }
+}
+
+if (!function_exists('refresh_token')) {
+
+    /**
+     * 刷新token
+     * @return bool
+     * @throws ErrorException
+     */
+    function refresh_token()
+    {
+        $expires = setting('access_token_expires', 0);
+        $hasExpired = $expires - time() <= 0;
+        if ($hasExpired) {
+            $oauth = new OauthController();
+            $res = json_decode($oauth->refreshToken(false), true);
+
+            return $res['code'] === 200;
+        }
+        return true;
+    }
+}
+

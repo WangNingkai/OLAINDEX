@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\OneDrive;
 
-use App\Helpers\OneDrive;
+use App\Service\OneDrive;
 use Illuminate\Console\Command;
 
 class Remove extends Command
@@ -63,7 +63,7 @@ class Remove extends Command
                 exit;
             }
             $id_response
-                = OneDrive::pathToItemId($remote);
+                = OneDrive::getInstance(one_account())->pathToItemId($remote);
             if ($id_response['errno'] === 0) {
                 $id = $id_response['data']['id'];
             } else {
@@ -71,9 +71,9 @@ class Remove extends Command
                 exit;
             }
         }
-        $response = OneDrive::delete($id);
+        $response = OneDrive::getInstance(one_account())->delete($id);
         $this->call('cache:clear');
-        $response['errno'] === 0 ? $this->info("Deleted!")
+        $response['errno'] === 0 ? $this->info('Deleted')
             : $this->warn("Failed!\n{$response['msg']} ");
     }
 }

@@ -2,8 +2,9 @@
 
 namespace App\Console\Commands\OneDrive;
 
-use App\Helpers\OneDrive;
+use App\Service\OneDrive;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 
 class WhereIs extends Command
 {
@@ -38,9 +39,9 @@ class WhereIs extends Command
     {
         $this->call('od:refresh');
         $id = $this->argument('id');
-        $response = OneDrive::itemIdToPath($id);
+        $response = OneDrive::getInstance(one_account())->itemIdToPath($id);
         if ($response['errno'] === 0) {
-            $this->info(array_get($response, 'data.path'));
+            $this->info(Arr::get($response, 'data.path'));
         } else {
             $this->error($response['msg']);
             exit;
