@@ -309,23 +309,23 @@ class Tool
      */
     public static function refreshAccount($account): void
     {
-        $response = OneDrive::getInstance($account)->getDriveInfo();
+
+        $response = OneDrive::getInstance($account)->getAccountInfo();
         if ($response['errno'] === 0) {
-            $extend = Arr::get($response, 'data');
-            $account_email = Arr::get($extend, 'owner.user.email', '');
-            $data = [
-                'account_email' => $account_email,
-                'account_state' => '正常',
-                'account_extend' => $extend
-            ];
-        } else {
-            $response = OneDrive::getInstance($account)->getAccountInfo();
             $extend = Arr::get($response, 'data');
             $account_email = $response['errno'] === 0 ? Arr::get($extend, 'userPrincipalName') : '';
             $data = [
                 'account_email' => $account_email,
-                'account_state' => '暂时无法使用',
-                'account_extend' => $extend
+                'account_state' => '正常',
+            ];
+            $resp = OneDrive::getInstance($account)->getDriveInfo();
+            if ($resp['errno'] === 0) {
+                $extend = Arr::get($resp, 'data');
+                $data['account_extend'] = $extend;
+            }
+        } else {
+            $data = [
+                'account_state' => '账号异常',
             ];
         }
         Setting::batchUpdate($data);
@@ -377,70 +377,5 @@ class Tool
         }
 
         return $content;
-    }
-
-    /**
-     * @param $ext
-     *
-     * @return string
-     */
-    public static function fileIcon($ext)
-    {
-        if (in_array($ext, ['ogg', 'mp3', 'wav'], false)) {
-            return 'audiotrack';
-        }
-        if (in_array($ext, ['apk'], false)) {
-            return 'android';
-        }
-        if (in_array($ext, ['pdf'], false)) {
-            return 'picture_as_pdf';
-        }
-        if (in_array($ext, [
-            'bmp',
-            'jpg',
-            'jpeg',
-            'png',
-            'gif',
-            'ico',
-            'jpe',
-        ])
-        ) {
-            return 'image';
-        }
-        if (in_array($ext, [
-            'mp4',
-            'mkv',
-            'webm',
-            'avi',
-            'mpg',
-            'mpeg',
-            'rm',
-            'rmvb',
-            'mov',
-            'wmv',
-            'mkv',
-            'asf',
-        ])
-        ) {
-            return 'ondemand_video';
-        }
-        if (in_array($ext, [
-            'html',
-            'htm',
-            'css',
-            'go',
-            'java',
-            'js',
-            'json',
-            'txt',
-            'sh',
-            'md',
-            'php',
-        ])
-        ) {
-            return 'code';
-        }
-
-        return 'insert_drive_file';
     }
 }

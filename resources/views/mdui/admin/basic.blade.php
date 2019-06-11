@@ -102,6 +102,13 @@
                 <div class="mdui-textfield-helper">重试等待时间默认是1分钟（格式：5,10，每10分钟最多搜索5次；5 每分钟最多搜索5次）</div>
             </div>
             <br>
+            <label for="origin_path" class="mdui-textfield-label">路径兼容模式</label> &nbsp; &nbsp;
+            <br>
+            <select name="origin_path" id="origin_path" class="mdui-select" mdui-select="{position: 'bottom'}">
+                <option value="1" @if(setting('origin_path',0) === 1) selected @endif>开启</option>
+                <option value="0" @if(setting('origin_path',0) === 0) selected @endif>关闭</option>
+            </select>
+            <br>
             <div class="mdui-textfield mdui-textfield-floating-label">
                 <label class="mdui-textfield-label" for="hotlink_protection">防盗链</label>
                 <input type="text" class="mdui-textfield-input" id="hotlink_protection" name="hotlink_protection"
