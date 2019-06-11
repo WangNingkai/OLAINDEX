@@ -199,4 +199,68 @@ class Extension
         'United' => 'united',
         'Yeti' => 'yeti',
     ];
+
+    /**
+     * @param $ext
+     * @return string
+     */
+    public static function getFileIcon($ext): string
+    {
+        if (in_array($ext, ['ogg', 'mp3', 'wav'], false)) {
+            return 'audiotrack';
+        }
+        if ($ext === 'apk') {
+            return 'android';
+        }
+        if ($ext === 'pdf') {
+            return 'picture_as_pdf';
+        }
+        if (in_array($ext, [
+            'bmp',
+            'jpg',
+            'jpeg',
+            'png',
+            'gif',
+            'ico',
+            'jpe',
+        ])
+        ) {
+            return 'image';
+        }
+        if (in_array($ext, [
+            'mp4',
+            'mkv',
+            'webm',
+            'avi',
+            'mpg',
+            'mpeg',
+            'rm',
+            'rmvb',
+            'mov',
+            'wmv',
+            'mkv',
+            'asf',
+        ])
+        ) {
+            return 'ondemand_video';
+        }
+        if (in_array($ext, [
+            'html',
+            'htm',
+            'css',
+            'go',
+            'java',
+            'js',
+            'json',
+            'txt',
+            'sh',
+            'md',
+            'php',
+        ])
+        ) {
+            return 'code';
+        }
+
+        return 'insert_drive_file';
+    }
 }

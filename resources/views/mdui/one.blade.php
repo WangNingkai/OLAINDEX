@@ -109,7 +109,7 @@
                             <a href="{{ route('show',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}"
                                target="_blank">
                                 <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
-                                    <i class="mdui-icon material-icons">{{ \App\Utils\Tool::fileIcon($item['ext']) }}</i>
+                                    <i class="mdui-icon material-icons">{{ \App\Utils\Extension::getFileIcon($item['ext']) }}</i>
                                     {{ $item['name'] }}
                                 </div>
                                 <div
@@ -197,7 +197,7 @@
             @endforeach
         </div>
 
-            {{ $items->appends(['limit' => request()->get('limit'),'orderBy'=> request()->get('orderBy')])->links('mdui.page') }}
+        {{ $items->appends(['limit' => request()->get('limit'),'orderBy'=> request()->get('orderBy')])->links('mdui.page') }}
 
         @if (!blank($readme))
             <div class="mdui-typo mdui-shadow-3 mdui-p-a-2 mdui-m-a-2">

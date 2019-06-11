@@ -34,7 +34,8 @@
         <a href="{{ route('home') }}" target="_blank" class="mdui-typo-headline mdui-hidden-xs">OLAINDEX</a>
         <div class="mdui-toolbar-spacer"></div>
         <a href="{{ route('admin.bind') }}" class="mdui-btn"><i
-                class="mdui-icon material-icons">face</i> {{ \Illuminate\Support\Str::before(\App\Helpers\Tool::getBindAccount(),'@')  }}</a>
+                class="mdui-icon material-icons">face</i> {{ \Illuminate\Support\Str::before(setting('account_email'),'@')  }}
+        </a>
         <a onclick="event.preventDefault();document.getElementById('logout-form').submit();"
            href="javascript:void(0)" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">exit_to_app</i></a>
         <form id="logout-form" action="{{ route('logout') }}" method="POST"
@@ -53,8 +54,8 @@
         <div class="mdui-list-item mdui-ripple">
             <i class="mdui-list-item-icon mdui-icon material-icons mdui-text-color-indigo">storage</i>
             <div class="mdui-list-item-content"><span
-                    class="mdui-text-color-red">{{ \App\Helpers\Tool::getOneDriveInfo('used') }}</span> / <span
-                    class="mdui-text-color-green">{{ \App\Helpers\Tool::getOneDriveInfo('total') }}</span></div>
+                    class="mdui-text-color-red">{{ one_info('used') }}</span> / <span
+                    class="mdui-text-color-green">{{ one_info('total') }}</span></div>
         </div>
         <div
             class="mdui-collapse-item @if(in_array(request()->route()->getName(),['admin.basic','admin.show','admin.profile','admin.bind'])) mdui-collapse-item-open @endif">
@@ -100,7 +101,8 @@
                 <a class="mdui-list-item mdui-ripple"
                    href="{{ route('admin.cache.clear') }}">缓存清理 </a>
                 <a class="mdui-list-item mdui-ripple"
-                   href="{{ route('admin.cache.refresh') }}" onclick="mdui.snackbar({ message: '正在刷新缓存，请稍等', position: 'right-top' });">缓存刷新 </a>
+                   href="{{ route('admin.cache.refresh') }}"
+                   onclick="mdui.snackbar({ message: '正在刷新缓存，请稍等', position: 'right-top' });">缓存刷新 </a>
             </div>
         </div>
         <a href="{{ route('image') }}" class="mdui-list-item mdui-ripple">

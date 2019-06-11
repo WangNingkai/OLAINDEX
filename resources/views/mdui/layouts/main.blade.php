@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ \App\Helpers\Tool::config('name','OLAINDEX') }}</title>
+    <title>{{ setting('name','OLAINDEX') }}</title>
     <meta name="keywords" content="OLAINDEX,OneDrive,Index,Microsoft OneDrive,Directory Index"/>
     <meta name="description" content="OLAINDEX,Another OneDrive Directory Index"/>
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -27,7 +27,7 @@
 <body class="mdui-appbar-with-toolbar mdui-theme-accent-blue mdui-theme-primary-indigo">
 <div class="mdui-appbar  mdui-appbar-fixed mdui-color-theme">
     <div class="mdui-toolbar mdui-color-theme mdui-container" style="position: relative">
-        <a href="{{ route('home') }}" class="mdui-typo-headline">{{ \App\Helpers\Tool::config('name') }}</a>
+        <a href="{{ route('home') }}" class="mdui-typo-headline">{{ setting('name') }}</a>
         <div class="mdui-toolbar-spacer"></div>
         @if(in_array(request()->route()->getName(),['home','search']))
             <label class="mdui-switch" mdui-tooltip="{content: '切换视图'}" style="position: absolute;right: 0">

@@ -17,14 +17,14 @@
             <i class="mdui-icon material-icons">https</i>
             <label class="mdui-textfield-label" for="client_secret">应用 机密(client secret)</label>
             <input type="text" class="mdui-textfield-input" disabled name="client_secret" id="client_secret" required
-                   value="{{ \App\Helpers\Tool::config('client_secret') }}"/>
+                   value="{{ setting('client_secret') }}"/>
         </div>
         <br>
         <div class="mdui-textfield mdui-textfield-floating-label">
             <i class="mdui-icon material-icons">apps</i>
             <label class="mdui-textfield-label" for="client_id">应用 ID(client_id)</label>
             <input type="text" class="mdui-textfield-input" disabled name="client_id" id="client_id" required
-                   value="{{ \App\Helpers\Tool::config('client_id') }}"/>
+                   value="{{ setting('client_id') }}"/>
         </div>
         <br>
 
@@ -32,13 +32,13 @@
             <i class="mdui-icon material-icons">link</i>
             <label class="mdui-textfield-label" for="redirect_uri">回调地址(redirect_uri)</label>
             <input type="text" name="redirect_uri" disabled id="redirect_uri" class="mdui-textfield-input"
-                   value="{{ \App\Helpers\Tool::config('redirect_uri') }}" required/>
+                   value="{{ setting('redirect_uri') }}" required/>
         </div>
         <div class="mdui-textfield">
             <i class="mdui-icon material-icons">info</i>
             <label class="mdui-textfield-label" for="account_type">账户类型(com/cn)</label>
             <input type="text" name="account_type" disabled id="account_type" class="mdui-textfield-input"
-                   value="{{ \App\Helpers\Tool::config('account_type') }}" required/>
+                   value="{{ setting('account_type') }}" required/>
         </div>
         <form id="bind-form" action="{{ route('bind') }}" method="POST"
               class="mdui-hidden">

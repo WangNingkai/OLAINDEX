@@ -12,7 +12,7 @@
                 audio: [{
                     name: '{{ $file['name'] }}',
                     artist: '{{ $file['name'] }}',
-                    url: "{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}",
+                    url: "{{ route('download',\App\Utils\Tool::encodeUrl($origin_path)) }}",
                     cover: 'cover.jpg'
                 }]
             });
@@ -20,7 +20,7 @@
             ap.on('error', function () {
                 console.log('获取资源错误，开始重新加载！');
                 let last = dp.audio.currentTime;
-                ap.audio.src = "{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}";
+                ap.audio.src = "{{ route('download',\App\Utils\Tool::encodeUrl($origin_path)) }}";
                 ap.audio.load();
                 ap.audio.currentTime = last;
                 ap.play();
@@ -30,7 +30,7 @@
                 if (!ap.audio.paused && !ap.audio.ended) {
                     console.log('开始重新加载！');
                     let last = ap.audio.currentTime;
-                    ap.audio.src = "{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}";
+                    ap.audio.src = "{{ route('download',\App\Utils\Tool::encodeUrl($origin_path)) }}";
                     ap.audio.load();
                     ap.audio.currentTime = last;
                     ap.play();
@@ -51,7 +51,7 @@
         <div class="mdui-textfield">
             <label class="mdui-textfield-label" for="downloadUrl">下载地址</label>
             <input class="mdui-textfield-input" type="text" id="downloadUrl"
-                   value="{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}"/>
+                   value="{{ route('download',\App\Utils\Tool::encodeUrl($origin_path)) }}"/>
         </div>
     </div>
     <a href="{{ $file['download'] }}" class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"><i
