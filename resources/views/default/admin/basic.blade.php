@@ -65,7 +65,7 @@
             </div>
             <span class="form-text text-danger">选择需要加密强度，默认加密列表</span>
         </div>
-        <div class="form-group">
+        {{--<div class="form-group">
             <label class="form-control-label">是否看图模式</label>
             <div class="custom-control custom-radio">
                 <input type="radio" id="image_view1" name="image_view" class="custom-control-input"
@@ -77,7 +77,7 @@
                        @if((int)setting('image_view',0) === 0) checked @endif value="0">
                 <label class="custom-control-label" for="image_view0">关闭</label>
             </div>
-        </div>
+        </div>--}}
         <div class="form-group">
             <label class="form-control-label">是否开启图床</label>
             <div class="custom-control custom-radio">
