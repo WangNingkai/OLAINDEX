@@ -23,7 +23,7 @@
                 <br>
                 <button type="submit" class="mdui-center mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme">
                     <i class="mdui-icon material-icons">fingerprint</i>
-                    登陆
+                    登录
                 </button>
             </form>
         </div>

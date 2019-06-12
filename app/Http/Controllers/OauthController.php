@@ -54,7 +54,7 @@ class OauthController extends Controller
 
                 return view(config('olaindex.theme') . 'message');
             }
-            Session::forget('state'); // 兼容下次登陆
+            Session::forget('state'); // 兼容下次登录
             $code = $request->get('code');
 
             $token = Authorize::getInstance(setting('account_type'))->getAccessToken($code);

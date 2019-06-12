@@ -148,12 +148,15 @@ class IndexController extends Controller
         });
 
         // 过滤隐藏文件
-        $originItems = Arr::where($originItems, static function ($value) {
-            $parentPath = Arr::get($value, 'parentReference.path');
-            $filePath = Str::after($parentPath . '/' . $value['name'], '/drive/root:/' . trim(setting('root'), '/'));
-            $hideDir = Tool::handleHideItem(setting('hide_path'));
-            return !in_array(trim($filePath, '/'), $hideDir, false);
-        });
+        if (Auth::guest()) {
+            $originItems = Arr::where($originItems, static function ($value) {
+                $parentPath = Arr::get($value, 'parentReference.path');
+                $filePath = Str::after($parentPath . '/' . $value['name'], '/drive/root:/' . trim(setting('root'), '/'));
+                $hideDir = Tool::handleHideItem(setting('hide_path'));
+                return !in_array(trim($filePath, '/'), $hideDir, false);
+            });
+        }
+
 
         // 处理 head/readme
         $head = array_key_exists('HEAD.md', $originItems)
