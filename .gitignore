@@ -14,3 +14,4 @@ yarn-error.log
 .env
 .phpunit.result.cache
 /frontend
+.php_cs.cache
