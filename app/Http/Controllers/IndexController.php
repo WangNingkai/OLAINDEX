@@ -72,14 +72,14 @@ class IndexController extends Controller
 
     /**
      * 首页
-     * @param Request $request
-     *
      * @return Factory|RedirectResponse|View
-     * @throws ErrorException
      */
-    public function home(Request $request)
+    public function home()
     {
-        return $this->list($request);
+        if (setting('image_home', 0)) {
+            return view(config('olaindex.theme') . 'image');
+        }
+        return redirect()->route('home');
     }
 
     /**
