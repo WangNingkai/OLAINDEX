@@ -26,7 +26,7 @@ Route::view('message', config('olaindex.theme') . 'message')->name('message');
 
 // 图床
 Route::get('image', 'ImageController@index')->name('image');
-Route::post('image', 'ImageController@upload')->name('image.upload');
+Route::post('image-upload', 'ImageController@upload')->name('image.upload');
 
 //删除
 Route::get('file/delete/{sign}', 'ManageController@deleteItem')->name('delete');
@@ -134,5 +134,6 @@ if (!$showOriginPath) {
     Route::get('v/{query?}', 'IndexController@download')
         ->where('query', '.*')
         ->name('view');
+
     Route::get('{query?}', 'IndexController@list')->where('query', '.*')->name('home');
 }

@@ -63,6 +63,7 @@ class Kernel extends HttpKernel
 
         // todo:完善路由
         'verify.token' => \App\Http\Middleware\VerifyAccessToken::class,
+        'verify.third.token' => \App\Http\Middleware\VerifyThirdToken::class,
         'verify.image' => \App\Http\Middleware\VerifyImageHost::class,
         'verify.installation' => \App\Http\Middleware\VerifyInstallation::class,
         'hotlink.protection' => \App\Http\Middleware\HotlinkProtection::class,

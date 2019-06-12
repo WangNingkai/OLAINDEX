@@ -77,6 +77,9 @@ class IndexController extends Controller
     public function home()
     {
         if (setting('image_home', 0)) {
+            if ((int)setting('image_hosting', 0) === 0 || ((int)setting('image_hosting', 0) === 2 && Auth::guest())) {
+                return redirect()->route('home');
+            }
             return view(config('olaindex.theme') . 'image');
         }
         return redirect()->route('home');
@@ -151,7 +154,10 @@ class IndexController extends Controller
         if (Auth::guest()) {
             $originItems = Arr::where($originItems, static function ($value) {
                 $parentPath = Arr::get($value, 'parentReference.path');
-                $filePath = Str::after($parentPath . '/' . $value['name'], '/drive/root:/' . trim(setting('root'), '/'));
+                $filePath = Str::after(
+                    $parentPath . '/' . $value['name'],
+                    '/drive/root:/' . trim(setting('root'), '/')
+                );
                 $hideDir = Tool::handleHideItem(setting('hide_path'));
                 return !in_array(trim($filePath, '/'), $hideDir, false);
             });

@@ -65,19 +65,6 @@
             </div>
             <span class="form-text text-danger">选择需要加密强度，默认加密列表</span>
         </div>
-        {{--<div class="form-group">
-            <label class="form-control-label">是否看图模式</label>
-            <div class="custom-control custom-radio">
-                <input type="radio" id="image_view1" name="image_view" class="custom-control-input"
-                       @if((int)setting('image_view',0) === 1) checked @endif value="1">
-                <label class="custom-control-label" for="image_view1">开启</label>
-            </div>
-            <div class="custom-control custom-radio">
-                <input type="radio" id="image_view0" name="image_view" class="custom-control-input"
-                       @if((int)setting('image_view',0) === 0) checked @endif value="0">
-                <label class="custom-control-label" for="image_view0">关闭</label>
-            </div>
-        </div>--}}
         <div class="form-group">
             <label class="form-control-label">是否开启图床</label>
             <div class="custom-control custom-radio">
@@ -159,6 +146,12 @@
             <input type="text" class="form-control" id="statistics" name="statistics"
                    value="{{ setting('statistics') }}">
             <span class="form-text text-danger">站点统计代码</span>
+        </div>
+        <div class="form-group">
+            <label class="form-control-label" for="third_access_token">第三方接口token</label>
+            <input type="text" class="form-control" id="third_access_token" name="third_access_token"
+                   value="{{ setting('third_access_token') }}">
+            <span class="form-text text-danger">第三方接口token(图床、文件列表)</span>
         </div>
         <button type="submit" class="btn btn-primary">提交</button>
     </form>

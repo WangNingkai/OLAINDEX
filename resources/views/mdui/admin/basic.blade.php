@@ -138,7 +138,15 @@
                 <label class="mdui-textfield-label" for="statistics">统计代码</label>
                 <input type="text" class="mdui-textfield-input" id="statistics" name="statistics"
                        value="{{ setting('statistics') }}">
-                <div class="mdui-textfield-helper">js 统计代码</div>
+                <div class="mdui-textfield-helper">站点统计代码</div>
+            </div>
+
+            <br>
+            <div class="mdui-textfield mdui-textfield-floating-label">
+                <label class="mdui-textfield-label" for="third_access_token">第三方接口token</label>
+                <input type="text" class="mdui-textfield-input" id="third_access_token" name="third_access_token"
+                       value="{{ setting('third_access_token') }}">
+                <div class="mdui-textfield-helper">第三方接口token</div>
             </div>
 
             <br>

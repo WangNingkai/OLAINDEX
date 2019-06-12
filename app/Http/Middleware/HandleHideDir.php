@@ -14,7 +14,7 @@ class HandleHideDir
      * @param \Illuminate\Http\Request $request
      * @param Closure $next
      *
-     * @return mixed
+     * @return mixed|void
      */
     public function handle($request, Closure $next)
     {
@@ -22,15 +22,15 @@ class HandleHideDir
 
         $hideDir = Tool::handleHideItem(setting('hide_path'));
 
-        if (blank($hideDir)) {
+        $requestPath = trim($requestPath, '/');
+        if ($requestPath === '' || blank($hideDir)) {
             return $next($request);
         }
-        if (in_array(trim($requestPath, '/'), $hideDir, false)) {
+        if (in_array($requestPath, $hideDir, false)) {
             Tool::showMessage('非法请求', false);
 
             return response()->view(config('olaindex.theme') . 'message');
         }
         return $next($request);
     }
-
 }
