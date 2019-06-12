@@ -43,16 +43,16 @@ class Move extends Command
         $this->info('开始移动...');
         $this->info('Please waiting...');
         $origin = $this->argument('origin');
-        $_origin = OneDrive::pathToItemId($origin);
+        $_origin = OneDrive::getInstance(one_account())->pathToItemId($origin);
         $origin_id = $_origin['errno'] === 0 ? Arr::get($_origin, 'data.id')
             : exit('Origin Path Abnormal');
         $target = $this->argument('target');
-        $_target = OneDrive::pathToItemId($target);
+        $_target = OneDrive::getInstance(one_account())->pathToItemId($target);
         $target_id = $_origin['errno'] === 0 ? Arr::get($_target, 'data.id')
             : exit('Target Path Abnormal');
-        $rename = $this->option('rename') ?? '';
-        $response = OneDrive::move($origin_id, $target_id, $rename);
-        $response['errno'] === 0 ? $this->info("Move Success!")
+        $rename = $this->option('rename') ?: '';
+        $response = OneDrive::getInstance(one_account())->move($origin_id, $target_id, $rename);
+        $response['errno'] === 0 ? $this->info('Move Success!')
             : $this->warn("Failed!\n{$response['msg']} ");
     }
 }

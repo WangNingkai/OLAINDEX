@@ -1,6 +1,10 @@
 <?php
 
+
 namespace App\Traits;
+
+
+use DB;
 
 trait HelperModel
 {
@@ -17,7 +21,6 @@ trait HelperModel
         // 获取表名
         $tableName = config('database.connections.mysql.prefix') . $this->getTable();
         $firstRow = current($multipleData);
-
         $updateColumn = array_keys($firstRow);
         // 默认以id为条件更新，如果没有ID则以第一个字段为条件
         $referenceColumn = isset($firstRow['id']) ? 'id' : current($updateColumn);
@@ -41,7 +44,7 @@ trait HelperModel
         $whereIn = rtrim(str_repeat('?,', count($whereIn)), ',');
         $updateSql = rtrim($updateSql, ", ") . " WHERE `" . $referenceColumn . "` IN (" . $whereIn . ")";
         // 传入预处理sql语句和对应绑定数据
-        return \DB::update($updateSql, $bindings);
+        return DB::update($updateSql, $bindings);
     }
 
     /**
@@ -68,7 +71,7 @@ trait HelperModel
         $where = 'where';
         if (isset($map['_logic'])) {
             $logic = strtolower($map['_logic']);
-            $where = $logic == 'or' ? 'orWhere' : 'where';
+            $where = $logic === 'or' ? 'orWhere' : 'where';
             unset($map['_logic']);
         }
         // 判断各种方法
@@ -107,7 +110,6 @@ trait HelperModel
             }
         }
         return $query;
-
     }
 
 }

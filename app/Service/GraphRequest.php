@@ -4,7 +4,8 @@ namespace App\Service;
 
 use Curl\Curl;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
+use ErrorException;
+use Log;
 
 class GraphRequest
 {
@@ -12,17 +13,14 @@ class GraphRequest
      * @var $accessToken
      */
     protected $accessToken;
-
     /**
      * @var $baseUrl
      */
     protected $baseUrl;
-
     /**
      * @var $apiVersion
      */
     protected $apiVersion;
-
     /**
      * The endpoint to call
      *
@@ -47,71 +45,65 @@ class GraphRequest
      * @var object
      */
     protected $requestType;
-
     /**
      * The timeout, in seconds
      *
      * @var string
      */
     protected $timeout;
-
     /**
      * @var $response
      */
-    protected $response = null;
-
+    protected $response;
     /**
      * @var $responseHeaders
      */
-    protected $responseHeaders = null;
-
+    protected $responseHeaders;
     /**
      * @var $responseError
      */
-    protected $responseError = null;
-
+    protected $responseError;
+    public $error = false;
 
     /**
+     * 构造 microsoft graph 请求
      * @param      $method
      * @param      $param
-     * @param bool $token
+     * @param null $token
      *
      * @return $this
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public function request(
-        $method,
-        $param,
-        $token = false
-    ) {
+    public function request($method, $param, $token = null): self
+    {
         if (is_array($param)) {
             @list($endpoint, $requestBody, $requestHeaders, $timeout) = $param;
             $this->requestBody = $requestBody ?? '';
             $this->headers = $requestHeaders ?? [];
-            $this->timeout = $timeout ?? 120;
+            $this->timeout = $timeout ?? CoreConstants::DEFAULT_TIMEOUT;
             $this->endpoint = $endpoint;
         } else {
             $this->endpoint = $param;
             $this->headers = [];
-            $this->timeout = 120;
+            $this->timeout = CoreConstants::DEFAULT_TIMEOUT;
         }
         if (!$token) {
             $this->headers = array_merge([
-                'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer '.$this->accessToken,
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $this->accessToken,
             ], $this->headers);
-            if (stripos($this->endpoint, "http") !== 0) {
-                $this->endpoint = $this->apiVersion.$this->endpoint;
+            if (stripos($this->endpoint, 'http') !== 0) {
+                $this->endpoint = $this->apiVersion . $this->endpoint;
             }
         }
         $this->requestType = strtoupper($method);
         $options = [
-            CURLOPT_CUSTOMREQUEST  => $this->requestType,
-            //            CURLOPT_HEADER => true,
-            CURLOPT_AUTOREFERER    => true,
-            CURLOPT_FAILONERROR    => true,
+            CURLOPT_CUSTOMREQUEST => $this->requestType,
+//            CURLOPT_HEADER => true,
+            CURLOPT_AUTOREFERER => true,
+            CURLOPT_FAILONERROR => true,
             CURLOPT_FOLLOWLOCATION => false,
-            CURLOPT_ENCODING       => 'gzip,deflate',
+            CURLOPT_ENCODING => 'gzip,deflate',
         ];
         if ($this->requestBody) {
             $options = Arr::add($options, CURLOPT_POST, true);
@@ -126,9 +118,10 @@ class GraphRequest
         } else {
             $curl = new Curl();
         }
+        $curl->setUserAgent('ISV|OLAINDEX|OLAINDEX/9.9.9');
         $curl->setHeaders($this->headers);
-        $curl->setRetry(3);
-        $curl->setConnectTimeout(5);
+        $curl->setRetry(CoreConstants::DEFAULT_RETRY);
+        $curl->setConnectTimeout(CoreConstants::DEFAULT_CONNECT_TIMEOUT);
         $curl->setTimeout((int)$this->timeout);
         $curl->setUrl($this->endpoint);
         $curl->setOpts($options);
@@ -139,21 +132,18 @@ class GraphRequest
                 'Get OneDrive source content error.',
                 [
                     'errno' => $curl->errorCode,
-                    'msg'   => $curl->errorMessage,
+                    'message' => $curl->errorMessage,
                 ]
             );
-            $this->responseError = json_encode([
+            $this->responseError = collect([
                 'errno' => $curl->errorCode,
-                'msg'   => $curl->errorMessage,
-            ]);
-
-            return $this;
-        } else {
-            $this->responseHeaders = collect($curl->responseHeaders)->toJson();
-            $this->response = collect($curl->response)->toJson();
-
-            return $this;
+                'msg' => $curl->errorMessage,
+            ])->toJson();
+            $this->error = true;
         }
+        $this->responseHeaders = collect($curl->responseHeaders)->toJson();
+        $this->response = collect($curl->response)->toJson();
+        return $this;
     }
 
     /**
@@ -161,11 +151,10 @@ class GraphRequest
      *
      * @return $this
      */
-    public function setAccessToken($accessToken)
+    public function setAccessToken($accessToken): self
     {
         $this->accessToken = $accessToken;
-        $this->headers['Authorization'] = 'Bearer '.$this->accessToken;
-
+        $this->headers['Authorization'] = 'Bearer ' . $this->accessToken;
         return $this;
     }
 
@@ -174,10 +163,9 @@ class GraphRequest
      *
      * @return $this
      */
-    public function setBaseUrl($baseUrl)
+    public function setBaseUrl($baseUrl): self
     {
         $this->baseUrl = $baseUrl;
-
         return $this;
     }
 
@@ -186,11 +174,34 @@ class GraphRequest
      *
      * @return $this
      */
-    public function setApiVersion($version)
+    public function setApiVersion($version): self
     {
         $this->apiVersion = $version;
-
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAccessToken()
+    {
+        return $this->accessToken;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBaseUrl()
+    {
+        return $this->baseUrl;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getApiVersion()
+    {
+        return $this->apiVersion;
     }
 
     /**

@@ -1,6 +1,8 @@
 <?php
 
+
 namespace App\Entities;
+
 
 class BaseEntity
 {
@@ -12,5 +14,4 @@ class BaseEntity
             }
         }
     }
-
 }

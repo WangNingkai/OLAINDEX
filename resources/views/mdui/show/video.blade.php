@@ -1,10 +1,10 @@
 @extends('mdui.layouts.main')
 @section('title',$file['name'])
 @section('css')
-    <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/dplayer/1.25.0/DPlayer.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/dplayer/1.25.0/DPlayer.min.css">
 @stop
 @section('js')
-    <script src="https://cdnjs.loli.net/ajax/libs/dplayer/1.25.0/DPlayer.min.js"></script>
+    <script src="https://cdn.bootcss.com/dplayer/1.25.0/DPlayer.min.js"></script>
     <script>
         $(function () {
             const dp = new DPlayer({
@@ -55,7 +55,7 @@
         <div class="mdui-textfield">
             <label class="mdui-textfield-label" for="downloadUrl">下载地址</label>
             <input class="mdui-textfield-input" type="text" id="downloadUrl"
-                   value="{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}"/>
+                   value="{{ route('download',\App\Utils\Tool::encodeUrl($originPath)) }}"/>
         </div>
     </div>
     <a href="{{ $file['download'] }}" class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"><i

@@ -2,16 +2,16 @@
 
 namespace App\Http\Middleware;
 
-use App\Helpers\Tool;
+use App\Utils\Tool;
 use Closure;
 
-class HandleIllegalFile
+class HandleForbidFile
 {
     /**
-     * Handle an incoming request.
+     * 处理非法文件
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure                 $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure $next
      *
      * @return mixed
      */
@@ -24,12 +24,10 @@ class HandleIllegalFile
         $fileName = array_pop($path_array);
         $illegalFile = ['README.md', 'HEAD.md', '.password', '.deny'];
         $pattern = '/^README\.md|HEAD\.md|\.password|\.deny/';
-        if (in_array($fileName, $illegalFile)
-            || preg_match($pattern, $fileName, $arr) > 0
-        ) {
+        if (in_array($fileName, $illegalFile, false) || preg_match($pattern, $fileName, $arr) > 0) {
             Tool::showMessage('非法请求', false);
 
-            return response()->view(config('olaindex.theme').'message');
+            return response()->view(config('olaindex.theme') . 'message');
         }
 
         return $next($request);

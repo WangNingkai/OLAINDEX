@@ -10,7 +10,7 @@
             <div class="mdui-textfield mdui-textfield-floating-label">
                 <label class="mdui-textfield-label" for="email">已绑定账户</label>
                 <input type="text" class="mdui-textfield-input" id="email" name="email"
-                       value="{{ \App\Helpers\Tool::getBindAccount() }}" disabled>
+                       value="{{ setting('account_email') }}" disabled>
             </div>
             <br>
 

@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="page-header mb-4">
-        <h1>控制台</h1>
+        <h1>Dashboard</h1>
     </div>
 
     <div class="row">

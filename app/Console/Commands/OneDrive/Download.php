@@ -42,12 +42,12 @@ class Download extends Command
         $remote = $this->argument('remote');
         $id = $this->option('id');
         if ($id) {
-            $response = OneDrive::getItem($id);
+            $response = OneDrive::getInstance(one_account())->getItem($id);
         } else {
             if (empty($remote)) {
                 exit('Parameters Missing!');
             }
-            $response = OneDrive::getItemByPath($remote);
+            $response = OneDrive::getInstance(one_account())->getItemByPath($remote);
         }
         if ($response['errno'] === 0) {
             $download = $response['data']['@microsoft.graph.downloadUrl'] ??

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Entities;
-
 
 class ClientConfigEntity extends BaseEntity
 {
@@ -42,5 +40,4 @@ class ClientConfigEntity extends BaseEntity
      * @var string
      */
     public $scopes;
-
 }

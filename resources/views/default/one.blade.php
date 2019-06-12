@@ -1,18 +1,8 @@
 @extends('default.layouts.main')
-@section('title',\App\Helpers\Tool::config('name','OLAINDEX'))
-@section('css')
-    <link rel="stylesheet"
-          href="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/css/blueimp-gallery-indicator.min.css">
-    <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/css/blueimp-gallery.min.css">
-@stop
+@section('title',setting('name','OLAINDEX'))
 @section('js')
-    <script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/blueimp-helper.min.js"></script>
-    <script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/blueimp-gallery.min.js"></script>
-    <script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/blueimp-gallery-indicator.min.js"></script>
-    <script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/jquery.blueimp-gallery.min.js"></script>
-    <script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/blueimp-gallery-fullscreen.min.js"></script>
     <script>
-        @if(session()->has('LogInfo'))
+        @auth
         function deleteItem($sign) {
             swal({
                 title: '确定删除吗？',
@@ -40,7 +30,7 @@
                 $("#dl").val(origin + url);
             });
         }
-        @endif
+        @endauth
     </script>
 @stop
 @section('content')
@@ -58,7 +48,7 @@
             <div class="row">
                 <div class="col-8 col-sm-6">
                     文件&nbsp;
-                    @if(\App\Helpers\Tool::getOrderByStatus('name'))
+                    @if(\App\Utils\Tool::getOrderByStatus('name'))
                         <a href="?orderBy=name,asc"><i class="fa fa-arrow-down"></i></a>
                     @else
                         <a href="?orderBy=name,desc"><i class="fa fa-arrow-up"></i></a>
@@ -68,7 +58,7 @@
                 <div class="col-sm-2 d-none d-md-block d-md-none">
                     <span class="pull-right">
                         修改日期&nbsp;
-                        @if(\App\Helpers\Tool::getOrderByStatus('lastModifiedDateTime'))
+                        @if(\App\Utils\Tool::getOrderByStatus('lastModifiedDateTime'))
                             <a href="?orderBy=lastModifiedDateTime,asc"><i class="fa fa-arrow-down"></i></a>
                         @else
                             <a href="?orderBy=lastModifiedDateTime,desc"><i class="fa fa-arrow-up"></i></a>
@@ -78,7 +68,7 @@
                 <div class="col-sm-2 d-none d-md-block d-md-none">
                     <span class="pull-right">
                         大小&nbsp;
-                        @if(\App\Helpers\Tool::getOrderByStatus('size'))
+                        @if(\App\Utils\Tool::getOrderByStatus('size'))
                             <a href="?orderBy=size,asc"><i class="fa fa-arrow-down"></i></a>
                         @else
                             <a href="?orderBy=size,desc"><i class="fa fa-arrow-up"></i></a>
@@ -86,28 +76,28 @@
                     </span>
                 </div>
                 <div class="col-4 col-sm-2">
-                    @if (session()->has('LogInfo'))
+                    @auth
                         <a class="pull-right dropdown-toggle btn btn-sm btn-primary" href="#" id="actionDropdownLink"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">操作</a>
                         <div class="dropdown-menu" aria-labelledby="actionDropdownLink">
-                            @if (array_key_exists('README.md', $origin_items))
+                            @if (array_key_exists('README.md', $originItems))
                                 <a class="dropdown-item"
-                                   href="{{ route('admin.file.update',$origin_items['README.md']['id']) }}"><i
+                                   href="{{ route('admin.file.update',$originItems['README.md']['id']) }}"><i
                                         class="fa fa-pencil-square-o"></i> 编辑 README</a>
                             @else
                                 <a class="dropdown-item"
-                                   href="{{ route('admin.file.create',['name' => 'README', 'path' => encrypt($origin_path)]) }}"><i
+                                   href="{{ route('admin.file.create',['name' => 'README', 'path' => encrypt($originPath)]) }}"><i
                                         class="fa fa-plus-circle"></i> 添加
                                     README</a>
                             @endif
-                            @if (array_key_exists('HEAD.md', $origin_items))
+                            @if (array_key_exists('HEAD.md', $originItems))
                                 <a class="dropdown-item"
-                                   href="{{ route('admin.file.update',$origin_items['HEAD.md']['id']) }}"><i
+                                   href="{{ route('admin.file.update',$originItems['HEAD.md']['id']) }}"><i
                                         class="fa fa-pencil-square-o"></i> 编辑 HEAD</a>
 
                             @else
                                 <a class="dropdown-item"
-                                   href="{{ route('admin.file.create',['name' => 'HEAD', 'path' => encrypt($origin_path)]) }}"><i
+                                   href="{{ route('admin.file.create',['name' => 'HEAD', 'path' => encrypt($originPath)]) }}"><i
                                         class="fa fa-plus-circle"></i> 添加
                                     HEAD</a>
                             @endif
@@ -133,7 +123,7 @@
                                             <div class="form-group">
                                                 <input type="text" name="name" class="form-control" placeholder="请输入目录名"
                                                        required>
-                                                <input type="hidden" name="path" value="{{ encrypt($origin_path) }}">
+                                                <input type="hidden" name="path" value="{{ encrypt($originPath) }}">
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -156,7 +146,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <p class="text-danger">
-                                            链接将在 {{ date('m/d/Y H:i', \App\Helpers\Tool::config('access_token_expires')) }}
+                                            链接将在 {{ setting('access_token_expires') }}
                                             后失效</p>
                                         <p><a href="javascript:void(0)"
                                               style="text-decoration: none" data-toggle="tooltip"
@@ -175,16 +165,16 @@
                                 </div>
                             </div>
                         </div>
-                    @else
+                    @elseauth
                         <span class="pull-right">操作</span>
-                    @endif
+                    @endauth
                 </div>
             </div>
         </div>
         <div class="list-group item-list">
-            @if(!blank($path_array))
+            @if(!blank($pathArray))
                 <li class="list-group-item list-group-item-action"><a
-                        href="{{ route('home',\App\Helpers\Tool::getEncodeUrl(\App\Helpers\Tool::getParentUrl($path_array))) }}"><i
+                        href="{{ route('home',\App\Utils\Tool::encodeUrl(\App\Utils\Tool::getParentUrl($pathArray))) }}"><i
                             class="fa fa-level-up"></i> 返回上一层</a></li>
             @endif
             @foreach($items as $item)
@@ -192,14 +182,14 @@
                     <div class="row">
                         <div class="col-8 col-sm-6" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
                             @if( \Illuminate\Support\Arr::has($item,'folder'))
-                                <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
+                                <a href="{{ route('home',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}"
                                    title="{{ $item['name'] }}">
                                     <i class="fa fa-folder"></i> {{ $item['name'] }}
                                 </a>
                             @else
-                                <a href="{{ route('show',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
+                                <a href="{{ route('show',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}"
                                    title="{{ $item['name'] }}">
-                                    <i class="fa {{ \App\Helpers\Tool::getExtIcon($item['ext'] ?? '') }}"></i> {{ $item['name'] }}
+                                    <i class="fa {{ \App\Utils\Tool::getExtIcon($item['ext'] ?? '') }}"></i> {{ $item['name'] }}
                                 </a>
                             @endif
                         </div>
@@ -209,34 +199,34 @@
                         </div>
                         <div class="col-sm-2 d-none d-md-block d-md-none">
                             <span
-                                class="pull-right">{{ \Illuminate\Support\Arr::has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</span>
+                                class="pull-right">{{ \Illuminate\Support\Arr::has($item,'folder')? '-' : \App\Utils\Tool::convertSize($item['size']) }}</span>
                         </div>
                         <div class="col-4 col-sm-2">
                             <span class="pull-right">
                                 @if(! \Illuminate\Support\Arr::has($item,'folder'))
                                     @if( \Illuminate\Support\Arr::has($item,'image'))
-                                        <a href="{{ route('view',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
+                                        <a href="{{ route('view',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}"
                                            data-fancybox="image-list"><i
                                                 class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
                                     @endif
-                                    @if(session()->has('LogInfo') && \App\Helpers\Tool::canEdit($item) )
+                                    @if(Auth::user() && \App\Utils\Tool::canEdit($item) )
                                         <a href="{{ route('admin.file.update',$item['id']) }}"><i
                                                 class="fa fa-pencil"></i></a>&nbsp;&nbsp;
                                     @endif
                                     <a class="download_url"
-                                       href="{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"><i
+                                       href="{{ route('download',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}"><i
                                             class="fa fa-download"
                                             title="下载"></i></a>&nbsp;&nbsp;
                                 @else
-                                    <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
+                                    <a href="{{ route('home',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}"
                                        title="{{ $item['name'] }}"><i class="fa fa-folder-open"></i></a>&nbsp;&nbsp;
                                 @endif
-                                @if (session()->has('LogInfo'))
+                                @auth
                                     <a onclick="deleteItem('{{ encrypt($item['id'] . '.' . encrypt($item['eTag'])) }}')"
                                        href="javascript:void(0)"><i class="fa fa-trash"
                                                                     title="删除"></i></a>&nbsp;
                                     &nbsp;
-                                @endif
+                                @endauth
                             </span>
                         </div>
                     </div>
@@ -247,9 +237,9 @@
                     <div class="col-8 col-sm-6" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
                             <span class="text-muted font-weight-light">
                                 共 {{ $parent_item['folder']['childCount'] }} 个项目
-                                @if(session()->has('LogInfo'))
-                                    {{ \App\Helpers\Tool::convertSize($parent_item['size']) }}
-                                @endif
+                                @auth
+                                    {{ \App\Utils\Tool::convertSize($parent_item['size']) }}
+                                @endauth
                             </span>
                     </div>
                 </div>
@@ -259,37 +249,6 @@
     <div>
         {{ $items->appends(['limit' => request()->get('limit'),'orderBy'=> request()->get('orderBy')])->links('default.page') }}
     </div>
-    @if ($hasImage && (int)\App\Helpers\Tool::config('image_view'))
-        <div class="card border-light mb-3">
-            <div class="card-header">
-                看图
-            </div>
-            <div class="card-body">
-                <div id="links">
-                    @foreach($items as $item)
-                        @if( \Illuminate\Support\Arr::has($item,'image'))
-                            <a href="{{ route('view',$origin_path ? $origin_path.'/'.$item['name'] : $item['name']) }}"
-                               title="{{ $item['name'] }}" data-gallery>
-                                <img class="lazy"
-                                     data-original="{{  \Illuminate\Support\Arr::get($item,'thumbnails.0.small.url') }}"
-                                     src="{{ asset('img/loading.gif') }}"
-                                     alt="{{ $item['name'] }}" width="10%" height="10%">
-                            </a>
-                        @endif
-                    @endforeach
-                </div>
-                <div id="blueimp-gallery" class="blueimp-gallery" data-start-slideshow="true" data-filter=":even">
-                    <div class="slides"></div>
-                    <h3 class="title"></h3>
-                    <a class="prev">‹</a>
-                    <a class="next">›</a>
-                    <a class="close">×</a>
-                    <a class="play-pause"></a>
-                    <ol class="indicator"></ol>
-                </div>
-            </div>
-        </div>
-    @endif
     @if (!blank($readme))
         <div class="card border-light mb-3">
             <div class="card-header"><i class="fa fa-bookmark"></i> README</div>

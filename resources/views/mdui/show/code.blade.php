@@ -20,7 +20,7 @@
         <div class="mdui-textfield">
             <label class="mdui-textfield-label" for="downloadUrl">下载地址</label>
             <input class="mdui-textfield-input" type="text" id="downloadUrl"
-                   value="{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}"/>
+                   value="{{ route('download',\App\Utils\Tool::encodeUrl($originPath)) }}"/>
         </div>
     </div>
     <a href="{{ $file['download'] }}" class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"><i

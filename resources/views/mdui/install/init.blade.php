@@ -23,7 +23,7 @@
             <select name="account_type" id="account_type" class="mdui-select" mdui-select="{position: 'bottom'}">
                 <option value="">选择账户类型</option>
                 <option value="cn">国内版（世纪互联）</option>
-                <option value="com">国际版</option>
+                <option value="com" selected>国际版</option>
             </select>
             <div class="mdui-textfield mdui-textfield-floating-label">
                 <i class="mdui-icon material-icons">https</i>

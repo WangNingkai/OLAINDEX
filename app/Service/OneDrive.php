@@ -2,179 +2,173 @@
 
 namespace App\Service;
 
-use App\Helpers\Constants;
-use App\Helpers\Tool;
+use App\Entities\ClientConfigEntity;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use ErrorException;
 
 /**
  * Class OneDrive
- *
- * @package App\Helpers
+ * @package App\Service
  */
 class OneDrive
 {
+    /**
+     * @var $instance
+     */
+    private static $instances = [];
+
+    /* @var GraphRequest $graph */
+    private $graph;
 
     /**
-     * @var GraphRequest
+     * @param $account
+     * @return OneDrive
      */
-    protected $graph;
-
-    /**
-     * @var $baseUrl
-     */
-    protected $baseUrl;
-
-    /**
-     * @var $apiVersion
-     */
-    protected $apiVersion;
-
-    /**
-     * OneDriveGraph constructor.
-     */
-    public function __construct()
+    public static function getInstance($account): OneDrive
     {
-        $access_token = Tool::config('access_token');
-        $base_url = Tool::config('account_type', 'com') === 'com'
-            ? Constants::REST_ENDPOINT : Constants::REST_ENDPOINT_21V;
-        $api_version = Constants::API_VERSION;
-        $this->graph = new GraphRequest();
-        $this->graph->setAccessToken($access_token);
-        $this->graph->setBaseUrl($base_url);
-        $this->graph->setApiVersion($api_version);
-        $this->baseUrl = $base_url;
-        $this->apiVersion = $api_version;
+        $account_id = Arr::get($account, 'account_email', 0);
+        if (!array_key_exists($account_id, self::$instances)) {
+            self::$instances[$account_id] = new self($account);
+        }
+        return self::$instances[$account_id];
+    }
+
+    /**
+     * OneDrive constructor.
+     * @param $account
+     */
+    private function __construct($account)
+    {
+        $this->initRequest($account);
+    }
+
+    /**
+     * @param $account
+     */
+    private function initRequest($account): void
+    {
+        $accountType = Arr::get($account, 'account_type', 'com');
+        $clientConfig = new ClientConfigEntity(CoreConstants::getClientConfig($accountType));
+        $baseUrl = $clientConfig->graph_endpoint;
+        $apiVersion = $clientConfig->api_version;
+        $accessToken = Arr::get($account, 'access_token', '');
+        $this->graph = (new GraphRequest())
+            ->setAccessToken($accessToken)
+            ->setBaseUrl($baseUrl)
+            ->setApiVersion($apiVersion);
     }
 
     /**
      * @param      $method
      * @param      $param
-     * @param bool $token
+     * @param null $token
      *
      * @return mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function request($method, $param, $token = false)
+    public function request($method, $param, $token = null)
     {
-        $od = new self();
-        $response = $od->graph->request(
-            $method,
-            $param,
-            $token
-        );
-        if (is_null($response->getResponseError())) {
-            $headers = json_decode($response->getResponseHeaders(), true);
-            $response = json_decode($response->getResponse(), true);
-
-            return [
-                'errno' => 0,
-                'msg' => 'OK',
-                'headers' => $headers,
-                'data' => $response,
-            ];
-        } else {
+        $response = $this->graph->request($method, $param, $token);
+        if ($response->error) {
             return json_decode($response->getResponseError(), true);
         }
+        $headers = json_decode($response->getResponseHeaders(), true);
+        $response = json_decode($response->getResponse(), true);
+
+        return [
+            'errno' => 0,
+            'message' => 'OK',
+            'headers' => $headers,
+            'data' => $response,
+        ];
     }
 
     /**
-     * Get Account Info
+     * 获取账户信息
      *
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function getMe()
+    public function getAccountInfo()
     {
         $endpoint = '/me';
-        $response = self::request('get', $endpoint);
-
-        return $response;
+        return $this->request('get', $endpoint);
     }
 
     /**
-     * Get Drive Info
+     * 获取网盘信息
      *
      * @return mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function getDrive()
+    public function getDriveInfo()
     {
         $endpoint = '/me/drive';
-        $response = self::request('get', $endpoint);
-
-        return $response;
+        return $this->request('get', $endpoint);
     }
 
     /**
-     * Get Drive Item Children
+     * 获取网盘资源目录列表
      *
      * @param string $itemId
      * @param string $query
      *
      * @return array|mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function getChildren($itemId = '', $query = '')
+    public function getItemList($itemId = '', $query = '')
     {
         $endpoint = $itemId ? "/me/drive/items/{$itemId}/children{$query}"
             : "/me/drive/root/children{$query}";
-        $response = self::request('get', $endpoint);
-
+        $response = $this->request('get', $endpoint);
         if ($response['errno'] === 0) {
             $response_data = Arr::get($response, 'data');
-            $data = self::getNextLinkList($response_data);
-
-            $format = self::formatArray($data);
-
-            return self::response($format);
-        } else {
-            return $response;
+            $data = $this->getNextLinkList($response_data);
+            $format = $this->formatItem($data);
+            return $this->response($format);
         }
+        return $response;
     }
 
     /**
-     * Get Drive Item Children by Path
+     * 通过路径获取网盘资源目录列表
      *
      * @param string $path
      * @param string $query
      *
      * @return array|mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function getChildrenByPath($path = '/', $query = '')
+    public function getItemListByPath($path = '/', $query = '')
     {
-        $requestPath = self::getRequestPath($path);
+        $requestPath = $this->getRequestPath($path);
         $endpoint = $requestPath === '/' ? "/me/drive/root/children{$query}"
             : "/me/drive/root{$requestPath}children{$query}";
-        $response = self::request('get', $endpoint);
+        $response = $this->request('get', $endpoint);
         if ($response['errno'] === 0) {
             $response_data = Arr::get($response, 'data');
-            $data = self::getNextLinkList($response_data);
-
-            $format = self::formatArray($data);
-
-            return self::response($format);
-        } else {
-            return $response;
+            $data = $this->getNextLinkList($response_data);
+            $format = $this->formatItem($data);
+            return $this->response($format);
         }
+        return $response;
     }
 
     /**
-     * Get Drive Item Children Next Page
+     * 获取下一页全部网盘资源目录
      *
      * @param       $list
      * @param array $result
      *
      * @return array
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function getNextLinkList($list, &$result = [])
+    public function getNextLinkList($list, &$result = []): array
     {
         if (Arr::has($list, '@odata.nextLink')) {
-            $od = new self();
-            $baseLength = strlen($od->baseUrl) + strlen($od->apiVersion);
+            $baseLength = strlen($this->graph->getBaseUrl()) + strlen($this->graph->getApiVersion());
             $endpoint = substr($list['@odata.nextLink'], $baseLength);
-            $response = self::request('get', $endpoint);
+            $response = $this->request('get', $endpoint);
             if ($response['errno'] === 0) {
                 $data = $response['data'];
             } else {
@@ -182,76 +176,71 @@ class OneDrive
             }
             $result = array_merge(
                 $list['value'],
-                self::getNextLinkList($data, $result)
+                $this->getNextLinkList($data, $result)
             );
         } else {
             $result = array_merge($list['value'], $result);
         }
-
         return $result;
     }
 
     /**
-     * Get Item
+     * 根据资源id获取网盘资源
      *
      * @param        $itemId
      * @param string $query
      *
      * @return array|mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function getItem($itemId, $query = '')
+    public function getItem($itemId, $query = '')
     {
         $endpoint = "/me/drive/items/{$itemId}{$query}";
-        $response = self::request('get', $endpoint);
+        $response = $this->request('get', $endpoint);
         if ($response['errno'] === 0) {
             $data = Arr::get($response, 'data');
-
-            $format = self::formatArray($data, false);
-
-            return self::response($format);
-        } else {
-            return $response;
+            $format = $this->formatItem($data, false);
+            return $this->response($format);
         }
+        return $response;
     }
 
     /**
-     * Get Item By Path
+     * 通过路径获取网盘资源
      *
      * @param        $path
      * @param string $query
      *
      * @return array|mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function getItemByPath($path, $query = '')
+    public function getItemByPath($path, $query = '')
     {
-        $requestPath = self::getRequestPath($path);
+        $requestPath = $this->getRequestPath($path);
         $endpoint = "/me/drive/root{$requestPath}{$query}";
-        $response = self::request('get', $endpoint);
+        $response = $this->request('get', $endpoint);
         if ($response['errno'] === 0) {
             $data = Arr::get($response, 'data');
-
-            $format = self::formatArray($data, false);
-
-            return self::response($format);
-        } else {
-            return $response;
+            $format = $this->formatItem($data, false);
+            return $this->response($format);
         }
+        return $response;
     }
 
     /**
+     * 复制资源
+     *
      * @param $itemId
      * @param $parentItemId
      *
      * @return mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function copy($itemId, $parentItemId)
+    public function copy($itemId, $parentItemId)
     {
-        $drive = self::getDrive();
-        if ($drive['errno'] === 0) {
-            $driveId = Arr::get($drive, 'data.id');
+        $driveResponse = $this->getDriveInfo();
+        if ($driveResponse['errno'] === 0) {
+            $driveId = Arr::get($driveResponse, 'data.id');
             $endpoint = "/me/drive/items/{$itemId}/copy";
             $body = json_encode([
                 'parentReference' => [
@@ -259,30 +248,28 @@ class OneDrive
                     'id' => $parentItemId,
                 ],
             ]);
-            $response = self::request('post', [$endpoint, $body], false);
+            $response = $this->request('post', [$endpoint, $body]);
             if ($response['errno'] === 0) {
                 $data = [
                     'redirect' => Arr::get($response, 'headers.Location'),
                 ];
-
-                return self::response($data);
-            } else {
-                return $response;
+                return $this->response($data);
             }
-        } else {
-            return $drive;
+            return $response;
         }
+        return $driveResponse;
     }
 
     /**
-     * @param        $itemId
-     * @param        $parentItemId
-     * @param string $itemName
+     * 移动资源
      *
+     * @param $itemId
+     * @param $parentItemId
+     * @param string $itemName
      * @return mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function move($itemId, $parentItemId, $itemName = '')
+    public function move($itemId, $parentItemId, $itemName = '')
     {
         $endpoint = "/me/drive/items/{$itemId}";
         $content = [
@@ -295,448 +282,496 @@ class OneDrive
         }
         $body = json_encode($content);
 
-        $response = self::request('patch', [$endpoint, $body]);
-
-        return $response;
+        return $this->request('patch', [$endpoint, $body]);
     }
 
     /**
+     * 新建目录
+     *
      * @param $itemName
      * @param $parentItemId
-     *
      * @return mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function mkdir($itemName, $parentItemId)
+    public function mkdir($itemName, $parentItemId)
     {
         $endpoint = "/me/drive/items/$parentItemId/children";
-        $body = '{"name":"' . $itemName
-            . '","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
-        $response = self::request('post', [$endpoint, $body]);
-
-        return $response;
+        $body = '{"name":"' . $itemName . '","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
+        return $this->request('post', [$endpoint, $body]);
     }
 
     /**
+     * 新建目录（路径）
+     *
      * @param $itemName
      * @param $path
      *
      * @return mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function mkdirByPath($itemName, $path)
+    public function mkdirByPath($itemName, $path)
     {
-        $requestPath = self::getRequestPath($path);
-        $endpoint = $requestPath === '/' ? "/me/drive/root/children"
+        $requestPath = $this->getRequestPath($path);
+        $endpoint = $requestPath === '/' ? '/me/drive/root/children'
             : "/me/drive/root{$requestPath}children";
-        $body = '{"name":"' . $itemName
-            . '","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
-        $response = self::request('post', [$endpoint, $body]);
+        $body = '{"name":"' . $itemName . '","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
 
-        return $response;
+        return $this->request('post', [$endpoint, $body]);
     }
 
     /**
+     * 删除资源
+     *
      * @param        $itemId
      * @param string $eTag
      *
      * @return array|mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function delete($itemId, $eTag = '')
+    public function delete($itemId, $eTag = '')
     {
         $endpoint = "/me/drive/items/{$itemId}";
         $headers = $eTag ? ['if-match' => $eTag] : [];
-        $response = self::request('delete', [$endpoint, '', $headers]);
+        $response = $this->request('delete', [$endpoint, '', $headers]);
         if ($response['errno'] === 0) {
-            return self::response(['deleted' => true]);
-        } else {
-            return $response;
+            return $this->response(['deleted' => true]);
         }
+        return $response;
     }
 
-
     /**
+     * 搜索资源
+     *
      * @param $path
      * @param $query
      *
      * @return array|mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function search($path, $query)
+    public function search($path, $query)
     {
-        $graphPath = self::getRequestPath($path);
-        $endpoint = $graphPath === '/' ? "/me/drive/root/search(q='{$query}')"
-            : "/me/drive/root{$graphPath}search(q='{$query}')";
-        $response = self::request('get', $endpoint);
+        $requestPath = $this->getRequestPath($path);
+        $endpoint = $requestPath === '/'
+            ? "/me/drive/root/search(q='{$query}')"
+            : "/me/drive/root{$requestPath}search(q='{$query}')";
+        $response = $this->request('get', $endpoint);
         if ($response['errno'] === 0) {
             $response_data = Arr::get($response, 'data');
-            $data = self::getNextLinkList($response_data);
+            $data = $this->getNextLinkList($response_data);
 
-            $format = self::formatArray($data);
+            $format = $this->formatItem($data);
 
-            return self::response($format);
-        } else {
-            return $response;
+            return $this->response($format);
         }
+        return $response;
     }
 
     /**
+     * 获取缩略图
+     *
      * @param $itemId
      * @param $size
      *
      * @return mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function thumbnails($itemId, $size)
+    public function thumbnails($itemId, $size)
     {
         $endpoint = "/me/drive/items/{$itemId}/thumbnails/0/{$size}";
-        $response = self::request('get', $endpoint);
-
-        return $response;
+        return $this->request('get', $endpoint);
     }
 
     /**
+     * 获取资源分享直链
+     *
      * @param $itemId
      *
      * @return array|mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function createShareLink($itemId)
+    public function createShareLink($itemId)
     {
         $endpoint = "/me/drive/items/{$itemId}/createLink";
         $body = '{"type": "view","scope": "anonymous"}';
-        $response = self::request('post', [$endpoint, $body]);
+        $response = $this->request('post', [$endpoint, $body]);
 
         if ($response['errno'] === 0) {
             $data = $response['data'];
-            $web_url = Arr::get($data, 'link.webUrl');
-            if (Str::contains($web_url, ['sharepoint.com', 'sharepoint.cn'])) {
-                $parse = parse_url($web_url);
+            $webUrl = Arr::get($data, 'link.webUrl');
+            if (Str::contains($webUrl, ['sharepoint.com', 'sharepoint.cn'])) {
+                $parse = parse_url($webUrl);
                 $domain = "{$parse['scheme']}://{$parse['host']}/";
                 $param = Str::after($parse['path'], 'personal/');
-                $info = explode('/', $param);
-                $res_id = $info[1];
-                $user_info = $info[0];
-                $direct_link = $domain . 'personal/' . $user_info
-                    . '/_layouts/15/download.aspx?share=' . $res_id;
-            } elseif (Str::contains($web_url, '1drv.ms')) {
-                $req = self::request('get', $web_url);
-                if ($req['errno'] === 0) {
-                    $direct_link = str_replace(
-                        'redir?',
-                        'download?',
-                        $req['headers']['Location']
-                    );
+                [$userInfo, $res_id] = explode('/', $param);
+                $directLink = $domain . 'personal/' . $userInfo . '/_layouts/15/download.aspx?share=' . $res_id;
+            } elseif (Str::contains($webUrl, '1drv.ms')) {
+                $rep = $this->request('get', $webUrl);
+                if ($rep['errno'] === 0) {
+                    $directLink = str_replace('redir?', 'download?', $rep['headers']['Location']);
                 } else {
-                    return $req;
+                    return $rep;
                 }
             } else {
-                $direct_link = '';
+                $directLink = '';
             }
-
-            return self::response([
-                'redirect' => $direct_link,
+            return $this->response([
+                'redirect' => $directLink,
             ]);
-        } else {
-            return $response;
         }
+        return $response;
     }
 
+
     /**
+     * 删除资源分享直链
+     *
      * @param $itemId
      *
      * @return array|mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function deleteShareLink($itemId)
+    public function deleteShareLink($itemId)
     {
-        $response = self::getPermission($itemId);
+        $response = $this->getPermission($itemId);
         if ($response['errno'] === 0) {
             $data = $response['data'];
-            $permission = Arr::first($data, function ($value) {
+            $permission = Arr::first($data, static function ($value) {
                 return $value['roles'][0] === 'read';
             });
             $permissionId = Arr::get($permission, 'id');
 
-            return self::deletePermission($itemId, $permissionId);
-        } else {
-            return $response;
+            return $this->deletePermission($itemId, $permissionId);
         }
+        return $response;
     }
 
+
     /**
+     * 获取资源权限
+     *
      * @param $itemId
      *
      * @return array|mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function getPermission($itemId)
+    public function getPermission($itemId)
     {
         $endpoint = "/me/drive/items/{$itemId}/permissions";
-        $response = self::request('get', $endpoint);
+        $response = $this->request('get', $endpoint);
         if ($response ['errno'] === 0) {
             $data = $response ['data'];
 
-            return self::response($data['value']);
-        } else {
-            return $response;
+            return $this->response($data['value']);
         }
+        return $response;
     }
 
     /**
+     * 删除资源权限
+     *
      * @param $itemId
      * @param $permissionId
      *
      * @return array|mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function deletePermission($itemId, $permissionId)
+    public function deletePermission($itemId, $permissionId)
     {
         $endpoint = "/me/drive/items/{$itemId}/permissions/{$permissionId}";
-        $response = self::request('delete', $endpoint);
+        $response = $this->request('delete', $endpoint);
         if ($response['errno'] === 0) {
-            return self::response(['deleted' => true]);
-        } else {
-            return $response;
+            return $this->response(['deleted' => true]);
         }
+        return $response;
     }
 
     /**
+     * 上传文件
      * @param $id
      * @param $content
      *
      * @return mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function upload($id, $content)
+    public function upload($id, $content)
     {
         $endpoint = "/me/drive/items/{$id}/content";
         $body = $content;
-        $response = self::request('put', [$endpoint, $body]);
-
-        return $response;
+        return $this->request('put', [$endpoint, $body]);
     }
 
     /**
+     * 上传文件到指定路径
      * @param $path
      * @param $content
      *
      * @return mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function uploadByPath($path, $content)
+    public function uploadByPath($path, $content)
     {
-        $requestPath = self::getRequestPath($path);
+        $requestPath = $this->getRequestPath($path);
         $endpoint = "/me/drive/root{$requestPath}content";
         $body = $content;
-        $response = self::request('put', [$endpoint, $body]);
-
-        return $response;
+        return $this->request('put', [$endpoint, $body]);
     }
 
     /**
+     * 离线上传 （个人账号 50M以下）
      * @param $remote
      * @param $url
      *
      * @return array|mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function uploadUrl($remote, $url)
+    public function uploadUrl($remote, $url)
     {
-        $drive = self::getDrive();
-        if ($drive['errno'] === 0) {
-            if ($drive['data']['driveType'] == 'business') {
-                return self::response(
-                    ['driveType' => $drive['data']['driveType']],
-                    400,
-                    'Account Not Support'
-                );
-            } else {
-                $path = self::getAbsolutePath(dirname($remote));
+        $driveResp = $this->getDriveInfo();
+        if ($driveResp['errno'] === 0) {
+            if ($driveResp['data']['driveType'] !== 'business') {
+                $path = $this->getAbsolutePath(dirname($remote));
                 // $pathId = $this->pathToItemId($path);
                 // $endpoint = "/me/drive/items/{$pathId}/children"; // by id
-                $handledPath = self::getEncodeUrl(trim($path, '/'));
+                $handledPath = $this->encodeUrl(trim($path, '/'));
                 $graphPath = empty($handledPath) ? '/' : ":/{$handledPath}:/";
                 $endpoint = "/me/drive/root{$graphPath}children";
                 $headers = ['Prefer' => 'respond-async'];
                 $body = '{"@microsoft.graph.sourceUrl":"' . $url . '","name":"'
                     . pathinfo($remote, PATHINFO_BASENAME) . '","file":{}}';
-                $response = self::request('post', [$endpoint, $body, $headers]);
+                $response = $this->request('post', [$endpoint, $body, $headers]);
                 if ($response['errno'] === 0) {
                     $data = [
                         'redirect' => $response['headers']['Location'],
                     ];
 
-                    return self::response($data);
-                } else {
-                    return $response;
+                    return $this->response($data);
                 }
+                return $response;
             }
-        } else {
-            return $drive;
+            return $this->response(
+                ['driveType' => $driveResp['data']['driveType']],
+                400,
+                'Account Not Support'
+            );
         }
+        return $driveResp;
     }
 
     /**
+     * 创建分片上传
      * @param $remote
      *
      * @return mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function createUploadSession($remote)
+    public function createUploadSession($remote)
     {
-        $graphPath = self::getRequestPath($remote);
+        $graphPath = $this->getRequestPath($remote);
         $endpoint = "/me/drive/root{$graphPath}createUploadSession";
         $body = json_encode([
             'item' => [
                 '@microsoft.graph.conflictBehavior' => 'fail',
             ],
         ]);
-        $response = self::request('post', [$endpoint, $body]);
-
-        return $response;
+        return $this->request('post', [$endpoint, $body]);
     }
 
     /**
+     * 上传分片
      * @param     $url
      * @param     $file
      * @param     $offset
      * @param int $length
      *
      * @return mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function uploadToSession(
-        $url,
-        $file,
-        $offset,
-        $length = 5242880
-    )
+    public function uploadToSession($url, $file, $offset, $length = 5242880)
     {
-        $file_size = self::readFileSize($file);
+        $file_size = $this->readFileSize($file);
         $content_length = (($offset + $length) > $file_size) ? ($file_size
             - $offset) : $length;
         $end = (($offset + $length) > $file_size) ? ($file_size - 1)
             : $offset + $content_length - 1;
-        $content = self::readFileContent($file, $offset, $length);
+        $content = $this->readFileContent($file, $offset, $length);
         $headers = [
             'Content-Length' => $content_length,
             'Content-Range' => "bytes {$offset}-{$end}/{$file_size}",
         ];
         $requestBody = $content;
-        $response = self::request(
+        $response = $this->request(
             'put',
             [$url, $requestBody, $headers, 360]
         );
-
         return $response;
     }
 
     /**
+     * 获取分片上传状态
      * @param $url
-     *
      * @return mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function uploadSessionStatus($url)
+    public function uploadSessionStatus($url)
     {
-        $response = self::request('get', $url, false);
-
-        return $response;
+        return $this->request('get', $url, false);
     }
 
     /**
+     * 删除分片上传session
+     *
      * @param $url
-     *
      * @return mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function deleteUploadSession($url)
+    public function deleteUploadSession($url)
     {
-        $response = self::request('delete', $url, false);
-
-        return $response;
+        return $this->request('delete', $url, false);
     }
 
     /**
+     * 资源id转路径
+     *
      * @param      $itemId
      * @param bool $start
      *
      * @return array|mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function itemIdToPath($itemId, $start = false)
+    public function itemIdToPath($itemId, $start = false)
     {
-        $response = self::getItem($itemId);
+        $response = $this->getItem($itemId);
         if ($response['errno'] === 0) {
             $item = $response['data'];
-            if (!array_key_exists('path', $item['parentReference'])
-                && $item['name'] == 'root'
-            ) {
-                return self::response([
+            if (!array_key_exists('path', $item['parentReference']) && $item['name'] === 'root') {
+                return $this->response([
                     'path' => '/',
                 ]);
             }
             $path = $item['parentReference']['path'];
-            if (starts_with($path, '/drive/root:')) {
+            if (Str::startsWith($path, '/drive/root:')) {
                 $path = Str::after($path, '/drive/root:');
             }
-            if (!$start) {
-                $pathArr = $path === '' ? [] : explode('/', $path);
+
+            // 兼容根目录
+            if ($path === '') {
+                $pathArr = [];
+            } elseif ($start) {
+                $pathArr = explode('/', $path);
             } else {
-                // 兼容根目录
-                if ($path === '') {
-                    $pathArr = [];
-                } else {
-                    $pathArr = explode('/', $path);
-                    if (trim($start, '/') !== '') {
-                        $pathArr = array_slice($pathArr, 1);
-                    }
+                $pathArr = explode('/', $path);
+                if (trim($start, '/') !== '') {
+                    $pathArr = array_slice($pathArr, 1);
                 }
             }
-            array_push($pathArr, $item['name']);
-            $path = self::getAbsolutePath(implode('/', $pathArr));
 
-            return self::response([
+
+            $pathArr[] = $item['name'];
+
+            $path = $this->getAbsolutePath(implode('/', $pathArr));
+
+            return $this->response([
                 'path' => $path,
             ]);
-        } else {
-            return $response;
         }
+        return $response;
     }
 
     /**
+     * 路径转资源id
+     *
      * @param $path
      *
      * @return array|mixed
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    public static function pathToItemId($path)
+    public function pathToItemId($path)
     {
-        $requestPath = self::getRequestPath($path);
-        $endpoint = $requestPath === '/' ? '/me/drive/root'
+        $requestPath = $this->getRequestPath($path);
+        $endpoint = $requestPath === '/'
+            ? '/me/drive/root'
             : '/me/drive/root' . $requestPath;
-        $response = self::request('get', $endpoint);
+        $response = $this->request('get', $endpoint);
         if ($response['errno'] === 0) {
             $data = $response['data'];
 
-            return self::response(['id' => $data['id']]);
-        } else {
-            return $response;
+            return $this->response(['id' => $data['id']]);
         }
+        return $response;
     }
 
+    /**
+     * 处理url
+     *
+     * @param $path
+     *
+     * @return string
+     */
+    public function encodeUrl($path): string
+    {
+        $url = [];
+        foreach (explode('/', $path) as $key => $value) {
+            if (empty(!$value)) {
+                $url[] = rawurlencode($value);
+            }
+        }
+        return @implode('/', $url);
+    }
 
     /**
-     * Format Response Data
+     * 获取格式化请求路径
+     *
+     * @param      $path
+     * @param bool $isFile
+     *
+     * @return string
+     */
+    public function getRequestPath($path, $isFile = false): string
+    {
+        $origin_path = $this->getAbsolutePath($path);
+        $query_path = trim($origin_path, '/');
+        $query_path = $this->encodeUrl(rawurldecode($query_path));
+        $request_path = empty($query_path) ? '/' : ":/{$query_path}:/";
+        if ($isFile) {
+            return rtrim($request_path, ':/');
+        }
+        return $request_path;
+    }
+
+    /**
+     * 转换为绝对路径
+     *
+     * @param $path
+     *
+     * @return mixed
+     */
+    public function getAbsolutePath($path)
+    {
+        $path = str_replace(['/', '\\', '//'], '/', $path);
+        $parts = array_filter(explode('/', $path), 'strlen');
+        $absolutes = [];
+        foreach ($parts as $part) {
+            if ('.' === (string)$part) {
+                continue;
+            }
+            if ('..' === (string)$part) {
+                array_pop($absolutes);
+            } else {
+                $absolutes[] = $part;
+            }
+        }
+        return str_replace('//', '/', '/' . implode('/', $absolutes) . '/');
+    }
+
+    /**
+     * 格式化目录数据
      *
      * @param      $response
      * @param bool $isList
      *
      * @return array
      */
-    public static function formatArray($response, $isList = true)
+    public function formatItem($response, $isList = true): array
     {
         if ($isList) {
             $items = [];
@@ -751,85 +786,30 @@ class OneDrive
                 }
                 $items[$item['name']] = $item;
             }
-
             return $items;
-        } else {
-            $response['ext'] = strtolower(
-                pathinfo(
-                    $response['name'],
-                    PATHINFO_EXTENSION
-                )
-            );
-
-            return $response;
         }
+        $response['ext'] = strtolower(
+            pathinfo(
+                $response['name'],
+                PATHINFO_EXTENSION
+            )
+        );
+        return $response;
     }
 
     /**
-     * Handle Request Path
-     *
-     * @param      $path
-     * @param bool $isFile
-     *
-     * @return string
+     * @param $data
+     * @param int $errno
+     * @param string $msg
+     * @return array
      */
-    public static function getRequestPath($path, $isFile = false)
+    public function response($data, $errno = 0, $msg = 'ok'): array
     {
-        $origin_path = self::getAbsolutePath($path);
-        $query_path = trim($origin_path, '/');
-        $query_path = self::getEncodeUrl(rawurldecode($query_path));
-        $request_path = empty($query_path) ? '/' : ":/{$query_path}:/";
-        if ($isFile) {
-            return rtrim($request_path, ':/');
-        }
-
-        return $request_path;
-    }
-
-    /**
-     * Transfer Path
-     *
-     * @param $path
-     *
-     * @return mixed
-     */
-    public static function getAbsolutePath($path)
-    {
-        $path = str_replace(['/', '\\', '//'], '/', $path);
-
-        $parts = array_filter(explode('/', $path), 'strlen');
-        $absolutes = [];
-        foreach ($parts as $part) {
-            if ('.' == $part) {
-                continue;
-            }
-            if ('..' == $part) {
-                array_pop($absolutes);
-            } else {
-                $absolutes[] = $part;
-            }
-        }
-
-        return str_replace('//', '/', '/' . implode('/', $absolutes) . '/');
-    }
-
-    /**
-     * Handle Url
-     *
-     * @param $path
-     *
-     * @return string
-     */
-    public static function getEncodeUrl($path)
-    {
-        $url = [];
-        foreach (explode('/', $path) as $key => $value) {
-            if (empty(!$value)) {
-                $url[] = rawurlencode($value);
-            }
-        }
-
-        return @implode('/', $url);
+        return [
+            'errno' => $errno,
+            'msg' => $msg,
+            'data' => $data,
+        ];
     }
 
     /**
@@ -839,7 +819,7 @@ class OneDrive
      *
      * @return bool|int|string
      */
-    public static function readFileSize($path)
+    public function readFileSize($path)
     {
         if (!file_exists($path)) {
             return false;
@@ -848,18 +828,16 @@ class OneDrive
         if (!($file = fopen($path, 'rb'))) {
             return false;
         }
-        if ($size >= 0) { //Check if it really is a small file (< 2 GB)
-            if (fseek($file, 0, SEEK_END) === 0) { //It really is a small file
-                fclose($file);
 
-                return $size;
-            }
+        //Check if it really is a small file (< 2 GB)
+        if ($size >= 0 && fseek($file, 0, SEEK_END) === 0) { //It really is a small file
+            fclose($file);
+            return $size;
         }
         //Quickly jump the first 2 GB with fseek. After that fseek is not working on 32 bit php (it uses int internally)
         $size = PHP_INT_MAX - 1;
         if (fseek($file, PHP_INT_MAX - 1) !== 0) {
             fclose($file);
-
             return false;
         }
         $length = 1024 * 1024;
@@ -871,7 +849,6 @@ class OneDrive
         $size = bcsub($size, $length);
         $size = bcadd($size, strlen($read));
         fclose($file);
-
         return $size;
     }
 
@@ -884,26 +861,18 @@ class OneDrive
      *
      * @return bool|string
      */
-    public static function readFileContent($file, $offset, $length)
+    public function readFileContent($file, $offset, $length)
     {
-        $handler = fopen($file, "rb") ?? die('Failed Get Content');
+        $handler = fopen($file, 'rb') or die('Failed Get Content');
         fseek($handler, $offset);
-
         return fread($handler, $length);
     }
 
+
     /**
-     * @param $data
-     * @param int $errno
-     * @param string $msg
-     * @return array
+     * 防止实例被克隆（这会创建实例的副本）
      */
-    public static function response($data, $errno = 0, $msg = 'ok')
+    private function __clone()
     {
-        return [
-            'errno' => $errno,
-            'msg' => $msg,
-            'data' => $data,
-        ];
     }
 }

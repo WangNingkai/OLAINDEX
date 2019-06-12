@@ -2,13 +2,13 @@
 
 namespace App\Http\Middleware;
 
+use App\Utils\Tool;
 use Closure;
-use Illuminate\Support\Facades\Session;
 
-class CheckAuth
+class VerifyInstallation
 {
     /**
-     * 处理登陆
+     * 处理验证安装
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \Closure                 $next
@@ -17,10 +17,10 @@ class CheckAuth
      */
     public function handle($request, Closure $next)
     {
-        if (!Session::has('LogInfo')) {
-            return redirect()->route('login');
+        // 检测是否配置client_id等信息
+        if (!Tool::hasConfig()) {
+            return redirect()->route('_1stInstall');
         }
-        Session::put('LogInfo.LastActivityTime', time());
 
         return $next($request);
     }

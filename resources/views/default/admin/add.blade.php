@@ -1,7 +1,7 @@
 @extends('default.layouts.admin')
 @section('title', request()->get('name'))
 @section('css')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/inscrybmde@1.11.4/dist/inscrybmde.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/inscrybmde@1.11.6/dist/inscrybmde.min.css">
     <style>
         .editor-preview img, .editor-preview-side img {
             box-sizing: border-box;
@@ -13,7 +13,7 @@
     </style>
 @stop
 @section('js')
-    <script src="https://cdn.jsdelivr.net/npm/inscrybmde@1.11.4/dist/inscrybmde.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/inscrybmde@1.11.6/dist/inscrybmde.min.js"></script>
     <script>
         $(function () {
             const mdeditor = new InscrybMDE({

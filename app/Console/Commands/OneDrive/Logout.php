@@ -2,7 +2,8 @@
 
 namespace App\Console\Commands\OneDrive;
 
-use App\Helpers\Tool;
+use App\Models\Setting;
+use App\Utils\Tool;
 use Illuminate\Console\Command;
 
 class Logout extends Command
@@ -51,14 +52,17 @@ class Logout extends Command
     public function logout()
     {
         $data = [
-            'access_token'         => '',
-            'refresh_token'        => '',
+            'access_token' => '',
+            'refresh_token' => '',
             'access_token_expires' => 0,
-            'root'                 => '/',
-            'image_hosting'        => 0,
-            'image_hosting_path'   => '',
+            'root' => '/',
+            'image_hosting' => 0,
+            'image_hosting_path' => '',
+            'account_email' => '',
+            'account_state' => '暂时无法使用',
+            'account_extend' => ''
         ];
-        $saved = Tool::updateConfig($data);
+        $saved = Setting::batchUpdate($data);
         if ($saved) {
             $this->call('cache:clear');
             $this->warn('Logout Success!');

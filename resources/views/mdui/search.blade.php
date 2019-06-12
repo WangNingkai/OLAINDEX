@@ -1,7 +1,7 @@
 @extends('mdui.layouts.main')
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/store@2/dist/store.everything.min.js"></script>
-    <script src="https://cdnjs.loli.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+    <script src="https://cdn.bootcss.com/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
     <script>
         function getDirect() {
             $("#dl").val('');
@@ -74,13 +74,13 @@
                             <a href="{{ route('search.show',$item['id']) }}"
                                target="_blank">
                                 <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
-                                    <i class="mdui-icon material-icons">{{ \App\Helpers\Tool::fileIcon($item['ext']) }}</i>
+                                    <i class="mdui-icon material-icons">{{ \App\Utils\Extension::getFileIcon($item['ext']) }}</i>
                                     {{ $item['name'] }}
                                 </div>
                                 <div
                                     class="mdui-col-sm-3 mdui-text-right">{{ date('M d H:i',strtotime($item['lastModifiedDateTime'])) }}</div>
                                 <div
-                                    class="mdui-col-sm-2 mdui-text-right">{{ array_has($item,'folder')? '-' : \App\Helpers\Tool::convertSize($item['size']) }}</div>
+                                    class="mdui-col-sm-2 mdui-text-right">{{ \Illuminate\Support\Arr::has($item,'folder')? '-' : \App\Utils\Tool::convertSize($item['size']) }}</div>
                             </a>
                         </li>
                     @endforeach

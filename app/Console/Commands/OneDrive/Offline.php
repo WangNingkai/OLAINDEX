@@ -41,13 +41,13 @@ class Offline extends Command
         $this->call('refresh:token');
         $remote = $this->argument('remote');
         $url = $this->argument('url');
-        $response = OneDrive::uploadUrl($remote, $url);
+        $response = OneDrive::getInstance(one_account())->uploadUrl($remote, $url);
         if ($response['errno'] === 200) {
             $redirect = Arr::get($response, 'data.redirect');
             $this->info('progress link: '.$redirect);
             $done = false;
             while (!$done) {
-                $result = OneDrive::request('get', $redirect, false);
+                $result = OneDrive::getInstance(one_account())->request('get', $redirect, false);
                 $status = Arr::get($result, 'data.status');
                 if ($status === 'failed') {
                     $this->error(Arr::get($result, 'data.error.message'));

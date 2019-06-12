@@ -2,12 +2,12 @@
 
 namespace App\Http\Middleware;
 
-use App\Helpers\Tool;
+use App\Utils\Tool;
 use App\Http\Controllers\OauthController;
 use Closure;
-use Illuminate\Support\Facades\Session;
+use Session;
 
-class CheckAccessToken
+class VerifyAccessToken
 {
     /**
      * @param         $request
@@ -23,8 +23,9 @@ class CheckAccessToken
 
             return redirect()->route('bind');
         }
-        $expires = Tool::config('access_token_expires', 0);
-        $hasExpired = $expires - time() <= 0 ? true : false;
+        $expires = setting('access_token_expires', 0);
+        $expires = strtotime($expires);
+        $hasExpired = $expires - time() <= 0;
         if ($hasExpired) {
             $current = url()->current();
             Session::put('refresh_redirect', $current);

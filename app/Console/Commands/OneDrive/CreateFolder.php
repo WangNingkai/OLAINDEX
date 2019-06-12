@@ -41,8 +41,8 @@ class CreateFolder extends Command
         $this->call('od:refresh');
         $name = $this->argument('name');
         $remote = $this->argument('remote');
-        $response = OneDrive::mkdirByPath($name, $remote);
+        $response = OneDrive::getInstance(one_account())->mkdirByPath($name, $remote);
         $this->call('cache:clear');
-        $response['errno'] === 0 ? $this->info("Folder Created!") : $this->warn("Failed!\n{$response['msg']} ");
+        $response['errno'] === 0 ? $this->info('Folder Created!') : $this->warn("Failed!\n{$response['msg']} ");
     }
 }
