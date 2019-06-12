@@ -389,11 +389,11 @@ class Tool
     public static function handleEncryptItem($str): array
     {
         $str = str_replace(PHP_EOL, '', $str);
-        $str = trim($str, ',');
+        $str = trim($str, '|');
         $encryptPathArr = explode('|', $str);
         $all = [];
         foreach ($encryptPathArr as $encryptPathDir) {
-            [$pathItem, $password] = explode(':', $encryptPathDir);
+            @list($pathItem, $password) = explode(':', $encryptPathDir);
             $pathItem = explode(',', $pathItem);
             $pathItem = array_map(static function ($value) {
                 return 'p-' . $value;
@@ -403,6 +403,24 @@ class Tool
         }
         uksort($all, [self::class, 'lenSort']);
         return $all;
+    }
+
+    /**
+     * 解析隐藏目录
+     *
+     * @param $str
+     * @return array
+     */
+    public static function handleHideItem($str): array
+    {
+        $str = str_replace(PHP_EOL, '', $str);
+        $str = trim($str, '|');
+        $hidePathArr = explode('|', $str);
+        $hidePathArr = array_map(static function ($value) {
+            return trim($value, '/');
+        }, $hidePathArr);
+        uksort($hidePathArr, [self::class, 'lenSort']);
+        return $hidePathArr;
     }
 
     /**

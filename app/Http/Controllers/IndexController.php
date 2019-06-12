@@ -30,7 +30,7 @@ class IndexController extends Controller
      *
      * @var int|mixed|string
      */
-    public $expires = 1800;
+    public $expires = 1200;
 
     /**
      * 根目录
@@ -51,7 +51,7 @@ class IndexController extends Controller
      */
     public function __construct()
     {
-        $this->middleware(['verify.installation', 'verify.token', 'handle.forbid',]);
+        $this->middleware(['verify.installation', 'verify.token', 'handle.forbid', 'handle.hide']);
         $this->middleware('handle.encrypt')->only(setting('encrypt_option', ['list']));
         $this->middleware('hotlink.protection')->only(['show', 'download', 'thumb', 'thumbCrop']);
         $this->middleware('throttle:' . setting('search_throttle'))->only(['search', 'searchShow']);
@@ -125,8 +125,8 @@ class IndexController extends Controller
         } else {
             $response = OneDrive::getInstance(one_account())->getItemListByPath(
                 $graphPath,
-                '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl'
-                . '&expand=thumbnails'
+                '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,'
+                . 'parentReference,@microsoft.graph.downloadUrl&expand=thumbnails'
             );
 
             if ($response['errno'] === 0) {
@@ -161,6 +161,14 @@ class IndexController extends Controller
         // 过滤微软OneNote文件
         $originItems = Arr::where($originItems, static function ($value) {
             return !Arr::has($value, 'package.type');
+        });
+
+        // 过滤隐藏文件
+        $originItems = Arr::where($originItems, static function ($value) {
+            $parentPath = Arr::get($value, 'parentReference.path');
+            $filePath = Str::after($parentPath . '/' . $value['name'], '/drive/root:/' . trim(setting('root'), '/'));
+            $hideDir = Tool::handleHideItem(setting('hide_path'));
+            return !in_array(trim($filePath, '/'), $hideDir, false);
         });
 
         // 处理 head/readme
@@ -463,15 +471,5 @@ class IndexController extends Controller
             config('olaindex.theme') . 'password',
             compact('route', 'requestPath', 'encryptKey')
         );
-    }
-
-    /*处理隐藏资源*/
-    public function handleHide($itemArray)
-    {
-    }
-
-    /*处理禁用资源*/
-    public function handleForbid($itemArray)
-    {
     }
 }

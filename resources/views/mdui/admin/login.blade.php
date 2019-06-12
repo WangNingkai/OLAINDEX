@@ -8,7 +8,8 @@
                 <div class="mdui-textfield mdui-textfield-floating-label">
                     <i class="mdui-icon material-icons">face</i>
                     <label class="mdui-textfield-label" for="name">用户名</label>
-                    <input name="text" class="mdui-textfield-input" type="name" id="name" required/>
+                    <input name="name" class="mdui-textfield-input" type="text" id="name" value="{{ old('name') }}"
+                           required/>
                     @if($errors->has('name')) <div
                         class="mdui-textfield-helper">{{ $errors->first('name') }}</div>  @endif
                 </div>

@@ -68,6 +68,6 @@ class Kernel extends HttpKernel
         'hotlink.protection' => \App\Http\Middleware\HotlinkProtection::class,
         'handle.forbid' => \App\Http\Middleware\HandleForbidFile::class,
         'handle.encrypt' => \App\Http\Middleware\HandleEncryptDir::class,
-        'Handle.hide' => \App\Http\Middleware\HandleHideDir::class,
+        'handle.hide' => \App\Http\Middleware\HandleHideDir::class,
     ];
 }

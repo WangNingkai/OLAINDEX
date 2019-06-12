@@ -1,16 +1,16 @@
 @extends('default.layouts.main')
 @section('title',setting('name','OLAINDEX'))
 @section('css')
-    <link rel="stylesheet"
+    {{--<link rel="stylesheet"
           href="https://cdn.bootcss.com/blueimp-gallery/2.33.0/css/blueimp-gallery-indicator.min.css">
-    <link rel="stylesheet" href="https://cdn.bootcss.com/blueimp-gallery/2.33.0/css/blueimp-gallery.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/blueimp-gallery/2.33.0/css/blueimp-gallery.min.css">--}}
 @stop
 @section('js')
-    <script src="https://cdn.bootcss.com/blueimp-gallery/2.33.0/js/blueimp-helper.min.js"></script>
-    <script src="https://cdn.bootcss.com/blueimp-gallery/2.33.0/js/blueimp-gallery.min.js"></script>
-    <script src="https://cdn.bootcss.com/blueimp-gallery/2.33.0/js/blueimp-gallery-indicator.min.js"></script>
-    <script src="https://cdn.bootcss.com/libs/blueimp-gallery/2.33.0/js/jquery.blueimp-gallery.min.js"></script>
-    <script src="https://cdn.bootcss.com/libs/blueimp-gallery/2.33.0/js/blueimp-gallery-fullscreen.min.js"></script>
+    {{--    <script src="https://cdn.bootcss.com/blueimp-gallery/2.33.0/js/blueimp-helper.min.js"></script>
+        <script src="https://cdn.bootcss.com/blueimp-gallery/2.33.0/js/blueimp-gallery.min.js"></script>
+        <script src="https://cdn.bootcss.com/blueimp-gallery/2.33.0/js/blueimp-gallery-indicator.min.js"></script>
+        <script src="https://cdn.bootcss.com/libs/blueimp-gallery/2.33.0/js/jquery.blueimp-gallery.min.js"></script>
+        <script src="https://cdn.bootcss.com/libs/blueimp-gallery/2.33.0/js/blueimp-gallery-fullscreen.min.js"></script>--}}
     <script>
         @auth
         function deleteItem($sign) {
@@ -259,37 +259,37 @@
     <div>
         {{ $items->appends(['limit' => request()->get('limit'),'orderBy'=> request()->get('orderBy')])->links('default.page') }}
     </div>
-    @if ($hasImage && (int)setting('image_view'))
-        <div class="card border-light mb-3">
-            <div class="card-header">
-                看图
-            </div>
-            <div class="card-body">
-                <div id="links">
-                    @foreach($items as $item)
-                        @if( \Illuminate\Support\Arr::has($item,'image'))
-                            <a href="{{ route('view',$originPath ? $originPath.'/'.$item['name'] : $item['name']) }}"
-                               title="{{ $item['name'] }}" data-gallery>
-                                <img class="lazy"
-                                     data-original="{{  \Illuminate\Support\Arr::get($item,'thumbnails.0.small.url') }}"
-                                     src="{{ asset('img/loading.gif') }}"
-                                     alt="{{ $item['name'] }}" width="10%" height="10%">
-                            </a>
-                        @endif
-                    @endforeach
-                </div>
-                <div id="blueimp-gallery" class="blueimp-gallery" data-start-slideshow="true" data-filter=":even">
-                    <div class="slides"></div>
-                    <h3 class="title"></h3>
-                    <a class="prev">‹</a>
-                    <a class="next">›</a>
-                    <a class="close">×</a>
-                    <a class="play-pause"></a>
-                    <ol class="indicator"></ol>
-                </div>
-            </div>
-        </div>
-    @endif
+    {{--    @if ($hasImage && (int)setting('image_view'))--}}
+    {{--        <div class="card border-light mb-3">--}}
+    {{--            <div class="card-header">--}}
+    {{--                看图--}}
+    {{--            </div>--}}
+    {{--            <div class="card-body">--}}
+    {{--                <div id="links">--}}
+    {{--                    @foreach($items as $item)--}}
+    {{--                        @if( \Illuminate\Support\Arr::has($item,'image'))--}}
+    {{--                            <a href="{{ route('view',$originPath ? $originPath.'/'.$item['name'] : $item['name']) }}"--}}
+    {{--                               title="{{ $item['name'] }}" data-gallery>--}}
+    {{--                                <img class="lazy"--}}
+    {{--                                     data-original="{{  \Illuminate\Support\Arr::get($item,'thumbnails.0.small.url') }}"--}}
+    {{--                                     src="{{ asset('img/loading.gif') }}"--}}
+    {{--                                     alt="{{ $item['name'] }}" width="10%" height="10%">--}}
+    {{--                            </a>--}}
+    {{--                        @endif--}}
+    {{--                    @endforeach--}}
+    {{--                </div>--}}
+    {{--                <div id="blueimp-gallery" class="blueimp-gallery" data-start-slideshow="true" data-filter=":even">--}}
+    {{--                    <div class="slides"></div>--}}
+    {{--                    <h3 class="title"></h3>--}}
+    {{--                    <a class="prev">‹</a>--}}
+    {{--                    <a class="next">›</a>--}}
+    {{--                    <a class="close">×</a>--}}
+    {{--                    <a class="play-pause"></a>--}}
+    {{--                    <ol class="indicator"></ol>--}}
+    {{--                </div>--}}
+    {{--            </div>--}}
+    {{--        </div>--}}
+    {{--    @endif--}}
     @if (!blank($readme))
         <div class="card border-light mb-3">
             <div class="card-header"><i class="fa fa-bookmark"></i> README</div>

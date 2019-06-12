@@ -24,8 +24,7 @@ class HandleForbidFile
         $fileName = array_pop($path_array);
         $illegalFile = ['README.md', 'HEAD.md', '.password', '.deny'];
         $pattern = '/^README\.md|HEAD\.md|\.password|\.deny/';
-        if (in_array($fileName, $illegalFile, false)
-            || preg_match($pattern, $fileName, $arr) > 0) {
+        if (in_array($fileName, $illegalFile, false) || preg_match($pattern, $fileName, $arr) > 0) {
             Tool::showMessage('非法请求', false);
 
             return response()->view(config('olaindex.theme') . 'message');

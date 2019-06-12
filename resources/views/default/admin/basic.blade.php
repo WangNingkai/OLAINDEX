@@ -31,7 +31,7 @@
             <label for="hide_path">目录隐藏</label>
             <textarea class="form-control" id="hide_path" name="hide_path"
                       rows="5">{{ setting('hide_path') }}</textarea>
-            <span class="form-text text-danger">填写需要隐藏的文件或文件夹路径</span>
+            <span class="form-text text-danger">填写需要隐藏的文件或文件夹路径,每个组使用英文“|”隔开</span>
         </div>
         <div class="form-group">
             <label for="encrypt_path">目录加密</label>
@@ -43,24 +43,24 @@
             <label for="">加密选项</label>
             <div class="custom-control custom-checkbox">
                 <input type="checkbox" class="custom-control-input" id="c1" name="encrypt_option[]" value="list"
-                       @if(in_array('list',json_decode(setting('encrypt_option',[]),true),false)) checked @endif>
+                       @if(in_array('list',setting('encrypt_option',[]),false)) checked @endif>
                 <label class="custom-control-label" for="c1">加密目录列表</label>
             </div>
 
             <div class="custom-control custom-checkbox">
                 <input type="checkbox" class="custom-control-input" id="c2" name="encrypt_option[]" value="show"
-                       @if(in_array('show',json_decode($setting->encrypt_option,true),false)) checked @endif>
+                       @if(in_array('show',setting('encrypt_option',[]),false)) checked @endif>
                 <label class="custom-control-label" for="c2">加密文件预览</label>
             </div>
 
             <div class="custom-control custom-checkbox">
                 <input type="checkbox" class="custom-control-input" id="c3" name="encrypt_option[]" value="download"
-                       @if(in_array('download',json_decode($setting->encrypt_option,true),false)) checked @endif>
+                       @if(in_array('download',setting('encrypt_option',[]),false)) checked @endif>
                 <label class="custom-control-label" for="c3">加密文件下载</label>
             </div>
             <div class="custom-control custom-checkbox">
                 <input type="checkbox" class="custom-control-input" id="c4" name="encrypt_option[]" value="view"
-                       @if(in_array('view',json_decode($setting->encrypt_option,true),false)) checked @endif>
+                       @if(in_array('view',setting('encrypt_option',[]),false)) checked @endif>
                 <label class="custom-control-label" for="c4">加密图片查看页</label>
             </div>
             <span class="form-text text-danger">选择需要加密强度，默认加密列表</span>
