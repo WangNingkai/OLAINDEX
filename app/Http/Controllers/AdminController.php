@@ -131,7 +131,7 @@ class AdminController extends Controller
             RefreshCache::dispatch()->delay(Carbon::now()->addSeconds(5))->onQueue('olaindex');
             Tool::showMessage('后台正在刷新，请继续其它任务...');
         } else {
-            Artisan::call('od:refresh');
+            Artisan::call('od:cache');
         }
         return redirect()->route('admin.basic');
     }

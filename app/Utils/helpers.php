@@ -57,7 +57,7 @@ if (!function_exists('one_account')) {
             'access_token' => setting('access_token'),
             'account_email' => setting('account_email'),
         ]);
-        return $key ? $account->get($key, '') : $account;
+        return $key ? $account->get($key, '') : $account->toArray();
     }
 }
 

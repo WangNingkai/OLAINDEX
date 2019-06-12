@@ -56,10 +56,9 @@ class RefreshCache extends Command
         Artisan::call('od:refresh');
         $response = OneDrive::getInstance(one_account())->getItemListByPath(
             $path,
-            '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl'
-            . '&expand=thumbnails'
+            '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,'
+            . 'parentReference,@microsoft.graph.downloadUrl&expand=thumbnails'
         );
-
         return $response['errno'] === 0 ? $response['data'] : null;
     }
 

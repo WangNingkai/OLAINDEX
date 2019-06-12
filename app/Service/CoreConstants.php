@@ -56,8 +56,8 @@ EOF;
                 'scopes' => self::SCOPES
             ],
             self::ACCOUNT_CN => [
-                'client_id' => setting('client_id_v21'),
-                'client_secret' => setting('client_secret_v21'),
+                'client_id' => setting('client_id'),
+                'client_secret' => setting('client_secret'),
                 'redirect_uri' => setting('redirect_uri', self::DEFAULT_REDIRECT_URI),
                 'authorize_url' => self::AUTHORITY_URL_21V,
                 'authorize_endpoint' => self::AUTHORIZE_ENDPOINT_21V,
