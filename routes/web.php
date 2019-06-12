@@ -18,7 +18,7 @@ Route::any('search/file/{id}', 'IndexController@searchShow')
 
 
 // 加密
-Route::post('password', 'IndexController@handlePassword')->name('password');
+Route::post('password', 'IndexController@handleEncrypt')->name('password');
 
 //消息
 Route::view('message', config('olaindex.theme') . 'message')->name('message');

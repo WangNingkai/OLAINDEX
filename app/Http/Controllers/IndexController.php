@@ -368,6 +368,7 @@ class IndexController extends Controller
         if ($response['errno'] === 0) {
             $url = $response['data']['url'];
             @list($url, $tmp) = explode('&width=', $url);
+            unset($tmp);
             $url .= strpos($url, '?') ? '&' : '?';
             $thumb = $url . "width={$width}&height={$height}";
         } else {
@@ -437,7 +438,7 @@ class IndexController extends Controller
      * 处理加密文档
      * @return Factory|RedirectResponse|View|void
      */
-    public function handlePassword()
+    public function handleEncrypt()
     {
         $password = request()->get('password');
         $route = decrypt(request()->get('route'));
@@ -462,11 +463,6 @@ class IndexController extends Controller
             config('olaindex.theme') . 'password',
             compact('route', 'requestPath', 'encryptKey')
         );
-    }
-
-    /*处理加密资源*/
-    public function handleEncrypt($itemArray)
-    {
     }
 
     /*处理隐藏资源*/
