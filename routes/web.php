@@ -26,7 +26,7 @@ Route::view('message', config('olaindex.theme') . 'message')->name('message');
 
 // 图床
 Route::get('image', 'ImageController@index')->name('image');
-Route::post('image', 'ImageController@upload')->name('image.upload');
+Route::post('image-upload', 'ImageController@upload')->name('image.upload');
 
 //删除
 Route::get('file/delete/{sign}', 'ManageController@deleteItem')->name('delete');
@@ -102,10 +102,8 @@ $showOriginPath = setting('origin_path', 1);
 
 if (!$showOriginPath) {
     // 索引
-    Route::any('/', static function () {
-        $redirect = (int)setting('image_home', 0) ? 'image' : 'home';
-        return redirect()->route($redirect);
-    });
+    Route::get('/', 'IndexController@home');
+
     //列表
     Route::prefix('home')->group(static function () {
         Route::get('{query?}', 'IndexController@list')->where('query', '.*')->name('home');
@@ -136,5 +134,6 @@ if (!$showOriginPath) {
     Route::get('v/{query?}', 'IndexController@download')
         ->where('query', '.*')
         ->name('view');
+
     Route::get('{query?}', 'IndexController@list')->where('query', '.*')->name('home');
 }

@@ -72,14 +72,17 @@ class IndexController extends Controller
 
     /**
      * 首页
-     * @param Request $request
-     *
      * @return Factory|RedirectResponse|View
-     * @throws ErrorException
      */
-    public function home(Request $request)
+    public function home()
     {
-        return $this->list($request);
+        if (setting('image_home', 0)) {
+            if ((int)setting('image_hosting', 0) === 0 || ((int)setting('image_hosting', 0) === 2 && Auth::guest())) {
+                return redirect()->route('home');
+            }
+            return view(config('olaindex.theme') . 'image');
+        }
+        return redirect()->route('home');
     }
 
     /**
@@ -148,12 +151,18 @@ class IndexController extends Controller
         });
 
         // 过滤隐藏文件
-        $originItems = Arr::where($originItems, static function ($value) {
-            $parentPath = Arr::get($value, 'parentReference.path');
-            $filePath = Str::after($parentPath . '/' . $value['name'], '/drive/root:/' . trim(setting('root'), '/'));
-            $hideDir = Tool::handleHideItem(setting('hide_path'));
-            return !in_array(trim($filePath, '/'), $hideDir, false);
-        });
+        if (Auth::guest()) {
+            $originItems = Arr::where($originItems, static function ($value) {
+                $parentPath = Arr::get($value, 'parentReference.path');
+                $filePath = Str::after(
+                    $parentPath . '/' . $value['name'],
+                    '/drive/root:/' . trim(setting('root'), '/')
+                );
+                $hideDir = Tool::handleHideItem(setting('hide_path'));
+                return !in_array(trim($filePath, '/'), $hideDir, false);
+            });
+        }
+
 
         // 处理 head/readme
         $head = array_key_exists('HEAD.md', $originItems)
@@ -162,6 +171,8 @@ class IndexController extends Controller
         $readme = array_key_exists('README.md', $originItems)
             ? Tool::markdown2Html(Tool::getFileContent($originItems['README.md']['@microsoft.graph.downloadUrl']))
             : '';
+
+        // 过滤预留文件
         if (Auth::guest()) {
             $originItems = Arr::except(
                 $originItems,

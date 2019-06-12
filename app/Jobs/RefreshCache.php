@@ -22,7 +22,9 @@ class RefreshCache implements ShouldQueue
     {
         $artisan = base_path('artisan');
         $log = storage_path('app' . DIRECTORY_SEPARATOR . 'refresh.log');
-        $command = "/usr/bin/nohup /usr/bin/php {$artisan} od:cache >> {$log}  2>&1 &";
+        $phpPath = config('olaindex.php_path');
+        $isWin = stripos(PHP_OS, 'WIN') === 0;
+        $command = $isWin ? "start /b {$phpPath} {$artisan} od:cache >> {$log}" : "/usr/bin/nohup {$phpPath} {$artisan} od:cache >> {$log}  2>&1 &";
         $process = new Process($command);
         $process->run(static function ($type, $buffer) {
             if (Process::ERR === $type) {

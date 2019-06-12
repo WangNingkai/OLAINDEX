@@ -90,6 +90,16 @@
                 <option value="1" @if(setting('image_home',0) === 1) selected @endif>开启</option>
                 <option value="0" @if(setting('image_home',0) === 0) selected @endif>关闭</option>
             </select>
+            <br>
+            <br>
+            <label for="queue_refresh" class="mdui-textfield-label">队列刷新缓存</label> &nbsp; &nbsp;
+            <br>
+            <select name="queue_refresh" id="queue_refresh" class="mdui-select" mdui-select="{position: 'bottom'}">
+                <option value="1" @if(setting('queue_refresh',0) === 1) selected @endif>开启</option>
+                <option value="0" @if(setting('queue_refresh',0) === 0) selected @endif>关闭</option>
+            </select>
+
+            <br>
             <div class="mdui-textfield mdui-textfield-floating-label">
                 <label class="mdui-textfield-label" for="image_hosting_path">OneDrive中图床保存地址</label>
                 <input type="text" class="mdui-textfield-input" id="image_hosting_path" name="image_hosting_path"
@@ -138,7 +148,15 @@
                 <label class="mdui-textfield-label" for="statistics">统计代码</label>
                 <input type="text" class="mdui-textfield-input" id="statistics" name="statistics"
                        value="{{ setting('statistics') }}">
-                <div class="mdui-textfield-helper">js 统计代码</div>
+                <div class="mdui-textfield-helper">站点统计代码</div>
+            </div>
+
+            <br>
+            <div class="mdui-textfield mdui-textfield-floating-label">
+                <label class="mdui-textfield-label" for="third_access_token">第三方接口token</label>
+                <input type="text" class="mdui-textfield-input" id="third_access_token" name="third_access_token"
+                       value="{{ setting('third_access_token') }}">
+                <div class="mdui-textfield-helper">第三方接口token</div>
             </div>
 
             <br>

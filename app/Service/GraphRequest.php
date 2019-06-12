@@ -99,11 +99,11 @@ class GraphRequest
         $this->requestType = strtoupper($method);
         $options = [
             CURLOPT_CUSTOMREQUEST => $this->requestType,
-//            CURLOPT_HEADER => true,
             CURLOPT_AUTOREFERER => true,
             CURLOPT_FAILONERROR => true,
             CURLOPT_FOLLOWLOCATION => false,
             CURLOPT_ENCODING => 'gzip,deflate',
+
         ];
         if ($this->requestBody) {
             $options = Arr::add($options, CURLOPT_POST, true);

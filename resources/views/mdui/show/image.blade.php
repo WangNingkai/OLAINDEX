@@ -1,9 +1,9 @@
 @extends('mdui.layouts.main')
 @section('css')
-    <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+    <link href="https://cdn.staticfile.org/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
 @stop
 @section('js')
-    <script src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+    <script src="https://cdn.staticfile.org/fancybox/3.5.2/jquery.fancybox.min.js"></script>
 @stop
 @section('content')
 

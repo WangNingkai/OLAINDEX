@@ -1,6 +1,6 @@
 @extends('mdui.layouts.admin')
 @section('js')
-    <script src="https://cdn.bootcss.com/axios/0.19.0/axios.js"></script>
+    <script src="https://cdn.staticfile.org/axios/0.19.0/axios.js"></script>
     <script>
         $(function () {
             $("#submit_btn").on("click", function () {
