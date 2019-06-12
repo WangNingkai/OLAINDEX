@@ -10,11 +10,19 @@ use Validator;
 
 class ApiController extends Controller
 {
+    /**
+     * ApiController constructor.
+     */
     public function __construct()
     {
         $this->middleware(['verify.token', 'verify.third.token']);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse|mixed
+     * @throws \ErrorException
+     */
     public function imageUpload(Request $request)
     {
         $field = 'olaindex_img';

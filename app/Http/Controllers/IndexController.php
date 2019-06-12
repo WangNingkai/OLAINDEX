@@ -171,6 +171,8 @@ class IndexController extends Controller
         $readme = array_key_exists('README.md', $originItems)
             ? Tool::markdown2Html(Tool::getFileContent($originItems['README.md']['@microsoft.graph.downloadUrl']))
             : '';
+
+        // 过滤预留文件
         if (Auth::guest()) {
             $originItems = Arr::except(
                 $originItems,
