@@ -34,8 +34,7 @@
                 <label class="mdui-textfield-label" for="hide_path">隐藏目录</label>
                 <textarea name="encrypt_path" id="hide_path" class="mdui-textfield-input"
                           rows="3">{{ setting('hide_path') }}</textarea>
-                <div class="mdui-textfield-helper">填写需要隐藏的文件或文件夹路径
-                </div>
+                <div class="mdui-textfield-helper">填写需要隐藏的文件或文件夹路径,每个组路径使用英文“|”隔开</div>
             </div>
             <br>
             <div class="mdui-textfield mdui-textfield-floating-label">

@@ -138,24 +138,8 @@ class IndexController extends Controller
                 return view(config('olaindex.theme') . 'message');
             }
         }
-        // 处理排序
-        $order = $request->get('orderBy');
-        @list($field, $sortBy) = explode(',', $order);
-        $itemsBase = collect($originItems);
-        if (strtolower($sortBy) !== 'desc') {
-            $originItems = $itemsBase->sortBy($field)->toArray();
-        } else {
-            $originItems = $itemsBase->sortByDesc($field)->toArray();
-        }
-        // 文件夹排序
-        $originItems = collect($originItems)->sortByDesc(static function ($item) {
-            if (!isset($item['folder'])) {
-                $children = -1;
-            } else {
-                $children = $item['folder']['childCount'];
-            }
-            return $children;
-        })->toArray();
+
+
         $hasImage = Tool::hasImages($originItems);
 
         // 过滤微软OneNote文件
@@ -184,9 +168,32 @@ class IndexController extends Controller
                 ['README.md', 'HEAD.md', '.password', '.deny']
             );
         }
+        // 处理排序
+
+        // 字段排序
+        $order = $request->get('orderBy');
+        @list($field, $sortBy) = explode(',', $order);
+        $itemsBase = collect($originItems);
+        if (strtolower($sortBy) !== 'desc') {
+            $originItems = $itemsBase->sortBy($field)->toArray();
+        } else {
+            $originItems = $itemsBase->sortByDesc($field)->toArray();
+        }
+        // 文件夹排序
+        $originItems = collect($originItems)->sortByDesc(static function ($item) {
+            if (!isset($item['folder'])) {
+                $children = -1;
+            } else {
+                $children = $item['folder']['childCount'];
+            }
+            return $children;
+        })->toArray();
+
+
         $limit = $request->get('limit', 20);
         $items = Tool::paginate($originItems, $limit);
         $parent_item = $item;
+
         $data = compact(
             'parent_item',
             'items',

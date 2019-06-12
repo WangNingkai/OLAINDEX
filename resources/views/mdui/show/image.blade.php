@@ -17,17 +17,17 @@
         <div class="mdui-textfield">
             <label class="mdui-textfield-label" for="downloadUrl">下载地址</label>
             <input class="mdui-textfield-input" type="text" id="downloadUrl"
-                   value="{{ route('download',\App\Utils\Tool::encodeUrl($origin_path)) }}"/>
+                   value="{{ route('download',\App\Utils\Tool::encodeUrl($originPath)) }}"/>
         </div>
         <div class="mdui-textfield">
             <label class="mdui-textfield-label" for="htmlUrl">HTML 引用地址</label>
             <input class="mdui-textfield-input" type="text" id="htmlUrl"
-                   value="<img src='{{ route('view',\App\Utils\Tool::encodeUrl($origin_path)) }}' />"/>
+                   value="<img src='{{ route('view',\App\Utils\Tool::encodeUrl($originPath)) }}' />"/>
         </div>
         <div class="mdui-textfield">
             <label class="mdui-textfield-label" for="makdownUrl">Markdown 引用地址</label>
             <input class="mdui-textfield-input" type="text" id="makdownUrl"
-                   value="![]({{ route('view',\App\Utils\Tool::encodeUrl($origin_path)) }})"/>
+                   value="![]({{ route('view',\App\Utils\Tool::encodeUrl($originPath)) }})"/>
         </div>
     </div>
     <a href="{{ $file['download'] }}" class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"><i
