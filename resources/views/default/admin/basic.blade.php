@@ -28,6 +28,20 @@
             <span class="form-text text-danger">建议缓存时间小于60分钟，否则会导致缓存失效</span>
         </div>
         <div class="form-group">
+            <label class="form-control-label">队列刷新缓存</label>
+            <div class="custom-control custom-radio">
+                <input type="radio" id="queue_refresh1" name="queue_refresh" class="custom-control-input"
+                       @if((int)setting('queue_refresh',0) === 1) checked @endif value="1">
+                <label class="custom-control-label" for="queue_refresh1">开启</label>
+            </div>
+            <div class="custom-control custom-radio">
+                <input type="radio" id="queue_refresh0" name="queue_refresh" class="custom-control-input"
+                       @if((int)setting('queue_refresh',0) === 0) checked @endif value="0">
+                <label class="custom-control-label" for="queue_refresh0">关闭</label>
+            </div>
+            <span class="form-text text-danger">需要后台配置队列守护任务</span>
+        </div>
+        <div class="form-group">
             <label for="hide_path">目录隐藏</label>
             <textarea class="form-control" id="hide_path" name="hide_path"
                       rows="5">{{ setting('hide_path') }}</textarea>

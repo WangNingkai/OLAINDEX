@@ -90,6 +90,15 @@
                 <option value="1" @if(setting('image_home',0) === 1) selected @endif>开启</option>
                 <option value="0" @if(setting('image_home',0) === 0) selected @endif>关闭</option>
             </select>
+            <br>
+            <label for="queue_refresh" class="mdui-textfield-label">队列刷新缓存</label> &nbsp; &nbsp;
+            <br>
+            <select name="queue_refresh" id="queue_refresh" class="mdui-select" mdui-select="{position: 'bottom'}">
+                <option value="1" @if(setting('queue_refresh',0) === 1) selected @endif>开启</option>
+                <option value="0" @if(setting('queue_refresh',0) === 0) selected @endif>关闭</option>
+            </select>
+            <div class="mdui-textfield-helper">需要后台配置队列守护任务</div>
+            <br>
             <div class="mdui-textfield mdui-textfield-floating-label">
                 <label class="mdui-textfield-label" for="image_hosting_path">OneDrive中图床保存地址</label>
                 <input type="text" class="mdui-textfield-input" id="image_hosting_path" name="image_hosting_path"
