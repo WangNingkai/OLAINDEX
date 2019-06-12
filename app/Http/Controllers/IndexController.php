@@ -57,7 +57,7 @@ class IndexController extends Controller
         $this->middleware('throttle:' . setting('search_throttle'))->only(['search', 'searchShow']);
 
 
-        $this->expires = setting('expires', 1800);
+        $this->expires = setting('expires', 1200);
         $this->root = setting('root', '/');
         $this->show = [
             'stream' => explode(' ', setting('stream')),
@@ -162,7 +162,7 @@ class IndexController extends Controller
         $readme = array_key_exists('README.md', $originItems)
             ? Tool::markdown2Html(Tool::getFileContent($originItems['README.md']['@microsoft.graph.downloadUrl']))
             : '';
-        if (!Auth::guest()) {
+        if (Auth::guest()) {
             $originItems = Arr::except(
                 $originItems,
                 ['README.md', 'HEAD.md', '.password', '.deny']

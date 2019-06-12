@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Str;
-use App\Helpers\Tool;
+use App\Utils\Tool;
 
 // 授权
 Route::get('/oauth', 'OauthController@oauth')->name('oauth');
@@ -86,8 +86,7 @@ Route::prefix('admin')->group(static function () {
 
 if (Str::contains(config('app.url'), ['localhost', 'dev.ningkai.wang'])) {
     Route::get('about', static function () {
-        $url
-            = 'https://raw.githubusercontent.com/WangNingkai/OLAINDEX/master/README.md';
+        $url = 'https://raw.githubusercontent.com/WangNingkai/OLAINDEX/master/README.md';
         $content = Tool::getFileContent($url);
         $markdown = Tool::markdown2Html($content);
 
