@@ -15,17 +15,9 @@ composer install -vvv # 这里确保已成功安装 composer ，如果报权限�
 chmod -R 755 storage 
 chown -R www:www * # 此处 www 根据服务器具体用户组而定
 php artisan od:install # 此处绑定域名需根据实际域名谨慎填写（包含http/https）
-chmod 777 storage/app/config.json # 确保文件的读写权限，否则安装报403
 
 # 安装完成后，不要忘记配置 nginx ，将域名指向应用目录的 public 下，参考下面nginx配置。
 
-```
-
-## 自动安装
-
-自动安装依据 `oneinstack` 安装路径测试，其它版本未测试，慎重使用。
-```bash
-wget -N --no-check-certificate https://raw.githubusercontent.com/WangNingkai/OLAINDEX/master/install.sh && chmod +x install.sh && bash install.sh
 ```
 
 ***

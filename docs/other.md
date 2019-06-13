@@ -119,7 +119,11 @@ chown -R www:www *
 
 ## 队列刷新
 
+推荐使用 `supervisor` 管理
 
+```
+php artisan queue:word database --queue=olaindex --tries=3
+```  
 
 ## 缓存配置
 
