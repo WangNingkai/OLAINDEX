@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands\OneDrive;
 
-use App\Helpers\OneDrive;
-use App\Helpers\Tool;
+use App\Service\OneDrive;
+use App\Utils\Tool;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Cache;
+use Cache;
 
 class ListItem extends Command
 {
@@ -49,9 +49,9 @@ class ListItem extends Command
         if ($id) {
             $data = Cache::remember(
                 'one:list:id:'.$id,
-                Tool::config('expires'),
-                function () use ($id) {
-                    $response = OneDrive::getChildren($id);
+                setting('expires'),
+                static function () use ($id) {
+                    $response = OneDrive::getInstance(one_account())->getItemList($id);
 
                     return $response['errno'] === 0 ? $response['data'] : [];
                 }
@@ -59,9 +59,9 @@ class ListItem extends Command
         } else {
             $data = Cache::remember(
                 'one:list:path:'.$remote,
-                Tool::config('expires'),
-                function () use ($remote) {
-                    $response = OneDrive::getChildrenByPath($remote);
+                setting('expires'),
+                static function () use ($remote) {
+                    $response = OneDrive::getInstance(one_account())->getItemListByPath($remote);
 
                     return $response['errno'] === 0 ? $response['data'] : [];
                 }

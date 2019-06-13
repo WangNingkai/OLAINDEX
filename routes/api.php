@@ -16,3 +16,5 @@
 /*Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });*/
+
+Route::post('/image', 'ApiController@imageUpload')->name('image.upload.third');

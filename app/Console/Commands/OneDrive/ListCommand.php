@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\OneDrive;
 
-use App\Helpers\Constants;
+use App\Service\CoreConstants;
 use Illuminate\Console\Command;
 
 class ListCommand extends Command
@@ -38,7 +38,7 @@ class ListCommand extends Command
      */
     public function handle()
     {
-        $this->info(Constants::LOGO);
+        $this->info(CoreConstants::LOGO);
         $output = <<<'EOF'
 OLAINDEX Console Tool
 
@@ -74,8 +74,6 @@ Available commands:
   od:reset     Reset App
   od:rm        Delete Item
   od:share     ShareLink For File
-  od:switch    Switch Type
-  od:update    Update App
   od:upload    UploadFile File
   od:whereis   Find The Item's Remote Path
 

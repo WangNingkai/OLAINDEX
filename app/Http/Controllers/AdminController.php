@@ -2,11 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\Tool;
+use App\Utils\Tool;
+use App\Jobs\RefreshCache;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
+use App\Models\Setting;
+use App\Models\User;
+use Carbon\Carbon;
+use Artisan;
+use Auth;
+use Hash;
 
 /**
  * 后台管理操作
@@ -21,71 +28,22 @@ class AdminController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('checkAuth')->except('login');
-    }
-
-    /**
-     * 登录
-     *
-     * @param Request $request
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     */
-    public function login(Request $request)
-    {
-        if (Session::has('LogInfo')) {
-            return redirect()->route('admin.basic');
-        }
-        if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme').'admin.login');
-        }
-        $password = $request->get('password');
-        if (md5($password) === Tool::config('password')) {
-            $logInfo = [
-                'LastLoginTime'    => time(),
-                'LastLoginIP'      => $request->getClientIp(),
-                'LastActivityTime' => time(),
-            ];
-            Session::put('LogInfo', $logInfo);
-            $request->session()->regenerate();
-
-            return redirect()->route('admin.basic');
-        } else {
-            Tool::showMessage('密码错误', false);
-
-            return redirect()->back();
-        }
-    }
-
-    /**
-     * 退出
-     *
-     * @param Request $request
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function logout(Request $request)
-    {
-        $request->session()->invalidate();
-        Tool::showMessage('已退出');
-
-        return redirect()->route('home');
+        $this->middleware('auth');
     }
 
     /**
      * 基础设置
      *
      * @param Request $request
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @return Factory|RedirectResponse|View
      */
     public function basic(Request $request)
     {
         if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme').'admin.basic');
+            return view(config('olaindex.theme') . 'admin.basic');
         }
         $data = $request->except('_token');
-        Tool::updateConfig($data);
+        Setting::batchUpdate($data);
         Tool::showMessage('保存成功！');
 
         return redirect()->back();
@@ -95,16 +53,16 @@ class AdminController extends Controller
      * 显示设置
      *
      * @param Request $request
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @return Factory|RedirectResponse|View
      */
     public function show(Request $request)
     {
         if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme').'admin.show');
+            return view(config('olaindex.theme') . 'admin.show');
         }
         $data = $request->except('_token');
-        Tool::updateConfig($data);
+
+        Setting::batchUpdate($data);
         Tool::showMessage('保存成功！');
 
         return redirect()->back();
@@ -115,43 +73,46 @@ class AdminController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @return Factory|RedirectResponse|View
      */
     public function profile(Request $request)
     {
         if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme').'admin.profile');
+            return view(config('olaindex.theme') . 'admin.profile');
         }
-        $old_password = $request->get('old_password');
+        /* @var $user User */
+        $user = Auth::user();
+        $oldPassword = $request->get('old_password');
         $password = $request->get('password');
-        $password_confirm = $request->get('password_confirm');
-        if (md5($old_password) !== Tool::config('password')
-            || $old_password === ''
-        ) {
+        $passwordConfirm = $request->get('password_confirm');
+
+        if (!Hash::check($oldPassword, $user->password)) {
             Tool::showMessage('请确保原密码的准确性！', false);
 
             return redirect()->back();
         }
-        if ($password !== $password_confirm || $old_password === ''
-            || $old_password === ''
-        ) {
+        if ($password !== $passwordConfirm) {
             Tool::showMessage('两次密码不一致', false);
 
             return redirect()->back();
         }
-        $data = ['password' => md5($password)];
-        Tool::updateConfig($data);
-        Tool::showMessage('保存成功！');
 
+        $saved = User::query()->update([
+            'id' => $user->id,
+            'password' => bcrypt($password),
+        ]);
+
+        $msg = $saved ? '密码修改成功' : '请稍后重试';
+        Tool::showMessage($msg, $saved);
         return redirect()->back();
     }
 
     /**
      * 缓存清理
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
-    public function clear()
+    public function clear(): RedirectResponse
     {
         Artisan::call('cache:clear');
         Tool::showMessage('清理成功');
@@ -162,13 +123,20 @@ class AdminController extends Controller
     /**
      * 刷新缓存
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
-    public function refresh()
+    public function refresh(): RedirectResponse
     {
-        Artisan::call('od:cache');
-        Tool::showMessage('刷新成功');
-
+        if (setting('queue_refresh', 0)) {
+            RefreshCache::dispatch()
+                ->delay(Carbon::now()->addSeconds(5))
+                ->onQueue('olaindex')
+                ->onConnection('database');
+            Tool::showMessage('后台正在刷新，请继续其它任务...');
+        } else {
+            Artisan::call('od:cache');
+            Tool::showMessage('刷新成功');
+        }
         return redirect()->route('admin.basic');
     }
 
@@ -177,29 +145,30 @@ class AdminController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @return Factory|RedirectResponse|View
      */
     public function bind(Request $request)
     {
         if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme').'admin.bind');
-        } else {
-            if (!Tool::hasBind()) {
-                return redirect()->route('bind');
-            }
-            $data = [
-                'access_token'         => '',
-                'refresh_token'        => '',
-                'access_token_expires' => 0,
-                'root'                 => '/',
-                'image_hosting'        => 0,
-                'image_hosting_path'   => '',
-            ];
-            Tool::updateConfig($data);
-            Cache::forget('one:account');
-            Tool::showMessage('保存成功！');
-
+            return view(config('olaindex.theme') . 'admin.bind');
+        }
+        if (!Tool::hasBind()) {
             return redirect()->route('bind');
         }
+        $data = [
+            'access_token' => '',
+            'refresh_token' => '',
+            'access_token_expires' => 0,
+            'root' => '/',
+            'image_hosting' => 0,
+            'image_hosting_path' => '',
+            'account_email' => '',
+            'account_state' => '暂时无法使用',
+            'account_extend' => ''
+        ];
+        Setting::batchUpdate($data);
+        Tool::showMessage('保存成功！');
+
+        return redirect()->route('bind');
     }
 }

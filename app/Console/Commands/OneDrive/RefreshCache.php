@@ -2,10 +2,12 @@
 
 namespace App\Console\Commands\OneDrive;
 
-use App\Helpers\OneDrive;
-use App\Helpers\Tool;
+use App\Service\OneDrive;
+use App\Utils\Tool;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+use Artisan;
+use Cache;
 
 class RefreshCache extends Command
 {
@@ -51,13 +53,12 @@ class RefreshCache extends Command
      */
     public function getChildren($path)
     {
-        \Illuminate\Support\Facades\Artisan::call('od:refresh');
-        $response = OneDrive::getChildrenByPath(
+        Artisan::call('od:refresh');
+        $response = OneDrive::getInstance(one_account())->getItemListByPath(
             $path,
-            '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl'
-            .'&expand=thumbnails'
+            '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,'
+            . 'parentReference,@microsoft.graph.downloadUrl&expand=thumbnails'
         );
-
         return $response['errno'] === 0 ? $response['data'] : null;
     }
 
@@ -72,17 +73,17 @@ class RefreshCache extends Command
         $this->info($path);
         $data = $this->getChildren($path);
         if (is_array($data)) {
-            \Illuminate\Support\Facades\Cache::put(
-                'one:list:'.$path,
+            Cache::put(
+                'one:list:' . $path,
                 $data,
-                Tool::config('expires')
+                setting('expires')
             );
         } else {
             exit('Cache Error!');
         }
         foreach ((array)$data as $item) {
             if (Arr::has($item, 'folder')) {
-                $this->getRecursive($path.$item['name'].'/');
+                $this->getRecursive($path . $item['name'] . '/');
             }
         }
     }

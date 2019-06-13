@@ -11,11 +11,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://fonts.loli.net/css?family=Lato:400,700,400italic">
     <link rel="stylesheet"
-          href="https://cdnjs.loli.net/ajax/libs/bootswatch/4.3.1/{{ \App\Helpers\Tool::config('theme','materia') }}/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
-    <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.css">
-    <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css">
-    <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/fancybox/3.5.6/jquery.fancybox.min.css">
+          href="https://cdn.staticfile.org/bootswatch/4.3.1/{{ setting('theme','materia') }}/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/limonte-sweetalert2/7.33.1/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/3.0.1/github-markdown.min.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.6/jquery.fancybox.min.css">
 
     @yield('css')
     <style>
@@ -36,7 +36,7 @@
 <body>
 <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-primary">
     <div class="container">
-        <a class="navbar-brand" href="{{ route('home') }}">{{ \App\Helpers\Tool::config('name','OLAINDEX') }}</a>
+        <a class="navbar-brand" href="{{ route('home') }}">{{ setting('name','OLAINDEX') }}</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01"
                 aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -47,25 +47,23 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('home') }}"><i class="fa fa-home"></i> 首页</a>
                 </li>
-                @if (\App\Helpers\Tool::config('image_hosting',0))
-                    @if( (int)\App\Helpers\Tool::config('image_hosting') === 2 && session()->has('LogInfo') || (int)\App\Helpers\Tool::config('image_hosting') === 1)
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('image') }}"><i class="fa fa-cloud-upload"></i> 图床</a>
-                        </li>
-                    @endif
+                @if( (int)setting('image_hosting') === 1 || ((int)setting('image_hosting') === 2 && auth()->user()))
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('image') }}"><i class="fa fa-cloud-upload"></i> 图床</a>
+                    </li>
                 @endif
-                @if (session()->has('LogInfo'))
+                @auth
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('admin.basic') }}"><i class="fa fa-tachometer"></i> 管理</a>
                     </li>
-                @endif
+                @endauth
             </ul>
-            @if (session()->has('LogInfo'))
-                <form class="form-inline my-2 my-lg-0" action="{{ route('search') }}">
-                    <input class="form-control mr-sm-2" type="text" name="keywords" placeholder="搜索">
-                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">搜索</button>
-                </form>
-            @endif
+
+            <form class="form-inline my-2 my-lg-0" action="{{ route('search') }}">
+                <input class="form-control mr-sm-2" type="text" name="keywords" placeholder="搜索">
+                <button class="btn btn-secondary my-2 my-sm-0" type="submit">搜索</button>
+            </form>
+
         </div>
     </div>
 </nav>
@@ -82,22 +80,22 @@
         <div class="row text-center">
             <div class="col-lg-12">
                 <p class="text-muted">
-                    {!! \App\Helpers\Tool::markdown2Html(\App\Helpers\Tool::config('copyright','Designed
+                    {!! \App\Utils\Tool::markdown2Html(setting('copyright','Designed
                     by [IMWNK](https://imwnk.cn/) | Powered by [OLAINDEX](https://git.io/OLAINDEX)'),true) !!}.
                 </p>
             </div>
         </div>
     </footer>
 </div>
-<script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.loli.net/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://cdnjs.loli.net/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.loli.net/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.all.min.js"></script>
-<script src="https://cdnjs.loli.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
-<script src="https://cdnjs.loli.net/ajax/libs/fancybox/3.5.6/jquery.fancybox.min.js"></script>
-<script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
+<script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.staticfile.org/limonte-sweetalert2/7.33.1/sweetalert2.all.min.js"></script>
+<script src="https://cdn.staticfile.org/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+<script src="https://cdn.staticfile.org/fancybox/3.5.6/jquery.fancybox.min.js"></script>
+<script src="https://cdn.staticfile.org/clipboard.js/2.0.4/clipboard.min.js"></script>
 @yield('js')
-{!! \App\Helpers\Tool::config('statistics') !!}
+{!! setting('statistics') !!}
 <script>
     $(function () {
         $('[data-fancybox="image-list"]').fancybox({

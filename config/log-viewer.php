@@ -56,7 +56,7 @@ return [
         'attributes' => [
             'prefix' => 'admin/debug',
 
-            'middleware' => ['web', 'checkAuth'],
+            'middleware' => ['web', 'auth'],
         ],
     ],
 
