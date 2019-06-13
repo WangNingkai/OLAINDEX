@@ -11,10 +11,13 @@ Route::get('thumb/{id}/size/{size}', 'IndexController@thumb')->name('thumb');
 Route::get('thumb/{id}/{width}/{height}', 'IndexController@thumbCrop')->name('thumb_crop');
 
 // 搜索
-Route::any('search', 'IndexController@search')
-    ->name('search');
-Route::any('search/file/{id}', 'IndexController@searchShow')
-    ->name('search.show');
+if (setting('open_search',0)) {
+    Route::any('search', 'IndexController@search')
+        ->name('search');
+    Route::any('search/file/{id}', 'IndexController@searchShow')
+        ->name('search.show');
+
+}
 
 
 // 加密

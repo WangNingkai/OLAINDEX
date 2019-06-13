@@ -114,6 +114,15 @@
                 <div class="mdui-textfield-helper">重试等待时间默认是1分钟（格式：5,10，每10分钟最多上传5次；5 每分钟最多上传5次）</div>
             </div>
             <br>
+            <br>
+            <label for="open_search" class="mdui-textfield-label">开启搜索</label> &nbsp; &nbsp;
+            <br>
+            <select name="open_search" id="open_search" class="mdui-select" mdui-select="{position: 'bottom'}">
+                <option value="1" @if(setting('open_search') === 1) selected @endif>开启</option>
+                <option value="0" @if(setting('open_search') === 0) selected @endif>关闭</option>
+            </select>
+            <br>
+            <br>
             <div class="mdui-textfield mdui-textfield-floating-label">
                 <label class="mdui-textfield-label" for="search_throttle">搜索频次限制</label>
                 <input type="text" class="mdui-textfield-input" id="search_throttle" name="search_throttle"
