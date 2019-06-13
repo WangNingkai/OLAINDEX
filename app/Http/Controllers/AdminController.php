@@ -128,10 +128,14 @@ class AdminController extends Controller
     public function refresh(): RedirectResponse
     {
         if (setting('queue_refresh', 0)) {
-            RefreshCache::dispatch()->delay(Carbon::now()->addSeconds(5))->onQueue('olaindex');
+            RefreshCache::dispatch()
+                ->delay(Carbon::now()->addSeconds(5))
+                ->onQueue('olaindex')
+                ->onConnection('database');
             Tool::showMessage('后台正在刷新，请继续其它任务...');
         } else {
             Artisan::call('od:cache');
+            Tool::showMessage('刷新成功');
         }
         return redirect()->route('admin.basic');
     }

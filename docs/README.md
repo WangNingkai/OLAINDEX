@@ -1,17 +1,4 @@
-# OLAINDEX
-
-✨ Another OneDrive Directory Index.
-
-[![Latest Stable Version](https://poser.pugx.org/wangningkai/olaindex/v/stable)](https://packagist.org/packages/wangningkai/olaindex)
-[![GitHub stars](https://img.shields.io/github/stars/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/network)
-[![GitHub license](https://img.shields.io/github/license/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/blob/master/LICENSE)
-
-![OLAINDEX](https://i.loli.net/2018/12/20/5c1afb0e9a37b.jpg)
-
-此图来自 [如有乐享](https://51.ruyo.net/)，感谢推广
-
-> 👋 本项目受 Oneindex 启发，借鉴其部分功能，在这里感谢。 项目持续开发，会加入更多功能，欢迎大家提交 issue.
+**✨ Another OneDrive Directory Index.**
 
 ## 简介
 
@@ -43,7 +30,8 @@
 - 后台基本显示管理，多主题管理，文件预览管理等等（清理缓存后及时生效）；
 - 支持世纪互联；
 - 支持多种缓存系统（Redis、Memcached等）；
-- 更多功能欢迎亲自尝试。
+- 支持 Heroku 搭建（亲测地址：`http://imwnk-olaindex.herokuapp.com`）。
+- 支持第三方接口
 
 **注：** 部分功能需登录。
 
@@ -126,7 +114,7 @@ Blog : [https://imwnk.cn](https://imwnk.cn)
 
 Email : [imwnk@live.com](mailto:imwnk@live.com)
 
-### 其他：
+## 其他
 
 1. 本项目同样存在命令行版本，包含基本的显示下载，功能与此版本一致。项目地址 [OLAINDEX-CMD](https://git.io/OLACMD)
 
