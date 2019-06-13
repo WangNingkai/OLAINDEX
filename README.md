@@ -24,6 +24,7 @@
 ## 预览
 
 ![预览](https://i.loli.net/2018/11/11/5be82800ce8b5.png)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FWangNingkai%2FOLAINDEX.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FWangNingkai%2FOLAINDEX?ref=badge_shield)
  
 ## 演示地址
 
@@ -124,3 +125,7 @@ Email : [imwnk@live.com](mailto:imwnk@live.com)
 3. 如使用本应用，请保留底部版权，并分享给更多人，谢谢。
 
 ---
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FWangNingkai%2FOLAINDEX.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FWangNingkai%2FOLAINDEX?ref=badge_large)
