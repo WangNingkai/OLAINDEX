@@ -3,6 +3,7 @@
 namespace App\Console\Commands\OneDrive;
 
 use Illuminate\Console\Command;
+use DB;
 
 class Reset extends Command
 {
@@ -50,7 +51,7 @@ class Reset extends Command
     public function reset()
     {
         $this->call('cache:clear');
-        $this->call('migrate:reset');
+        DB::table('settings')->truncate();
         $this->info('Reset Completed！');
     }
 }

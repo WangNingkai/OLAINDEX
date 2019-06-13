@@ -54,8 +54,6 @@ class Install extends Command
             $this->info('Done!');
         }
         // 执行数据迁移
-        $this->call('migrate:reset');
-        $this->call('migrate');
         if (!file_exists(base_path('.env.example'))) {
             $this->warn('No [.env.example] File,please make sure the project complete!');
             exit;
