@@ -19,7 +19,7 @@
 
 ## 项目地址
 
-- [https://github.com/WangNingkai/OLAINDEX](https://git.io/OLAINDEX)
+- [https://github.com/WangNingkai/OLAINDEX](https://github.com/WangNingkai/OLAINDEX)
 
 ## 预览
 
@@ -73,11 +73,9 @@ v4.0
 
 **帮助文档 ：**
 
-[Github Wiki](https://github.com/WangNingkai/OLAINDEX/wiki)
+[帮助文档](https://wangningkai.github.io/OLAINDEX/)
 
 ## 更新升级
-
-**更新日志：** [CHANGELOG](https://raw.githubusercontent.com/WangNingkai/OLAINDEX/master/CHANGELOG.md)
 
 **版本升级：**
 
