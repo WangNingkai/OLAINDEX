@@ -132,6 +132,7 @@ class AdminController extends Controller
             Tool::showMessage('后台正在刷新，请继续其它任务...');
         } else {
             Artisan::call('od:cache');
+            Tool::showMessage('刷新成功');
         }
         return redirect()->route('admin.basic');
     }
