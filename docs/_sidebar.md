@@ -1,5 +1,6 @@
 - **概览**
    -  [简介](README.md)
+   -  [更新日志](changelog.md)
 - **帮助**
    - [环境要求](env.md)
    - [部署安装](install.md)
