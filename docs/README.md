@@ -123,3 +123,6 @@ Email : [imwnk@live.com](mailto:imwnk@live.com)
 3. 如使用本应用，请保留底部版权，并分享给更多人，谢谢。
 
 ---
+
+## License
+The OLAINDEX is open-source software licensed under the MIT license.

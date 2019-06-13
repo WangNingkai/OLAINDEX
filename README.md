@@ -137,4 +137,4 @@ Email : [imwnk@live.com](mailto:imwnk@live.com)
 
 
 ## License
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FWangNingkai%2FOLAINDEX.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FWangNingkai%2FOLAINDEX?ref=badge_large)
+The OLAINDEX is open-source software licensed under the MIT license.
