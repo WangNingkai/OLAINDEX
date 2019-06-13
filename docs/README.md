@@ -1,5 +1,3 @@
-![OLAINDEX](https://i.loli.net/2018/12/20/5c1afb0e9a37b.jpg)
-
 **✨ Another OneDrive Directory Index.**
 
 ## 简介
