@@ -2,6 +2,7 @@
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/store@2/dist/store.everything.min.js"></script>
     <script src="https://cdn.bootcss.com/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+    <script src="https://cdn.staticfile.org/marked/0.6.2/marked.min.js"></script>
     <script>
         function getDirect() {
             $("#dl").val('');
@@ -14,6 +15,8 @@
         }
 
         $(function () {
+            document.getElementById('head').innerHTML = marked(`{!! $head !!}`);
+            document.getElementById('readme').innerHTML = marked(`{!! $readme !!}`);
             let display_type = store.get('display_type');
             if (typeof (display_type) == "undefined" || display_type === null) {
                 display_type = "table";
@@ -41,8 +44,7 @@
 @section('content')
     <div class="mdui-container-fluid">
         @if (!blank($head))
-            <div class="mdui-typo mdui-p-t-3">
-                {!! $head !!}
+            <div class="mdui-typo mdui-p-t-3" id="head">
             </div>
         @endif
 
@@ -205,7 +207,7 @@
                     <span class="mdui-chip-icon"><i class="mdui-icon material-icons">face</i></span>
                     <span class="mdui-chip-title">README.md</span>
                 </div>
-                {!! $readme !!}
+                <div id="readme"></div>
             </div>
         @endif
 
