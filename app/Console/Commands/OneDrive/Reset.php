@@ -52,6 +52,7 @@ class Reset extends Command
     {
         $this->call('cache:clear');
         DB::table('settings')->truncate();
+        DB::table('users')->truncate();
         $this->info('Reset Completed！');
     }
 }
