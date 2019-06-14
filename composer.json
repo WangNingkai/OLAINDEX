@@ -35,6 +35,7 @@
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.6",
         "beyondcode/laravel-dump-server": "^1.0",
+        "bvanhoekelen/performance": "^2.5",
         "doctrine/dbal": "^2.9",
         "filp/whoops": "^2.0",
         "fzaninotto/faker": "^1.4",
