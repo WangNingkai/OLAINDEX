@@ -15,7 +15,6 @@ use Illuminate\Http\Request;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use Performance\Performance;
 
 /**
  * OneDrive 目录索引
@@ -95,18 +94,12 @@ class IndexController extends Controller
      */
     public function list(Request $request)
     {
-        Performance::point('point-1');
-
         // 处理路径
         $requestPath = $request->route()->parameter('query', '/');
         $graphPath = Tool::getOriginPath($requestPath);
         $queryPath = trim(Tool::getAbsolutePath($requestPath), '/');
         $originPath = rawurldecode($queryPath);
         $pathArray = $originPath ? explode('/', $originPath) : [];
-
-        Performance::finish();
-        Performance::point('point-2');
-
 
         // 获取资源缓存
         $pathKey = 'one:path:' . $graphPath;
@@ -126,17 +119,9 @@ class IndexController extends Controller
                 return view(config('olaindex.theme') . 'message');
             }
         }
-
-        Performance::finish();
-        Performance::point('point-3');
-
         if (Arr::has($item, '@microsoft.graph.downloadUrl')) {
             return redirect()->away($item['@microsoft.graph.downloadUrl']);
         }
-
-        Performance::finish();
-        Performance::point('point-4');
-
         // 获取列表资源
         $key = 'one:list:' . $graphPath;
         if (Cache::has($key)) {
@@ -158,39 +143,20 @@ class IndexController extends Controller
             }
         }
 
-        Performance::finish();
-        Performance::point('point-5-0');
         // 处理 head/readme
-        $headFileContent = Tool::getFileContent($originItems['HEAD.md']['@microsoft.graph.downloadUrl']);
-        Performance::finish();
-        Performance::point('point-5-0-1');
         $head = array_key_exists('HEAD.md', $originItems)
-            ? Tool::markdown2Html($headFileContent)
+            ? Tool::getFileContent($originItems['HEAD.md']['@microsoft.graph.downloadUrl'], $graphPath . ':head')
             : '';
-        Performance::finish();
-        Performance::point('point-5-1');
-        $readmeFileContent = Tool::getFileContent($originItems['README.md']['@microsoft.graph.downloadUrl']);
-        Performance::finish();
-        Performance::point('point-5-1-1');
         $readme = array_key_exists('README.md', $originItems)
-            ? Tool::markdown2Html($readmeFileContent)
+            ? Tool::getFileContent($originItems['README.md']['@microsoft.graph.downloadUrl'], $graphPath . ':readme')
             : '';
-
-        Performance::finish();
-        Performance::point('point-6');
-
         // 过滤微软OneNote文件
         $originItems = Arr::where($originItems, static function ($value) {
             return !Arr::has($value, 'package.type');
         });
 
-        Performance::finish();
-        Performance::point('point-7');
-
         if (Auth::guest()) {
             // 过滤隐藏文件
-            Performance::finish();
-            Performance::point('point-7-1');
             $hideDir = Tool::handleHideItem(setting('hide_path'));
             $originItems = Arr::where($originItems, static function ($value) use ($hideDir) {
                 $parentPath = Arr::get($value, 'parentReference.path');
@@ -200,8 +166,6 @@ class IndexController extends Controller
                 );
                 return !in_array(trim($filePath, '/'), $hideDir, false);
             });
-            Performance::finish();
-            Performance::point('point-7-2');
 
             // 过滤预留文件
             $originItems = Arr::except(
@@ -209,9 +173,6 @@ class IndexController extends Controller
                 ['README.md', 'HEAD.md', '.password', '.deny']
             );
         }
-
-        Performance::finish();
-        Performance::point('point-8');
 
         $order = $request->get('orderBy');
         @list($field, $sortBy) = explode(',', $order);
@@ -232,15 +193,13 @@ class IndexController extends Controller
             $folders = $folders->sortByDesc($field)->toArray();
             $files = $files->sortByDesc($field)->toArray();
         }
-
         $originItems = collect($folders)->merge($files)->toArray();
 
-        Performance::finish();
-//        Performance::point();
-        $hasImage = Tool::hasImages($originItems);
         $limit = $request->get('limit', 20);
         $items = Tool::paginate($originItems, $limit);
         $parent_item = $item;
+
+        $hasImage = Tool::hasImages($originItems);
 
         $data = compact(
             'parent_item',
@@ -253,7 +212,6 @@ class IndexController extends Controller
             'hasImage'
         );
 
-        Performance::results();
         return view(config('olaindex.theme') . 'one', $data);
     }
 

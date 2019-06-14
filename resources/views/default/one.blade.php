@@ -1,7 +1,16 @@
 @extends('default.layouts.main')
 @section('title',setting('name','OLAINDEX'))
 @section('js')
+    <script src="https://cdn.staticfile.org/marked/0.6.2/marked.min.js"></script>
     <script>
+        $(function () {
+            @if (!blank($head))
+            document.getElementById('head').innerHTML = marked(`{!! $head !!}`);
+            @endif
+            @if (!blank($readme))
+            document.getElementById('readme').innerHTML = marked(`{!! $readme !!}`);
+            @endif
+        });
         @auth
         function deleteItem($sign) {
             swal({
@@ -38,8 +47,7 @@
     @if (!blank($head))
         <div class="card border-light mb-3">
             <div class="card-header"><i class="fa fa-leaf"></i> HEAD</div>
-            <div class="card-body markdown-body">
-                {!! $head !!}
+            <div class="card-body markdown-body" id="head">
             </div>
         </div>
     @endif
@@ -252,8 +260,7 @@
     @if (!blank($readme))
         <div class="card border-light mb-3">
             <div class="card-header"><i class="fa fa-bookmark"></i> README</div>
-            <div class="card-body markdown-body">
-                {!! $readme !!}
+            <div class="card-body markdown-body" id="readme">
             </div>
         </div>
     @endif

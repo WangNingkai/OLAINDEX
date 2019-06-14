@@ -90,7 +90,7 @@ Route::prefix('admin')->group(static function () {
 if (Str::contains(config('app.url'), ['localhost', 'dev.ningkai.wang'])) {
     Route::get('about', static function () {
         $url = 'https://raw.githubusercontent.com/WangNingkai/OLAINDEX/master/README.md';
-        $content = Tool::getFileContent($url);
+        $content = Tool::getFileContent($url,'aboutMe');
         $markdown = Tool::markdown2Html($content);
 
         return response()->view(

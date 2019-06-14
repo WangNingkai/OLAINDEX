@@ -334,15 +334,18 @@ class Tool
      * 获取远程文件内容
      *
      * @param $url
-     * @param bool $cache
+     * @param string|bool $cache
      * @return mixed|string|null
      * @throws ErrorException
      */
-    public static function getFileContent($url, $cache = true)
+    public static function getFileContent($url, $cache = '')
     {
-        $key = 'one:content:' . $url;
-        if ($cache && Cache::has($key)) {
-            return Cache::get($key, '');
+        if ($cache) {
+            $key = 'one:content:' . $cache;
+            $content = Cache::get($key,'');
+            if ($content) {
+                return $content;
+            }
         }
         $curl = new Curl();
         $curl->setConnectTimeout(CoreConstants::DEFAULT_CONNECT_TIMEOUT);

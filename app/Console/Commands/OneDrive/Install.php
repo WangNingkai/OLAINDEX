@@ -82,6 +82,7 @@ class Install extends Command
         // 生成配置缓存否则报错
         $this->call('config:cache');
 
+        DB::table('users')->truncate();
         // 初始化用户
         DB::table('users')->updateOrInsert([
             'name' => 'admin',
