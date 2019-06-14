@@ -58,12 +58,12 @@
                     </li>
                 @endauth
             </ul>
-
-            <form class="form-inline my-2 my-lg-0" action="{{ route('search') }}">
-                <input class="form-control mr-sm-2" type="text" name="keywords" placeholder="搜索">
-                <button class="btn btn-secondary my-2 my-sm-0" type="submit">搜索</button>
-            </form>
-
+            @if(setting('open_search',0))
+                <form class="form-inline my-2 my-lg-0" action="{{ route('search') }}">
+                    <input class="form-control mr-sm-2" type="text" name="keywords" placeholder="搜索">
+                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">搜索</button>
+                </form>
+            @endif
         </div>
     </div>
 </nav>

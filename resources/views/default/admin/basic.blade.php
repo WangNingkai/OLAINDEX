@@ -123,6 +123,20 @@
             <span class="form-text text-danger">重试等待时间默认是1分钟（格式：5,10，每10分钟最多上传5次；5 每分钟最多上传5次）</span>
         </div>
         <div class="form-group">
+            <label class="form-control-label">开启搜索</label>
+            <div class="custom-control custom-radio">
+                <input type="radio" id="open_search1" name="open_search" class="custom-control-input"
+                       @if((int)setting('open_search',0) === 1) checked @endif value="1">
+                <label class="custom-control-label" for="open_search1">开启</label>
+            </div>
+            <div class="custom-control custom-radio">
+                <input type="radio" id="open_search0" name="open_search" class="custom-control-input"
+                       @if((int)setting('open_search',0) === 0) checked @endif value="0">
+                <label class="custom-control-label" for="open_search0">关闭</label>
+            </div>
+            <span class="form-text text-danger">搜索资源（过度开放会增加账号封禁风险）</span>
+        </div>
+        <div class="form-group">
             <label class="form-control-label" for="search_throttle">搜索频次限制</label>
             <input type="text" class="form-control" id="search_throttle" name="search_throttle"
                    value="{{ setting('search_throttle') }}">
