@@ -100,7 +100,8 @@ class IndexController extends Controller
         $queryPath = trim(Tool::getAbsolutePath($requestPath), '/');
         $originPath = rawurldecode($queryPath);
         $pathArray = $originPath ? explode('/', $originPath) : [];
-        // 获取路径缓存
+
+        // 获取资源缓存
         $pathKey = 'one:path:' . $graphPath;
         if (Cache::has($pathKey)) {
             $item = Cache::get($pathKey);
@@ -121,7 +122,7 @@ class IndexController extends Controller
         if (Arr::has($item, '@microsoft.graph.downloadUrl')) {
             return redirect()->away($item['@microsoft.graph.downloadUrl']);
         }
-        // 获取列表
+        // 获取列表资源
         $key = 'one:list:' . $graphPath;
         if (Cache::has($key)) {
             $originItems = Cache::get($key);
@@ -142,27 +143,7 @@ class IndexController extends Controller
             }
         }
 
-
         $hasImage = Tool::hasImages($originItems);
-
-        // 过滤微软OneNote文件
-        $originItems = Arr::where($originItems, static function ($value) {
-            return !Arr::has($value, 'package.type');
-        });
-
-        // 过滤隐藏文件
-        if (Auth::guest()) {
-            $originItems = Arr::where($originItems, static function ($value) {
-                $parentPath = Arr::get($value, 'parentReference.path');
-                $filePath = Str::after(
-                    $parentPath . '/' . $value['name'],
-                    '/drive/root:/' . trim(setting('root'), '/')
-                );
-                $hideDir = Tool::handleHideItem(setting('hide_path'));
-                return !in_array(trim($filePath, '/'), $hideDir, false);
-            });
-        }
-
 
         // 处理 head/readme
         $head = array_key_exists('HEAD.md', $originItems)
@@ -172,15 +153,30 @@ class IndexController extends Controller
             ? Tool::markdown2Html(Tool::getFileContent($originItems['README.md']['@microsoft.graph.downloadUrl']))
             : '';
 
-        // 过滤预留文件
+        // 过滤微软OneNote文件
+        $originItems = Arr::where($originItems, static function ($value) {
+            return !Arr::has($value, 'package.type');
+        });
+
         if (Auth::guest()) {
+            // 过滤隐藏文件
+            $hideDir = Tool::handleHideItem(setting('hide_path'));
+            $originItems = Arr::where($originItems, static function ($value) use ($hideDir) {
+                $parentPath = Arr::get($value, 'parentReference.path');
+                $filePath = Str::after(
+                    $parentPath . '/' . $value['name'],
+                    '/drive/root:/' . trim(setting('root'), '/')
+                );
+                return !in_array(trim($filePath, '/'), $hideDir, false);
+            });
+
+            // 过滤预留文件
             $originItems = Arr::except(
                 $originItems,
                 ['README.md', 'HEAD.md', '.password', '.deny']
             );
         }
 
-        // 字段排序
         $order = $request->get('orderBy');
         @list($field, $sortBy) = explode(',', $order);
         $itemsBase = collect($originItems);
