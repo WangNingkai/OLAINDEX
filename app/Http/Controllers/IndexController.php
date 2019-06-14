@@ -159,16 +159,21 @@ class IndexController extends Controller
         }
 
         Performance::finish();
-        Performance::point('point-5');
-
-        $hasImage = Tool::hasImages($originItems);
-
+        Performance::point('point-5-0');
         // 处理 head/readme
+        $headFileContent = Tool::getFileContent($originItems['HEAD.md']['@microsoft.graph.downloadUrl']);
+        Performance::finish();
+        Performance::point('point-5-0-1');
         $head = array_key_exists('HEAD.md', $originItems)
-            ? Tool::markdown2Html(Tool::getFileContent($originItems['HEAD.md']['@microsoft.graph.downloadUrl']))
+            ? Tool::markdown2Html($headFileContent)
             : '';
+        Performance::finish();
+        Performance::point('point-5-1');
+        $readmeFileContent = Tool::getFileContent($originItems['README.md']['@microsoft.graph.downloadUrl']);
+        Performance::finish();
+        Performance::point('point-5-1-1');
         $readme = array_key_exists('README.md', $originItems)
-            ? Tool::markdown2Html(Tool::getFileContent($originItems['README.md']['@microsoft.graph.downloadUrl']))
+            ? Tool::markdown2Html($readmeFileContent)
             : '';
 
         Performance::finish();
@@ -232,7 +237,7 @@ class IndexController extends Controller
 
         Performance::finish();
 //        Performance::point();
-
+        $hasImage = Tool::hasImages($originItems);
         $limit = $request->get('limit', 20);
         $items = Tool::paginate($originItems, $limit);
         $parent_item = $item;

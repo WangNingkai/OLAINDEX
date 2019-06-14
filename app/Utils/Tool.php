@@ -309,7 +309,6 @@ class Tool
      */
     public static function refreshAccount($account): void
     {
-
         $response = OneDrive::getInstance($account)->getAccountInfo();
         if ($response['errno'] === 0) {
             $extend = Arr::get($response, 'data');
@@ -333,6 +332,7 @@ class Tool
 
     /**
      * 获取远程文件内容
+     *
      * @param $url
      * @param bool $cache
      * @return mixed|string|null
@@ -342,10 +342,7 @@ class Tool
     {
         $key = 'one:content:' . $url;
         if ($cache && Cache::has($key)) {
-            $content = Cache::get($key);
-            if ($content) {
-                return $content;
-            }
+            return Cache::get($key, '');
         }
         $curl = new Curl();
         $curl->setConnectTimeout(CoreConstants::DEFAULT_CONNECT_TIMEOUT);
