@@ -6,6 +6,9 @@
    - [部署安装](install.md)
    - [账号申请](apply.md)
    - [其它配置](other.md)
+- **接口**
+   - [开放接口](api.md)
 - **常见问题**
    - [Q&A](question.md)
    - [issue](issue.md)
+

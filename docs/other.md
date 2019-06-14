@@ -40,24 +40,6 @@ Available commands:
 
 ```
 
-## 主题切换
-
-目前 OLAINDEX 存在两套主题，`bootswatch`(默认) 和 `mdui`，两套主题的切换方法是，更改根目录 `.env` 文件中 `THEME`变量，`default` 默认为 `bootswatch` 主题，`mdui` 为 `mdui` 主题。
-
-切换主题后，请执行 `php artisan config:cache` 确保配置生效
- 
-## 页面排序
-
-#### 支持字段 (limit|page|orderBy)
-
-* 演示：https://dev.ningkai.wang/home?limit=3&page=2&orderBy=name,desc
-
-* `limit={n}` 限制每页n条
-
-* `page={n}` 第n页
-
-* `orderBy={field},desc` 以field 排序，desc->倒序 asc-> 正序 （field 支持 id/name/size/lastModifiedDateTime）
-
 
 ## 版本升级
 
@@ -108,6 +90,41 @@ chown -R www:www *
 
 ![action](https://i.loli.net/2018/10/27/5bd4718b74864.png)
 
+## 文件加密与隐藏
+
+### 加密
+
+加密需要后台填写加密的文件或文件夹路径
+
+添加路径需去除设置的显示的初始路径，填写加密路径以 `/` 开始
+
+加密的目录使用英文 `,` 隔开；`:` 后是设置加密的密码，每个组加密使用 `|` 隔开
+
+假设 初始路径为 `/share`
+
+格式如： `/path1,/path2:password1|/path3,/path4:password2`  
+
+则加密的路径对应 `OneDrive` 
+
+`/share/path1` `/share/path2` 密码为 `password1`
+
+
+`/share/path3` `/share/path4` 密码为 `password2`
+
+### 隐藏
+
+隐藏需要后台填写隐藏的文件或文件夹路径
+
+添加路径需去除设置的显示的初始路径，填写加密路径以 `/` 开始
+
+每个组隐藏使用 `|` 隔开
+
+假设 初始路径为 `/share`
+
+格式如： `/path1|/path3`  
+
+则加密的路径对应 `OneDrive` 对应的隐藏目录为 `/share/path1` 和`/share/path3`
+
 ## 任务调度
 
 推荐配置此任务调度器（可选）。后台定时刷新token和缓存，可适当加速页面的访问
@@ -119,7 +136,9 @@ chown -R www:www *
 
 ## 队列刷新
 
-推荐使用 `supervisor` 管理
+更改根目录 `.env` 文件中 `PHP_PATH` 变量 添加服务器中php所在目录 可通过 `which php` 获取
+
+推荐使用 `supervisor` 管理守护任务
 
 ```
 php artisan queue:word database --queue=olaindex --tries=3
@@ -144,6 +163,26 @@ REDIS_HOST=127.0.0.1
 REDIS_PASSWORD=null
 REDIS_PORT=6379
 ```
+
+
+## 主题切换
+
+目前 OLAINDEX 存在两套主题，`bootswatch`(默认) 和 `mdui`，两套主题的切换方法是，更改根目录 `.env` 文件中 `THEME`变量，`default` 默认为 `bootswatch` 主题，`mdui` 为 `mdui` 主题。
+
+切换主题后，请执行 `php artisan config:cache` 确保配置生效
+
+## 页面排序
+
+#### 支持字段 (limit|page|orderBy)
+
+* 演示：https://dev.ningkai.wang/home?limit=3&page=2&orderBy=name,desc
+
+* `limit={n}` 限制每页n条
+
+* `page={n}` 第n页
+
+* `orderBy={field},desc` 以field 排序，desc->倒序 asc-> 正序 （field 支持 id/name/size/lastModifiedDateTime）
+
 
 ## 防盗链
 
