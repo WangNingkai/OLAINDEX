@@ -8,6 +8,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
+    <link rel="stylesheet" href="//cdn.staticfile.org/gitalk/1.5.0/gitalk.min.css">
 </head>
 <body>
 <div id="app">加载中</div>
@@ -19,11 +20,6 @@
         loadSidebar: true,
         subMaxLevel: 3,
         maxLevel: 4,
-        copyCode: {
-            buttonText: '点击复制',
-            errorText: '出错了',
-            successText: '已复制'
-        },
         // 完整配置参数
         search: {
             maxAge: 86400000, // 过期时间，单位毫秒，默认一天
@@ -42,8 +38,20 @@
         }
     }
 </script>
-<script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
-<script src="//unpkg.com/docsify/lib/plugins/search.js"></script>
-<script src="//unpkg.com/docsify-copy-code"></script>
+<script src="//cdn.staticfile.org/docsify/4.9.4/docsify.min.js"></script>
+<script src="//cdn.staticfile.org/docsify/4.9.4/plugins/search.min.js"></script>
+<script src="//cdn.staticfile.org/gitalk/1.5.0/gitalk.min.js"></script>
+<script src="//cdn.staticfile.org/docsify/4.9.4/plugins/gitalk.min.js"></script>
+<script>
+    const gitalk = new Gitalk({
+        clientID: '2de04433a71fe86618f1',
+        clientSecret: 'f1e5e9012c5c3b418bc80986da7778cb097aeb8b',
+        repo: 'OLAINDEX',
+        owner: 'WangNingkai',
+        admin: ['WangNingkai'],
+        // facebook-like distraction free mode
+        distractionFreeMode: false
+    })
+</script>
 </body>
 </html>
