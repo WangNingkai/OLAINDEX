@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Performance\Performance;
 
 /**
  * OneDrive 目录索引
@@ -94,12 +95,18 @@ class IndexController extends Controller
      */
     public function list(Request $request)
     {
+        Performance::point('point-1');
+
         // 处理路径
         $requestPath = $request->route()->parameter('query', '/');
         $graphPath = Tool::getOriginPath($requestPath);
         $queryPath = trim(Tool::getAbsolutePath($requestPath), '/');
         $originPath = rawurldecode($queryPath);
         $pathArray = $originPath ? explode('/', $originPath) : [];
+
+        Performance::finish();
+        Performance::point('point-2');
+
 
         // 获取资源缓存
         $pathKey = 'one:path:' . $graphPath;
@@ -119,9 +126,17 @@ class IndexController extends Controller
                 return view(config('olaindex.theme') . 'message');
             }
         }
+
+        Performance::finish();
+        Performance::point('point-3');
+
         if (Arr::has($item, '@microsoft.graph.downloadUrl')) {
             return redirect()->away($item['@microsoft.graph.downloadUrl']);
         }
+
+        Performance::finish();
+        Performance::point('point-4');
+
         // 获取列表资源
         $key = 'one:list:' . $graphPath;
         if (Cache::has($key)) {
@@ -143,6 +158,9 @@ class IndexController extends Controller
             }
         }
 
+        Performance::finish();
+        Performance::point('point-5');
+
         $hasImage = Tool::hasImages($originItems);
 
         // 处理 head/readme
@@ -153,13 +171,21 @@ class IndexController extends Controller
             ? Tool::markdown2Html(Tool::getFileContent($originItems['README.md']['@microsoft.graph.downloadUrl']))
             : '';
 
+        Performance::finish();
+        Performance::point('point-6');
+
         // 过滤微软OneNote文件
         $originItems = Arr::where($originItems, static function ($value) {
             return !Arr::has($value, 'package.type');
         });
 
+        Performance::finish();
+        Performance::point('point-7');
+
         if (Auth::guest()) {
             // 过滤隐藏文件
+            Performance::finish();
+            Performance::point('point-7-1');
             $hideDir = Tool::handleHideItem(setting('hide_path'));
             $originItems = Arr::where($originItems, static function ($value) use ($hideDir) {
                 $parentPath = Arr::get($value, 'parentReference.path');
@@ -169,6 +195,8 @@ class IndexController extends Controller
                 );
                 return !in_array(trim($filePath, '/'), $hideDir, false);
             });
+            Performance::finish();
+            Performance::point('point-7-2');
 
             // 过滤预留文件
             $originItems = Arr::except(
@@ -176,6 +204,9 @@ class IndexController extends Controller
                 ['README.md', 'HEAD.md', '.password', '.deny']
             );
         }
+
+        Performance::finish();
+        Performance::point('point-8');
 
         $order = $request->get('orderBy');
         @list($field, $sortBy) = explode(',', $order);
@@ -199,6 +230,9 @@ class IndexController extends Controller
 
         $originItems = collect($folders)->merge($files)->toArray();
 
+        Performance::finish();
+//        Performance::point();
+
         $limit = $request->get('limit', 20);
         $items = Tool::paginate($originItems, $limit);
         $parent_item = $item;
@@ -214,6 +248,7 @@ class IndexController extends Controller
             'hasImage'
         );
 
+        Performance::results();
         return view(config('olaindex.theme') . 'one', $data);
     }
 
