@@ -7,7 +7,7 @@
     <meta name="description" content="Description">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
+    <link rel="stylesheet" href="//cdn.staticfile.org/docsify/4.9.4/themes/vue.css">
     <link rel="stylesheet" href="//cdn.staticfile.org/gitalk/1.5.0/gitalk.min.css">
 </head>
 <body>
@@ -21,21 +21,16 @@
         auto2top: true,
         subMaxLevel: 3,
         maxLevel: 4,
-        // 完整配置参数
         search: {
-            maxAge: 86400000, // 过期时间，单位毫秒，默认一天
-            paths: 'auto', // or 'auto'
-            // 支持本地化
+            maxAge: 86400000,
+            paths: 'auto',
             placeholder: {
                 '/': '搜索'
             },
-            // 支持本地化
             noData: {
                 '/': '找不到结果'
             },
-
-            // 搜索标题的最大程级, 1 - 6
-            depth: 2
+            depth: 4
         }
     }
 </script>

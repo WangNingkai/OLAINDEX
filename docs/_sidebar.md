@@ -6,7 +6,6 @@
    - [部署安装](install.md)
    - [账号申请](apply.md)
    - [其它配置](other.md)
-   
 - **常见问题**
    - [Q&A](question.md)
    - [issue](issue.md)

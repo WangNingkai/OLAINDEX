@@ -179,27 +179,29 @@ class IndexController extends Controller
                 ['README.md', 'HEAD.md', '.password', '.deny']
             );
         }
-        // 处理排序
 
         // 字段排序
         $order = $request->get('orderBy');
         @list($field, $sortBy) = explode(',', $order);
         $itemsBase = collect($originItems);
-        if (strtolower($sortBy) !== 'desc') {
-            $originItems = $itemsBase->sortBy($field)->toArray();
-        } else {
-            $originItems = $itemsBase->sortByDesc($field)->toArray();
-        }
-        // 文件夹排序
-        $originItems = collect($originItems)->sortByDesc(static function ($item) {
-            if (!isset($item['folder'])) {
-                $children = -1;
-            } else {
-                $children = $item['folder']['childCount'];
-            }
-            return $children;
-        })->toArray();
 
+        // 文件夹/文件夹 排序
+        $folders = $itemsBase->filter(static function ($value) {
+            return Arr::has($value, 'folder');
+        });
+        $files = $itemsBase->filter(static function ($value) {
+            return !Arr::has($value, 'folder');
+        });
+
+        if (strtolower($sortBy) !== 'desc') {
+            $folders = $folders->sortBy($field)->toArray();
+            $files = $files->sortBy($field)->toArray();
+        } else {
+            $folders = $folders->sortByDesc($field)->toArray();
+            $files = $files->sortByDesc($field)->toArray();
+        }
+
+        $originItems = collect($folders)->merge($files)->toArray();
 
         $limit = $request->get('limit', 20);
         $items = Tool::paginate($originItems, $limit);
