@@ -4,8 +4,12 @@
     <script src="https://cdn.staticfile.org/marked/0.6.2/marked.min.js"></script>
     <script>
         $(function () {
+            @if (!blank($head))
             document.getElementById('head').innerHTML = marked(`{!! $head !!}`);
+            @endif
+            @if (!blank($readme))
             document.getElementById('readme').innerHTML = marked(`{!! $readme !!}`);
+            @endif
         });
         @auth
         function deleteItem($sign) {

@@ -15,8 +15,12 @@
         }
 
         $(function () {
+            @if (!blank($head))
             document.getElementById('head').innerHTML = marked(`{!! $head !!}`);
+            @endif
+            @if (!blank($readme))
             document.getElementById('readme').innerHTML = marked(`{!! $readme !!}`);
+            @endif
             let display_type = store.get('display_type');
             if (typeof (display_type) == "undefined" || display_type === null) {
                 display_type = "table";
