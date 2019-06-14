@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Utils\Extension;
 use Cache;
+use Performance\Performance;
 use Session;
 use Auth;
 use ErrorException;
@@ -143,22 +144,13 @@ class IndexController extends Controller
             }
         }
 
-        $hasImage = Tool::hasImages($originItems);
-
         // 处理 head/readme
-        /*$head = array_key_exists('HEAD.md', $originItems)
-            ? Tool::markdown2Html(Tool::getFileContent($originItems['HEAD.md']['@microsoft.graph.downloadUrl']))
-            : '';
-        $readme = array_key_exists('README.md', $originItems)
-            ? Tool::markdown2Html(Tool::getFileContent($originItems['README.md']['@microsoft.graph.downloadUrl']))
-            : '';*/
         $head = array_key_exists('HEAD.md', $originItems)
-            ? Tool::getFileContent($originItems['HEAD.md']['@microsoft.graph.downloadUrl'])
+            ? Tool::getFileContent($originItems['HEAD.md']['@microsoft.graph.downloadUrl'], $graphPath . ':head')
             : '';
         $readme = array_key_exists('README.md', $originItems)
-            ? Tool::getFileContent($originItems['README.md']['@microsoft.graph.downloadUrl'])
+            ? Tool::getFileContent($originItems['README.md']['@microsoft.graph.downloadUrl'], $graphPath . ':readme')
             : '';
-
         // 过滤微软OneNote文件
         $originItems = Arr::where($originItems, static function ($value) {
             return !Arr::has($value, 'package.type');
@@ -202,12 +194,13 @@ class IndexController extends Controller
             $folders = $folders->sortByDesc($field)->toArray();
             $files = $files->sortByDesc($field)->toArray();
         }
-
         $originItems = collect($folders)->merge($files)->toArray();
 
         $limit = $request->get('limit', 20);
         $items = Tool::paginate($originItems, $limit);
         $parent_item = $item;
+
+        $hasImage = Tool::hasImages($originItems);
 
         $data = compact(
             'parent_item',
