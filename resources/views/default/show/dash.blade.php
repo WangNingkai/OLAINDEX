@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="https://cdn.staticfile.org/dplayer/1.25.0/DPlayer.min.css">
 @stop
 @section('js')
-    <script src="https://cdn.jsdelivr.net/npm/dashjs/dist/dash.all.min.js"></script>
+    <script src="https://cdn.staticfile.org/dashjs/2.9.3/dash.all.min.js"></script>
     <script src="https://cdn.staticfile.org/dplayer/1.25.0/DPlayer.min.js"></script>
     <script>
         const dp = new DPlayer({

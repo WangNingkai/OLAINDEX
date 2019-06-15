@@ -1,9 +1,10 @@
 @extends('mdui.layouts.main')
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/store@2/dist/store.everything.min.js"></script>
-    <script src="https://cdn.bootcss.com/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
     <script src="https://cdn.staticfile.org/marked/0.6.2/marked.min.js"></script>
     <script>
+        @auth
         function getDirect() {
             $("#dl").val('');
             $(".dl_url").each(function () {
@@ -14,13 +15,15 @@
             });
         }
 
+        @endauth
+
         $(function () {
             @if (!blank($head))
             document.getElementById('head').innerHTML = marked(`{!! $head !!}`);
             @endif
             @if (!blank($readme))
             document.getElementById('readme').innerHTML = marked(`{!! $readme !!}`);
-            @endif
+                @endif
             let display_type = store.get('display_type');
             if (typeof (display_type) == "undefined" || display_type === null) {
                 display_type = "table";
