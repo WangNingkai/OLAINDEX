@@ -7,9 +7,8 @@
 [![GitHub forks](https://img.shields.io/github/forks/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/network)
 [![GitHub license](https://img.shields.io/github/license/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/blob/master/LICENSE)
 
-![OLAINDEX](https://i.loli.net/2018/12/20/5c1afb0e9a37b.jpg)
+![OLAINDEX](https://i.loli.net/2019/06/15/5d049d72309c376133.png)
 
-此图来自 [如有乐享](https://51.ruyo.net/)，感谢推广
 
 > 👋 本项目受 Oneindex 启发，借鉴其部分功能，在这里感谢。 项目持续开发，会加入更多功能，欢迎大家提交 issue.
 
