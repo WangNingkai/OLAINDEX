@@ -59,7 +59,7 @@
             <div class="form-group">
                 <div class="input-group mb-3">
                     <input type="text" id="link1" class="form-control"
-                           value="{{ route('download',\App\Utils\Tool::encodeUrlencodeUrl($originPath)) }}">
+                           value="{{ route('download',\App\Utils\Tool::encodeUrl($originPath)) }}">
                     <div class="input-group-append">
                         <a href="javascript:void(0)" style="text-decoration: none" data-toggle="tooltip"
                            data-placement="right" data-clipboard-target="#link1" class="clipboard"><span
