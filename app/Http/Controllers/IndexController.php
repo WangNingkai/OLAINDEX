@@ -409,6 +409,10 @@ class IndexController extends Controller
      */
     public function search(Request $request)
     {
+        if (!setting('open_search', 0)) {
+            Tool::showMessage('搜索暂不可用', false);
+            return view(config('olaindex.theme') . 'message');
+        }
         $keywords = $request->get('keywords');
         $limit = $request->get('limit', 20);
         if ($keywords) {
@@ -440,6 +444,10 @@ class IndexController extends Controller
      */
     public function searchShow($id): RedirectResponse
     {
+        if (!setting('open_search', 0)) {
+            Tool::showMessage('搜索暂不可用', false);
+            return view(config('olaindex.theme') . 'message');
+        }
         $response = OneDrive::getInstance(one_account())->itemIdToPath($id, setting('root'));
         if ($response['errno'] === 0) {
             $originPath = $response['data']['path'];

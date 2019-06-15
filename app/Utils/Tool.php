@@ -342,7 +342,7 @@ class Tool
     {
         if ($cache) {
             $key = 'one:content:' . $cache;
-            $content = Cache::get($key,'');
+            $content = Cache::get($key, '');
             if ($content) {
                 return $content;
             }

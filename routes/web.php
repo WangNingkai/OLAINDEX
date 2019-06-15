@@ -11,13 +11,10 @@ Route::get('thumb/{id}/size/{size}', 'IndexController@thumb')->name('thumb');
 Route::get('thumb/{id}/{width}/{height}', 'IndexController@thumbCrop')->name('thumb_crop');
 
 // 搜索
-if (setting('open_search',0)) {
-    Route::any('search', 'IndexController@search')
-        ->name('search');
-    Route::any('search/file/{id}', 'IndexController@searchShow')
-        ->name('search.show');
-
-}
+Route::any('search', 'IndexController@search')
+    ->name('search');
+Route::any('search/file/{id}', 'IndexController@searchShow')
+    ->name('search.show');
 
 
 // 加密
@@ -90,7 +87,7 @@ Route::prefix('admin')->group(static function () {
 if (Str::contains(config('app.url'), ['localhost', 'dev.ningkai.wang'])) {
     Route::get('about', static function () {
         $url = 'https://raw.githubusercontent.com/WangNingkai/OLAINDEX/master/README.md';
-        $content = Tool::getFileContent($url,'aboutMe');
+        $content = Tool::getFileContent($url, 'aboutMe');
         $markdown = Tool::markdown2Html($content);
 
         return response()->view(
