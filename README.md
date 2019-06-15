@@ -9,24 +9,12 @@
 
 <div align=center><img alt="OLAINDEX" src="https://i.loli.net/2019/06/15/5d049d72309c376133.png"/></div>
 
+
 > 👋 本项目受 Oneindex 启发，借鉴其部分功能，在这里感谢。 项目持续开发，会加入更多功能，欢迎大家提交 issue.
 
 ## 简介
 
 一款 `OneDrive` 目录文件索引应用，基于优雅的 `PHP` 框架 `Laravel5.7` 搭建，并通过 `Microsoft Graph` 接口获取数据展示，支持多类型帐号登录，多种主题显示，简单而强大。
-
-## 项目地址
-
-- [https://github.com/WangNingkai/OLAINDEX](https://github.com/WangNingkai/OLAINDEX)
-
-## 预览
-
-![预览](https://i.loli.net/2018/11/11/5be82800ce8b5.png)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FWangNingkai%2FOLAINDEX.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FWangNingkai%2FOLAINDEX?ref=badge_shield)
- 
-## 演示地址
-
-- [https://dev.ningkai.wang](https://dev.ningkai.wang)
 
 ## 功能
 
@@ -46,11 +34,45 @@
 
 **注：** 部分功能需登录。
 
-## 更新
+## 项目地址
+
+- [https://github.com/WangNingkai/OLAINDEX](https://github.com/WangNingkai/OLAINDEX)
+
+## 演示地址
+
+- [https://share.imwnk.cn](https://share.imwnk.cn)
+
+## 预览
+
+![预览](https://i.loli.net/2018/11/11/5be82800ce8b5.png)
+
+## 安装
+
+> 本项目基于 Laravel 开发，新手建议查看 laravel 的环境要求再进行部署。
+
+**强调：文档中包含常见的错误与解决，以及安装。如出现错误提示，建议到issues提供完整截图或相关完整报错代码，并仔细参考文档说明，进行修改！**
+
+[查看帮助文档](https://wangningkai.github.io/OLAINDEX)
+
+## 更新升级
+
+### 版本更新
+
+```
+git pull 
+composer install -vvv # 无版本更新只需执行到此（同时执行最后两条权限命令）
+
+php artisan od:update # 跨版本更新
+
+chmod -R 755 storage # 补充，保证缓存的写入权限，否则500
+chown -R www:www *
+```
+
+### 更新日志
 
 本次更新进行部分重构，不再兼容老版本，请删除原先代码重新拉取部署更新
 
-v4.0
+**2019.06 v4.0**
 
 1. 搜索功能增强(前台可搜索、后台设置搜索频次)
 2. 目录额外功能优化（文件隐藏、加密）
@@ -63,47 +85,13 @@ v4.0
 9. 更换信息存储为数据库存储
 10. 添加第三方接口
 
-## 安装
-
-> 本项目基于 Laravel 开发，新手建议查看 laravel 的环境要求再进行部署。
-
-**强调：Wiki 中包含常见的错误与解决，以及安装。如出现错误提示，建议到issues提供完整截图或相关完整报错代码，并仔细参考 wiki 说明，进行修改！**
-
-**帮助文档 ：**
-
-[帮助文档](https://wangningkai.github.io/OLAINDEX/)
-
-## 更新升级
-
-**版本升级：**
-
-```
-git pull 
-composer install -vvv # 无版本更新只需执行到此（同时执行最后两条权限命令）
-
-php artisan od:update # 跨版本更新
-
-chmod -R 755 storage # 补充，保证缓存的写入权限，否则500
-chown -R www:www *
-```
-
-## 分支说明
+### 分支说明
 
 - release: 稳定版
 
-- master: 开发版
+- master: 预览版
 
 - test: 测试版（不推荐使用）
-
-## 捐赠
-
-项目开发纯属个人爱好，如果你喜欢此项目，欢迎捐赠。
-
-同时捐赠可以获得一次安装技术服务。
-
-另可根据需求提供付费定制服务。
-
-**捐赠 ： [https://pay.ningkai.wang](https://pay.ningkai.wang)**
 
 ## 问题反馈
 
@@ -119,9 +107,9 @@ chown -R www:www *
 在求(伸)助(手)前请确保已经仔细 [Github Wiki](https://github.com/WangNingkai/OLAINDEX/wiki) 内的所有说明。
 使用 [GitHub issue](https://github.com/WangNingkai/OLAINDEX/issues) 提交问题时请确保提供信息完整准确，否则不予跟进。
 
-Blog : [https://imwnk.cn](https://imwnk.cn)
+Blog [https://imwnk.cn](https://imwnk.cn)
 
-Email : [imwnk@live.com](mailto:imwnk@live.com)
+Email [imwnk@live.com](mailto:imwnk@live.com)
 
 ### 其他：
 
@@ -130,6 +118,16 @@ Email : [imwnk@live.com](mailto:imwnk@live.com)
 2. 本软件仅供日常学习使用，不得用于任何商业用途；学习使用请遵守您所在国家的法律，任何非法行为由使用者本身承担。
 
 3. 如使用本应用，请保留底部版权，并分享给更多人，谢谢。
+
+## 捐赠
+
+项目开发纯属个人爱好，如果你喜欢此项目，欢迎赞助。
+
+同时赞助可以获得一次安装技术服务。
+
+另可根据需求提供付费定制服务。
+
+**赞助地址 ： [https://pay.ningkai.wang](https://pay.ningkai.wang)**
 
 ---
 
