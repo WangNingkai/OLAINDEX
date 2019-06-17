@@ -51,8 +51,7 @@ class Reset extends Command
     public function reset()
     {
         $this->call('cache:clear');
-        DB::table('settings')->truncate();
-        DB::table('users')->truncate();
+        $this->callSilent('migrate:reset');
         $this->info('Reset Completed！');
     }
 }

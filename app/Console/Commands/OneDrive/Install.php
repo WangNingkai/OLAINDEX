@@ -46,16 +46,16 @@ class Install extends Command
         $this->info('chmod -R 755 storage/* && chown -R www:www *');
         // sqlite数据库文件检测
         if (!file_exists(base_path('database/database.sqlite'))) {
-            $this->warn('Missing the Database File.');
+            $this->warn('Database file missing .');
             copy(
                 base_path('database/database.sample.sqlite'),
                 base_path('database/database.sqlite')
             );
-            $this->info('Done!');
+            $this->info('Coping the database file.');
         }
         // 执行数据迁移
         if (!file_exists(base_path('.env.example'))) {
-            $this->warn('No [.env.example] File,please make sure the project complete!');
+            $this->warn('[.env.example] file missing,Please make sure the project complete!');
             exit;
         }
         $app_url = $this->ask('Bind Domain(For Authorize)');
@@ -80,15 +80,19 @@ class Install extends Command
         }
 
         // 生成配置缓存否则报错
-        $this->call('config:cache');
-
-        DB::table('users')->truncate();
+        $this->callSilent('config:cache');
+        $this->call('migrate');
+        /*DB::table('users')->truncate();
+        DB::table('settings')->truncate();*/
         // 初始化用户
         DB::table('users')->updateOrInsert([
             'name' => 'admin',
             'email' => 'admin@admin.com',
             'password' => bcrypt('12345678'),
         ]);
+
+        $this->callSilent('config:cache');
+
         $this->warn('username:[ admin ] email:[ admin@admin.com ] password:[ 12345678 ]');
 
         $this->warn('All Done!');

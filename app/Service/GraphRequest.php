@@ -63,6 +63,10 @@ class GraphRequest
      * @var $responseError
      */
     protected $responseError;
+
+    /**
+     * @var bool
+     */
     public $error = false;
 
     /**

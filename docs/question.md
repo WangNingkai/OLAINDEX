@@ -34,8 +34,6 @@
 
 - 确保执行 `chmod` 和 `chown` 此处两个命令，解决目录权限问题
 
-- 确保执行 `chmod 777 storage/app/config.json` 此命令，解决配置权限问题
-
 - 不知情的情况，请勿修改文件
 
 - 其他情况，请在issue中提交最新log报错代码，位置 `storage/logs/laravel.log`\

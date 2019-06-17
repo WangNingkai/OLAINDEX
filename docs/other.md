@@ -141,7 +141,7 @@ chown -R www:www *
 推荐使用 `supervisor` 管理守护任务
 
 ```
-php artisan queue:word database --queue=olaindex --tries=3
+php artisan queue:work database --queue=olaindex --tries=3
 ```  
 
 ## 缓存配置

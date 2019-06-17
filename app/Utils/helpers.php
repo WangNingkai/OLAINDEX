@@ -29,7 +29,12 @@ if (!function_exists('setting')) {
     function setting($key = '', $default = '')
     {
         $setting = \Cache::remember('setting', 60 * 60, static function () {
-            $setting = Setting::all()->toArray();
+
+            try {
+                $setting = Setting::all()->toArray();
+            } catch (Exception $e) {
+                return [];
+            }
             $data = [];
             foreach ($setting as $detail) {
                 $data[$detail['name']] = $detail['value'];
