@@ -62,8 +62,6 @@
 git pull 
 composer install -vvv # 无版本更新只需执行到此（同时执行最后两条权限命令）
 
-php artisan od:update # 跨版本更新
-
 chmod -R 755 storage # 补充，保证缓存的写入权限，否则500
 chown -R www:www *
 ```
