@@ -396,7 +396,7 @@ class Tool
             @list($pathItem, $password) = explode(':', $encryptPathDir);
             $pathItem = explode(',', $pathItem);
             $pathItem = array_map(static function ($value) {
-                return 'p-' . $value;
+                return 'p>' . $value;
             }, $pathItem);
             $pathArray = array_fill_keys($pathItem, $password);
             $all = collect($all)->merge($pathArray)->toArray();

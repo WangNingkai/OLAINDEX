@@ -479,13 +479,13 @@ class IndexController extends Controller
             'encryptKey' => $encryptKey,
             'expires' => time() + (int)$this->expires * 60, // 目录密码过期时间
         ];
-        Session::put('password:' . $encryptKey, $data);
+        Session::put($encryptKey, $data);
 
-        $arr = Tool::handleEncryptItem(setting('encrypt_path'));
-
-        $directory_password = $arr['p-' . $encryptKey];
+        $encryptDir = Tool::handleEncryptItem(setting('encrypt_path'));
+        $encryptPath = Str::after($encryptKey, 'password:');
+        $directory_password = $encryptDir['p>' . $encryptPath];
         if (strcmp($password, $directory_password) === 0) {
-            return redirect()->route($route, Tool::encodeUrl($requestPath));
+            return redirect()->route($route, ['query' => Tool::encodeUrl($requestPath)]);
         }
         Tool::showMessage('密码错误', false);
 
