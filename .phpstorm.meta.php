@@ -5,7 +5,7 @@ namespace PHPSTORM_META {
 
    /**
     * PhpStorm Meta file, to provide autocomplete information for PhpStorm
-    * Generated on 2019-06-15 17:05:50.
+    * Generated on 2019-06-20 21:28:32.
     *
     * @author Barry vd. Heuvel <barryvdh@gmail.com>
     * @see https://github.com/barryvdh/laravel-ide-helper
@@ -41,7 +41,6 @@ namespace PHPSTORM_META {
         'NunoMaduro\Collision\Contracts\Provider' => \NunoMaduro\Collision\Provider::class,
         'Recca0120\LaravelTracy\DebuggerManager' => \Recca0120\LaravelTracy\DebuggerManager::class,
         'Recca0120\Terminal\Application' => \Recca0120\Terminal\Application::class,
-        'Recca0120\Terminal\Kernel' => \Recca0120\Terminal\Kernel::class,
         'Tracy\Bar' => \Tracy\Bar::class,
         'Tracy\BlueScreen' => \Tracy\BlueScreen::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
@@ -196,7 +195,6 @@ namespace PHPSTORM_META {
         'NunoMaduro\Collision\Contracts\Provider' => \NunoMaduro\Collision\Provider::class,
         'Recca0120\LaravelTracy\DebuggerManager' => \Recca0120\LaravelTracy\DebuggerManager::class,
         'Recca0120\Terminal\Application' => \Recca0120\Terminal\Application::class,
-        'Recca0120\Terminal\Kernel' => \Recca0120\Terminal\Kernel::class,
         'Tracy\Bar' => \Tracy\Bar::class,
         'Tracy\BlueScreen' => \Tracy\BlueScreen::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
@@ -351,7 +349,6 @@ namespace PHPSTORM_META {
         'NunoMaduro\Collision\Contracts\Provider' => \NunoMaduro\Collision\Provider::class,
         'Recca0120\LaravelTracy\DebuggerManager' => \Recca0120\LaravelTracy\DebuggerManager::class,
         'Recca0120\Terminal\Application' => \Recca0120\Terminal\Application::class,
-        'Recca0120\Terminal\Kernel' => \Recca0120\Terminal\Kernel::class,
         'Tracy\Bar' => \Tracy\Bar::class,
         'Tracy\BlueScreen' => \Tracy\BlueScreen::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
@@ -506,7 +503,6 @@ namespace PHPSTORM_META {
         'NunoMaduro\Collision\Contracts\Provider' => \NunoMaduro\Collision\Provider::class,
         'Recca0120\LaravelTracy\DebuggerManager' => \Recca0120\LaravelTracy\DebuggerManager::class,
         'Recca0120\Terminal\Application' => \Recca0120\Terminal\Application::class,
-        'Recca0120\Terminal\Kernel' => \Recca0120\Terminal\Kernel::class,
         'Tracy\Bar' => \Tracy\Bar::class,
         'Tracy\BlueScreen' => \Tracy\BlueScreen::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
@@ -661,7 +657,6 @@ namespace PHPSTORM_META {
         'NunoMaduro\Collision\Contracts\Provider' => \NunoMaduro\Collision\Provider::class,
         'Recca0120\LaravelTracy\DebuggerManager' => \Recca0120\LaravelTracy\DebuggerManager::class,
         'Recca0120\Terminal\Application' => \Recca0120\Terminal\Application::class,
-        'Recca0120\Terminal\Kernel' => \Recca0120\Terminal\Kernel::class,
         'Tracy\Bar' => \Tracy\Bar::class,
         'Tracy\BlueScreen' => \Tracy\BlueScreen::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
@@ -816,7 +811,6 @@ namespace PHPSTORM_META {
         'NunoMaduro\Collision\Contracts\Provider' => \NunoMaduro\Collision\Provider::class,
         'Recca0120\LaravelTracy\DebuggerManager' => \Recca0120\LaravelTracy\DebuggerManager::class,
         'Recca0120\Terminal\Application' => \Recca0120\Terminal\Application::class,
-        'Recca0120\Terminal\Kernel' => \Recca0120\Terminal\Kernel::class,
         'Tracy\Bar' => \Tracy\Bar::class,
         'Tracy\BlueScreen' => \Tracy\BlueScreen::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
@@ -971,7 +965,6 @@ namespace PHPSTORM_META {
         'NunoMaduro\Collision\Contracts\Provider' => \NunoMaduro\Collision\Provider::class,
         'Recca0120\LaravelTracy\DebuggerManager' => \Recca0120\LaravelTracy\DebuggerManager::class,
         'Recca0120\Terminal\Application' => \Recca0120\Terminal\Application::class,
-        'Recca0120\Terminal\Kernel' => \Recca0120\Terminal\Kernel::class,
         'Tracy\Bar' => \Tracy\Bar::class,
         'Tracy\BlueScreen' => \Tracy\BlueScreen::class,
         'auth' => \Illuminate\Auth\AuthManager::class,

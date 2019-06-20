@@ -48,12 +48,12 @@
         <div class="card-header">{{ $file['name'] }}</div>
         <div class="card-body">
             <div class="text-center">
-                <a href="{{ route('download',\App\Utils\Tool::encodeUrl($originPath)) }}" class="btn btn-success">
-                    <i class="fa fa-download"></i>下载</a>
-            </div>
-            <br>
-            <div class="text-center">
                 <div id="video-player"></div>
+                <br>
+                <div class="text-center">
+                    <a href="{{ route('download',\App\Utils\Tool::encodeUrl($originPath)) }}" class="btn btn-success">
+                        <i class="fa fa-download"></i>下载</a>
+                </div>
                 <br>
                 <p class="text-danger">如无法播放或格式不受支持，推荐使用 <a href="https://pan.lanzou.com/b112173" target="_blank">potplayer</a>
                     播放器在线播放

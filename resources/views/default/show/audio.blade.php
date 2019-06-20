@@ -47,13 +47,13 @@
         </div>
         <div class="card-body">
             <div class="blank-div"></div>
-            <div class="text-center"><a href="{{ route('download',\App\Utils\Tool::encodeUrl($originPath)) }}"
-                                        class="btn btn-success"><i
-                        class="fa fa-download"></i> 下载</a></div>
-            <br>
             <div class="text-center">
                 <div id="audio-player"></div>
             </div>
+            <br>
+            <div class="text-center"><a href="{{ route('download',\App\Utils\Tool::encodeUrl($originPath)) }}"
+                                        class="btn btn-success"><i
+                        class="fa fa-download"></i> 下载</a></div>
             <br>
             <label class="control-label">下载链接</label>
             <div class="form-group">

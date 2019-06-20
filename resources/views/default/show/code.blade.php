@@ -15,16 +15,17 @@
             {{ $file['name'] }}
         </div>
         <div class="card-body">
-            <div class="text-center"><a href="{{ route('download',\App\Utils\Tool::encodeUrl($originPath)) }}"
-                                        class="btn btn-success"><i
-                        class="fa fa-download"></i> 下载</a></div>
-            <br>
+
             <div class="text-center">
                 <pre>
                     <code
                         class="language-{{ $file['ext'] === 'sh' ? 'bash' : $file['ext']}}">{{ $file['content'] }}</code>
                 </pre>
             </div>
+
+            <br>
+            <div class="text-center"><a href="{{ route('download',\App\Utils\Tool::encodeUrl($originPath)) }}"
+                                        class="btn btn-success"><i class="fa fa-download"></i> 下载</a></div>
         </div>
     </div>
 @stop
