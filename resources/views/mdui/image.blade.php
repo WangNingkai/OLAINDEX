@@ -1,12 +1,9 @@
 @extends('mdui.layouts.main')
 @section('css')
-    <link rel="stylesheet" href="https://cdn.staticfile.org/dropzone/5.5.1/dropzone.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/filepond@4.4.9/dist/filepond.min.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/filepond-plugin-image-preview@4.2.1/dist/filepond-plugin-image-preview.min.css">
     <style>
-        .dropzone {
-            border: 2px dashed #ccc;
-            border-radius: 10px;
-            background: white;
-        }
 
         .link-container {
             border: solid 1px #dadada;
@@ -20,43 +17,70 @@
     </style>
 @stop
 @section('js')
-    <script src="https://cdn.staticfile.org/dropzone/5.5.1/dropzone.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/filepond@4.4.9/dist/filepond.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/filepond-plugin-image-preview@4.2.1/dist/filepond-plugin-image-preview.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/filepond-plugin-file-validate-size@2.1.3/dist/filepond-plugin-file-validate-size.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/filepond-plugin-file-validate-type@1.2.4/dist/filepond-plugin-file-validate-type.min.js"></script>
     <script>
-        Dropzone.options.imageDropzone = {
-            url: Config.routes.upload_image,
-            method: 'post',
-            maxFilesize: 4,
-            paramName: 'olaindex_img',
-            maxFiles: 10,
-            acceptedFiles: 'image/*',
-            addRemoveLinks: true,
-            init: function () {
-                this.on('sending', function (file, xhr, formData) {
-                    formData.append('_token', Config._token);
-                });
-                this.on('success', function (file, response) {
-                    $('#showUrl').removeClass('mdui-hidden');
-                    $('#urlCode').append('<p>' + response.data.url + '</p>');
-                    $('#htmlCode').append('<p>&lt;img src=\'' + response.data.url + '\' alt=\'' + response.data.filename + '\' title=\'' + response.data.filename + '\' /&gt;' + '</p>');
-                    $('#bbCode').append('<p>[img]' + response.data.url + '[/img]' + '</p>');
-                    $('#markdown').append('<p>![' + response.data.filename + '](' + response.data.url + ')' + '</p>');
-                    $('#markdownLinks').append('<p>[![' + response.data.filename + '](' + response.data.url + ')]' + '(' + response.data.url + ')' + '</p>');
-                    $('#deleteCode').append('<p>' + response.data.delete + '</p>')
-                });
+        FilePond.registerPlugin(
+            FilePondPluginImagePreview,
+            FilePondPluginFileValidateSize,
+            FilePondPluginFileValidateType
+        );
+        FilePond.setOptions({
+            dropOnPage: true,
+            dropOnElement: true,
+            dropValidation: true,
+            server: {
+                url: Config.routes.upload_image,
+                process: {
+                    url: '/',
+                    method: 'POST',
+                    withCredentials: false,
+                    headers: {},
+                    timeout: 5000,
+                    onload: (response) => {
+                        let res = JSON.parse(response);
+                        console.log(res);
+                        if (res.errno === 200) {
+                            $('#showUrl').removeClass('mdui-hidden');
+                            $('#urlCode').append('<p>' + res.data.url + '</p>');
+                            $('#htmlCode').append('<p>&lt;img src=\'' + res.data.url + '\' alt=\'' + res.data.filename + '\' title=\'' + res.data.filename + '\' /&gt;' + '</p>');
+                            $('#bbCode').append('<p>[img]' + res.data.url + '[/img]' + '</p>');
+                            $('#markdown').append('<p>![' + res.data.filename + '](' + res.data.url + ')' + '</p>');
+                            $('#markdownLinks').append('<p>[![' + res.data.filename + '](' + res.data.url + ')]' + '(' + res.data.url + ')' + '</p>');
+                            $('#deleteCode').append('<p>' + res.data.delete + '</p>');
+                        }
+                        return response.key
+                    },
+                    onerror: (response) => response.data,
+                    ondata: (formData) => {
+                        formData.append('_token', Config._token);
+                        return formData;
+                    }
+                },
+                revert: null,
+                restore: null,
+                load: null,
+                fetch: null
             },
-
-            dictDefaultMessage: '拖拽文件至此上传',
-            dictFallbackMessage: '浏览器不支持拖拽上传',
-            dictFileTooBig: '文件过大(@{{filesize}}MiB)，请重试',
-            dictInvalidFileType: '文件类型不支持',
-            dictResponseError: '上传错误 @{{statusCode}}',
-            dictCancelUpload: '取消上传',
-            dictUploadCanceled: '上传已取消',
-            dictCancelUploadConfirmation: '确定取消上传吗?',
-            dictRemoveFile: '移除此文件',
-            dictRemoveFileConfirmation: '确定移除此文件吗',
-            dictMaxFilesExceeded: '已达到最大上传数.',
-        };
+        });
+        const pond = FilePond.create(document.querySelector('input'), {
+            acceptedFileTypes: ['image/*'],
+        });
+        pond.on('processfile', (error, file) => {
+            if (error) {
+                console.log('上传出错了');
+                return;
+            }
+            console.log('文件已上传', file);
+        });
+        pond.on('removefile', (file) => {
+            console.log('文件已删除', file);
+        });
     </script>
 @stop
 @section('content')
@@ -66,8 +90,8 @@
             <br>
             <div class="mdui-typo-title-opacity">您可以尝试文件拖拽或者点击虚线框进行文件上传，单张图片最大支持4MB.</div>
             <br>
-            <form class="dropzone" id="image-dropzone">
-            </form>
+            <input type="file" class="filepond" name="olaindex_img" multiple data-max-file-size="4MB"
+                   data-max-files="5" data-instant-upload="false"/>
         </div>
         <div id="showUrl" class="mdui-hidden">
             <div class="mdui-tab" mdui-tab>
