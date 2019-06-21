@@ -71,7 +71,7 @@
                 fetch: null
             },
         });
-        const pond = FilePond.create(document.querySelector('input'), {
+        const pond = FilePond.create(document.querySelector('input[name=olaindex_img]'), {
             acceptedFileTypes: ['image/*'],
         });
         pond.on('processfile', (error, file) => {
