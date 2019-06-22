@@ -98,7 +98,19 @@
 <script>
     $(function () {
         $('[data-fancybox="image-list"]').fancybox({
-            type: "image"
+            type: "image",
+            thumbs: {
+                autoStart: true,
+                axis: 'x'
+            },
+            buttons: [
+                "zoom",
+                "slideShow",
+                "fullScreen",
+                "download",
+                "thumbs",
+                "close"
+            ],
         });
         let clipboard = new ClipboardJS('.clipboard');
         clipboard.on('success', function (e) {

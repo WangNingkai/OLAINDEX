@@ -214,7 +214,7 @@
                                 @if(! \Illuminate\Support\Arr::has($item,'folder'))
                                     @if( \Illuminate\Support\Arr::has($item,'image'))
                                         <a href="{{ route('view',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}"
-                                           data-fancybox="image-list"><i
+                                           data-fancybox="image-list" data-caption="{{ $item['name'] }}"><i
                                                 class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
                                     @endif
                                     @if(Auth::user() && \App\Utils\Tool::canEdit($item) )
