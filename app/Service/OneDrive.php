@@ -27,7 +27,7 @@ class OneDrive
      */
     public static function getInstance($account): OneDrive
     {
-        $account_id = Arr::get($account, 'account_email', 0);
+        $account_id = md5(serialize($account));
         if (!array_key_exists($account_id, self::$instances)) {
             self::$instances[$account_id] = new self($account);
         }
