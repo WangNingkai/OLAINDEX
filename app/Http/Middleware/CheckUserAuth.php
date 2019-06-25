@@ -17,7 +17,7 @@ class CheckUserAuth
      */
     public function handle($request, Closure $next)
     {
-        if (!Session::has('index_log_info')) {
+        if (!Session::has('index_log_info') && !Session::has('LogInfo')) {
             return redirect()->route('login');
         }
         Session::put('index_log_info.LastActivityTime', time());
