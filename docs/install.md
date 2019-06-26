@@ -13,7 +13,7 @@ rm -rf tmp
 git reset --hard 
 cp database/database.sample.sqlite database/database.sqlite  # 数据库文件
 composer install -vvv # 这里确保已成功安装 composer ，如果报权限问题，建议给予用户完整权限。
-chmod -R 755 storage 
+chmod -R 777 storage 
 chown -R www:www * # 此处 www 根据服务器具体用户组而定
 php artisan od:install # 此处绑定域名需根据实际域名谨慎填写（包含http/https）
 

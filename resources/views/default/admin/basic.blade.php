@@ -137,6 +137,21 @@
             <span class="form-text text-danger">搜索资源（过度开放会增加账号封禁风险）</span>
         </div>
         <div class="form-group">
+            <label class="form-control-label">开启批量下载</label>
+            <div class="custom-control custom-radio">
+                <input type="radio" id="export_download1" name="export_download" class="custom-control-input"
+                       @if((int)setting('export_download',0) === 1) checked @endif value="1">
+                <label class="custom-control-label" for="export_download1">开启</label>
+            </div>
+            <div class="custom-control custom-radio">
+                <input type="radio" id="export_download0" name="export_download" class="custom-control-input"
+                       @if((int)setting('export_download',0) === 0) checked @endif value="0">
+                <label class="custom-control-label" for="export_download0">关闭</label>
+            </div>
+            <span class="form-text text-danger">搜索资源（过度开放会增加账号封禁风险）</span>
+        </div>
+
+        <div class="form-group">
             <label class="form-control-label" for="search_throttle">搜索频次限制</label>
             <input type="text" class="form-control" id="search_throttle" name="search_throttle"
                    value="{{ setting('search_throttle') }}">

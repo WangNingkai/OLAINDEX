@@ -11,6 +11,17 @@
             document.getElementById('readme').innerHTML = marked(`{!! $readme !!}`);
             @endif
         });
+
+        function getDirect() {
+            $("#dl").val('');
+            $(".download_url").each(function () {
+                let dl = decodeURI($(this).attr("href"));
+                let url = dl + "\n";
+                let origin = $("#dl").val();
+                $("#dl").val(origin + url);
+            });
+        }
+
         @auth
         function deleteItem($sign) {
             swal({
@@ -28,16 +39,6 @@
                     swal('已取消', '文件安全 :)', 'error');
                 }
             })
-        }
-
-        function getDirect() {
-            $("#dl").val('');
-            $(".download_url").each(function () {
-                let dl = decodeURI($(this).attr("href"));
-                let url = dl + "\n";
-                let origin = $("#dl").val();
-                $("#dl").val(origin + url);
-            });
         }
         @endauth
     </script>
@@ -84,7 +85,7 @@
                     </span>
                 </div>
                 <div class="col-4 col-sm-2">
-                    @auth
+                    @if(auth()->user())
                         <a class="pull-right dropdown-toggle btn btn-sm btn-primary" href="#" id="actionDropdownLink"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">操作</a>
                         <div class="dropdown-menu" aria-labelledby="actionDropdownLink">
@@ -173,9 +174,49 @@
                                 </div>
                             </div>
                         </div>
-                    @elseauth
-                        <span class="pull-right">操作</span>
-                    @endauth
+                    @else
+                        @if (setting('export_download'))
+                            <a class="pull-right dropdown-toggle btn btn-sm btn-primary" href="#"
+                               id="actionDropdownLink"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">操作</a>
+                            <div class="dropdown-menu" aria-labelledby="actionDropdownLink">
+                                <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal"
+                                   data-target="#directLinkModal"><i class="fa fa-link"></i> 导出直链</a>
+                            </div>
+                            <div class="modal fade" id="directLinkModal" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title"><i class="fa fa-link"></i> 导出直链</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p class="text-danger">
+                                                链接将在 {{ setting('access_token_expires') }}
+                                                后失效</p>
+                                            <p><a href="javascript:void(0)"
+                                                  style="text-decoration: none" data-toggle="tooltip"
+                                                  data-placement="right" data-clipboard-target="#dl"
+                                                  class="clipboard">点击复制</a></p>
+                                            <label for="dl"><textarea name="urls" id="dl" class="form-control" cols="60"
+                                                                      rows="15"></textarea></label>
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" onclick="getDirect()" class="btn btn-primary">点击获取
+                                            </button>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <span class="pull-right">操作</span>
+                        @endif
+                    @endif
                 </div>
             </div>
         </div>
