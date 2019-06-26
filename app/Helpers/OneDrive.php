@@ -423,8 +423,7 @@ class OneDrive
                 $info = explode('/', $param);
                 $res_id = $info[1];
                 $user_info = $info[0];
-                $direct_link = $domain . 'personal/' . $user_info
-                    . '/_layouts/15/download.aspx?share=' . $res_id;
+                $direct_link = $domain . 'personal/' . $user_info . '/_layouts/15/download.aspx?share=' . $res_id;
             } elseif (Str::contains($web_url, '1drv.ms')) {
                 $req = self::request('get', $web_url);
                 if ($req['errno'] === 0) {
