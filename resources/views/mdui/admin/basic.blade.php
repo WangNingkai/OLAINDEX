@@ -123,6 +123,14 @@
             </select>
             <br>
             <br>
+            <label for="export_download" class="mdui-textfield-label">开启批量下载</label> &nbsp; &nbsp;
+            <br>
+            <select name="export_download" id="export_download" class="mdui-select" mdui-select="{position: 'bottom'}">
+                <option value="1" @if(setting('export_download',0) === 1) selected @endif>开启</option>
+                <option value="0" @if(setting('export_download',0) === 0) selected @endif>关闭</option>
+            </select>
+            <br>
+            <br>
             <div class="mdui-textfield mdui-textfield-floating-label">
                 <label class="mdui-textfield-label" for="search_throttle">搜索频次限制</label>
                 <input type="text" class="mdui-textfield-input" id="search_throttle" name="search_throttle"

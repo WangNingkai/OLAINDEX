@@ -4,7 +4,6 @@
     <script src="https://cdn.staticfile.org/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
     <script src="https://cdn.staticfile.org/marked/0.6.2/marked.min.js"></script>
     <script>
-        @auth
         function getDirect() {
             $("#dl").val('');
             $(".dl_url").each(function () {
@@ -14,8 +13,6 @@
                 $("#dl").val(origin + url);
             });
         }
-
-        @endauth
 
         $(function () {
             @if (!blank($head))
@@ -218,7 +215,7 @@
             </div>
         @endif
 
-        @auth
+            @if(auth()->user())
             <div class="mdui-fab-wrapper" mdui-fab>
                 <button class="mdui-fab mdui-ripple mdui-color-theme-accent">
                     <i class="mdui-icon material-icons">add</i>
@@ -270,7 +267,6 @@
             </div>
 
             <div class="mdui-dialog" id="exportDirect">
-
                 <div class="mdui-dialog-content">
                     <div class="mdui-dialog-title">导出直链</div>
                     <p class="mdui-text-color-red">
@@ -287,7 +283,37 @@
                 </div>
             </div>
 
-        @endauth
+            @else
+                @if(setting('export_download'))
+                    <div class="mdui-fab-wrapper" mdui-fab>
+                        <button class="mdui-fab mdui-ripple mdui-color-theme-accent">
+                            <i class="mdui-icon material-icons">add</i>
+                            <i class="mdui-icon mdui-fab-opened material-icons">close</i>
+                        </button>
+                        <div class="mdui-fab-dial">
+                            <a href="javascript:void(0)" class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-blue"><i
+                                    class="mdui-icon material-icons" mdui-dialog="{target: '#exportDirect'}">list</i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="mdui-dialog" id="exportDirect">
+                        <div class="mdui-dialog-content">
+                            <div class="mdui-dialog-title">导出直链</div>
+                            <p class="mdui-text-color-red">
+                                链接将在 {{ setting('access_token_expires')  }}
+                                后失效</p>
+                            <div class="mdui-textfield">
+                                <label class="mdui-textfield-label" for="dl">链接</label>
+                                <textarea name="urls" id="dl" class="mdui-textfield-input" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="mdui-dialog-actions">
+                            <button class="mdui-btn mdui-ripple" mdui-dialog-close>取消</button>
+                            <button class="mdui-btn mdui-ripple" onclick="getDirect()">点击获取</button>
+                        </div>
+                    </div>
+                @endif
+            @endif
 
     </div>
 @stop
