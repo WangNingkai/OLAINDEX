@@ -122,7 +122,7 @@ class GraphRequest
         } else {
             $curl = new Curl();
         }
-        $curl->setUserAgent('ISV|OLAINDEX|OLAINDEX/9.9.9');
+        $curl->setUserAgent('ISV|OLAINDEX|OLAINDEX/4.0');
         $curl->setHeaders($this->headers);
         $curl->setRetry(CoreConstants::DEFAULT_RETRY);
         $curl->setConnectTimeout(CoreConstants::DEFAULT_CONNECT_TIMEOUT);
