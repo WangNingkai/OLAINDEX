@@ -16,7 +16,6 @@ class ItemResource extends JsonResource
      */
     public function toArray($request)
     {
-
         $is_folder = Arr::has($this->resource, 'folder');
 
         $data = [
