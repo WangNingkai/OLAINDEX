@@ -187,15 +187,11 @@ class IndexController extends Controller
         });
 
         if (strtolower($sortBy) !== 'desc') {
-            $folders = $folders->sortBy($field)->toArray();
-            $files = $files->sortBy($field)->toArray();
-            usort($folders, 'strnatcmp');
-            usort($files, 'strnatcmp');
+            $folders = $folders->sortBy($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->toArray();
+            $files = $files->sortBy($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->toArray();
         } else {
-            $folders = $folders->sortByDesc($field)->toArray();
-            $files = $files->sortByDesc($field)->toArray();
-            usort($folders, 'strnatcmp');
-            usort($files, 'strnatcmp');
+            $folders = $folders->sortByDesc($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->toArray();
+            $files = $files->sortByDesc($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->toArray();
         }
         $originItems = collect($folders)->merge($files)->toArray();
 
