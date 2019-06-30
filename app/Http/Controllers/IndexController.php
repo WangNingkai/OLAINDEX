@@ -178,7 +178,13 @@ class IndexController extends Controller
         @list($field, $sortBy) = explode(',', $order);
         $itemsBase = collect($originItems);
 
-        // 文件夹/文件夹 排序
+        // 默认排序字段
+        if ($field === '' || $sortBy === null) {
+            $field = 'name';
+            $sortBy = 'asc';
+        }
+
+        // 筛选文件夹/文件夹
         $folders = $itemsBase->filter(static function ($value) {
             return Arr::has($value, 'folder');
         });
@@ -186,6 +192,7 @@ class IndexController extends Controller
             return !Arr::has($value, 'folder');
         });
 
+        // 执行文件夹/文件夹 排序
         if (strtolower($sortBy) !== 'desc') {
             $folders = $folders->sortBy($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->toArray();
             $files = $files->sortBy($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->toArray();
@@ -193,6 +200,7 @@ class IndexController extends Controller
             $folders = $folders->sortByDesc($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->toArray();
             $files = $files->sortByDesc($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->toArray();
         }
+        // 合并
         $originItems = collect($folders)->merge($files)->toArray();
 
         $limit = $request->get('limit', 20);
