@@ -189,9 +189,13 @@ class IndexController extends Controller
         if (strtolower($sortBy) !== 'desc') {
             $folders = $folders->sortBy($field)->toArray();
             $files = $files->sortBy($field)->toArray();
+            usort($folders, 'strnatcmp');
+            usort($files, 'strnatcmp');
         } else {
             $folders = $folders->sortByDesc($field)->toArray();
             $files = $files->sortByDesc($field)->toArray();
+            usort($folders, 'strnatcmp');
+            usort($files, 'strnatcmp');
         }
         $originItems = collect($folders)->merge($files)->toArray();
 
