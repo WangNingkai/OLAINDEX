@@ -10,6 +10,10 @@
             @if (!blank($readme))
             document.getElementById('readme').innerHTML = marked(`{!! $readme !!}`);
             @endif
+            $('.view').popover({
+                trigger: 'hover',
+                html: true,
+            });
         });
 
         function getDirect() {
@@ -255,7 +259,10 @@
                                 @if(! \Illuminate\Support\Arr::has($item,'folder'))
                                     @if( \Illuminate\Support\Arr::has($item,'image'))
                                         <a href="{{ route('view',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}"
-                                           data-fancybox="image-list" data-caption="{{ $item['name'] }}"><i
+                                           data-fancybox="image-list" data-caption="{{ $item['name'] }}"
+                                           data-toggle="popover" data-placement="bottom"
+                                           data-content="<img src='{{ $item['thumbnails'][0]['medium']['url'] }}' alt='' class='img-fluid'>"
+                                           class="view"><i
                                                 class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
                                     @endif
                                     @if(Auth::user() && \App\Utils\Tool::canEdit($item) )
