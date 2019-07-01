@@ -257,3 +257,15 @@ if (!function_exists('getOrderByStatus')) {
         return true;
     }
 }
+
+/**
+ * 选择默认的OneDrive
+ */
+if (!function_exists('getDefaultOneDriveAccount')) {
+    function getDefaultOneDriveAccount($one_drive_id)
+    {
+        if (is_null($one_drive_id)) {
+            
+        }
+    }
+}

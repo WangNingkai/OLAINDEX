@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Helpers\Tool;
 use App\Helpers\Constants;
@@ -20,56 +20,56 @@ class AdminController extends Controller
     /**
      * ManageController constructor.
      */
-    public function __construct()
-    {
-        $this->middleware('checkAuth')->except(['login', 'showLoginForm']);
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('checkAuth')->except(['login', 'showLoginForm']);
+    // }
 
-    /**
-     * 登录
-     *
-     * @param Request $request
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     */
-    public function login(Request $request)
-    {
-        if (Session::has('LogInfo')) {
-            return redirect()->route('admin.basic');
-        }
+    // /**
+    //  * 登录
+    //  *
+    //  * @param Request $request
+    //  *
+    //  * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+    //  */
+    // public function login(Request $request)
+    // {
+    //     if (Session::has('LogInfo')) {
+    //         return redirect()->route('admin.basic');
+    //     }
 
-        $password = $request->get('password');
-        if (md5($password) === Tool::config('password')) {
-            $logInfo = [
-                'LastLoginTime'    => time(),
-                'LastLoginIP'      => $request->getClientIp(),
-                'LastActivityTime' => time(),
-            ];
-            Session::put('LogInfo', $logInfo);
-            $request->session()->regenerate();
+    //     $password = $request->get('password');
+    //     if (md5($password) === Tool::config('password')) {
+    //         $logInfo = [
+    //             'LastLoginTime'    => time(),
+    //             'LastLoginIP'      => $request->getClientIp(),
+    //             'LastActivityTime' => time(),
+    //         ];
+    //         Session::put('LogInfo', $logInfo);
+    //         $request->session()->regenerate();
 
-            return redirect()->route('admin.basic');
-        } else {
-            Tool::showMessage('密码错误', false);
+    //         return redirect()->route('admin.basic');
+    //     } else {
+    //         Tool::showMessage('密码错误', false);
 
-            return redirect()->back();
-        }
-    }
+    //         return redirect()->back();
+    //     }
+    // }
 
-    /**
-     * 退出
-     *
-     * @param Request $request
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function logout(Request $request)
-    {
-        $request->session()->forget('LogInfo');
-        Tool::showMessage('管理员已退出');
+    // /**
+    //  * 退出
+    //  *
+    //  * @param Request $request
+    //  *
+    //  * @return \Illuminate\Http\RedirectResponse
+    //  */
+    // public function logout(Request $request)
+    // {
+    //     $request->session()->forget('LogInfo');
+    //     Tool::showMessage('管理员已退出');
 
-        return redirect()->route('login');
-    }
+    //     return redirect()->route('login');
+    // }
 
     /**
      * 基础设置

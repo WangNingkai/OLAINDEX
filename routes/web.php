@@ -56,55 +56,56 @@ Route::post('image/upload', 'ManageController@uploadImage')
 Route::get('file/delete/{sign}', 'ManageController@deleteItem')->name('delete');
 
 // 后台设置管理
-Route::get('new_admin', 'Admin\\HomeController@index')->middleware('auth:admin');
+// Route::get('new_admin', 'Admin\\HomeController@index')->middleware('auth:admin');
 Route::group(['prefix' => 'admin'], function () {
-    Route::get('new_login', 'Admin\\AuthController@showLoginForm')->name('admin.new_login');
-    Route::post('new_login', 'Admin\\AuthController@login');
+    Route::get('login', 'Admin\\AuthController@showLoginForm')->name('admin.login');
+    Route::post('login', 'Admin\\AuthController@login');
 
-    Route::post('new_logout', 'Admin\\AuthController@logout')->name('admin.new_logout')->middleware('auth:admin');
-    Route::view('login', config('olaindex.theme') . 'admin.login')->name('admin.login');
-    Route::middleware('checkAuth')->group(function () {
+    // Route::view('login', config('olaindex.theme') . 'admin.login')->name('admin.login');
+    Route::group(['middleware' => 'auth:admin'],function () {
+        Route::post('logout', 'Admin\\AuthController@logout')->name('admin.logout')->middleware('auth:admin');
         Route::view('/', config('olaindex.theme') . 'admin.basic')->name('admin.basic');
         Route::view('show', config('olaindex.theme') . 'admin.show')->name('admin.show');
         Route::view('profile', config('olaindex.theme') . 'admin.profile')->name('admin.profile.show');
+        // 基础设置
+        Route::post('/', 'AdminController@basic')->name('admin.basic.post');
+        Route::any('bind', 'AdminController@bind')->name('admin.bind');
+        Route::post('show', 'AdminController@settings')->name('admin.settings');
+        Route::post('profile', 'AdminController@profile')->name('admin.profile.post');
+        Route::any('clear', 'AdminController@clear')->name('admin.cache.clear');
+        Route::any('refresh', 'AdminController@refresh')->name('admin.cache.refresh');
+        // 文件夹操作
+        Route::group(['prefix' => 'folder'], function () {
+            Route::post('lock', 'ManageController@lockFolder')->name('admin.lock');
+            Route::post('create', 'ManageController@createFolder')->name('admin.folder.create');
+        });
+        // 文件操作
+        Route::prefix('file')->group(function () {
+            Route::get('/', 'ManageController@uploadFile')->name('admin.file');
+            Route::post('upload', 'ManageController@uploadFile')
+                ->name('admin.file.upload')->middleware('throttle:10,2');
+            Route::any('add', 'ManageController@createFile')
+                ->name('admin.file.create');
+            Route::any('edit/{id}', 'ManageController@updateFile')
+                ->name('admin.file.update');
+            Route::view('other', config('olaindex.theme') . 'admin.other')
+                ->name('admin.other');
+            Route::post('copy', 'ManageController@copyItem')->name('admin.copy');
+            Route::post('move', 'ManageController@moveItem')->name('admin.move');
+            Route::post('file/path2id', 'ManageController@pathToItemId')
+                ->name('admin.path2id');
+            Route::post('share', 'ManageController@createShareLink')
+                ->name('admin.share');
+            Route::post('share/delete', 'ManageController@deleteShareLink')
+                ->name('admin.share.delete');
+        });
+        // 离线上传
+        Route::post('url/upload', 'ManageController@uploadUrl')->name('admin.url.upload');
     });
 
-    Route::post('login', 'AdminController@login')->name('admin.login');
-    Route::post('logout', 'AdminController@logout')->name('admin.logout');
-    // 基础设置
-    Route::post('/', 'AdminController@basic')->name('admin.basic.post');
-    Route::any('bind', 'AdminController@bind')->name('admin.bind');
-    Route::post('show', 'AdminController@settings')->name('admin.settings');
-    Route::post('profile', 'AdminController@profile')->name('admin.profile.post');
-    Route::any('clear', 'AdminController@clear')->name('admin.cache.clear');
-    Route::any('refresh', 'AdminController@refresh')->name('admin.cache.refresh');
-    // 文件夹操作
-    Route::group(['prefix' => 'folder'], function () {
-        Route::post('lock', 'ManageController@lockFolder')->name('admin.lock');
-        Route::post('create', 'ManageController@createFolder')->name('admin.folder.create');
-    });
-    // 文件操作
-    Route::prefix('file')->group(function () {
-        Route::get('/', 'ManageController@uploadFile')->name('admin.file');
-        Route::post('upload', 'ManageController@uploadFile')
-            ->name('admin.file.upload')->middleware('throttle:10,2');
-        Route::any('add', 'ManageController@createFile')
-            ->name('admin.file.create');
-        Route::any('edit/{id}', 'ManageController@updateFile')
-            ->name('admin.file.update');
-        Route::view('other', config('olaindex.theme') . 'admin.other')
-            ->name('admin.other');
-        Route::post('copy', 'ManageController@copyItem')->name('admin.copy');
-        Route::post('move', 'ManageController@moveItem')->name('admin.move');
-        Route::post('file/path2id', 'ManageController@pathToItemId')
-            ->name('admin.path2id');
-        Route::post('share', 'ManageController@createShareLink')
-            ->name('admin.share');
-        Route::post('share/delete', 'ManageController@deleteShareLink')
-            ->name('admin.share.delete');
-    });
-    // 离线上传
-    Route::post('url/upload', 'ManageController@uploadUrl')->name('admin.url.upload');
+    // Route::post('login', 'AdminController@login')->name('admin.login');
+    // Route::post('logout', 'AdminController@logout')->name('admin.logout');
+
 });
 
 if (Str::contains(config('app.url'), ['localhost', 'dev.ningkai.wang'])) {

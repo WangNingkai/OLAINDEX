@@ -5,7 +5,7 @@ namespace App\Console\Commands\OneDrive;
 use App\Helpers\Constants;
 use Illuminate\Console\Command;
 
-class ListCommand extends Command
+class ListCommand extends BaseOneDriveCommand
 {
     /**
      * The name and signature of the console command.
@@ -38,6 +38,7 @@ class ListCommand extends Command
      */
     public function handle()
     {
+        getDefaultOneDriveAccount($this->option('one_drive_id'));
         $this->info(Constants::LOGO);
         $output = <<<'EOF'
 OLAINDEX Console Tool
