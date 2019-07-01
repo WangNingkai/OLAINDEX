@@ -261,9 +261,9 @@
                                         <a href="{{ route('view',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}"
                                            data-fancybox="image-list" data-caption="{{ $item['name'] }}"
                                            data-toggle="popover" data-placement="bottom"
-                                           data-content="<img src='{{ $item['thumbnails'][0]['medium']['url'] }}' alt='' class='img-fluid'>"
+                                           data-content="<img src='{{ $item['thumbnails'][0]['medium']['url'] }}' alt='{{ $item['name'] }}' class='img-fluid'>"
                                            class="view"><i
-                                                class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
+                                                class="fa fa-eye"></i></a>&nbsp;&nbsp;
                                     @endif
                                     @if(Auth::user() && \App\Utils\Tool::canEdit($item) )
                                         <a href="{{ route('admin.file.update',$item['id']) }}"><i
