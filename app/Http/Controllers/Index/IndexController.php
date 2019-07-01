@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Index;
 
 use App\Helpers\Constants;
 use App\Helpers\OneDrive;
@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use App\Http\Resources\ItemResource;
 use App\Services\CacheService;
+use App\Http\Controllers\Controller;
 
 /**
  * OneDriveGraph 索引
@@ -50,7 +51,7 @@ class IndexController extends Controller
         $this->middleware([
             'checkInstall',
             'checkToken',
-            'checkUserAuth',
+            // 'checkUserAuth',
             'handleIllegalFile',
         ]);
         $this->middleware('HandleEncryptDir')->only(Tool::config('encrypt_option', ['list']));

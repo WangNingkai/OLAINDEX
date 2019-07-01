@@ -30,18 +30,24 @@ Route::group(['namespace' => 'Index\Auth'], function () {
     Route::post('/logout', 'LoginController@logout')->name('logout')->middleware('checkUserAuth');
 });
 
-Route::group(['prefix' => 'home'], function () {
-    Route::get('{query?}', 'IndexController@list')->where('query', '.*')->name('home');
-});
-Route::get('show/{query}', 'IndexController@show')->where('query', '.*')->name('show');
-Route::group(['middleware' => ['hotlinkProtection']], function () {
-    Route::get('down/{query}', 'IndexController@download')->where('query', '.*')->name('download');
-    Route::get('view/{query}', 'IndexController@view')->where('query', '.*')->name('view');
+Route::group(['middleware' => ['auth:web'], 'namespace' => 'Index'], function () {
+    Route::group(['prefix' => 'home'], function () {
+        Route::get('{query?}', 'IndexController@list')->where('query', '.*')->name('home');
+    });
+    Route::get('show/{query}', 'IndexController@show')->where('query', '.*')->name('show');
+    Route::group(['middleware' => ['hotlinkProtection']], function () {
+        Route::get('down/{query}', 'IndexController@download')->where('query', '.*')->name('download');
+        Route::get('view/{query}', 'IndexController@view')->where('query', '.*')->name('view');
+    });
+    
+    Route::post('password', 'IndexController@handlePassword')->name('password');
+    Route::get('thumb/{id}/size/{size}', 'IndexController@thumb')->name('thumb');
+    Route::get('thumb/{id}/{width}/{height}', 'IndexController@thumbCrop')->name('thumb_crop');
+    // 搜索
+    Route::get('search', 'IndexController@search')->name('search')->middleware('checkAuth', 'throttle:10,2');
+    Route::get('search/file/{id}', 'IndexController@searchShow')->name('search.show')->middleware('checkAuth');
 });
 
-Route::post('password', 'IndexController@handlePassword')->name('password');
-Route::get('thumb/{id}/size/{size}', 'IndexController@thumb')->name('thumb');
-Route::get('thumb/{id}/{width}/{height}', 'IndexController@thumbCrop')->name('thumb_crop');
 Route::view('message', config('olaindex.theme') . 'message')->name('message');
 // 图床
 Route::get('image', 'ManageController@uploadImage')->name('image')->middleware('checkImage');
@@ -50,7 +56,12 @@ Route::post('image/upload', 'ManageController@uploadImage')
 Route::get('file/delete/{sign}', 'ManageController@deleteItem')->name('delete');
 
 // 后台设置管理
+Route::get('new_admin', 'Admin\\HomeController@index')->middleware('auth:admin');
 Route::group(['prefix' => 'admin'], function () {
+    Route::get('new_login', 'Admin\\AuthController@showLoginForm')->name('admin.new_login');
+    Route::post('new_login', 'Admin\\AuthController@login');
+
+    Route::post('new_logout', 'Admin\\AuthController@logout')->name('admin.new_logout')->middleware('auth:admin');
     Route::view('login', config('olaindex.theme') . 'admin.login')->name('admin.login');
     Route::middleware('checkAuth')->group(function () {
         Route::view('/', config('olaindex.theme') . 'admin.basic')->name('admin.basic');
@@ -95,9 +106,6 @@ Route::group(['prefix' => 'admin'], function () {
     // 离线上传
     Route::post('url/upload', 'ManageController@uploadUrl')->name('admin.url.upload');
 });
-// 搜索
-Route::get('search', 'IndexController@search')->name('search')->middleware('checkAuth', 'throttle:10,2');
-Route::get('search/file/{id}', 'IndexController@searchShow')->name('search.show')->middleware('checkAuth');
 
 if (Str::contains(config('app.url'), ['localhost', 'dev.ningkai.wang'])) {
     Route::get('about', function () {
