@@ -187,7 +187,7 @@ return [
         // I
         'image'              => '图片',
         'image_view'         => '看图模式',
-        'image_home'         => '图床首页',
+        'is_image_home'         => '图床首页',
         'image_hosting'      => '图床',
         'image_hosting_path' => '图床保存地址',
 

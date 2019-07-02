@@ -12,16 +12,8 @@ class Admin extends Authenticatable
     protected $guarded = [];
 
     protected $casts = [
-        'is_binded' => 'boolean'
-    ];
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name', 'email', 'password',
+        'is_binded'     => 'boolean',
+        'is_image_home' => 'boolean'
     ];
 
     /**
@@ -30,7 +22,8 @@ class Admin extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
     public function setPasswordAttribute($value)

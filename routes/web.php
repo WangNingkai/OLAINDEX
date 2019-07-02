@@ -64,10 +64,10 @@ Route::group(['prefix' => 'admin'], function () {
     // Route::view('login', config('olaindex.theme') . 'admin.login')->name('admin.login');
     Route::group(['middleware' => 'auth:admin', 'namespace' => 'Admin'], function () {
         Route::post('logout', 'AuthController@logout')->name('admin.logout')->middleware('auth:admin');
-        Route::view('/', config('olaindex.theme') . 'admin.basic')->name('admin.basic');
         Route::view('show', config('olaindex.theme') . 'admin.show')->name('admin.show');
         Route::view('profile', config('olaindex.theme') . 'admin.profile')->name('admin.profile.show');
         // 基础设置
+        Route::get('/', 'AdminController@showBasic')->name('admin.basic');
         Route::post('/', 'AdminController@basic')->name('admin.basic.post');
         Route::any('bind', 'AdminController@bind')->name('admin.bind');
         Route::post('show', 'AdminController@settings')->name('admin.settings');
