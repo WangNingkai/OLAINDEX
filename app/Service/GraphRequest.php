@@ -142,7 +142,7 @@ class GraphRequest
             );
             $this->responseError = collect([
                 'errno' => $curl->errorCode,
-                'message' => $curl->errorMessage,
+                'msg' => $curl->errorMessage,
                 'headers' => $curl->responseHeaders
             ])->toJson();
             $this->error = true;
