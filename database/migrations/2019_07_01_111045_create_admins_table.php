@@ -21,6 +21,9 @@ class CreateAdminsTable extends Migration
             $table->string('password');
             $table->string('site_name')->default('OLAINDEX')->comment('站点名称');
             $table->string('theme')->default('cosmo')->comment('站点主题');
+            $table->string('hotlink_protection')->nullable()->comment('防盗链');
+            $table->string('copyright')->nullable()->comment('自定义版权显示');
+            $table->string('statistics')->nullable()->comment('统计代码');
             $table->enum('image_hosting', ['enabled', 'disabled', 'admin_enabled'])->default('disabled')->comment('是否开启图床');
             $table->boolean('is_binded')->default(0)->comment('是否已绑定');
             $table->boolean('is_image_home')->default(0)->comment('是否将图床设为首页');
