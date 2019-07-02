@@ -2,7 +2,7 @@
 @section('title','基础设置')
 @section('content')
 @includeWhen($errors->isNotEmpty(), 'default.widgets.errors')
-<form action="{{ route('admin.basic') }}" method="post">
+<form action="{{ route('admin.basic') }}" method="post" id="test-form">
     @csrf
     <div class="form-group">
         <label class="form-control-label" for="name">站点名称</label>
@@ -68,12 +68,13 @@
 <script type="text/javascript">
     $(function() {
         $('#customSwitch1').on('click', function (e) {
-            console.log(e);
+            console.log(e.toElement.value);
             if (e.toElement.value == 'on' || e.toElement.value == 0) {
                 e.toElement.value = 1
             } else {
                 e.toElement.value = 0
             }
+            console.log($("#test-form"));
         });
     });
 

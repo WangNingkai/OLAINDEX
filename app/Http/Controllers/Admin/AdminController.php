@@ -48,7 +48,6 @@ class AdminController extends Controller
         $data = array_map(function (&$item) {
             return is_null($item) ? $item = '' : $item;
         }, $data);
-        dd($data);
 
         // dd($data);
         $user->update($data);
