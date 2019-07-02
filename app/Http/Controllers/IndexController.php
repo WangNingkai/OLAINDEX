@@ -340,9 +340,9 @@ class IndexController extends Controller
      * 下载
      * @param Request $request
      *
-     * @return RedirectResponse
+     * @return mixed
      */
-    public function download(Request $request): RedirectResponse
+    public function download(Request $request)
     {
         $requestPath = $request->route()->parameter('query', '/');
         if ($requestPath === '/') {
