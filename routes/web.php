@@ -39,7 +39,7 @@ Route::group(['middleware' => ['auth:web'], 'namespace' => 'Index'], function ()
         Route::get('down/{query}', 'IndexController@download')->where('query', '.*')->name('download');
         Route::get('view/{query}', 'IndexController@view')->where('query', '.*')->name('view');
     });
-    
+
     Route::post('password', 'IndexController@handlePassword')->name('password');
     Route::get('thumb/{id}/size/{size}', 'IndexController@thumb')->name('thumb');
     Route::get('thumb/{id}/{width}/{height}', 'IndexController@thumbCrop')->name('thumb_crop');
@@ -62,8 +62,8 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('login', 'Admin\\AuthController@login');
 
     // Route::view('login', config('olaindex.theme') . 'admin.login')->name('admin.login');
-    Route::group(['middleware' => 'auth:admin'],function () {
-        Route::post('logout', 'Admin\\AuthController@logout')->name('admin.logout')->middleware('auth:admin');
+    Route::group(['middleware' => 'auth:admin', 'namespace' => 'Admin'], function () {
+        Route::post('logout', 'AuthController@logout')->name('admin.logout')->middleware('auth:admin');
         Route::view('/', config('olaindex.theme') . 'admin.basic')->name('admin.basic');
         Route::view('show', config('olaindex.theme') . 'admin.show')->name('admin.show');
         Route::view('profile', config('olaindex.theme') . 'admin.profile')->name('admin.profile.show');
@@ -105,7 +105,6 @@ Route::group(['prefix' => 'admin'], function () {
 
     // Route::post('login', 'AdminController@login')->name('admin.login');
     // Route::post('logout', 'AdminController@logout')->name('admin.logout');
-
 });
 
 if (Str::contains(config('app.url'), ['localhost', 'dev.ningkai.wang'])) {
