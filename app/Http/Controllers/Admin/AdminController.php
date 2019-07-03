@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Arr;
 
 /**
  * 后台管理操作
@@ -43,18 +44,17 @@ class AdminController extends Controller
             'statistics'            => 'sometimes|nullable|string',
             'test'                  => 'sometimes',
         ]);
-        
+
         $user = $this->user();
         $data = array_map(function (&$item) {
             return is_null($item) ? $item = '' : $item;
         }, $data);
 
-        // dd($data);
         $user->update($data);
         // Tool::updateConfig($data);
         // Tool::showMessage('保存成功！');
 
-        return redirect()->back();
+        return success();
     }
 
     /**
@@ -98,11 +98,9 @@ class AdminController extends Controller
             'password_confirm' => 'required|string|same:password',
         ]);
 
-        $data = [
-            'password' => md5($data['password'])
-        ];
-        Tool::updateConfig($data);
-        Tool::showMessage('保存成功！');
+        $this->user()->update(Arr::only($data, 'password'));
+        // Tool::updateConfig($data);
+        // Tool::showMessage('保存成功！');
 
         return redirect()->back();
     }

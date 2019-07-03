@@ -269,3 +269,17 @@ if (!function_exists('getDefaultOneDriveAccount')) {
         }
     }
 }
+
+if (!function_exists('success')) {
+    function success($message = '操作成功', $status = 302, $headers = [], $fallback = false)
+    {
+        return app('redirect')->back($status, $headers, $fallback)->with('message', $message);
+    }
+}
+
+if (!function_exists('redirectSuccess')) {
+    function redirectSuccess($route, $parameters = [], $status = 302, $headers = [], $message = '操作成功')
+    {
+        return app('redirect')->route($route, $parameters = [], $status = 302, $headers = [])->with('message', $message);
+    }
+}
