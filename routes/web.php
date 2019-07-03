@@ -43,29 +43,31 @@ Route::group(['middleware' => ['auth:web'], 'namespace' => 'Index'], function ()
     Route::post('password', 'IndexController@handlePassword')->name('password');
     Route::get('thumb/{id}/size/{size}', 'IndexController@thumb')->name('thumb');
     Route::get('thumb/{id}/{width}/{height}', 'IndexController@thumbCrop')->name('thumb_crop');
+    
     // 搜索
     Route::get('search', 'IndexController@search')->name('search')->middleware('checkAuth', 'throttle:10,2');
     Route::get('search/file/{id}', 'IndexController@searchShow')->name('search.show')->middleware('checkAuth');
 });
 
 Route::view('message', config('olaindex.theme') . 'message')->name('message');
+
 // 图床
-Route::get('image', 'ManageController@uploadImage')->name('image')->middleware('checkImage');
-Route::post('image/upload', 'ManageController@uploadImage')
+Route::get('image', 'Admin\\ManageController@uploadImage')->name('image')->middleware('checkImage');
+Route::post('image/upload', 'Admin\\ManageController@uploadImage')
     ->name('image.upload')->middleware('throttle:10,2', 'checkImage');
-Route::get('file/delete/{sign}', 'ManageController@deleteItem')->name('delete');
+Route::get('file/delete/{sign}', 'Admin\\ManageController@deleteItem')->name('delete');
 
 // 后台设置管理
-// Route::get('new_admin', 'Admin\\HomeController@index')->middleware('auth:admin');
 Route::group(['prefix' => 'admin'], function () {
     Route::get('login', 'Admin\\AuthController@showLoginForm')->name('admin.login');
     Route::post('login', 'Admin\\AuthController@login');
 
     // Route::view('login', config('olaindex.theme') . 'admin.login')->name('admin.login');
     Route::group(['middleware' => 'auth:admin', 'namespace' => 'Admin'], function () {
-        Route::post('logout', 'AuthController@logout')->name('admin.logout')->middleware('auth:admin');
+        Route::post('logout', 'AuthController@logout')->name('admin.logout');
         Route::view('show', config('olaindex.theme') . 'admin.show')->name('admin.show');
         Route::view('profile', config('olaindex.theme') . 'admin.profile')->name('admin.profile.show');
+
         // 基础设置
         Route::get('/', 'AdminController@showBasic')->name('admin.basic');
         Route::post('/', 'AdminController@basic')->name('admin.basic.post');
@@ -74,13 +76,17 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('profile', 'AdminController@profile')->name('admin.profile.post');
         Route::any('clear', 'AdminController@clear')->name('admin.cache.clear');
         Route::any('refresh', 'AdminController@refresh')->name('admin.cache.refresh');
+        // onedrive
+        Route::resource('onedrive', 'OneDriveController', ['as' => 'admin']);
+        
         // 文件夹操作
         Route::group(['prefix' => 'folder'], function () {
             Route::post('lock', 'ManageController@lockFolder')->name('admin.lock');
             Route::post('create', 'ManageController@createFolder')->name('admin.folder.create');
         });
+
         // 文件操作
-        Route::prefix('file')->group(function () {
+        Route::group(['prefix' => 'file'], function () {
             Route::get('/', 'ManageController@uploadFile')->name('admin.file');
             Route::post('upload', 'ManageController@uploadFile')
                 ->name('admin.file.upload')->middleware('throttle:10,2');
@@ -99,6 +105,7 @@ Route::group(['prefix' => 'admin'], function () {
             Route::post('share/delete', 'ManageController@deleteShareLink')
                 ->name('admin.share.delete');
         });
+
         // 离线上传
         Route::post('url/upload', 'ManageController@uploadUrl')->name('admin.url.upload');
     });

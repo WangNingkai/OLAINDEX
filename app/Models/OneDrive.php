@@ -13,6 +13,8 @@ class OneDrive extends Model
     protected $columns = [
         'id',
         'admin_id',
+        'name',
+        'root',
         'is_default',
         'app_version',
         'access_token',

@@ -55,6 +55,10 @@
                         <a class="dropdown-item" href="{{ route('admin.bind') }}">绑定设置 </a>
                     </div>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.onedrive.index') }}" ><i class="fa fa-cloud"></i>
+                        OneDrive列表 </a>
+                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                        aria-haspopup="true" aria-expanded="false"><i class="fa fa-cogs"></i> 文件操作</a>

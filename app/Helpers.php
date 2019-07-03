@@ -283,3 +283,13 @@ if (!function_exists('redirectSuccess')) {
         return app('redirect')->route($route, $parameters = [], $status = 302, $headers = [])->with('message', $message);
     }
 }
+
+/**
+ * 返回主题的view路径
+ */
+if (!function_exists('themeView')) {
+    function themeView($view, $data = [])
+    {
+        return view(config('olaindex.theme') . '.' . $view, []);
+    }
+}
