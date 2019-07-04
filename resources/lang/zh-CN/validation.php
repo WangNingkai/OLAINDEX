@@ -185,11 +185,9 @@ return [
         'hotlink_protection' => '防盗链',
 
         // I
-        'image'              => '图片',
-        'image_view'         => '看图模式',
-        'is_image_home'         => '图床首页',
-        'image_hosting'      => '图床',
-        'image_hosting_path' => '图床保存地址',
+        'image'         => '图片',
+        'image_view'    => '看图模式',
+        'is_image_home' => '图床首页',
 
         // J
 
@@ -219,12 +217,19 @@ return [
         'root' => '根目录',
 
         // S
-        'second'     => '秒',
-        'sex'        => '性别',
-        'size'       => '大小',
-        'sort'       => '排序',
-        'stream'     => '文件流',
-        'statistics' => '统计代码',
+        'second'                      => '秒',
+        'sex'                         => '性别',
+        'size'                        => '大小',
+        'sort'                        => '排序',
+        'stream'                      => '文件流',
+        'statistics'                  => '统计代码',
+        'settings'                    => '设置项',
+        'settings.image_view'         => '看图模式',
+        'settings.image_hosting'      => '图床',
+        'settings.image_hosting_path' => '图床保存地址',
+        'settings.encrypt_path'       => '加密路径',
+        'settings.encrypt_option'     => '加密选项',
+        'settings.image_home'      => '图床首页',
 
         // T
         'theme' => '主题',

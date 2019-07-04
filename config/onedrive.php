@@ -2,6 +2,8 @@
 
 return [
     'image_view'         => 0,
+    'image_home'         => 0,
+    'image_hosting'      => 'disabled',
     'image_hosting_path' => 'Hosting',
     'image'              => 'bmp jpg jpeg png gif',
     'video'              => 'mkv mp4 webm',

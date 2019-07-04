@@ -25,39 +25,6 @@
         </div>
     </div>
     <div class="form-group row">
-        <label class="form-control-label col-sm-2">是否开启图床</label>
-        <div class="col-sm-10">
-            <div class="custom-control custom-radio">
-                <input type="radio" id="image_hosting1" name="image_hosting" class="custom-control-input"
-                    @if($admin->image_hosting == 'enabled') checked @endif value="enabled">
-                <label class="custom-control-label" for="image_hosting1">开启 &nbsp;&nbsp;</label>
-
-            </div>
-            <div class="custom-control custom-radio">
-                <input type="radio" id="image_hosting0" name="image_hosting" class="custom-control-input"
-                    @if($admin->image_hosting == 'disabled') checked @endif value="disabled">
-                <label class="custom-control-label" for="image_hosting0">关闭 &nbsp;&nbsp;</label>
-            </div>
-            <div class="custom-control custom-radio">
-                <input type="radio" id="image_hosting2" name="image_hosting" class="custom-control-input"
-                    @if($admin->image_hosting == 'admin_enabled') checked @endif value="admin_enabled">
-                <label class="custom-control-label" for="image_hosting2">仅管理员开启 </label>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <label class="form-control-label col-sm-2">是否将图床设为首页</label>
-        <div class="form-group col-sm-10">
-            <input type="hidden" name="is_image_home" value="0">
-            <div class="custom-control custom-switch">
-                <input type="checkbox" class="custom-control-input" name="is_image_home" id="customSwitch1"
-                    data-on-text="开启" data-off-text="关闭"
-                    @if($admin->is_image_home) checked @endif value="{{ $admin->is_image_home ? '1' : '0'}}">
-                <label class="custom-control-label" for="customSwitch1"></label>
-            </div>
-        </div>
-    </div>
-    <div class="form-group row">
         <label class="form-control-label col-sm-2" for="hotlink_protection">防盗链</label>
         <div class="col-sm-10">
             <input type="text" class="form-control" id="hotlink_protection" name="hotlink_protection"
@@ -86,17 +53,3 @@
     </div>
 </form>
 @stop
-@section('js')
-<script type="text/javascript">
-    $(function() {
-        $('#customSwitch1').on('click', function (e) {
-            if (e.toElement.value == 'on' || e.toElement.value == 0) {
-                e.toElement.value = 1;
-            } else {
-                e.toElement.value = 0;
-            }
-        });
-    });
-
-</script>
-@endSection

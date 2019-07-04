@@ -77,7 +77,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::any('clear', 'AdminController@clear')->name('admin.cache.clear');
         Route::any('refresh', 'AdminController@refresh')->name('admin.cache.refresh');
         // onedrive
-        Route::resource('onedrive', 'OneDriveController', ['as' => 'admin']);
+        Route::resource('onedrive', 'OneDriveController', ['as' => 'admin', 'except' => 'show']);
         
         // 文件夹操作
         Route::group(['prefix' => 'folder'], function () {

@@ -1,6 +1,7 @@
 @extends('default.layouts.admin')
 @section('title','新增 OneDrive')
 @section('content')
+@includeWhen($errors->isNotEmpty(), 'default.widgets.errors')
 <form action="{{ route('admin.onedrive.store') }}" method="POST">
     @csrf
     <div class="form-group row">

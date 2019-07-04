@@ -22,7 +22,7 @@ class OneDriveController extends Controller
     {
         $oneDrives = $this->model->where('admin_id', $this->user()->id)->exclude('settings')->get();
 
-        return view(config('olaindex.theme') . 'admin.onedrive.index', compact('oneDrives'));
+        return themeView('admin.onedrive.index', compact('oneDrives'));
     }
 
     /**
@@ -73,7 +73,9 @@ class OneDriveController extends Controller
      */
     public function edit($id)
     {
-        //
+        $oneDrive = $this->model->where('admin_id', $this->user()->id)->findOrFail($id);
+
+        return themeView('admin.onedrive.edit', compact('oneDrive'));
     }
 
     /**
@@ -85,7 +87,16 @@ class OneDriveController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->validate([
+            'name'       => 'sometimes|string|max:255',
+            'root'       => 'sometimes|string|max:255',
+            'is_default' => 'sometimes|boolean',
+            'settings'   => 'array'
+        ]);
+
+        dd($data);
+
+        return success();
     }
 
     /**
@@ -96,6 +107,7 @@ class OneDriveController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $oneDrive = $this->model->where('admin_id', $this->user()->id)->findOrFail($id);
+        $oneDrive->delete();
     }
 }
