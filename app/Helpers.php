@@ -290,6 +290,6 @@ if (!function_exists('redirectSuccess')) {
 if (!function_exists('themeView')) {
     function themeView($view, $data = [])
     {
-        return view(config('olaindex.theme') . '.' . $view, []);
+        return view(config('olaindex.theme') . '.' . $view, $data);
     }
 }
