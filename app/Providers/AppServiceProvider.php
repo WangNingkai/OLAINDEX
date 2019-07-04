@@ -2,20 +2,13 @@
 
 namespace App\Providers;
 
+use DebugBar\DebugBar;
 use Illuminate\Support\ServiceProvider;
+use App\Models\OneDrive;
+use App\Observers\OneDriveObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        //
-    }
-
     /**
      * Register any application services.
      *
@@ -24,5 +17,19 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         //
+    }
+
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        if (app('env') == 'local') {
+            DebugBar::enable();
+        }
+
+        OneDrive::observe(OneDriveObserver::class);
     }
 }
