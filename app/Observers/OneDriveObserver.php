@@ -14,7 +14,7 @@ class OneDriveObserver
      */
     public function creating(OneDrive $oneDrive)
     {
-        $this->settings = config('onedrive');        
+        $oneDrive->settings = config('onedrive');
     }
 
     /**
