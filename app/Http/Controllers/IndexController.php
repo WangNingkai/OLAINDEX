@@ -209,7 +209,10 @@ class IndexController extends Controller
 
         $hasImage = Tool::hasImages($originItems);
 
+        $size = collect($originItems)->sum('size');
+
         $data = compact(
+            'size',
             'parent_item',
             'items',
             'originItems',

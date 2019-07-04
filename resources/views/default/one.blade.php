@@ -292,9 +292,9 @@
                 <div class="row">
                     <div class="col-8 col-sm-6" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
                             <span class="text-muted font-weight-light">
-                                共 {{ $parent_item['folder']['childCount'] }} 个项目
+                                共 {{ count($originItems) }} 个项目
                                 @auth
-                                    {{ \App\Utils\Tool::convertSize($parent_item['size']) }}
+                                    {{ \App\Utils\Tool::convertSize($size) }}
                                 @endauth
                             </span>
                     </div>
