@@ -18,6 +18,7 @@ class CreateOneDrivesTable extends Migration
             $table->integer('admin_id')->unsigned()->index()->comment('管理员ID');
             $table->string('name')->comment('名称');
             $table->boolean('is_default')->default(0)->comment('是否默认');
+            $table->boolean('is_default')->default(0)->comment('是否绑定');
             $table->string('app_version')->default('v3.2.1')->comment('app版本');
             $table->string('root')->default('/')->comment('OneDrive根目录');
             $table->text('access_token')->nullable()->comment('访问token');
