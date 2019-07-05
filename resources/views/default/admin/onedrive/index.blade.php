@@ -9,6 +9,7 @@
             <th scope="col">根目录</th>
             <th scope="col">app版本</th>
             <th scope="col">是否默认</th>
+            <th scope="col">是否绑定</th>
             <th scope="col">操作</th>
         </tr>
     </thead>
@@ -21,6 +22,7 @@
             <td>{{ $oneDrive->root }}</td>
             <td>{{ $oneDrive->app_version }}</td>
             <td>{{ $oneDrive->is_default ? '是' : '否' }}</td>
+            <td>{{ $oneDrive->is_binded ? '是' : '否' }}</td>
             <td>
                 <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                     <a href="{{ route('admin.onedrive.edit', ['onedrive' => $oneDrive->id]) }}" data-id="{{ $oneDrive->id }}" class="btn btn-primary">编辑</a>
@@ -42,7 +44,7 @@
         @endforeach
     </tbody>
     @else
-    <td colspan="6" class="text-center">暂无数据</td>
+    <td colspan="7" class="text-center">暂无数据</td>
     @endif
 </table>
 <div class="float-right">

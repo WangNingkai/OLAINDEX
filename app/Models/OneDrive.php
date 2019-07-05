@@ -7,6 +7,7 @@ class OneDrive extends Model
     protected $casts = [
         'admin_id'   => 'integer',
         'is_default' => 'boolean',
+        'is_binded'  => 'boolean',
         'settings'   => 'array'
     ];
 
@@ -16,6 +17,7 @@ class OneDrive extends Model
         'name',
         'root',
         'is_default',
+        'is_binded',
         'app_version',
         'access_token',
         'refresh_token',

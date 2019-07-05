@@ -229,7 +229,16 @@ return [
         'settings.image_hosting_path' => '图床保存地址',
         'settings.encrypt_path'       => '加密路径',
         'settings.encrypt_option'     => '加密选项',
-        'settings.image_home'      => '图床首页',
+        'settings.encrypt_option.*'   => '加密选项子项',
+        'settings.image_home'         => '图床首页',
+        'settings.image'              => '图片文件后缀',
+        'settings.video'              => '视频文件后缀',
+        'settings.dash'               => 'Dash视频文件后缀',
+        'settings.audio'              => '音频文件后缀',
+        'settings.doc'                => '文档文件后缀',
+        'settings.code'               => '代码文件后缀',
+        'settings.stream'             => '文件流文件后缀',
+        'settings.encrypt_path'       => '图片文件后缀',
 
         // T
         'theme' => '主题',

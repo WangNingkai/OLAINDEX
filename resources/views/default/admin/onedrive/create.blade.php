@@ -14,6 +14,7 @@
         <label for="root" class="col-sm-2 col-form-label">根目录</label>
         <div class="col-sm-10">
             <input type="text" name="root" class="form-control" id="root" placeholder="根目录...">
+            <span class="form-text text-danger">目录索引起始文件夹地址，文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ | 否则无法索引。</span>
         </div>
     </div>
     <div class="form-group row">
