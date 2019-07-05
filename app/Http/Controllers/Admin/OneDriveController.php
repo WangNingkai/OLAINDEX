@@ -48,8 +48,7 @@ class OneDriveController extends Controller
             'root' => 'required|string|max:255',
         ]);
 
-        $data['admin_id'] = $this->user()->id;
-        $this->model->create($data);
+        $this->user()->oneDrives()->create($data);
 
         return redirect()->route('admin.onedrive.index');
     }
@@ -113,5 +112,41 @@ class OneDriveController extends Controller
     {
         $oneDrive = $this->model->where('admin_id', $this->user()->id)->findOrFail($id);
         $oneDrive->delete();
+    }
+
+    public function showBind($id)
+    {
+        $oneDrive = $this->model->where('admin_id', $this->user()->id)->findOrFail($id);
+
+        if ($oneDrive->is_binded) {
+            return redirect()->route('admin.onedrive.index')->withErrors(["{$oneDrive->name} 已经绑定"]);
+        }
+
+        return themeView('admin.onedrive.init', compact('oneDrive'));
+    }
+
+    public function apply(Request $request, $id)
+    {
+        $data = $request->validate([
+            'redirect_uri' => 'required|url'
+        ]);
+
+        $oneDrive = $this->model->where('admin_id', $this->user()->id)->findOrFail($id);
+
+        if ($oneDrive->is_binded) {
+            return redirect()->route('admin.onedrive.index')->withErrors(["{$oneDrive->name} 已经绑定"]);
+        }
+
+        $ru = 'https://developer.microsoft.com/en-us/graph/quick-start?appID=_appId_&appName=_appName_&redirectUrl='
+            . $data['redirect_uri'] . '&platform=option-php';
+        $deepLink = '/quickstart/graphIO?publicClientSupport=false&appName=OLAINDEX&redirectUrl='
+            . $data['redirect_uri'] . '&allowImplicitFlow=false&ru='
+            . urlencode($ru);
+        $app_url = 'https://apps.dev.microsoft.com/?deepLink='
+            . urlencode($deepLink);
+
+        $oneDrive->update($data);
+
+        return redirect()->away($app_url);
     }
 }

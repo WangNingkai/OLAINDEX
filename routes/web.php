@@ -43,7 +43,7 @@ Route::group(['middleware' => ['auth:web'], 'namespace' => 'Index'], function ()
     Route::post('password', 'IndexController@handlePassword')->name('password');
     Route::get('thumb/{id}/size/{size}', 'IndexController@thumb')->name('thumb');
     Route::get('thumb/{id}/{width}/{height}', 'IndexController@thumbCrop')->name('thumb_crop');
-    
+
     // 搜索
     Route::get('search', 'IndexController@search')->name('search')->middleware('checkAuth', 'throttle:10,2');
     Route::get('search/file/{id}', 'IndexController@searchShow')->name('search.show')->middleware('checkAuth');
@@ -62,7 +62,6 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('login', 'Admin\\AuthController@showLoginForm')->name('admin.login');
     Route::post('login', 'Admin\\AuthController@login');
 
-    // Route::view('login', config('olaindex.theme') . 'admin.login')->name('admin.login');
     Route::group(['middleware' => 'auth:admin', 'namespace' => 'Admin'], function () {
         Route::post('logout', 'AuthController@logout')->name('admin.logout');
         Route::view('show', config('olaindex.theme') . 'admin.show')->name('admin.show');
@@ -76,9 +75,15 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('profile', 'AdminController@profile')->name('admin.profile.post');
         Route::any('clear', 'AdminController@clear')->name('admin.cache.clear');
         Route::any('refresh', 'AdminController@refresh')->name('admin.cache.refresh');
+
         // onedrive
         Route::resource('onedrive', 'OneDriveController', ['as' => 'admin', 'except' => 'show']);
-        
+        Route::group(['prefix' => 'onedrive'], function () {
+            Route::get('{onedrive}/bind', 'OneDriveController@showBind')->name('admin.onedrive.showBind');
+            Route::post('{onedrive}/bind', 'OneDriveController@bind')->name('admin.onedrive.bind');
+            Route::post('{onedrive}/apply', 'OneDriveController@apply')->name('admin.onedrive.apply');
+        });
+
         // 文件夹操作
         Route::group(['prefix' => 'folder'], function () {
             Route::post('lock', 'ManageController@lockFolder')->name('admin.lock');

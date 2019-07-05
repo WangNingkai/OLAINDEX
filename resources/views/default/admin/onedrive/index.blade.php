@@ -1,6 +1,7 @@
 @extends('default.layouts.admin')
 @section('title','OneDrive列表')
 @section('content')
+@includeWhen($errors->isNotEmpty(), 'default.widgets.errors')
 <table class="table table-hover">
     <thead class="thead-light">
         <tr>
