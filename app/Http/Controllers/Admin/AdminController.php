@@ -35,14 +35,11 @@ class AdminController extends Controller
     public function basic(Request $request)
     {
         $data = $request->validate([
-            'name'                  => 'sometimes|nullable|string',
-            'theme'                 => 'sometimes|nullable|string|in:' . implode(',', Constants::SITE_THEME),
-            'image_hosting'         => 'sometimes|in:enabled,disabled,admin_enabled',
-            'is_image_home'         => 'sometimes|boolean',
-            'hotlink_protection'    => 'sometimes|nullable|string',
-            'copyright'             => 'sometimes|nullable|string',
-            'statistics'            => 'sometimes|nullable|string',
-            'test'                  => 'sometimes',
+            'name'               => 'sometimes|nullable|string',
+            'theme'              => 'sometimes|nullable|string|in:' . implode(',', Constants::SITE_THEME),
+            'hotlink_protection' => 'sometimes|nullable|string',
+            'copyright'          => 'sometimes|nullable|string',
+            'statistics'         => 'sometimes|nullable|string',
         ]);
 
         $user = $this->user();

@@ -55,17 +55,6 @@ class OneDriveController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
@@ -88,13 +77,17 @@ class OneDriveController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->validate([
-            'name'       => 'sometimes|string|max:255',
-            'root'       => 'sometimes|string|max:255',
-            'is_default' => 'sometimes|boolean',
-            'settings'   => 'array'
+            'name'                   => 'sometimes|string|max:255',
+            'root'                   => 'sometimes|string|max:255',
+            'is_default'             => 'sometimes|boolean',
+            'settings'               => 'array',
+            'settings.image_hosting' => 'in:enabled,disabled,admin_enabled',
+            'settings.image_home'    => 'boolean',
+            'settings.image_hosting' => 'string|max:255',
         ]);
 
-        dd($data);
+        $oneDrive = $this->model->where('admin_id', $this->user()->id)->findOrFail($id);
+        $oneDrive->update($data);
 
         return success();
     }
