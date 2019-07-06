@@ -79,6 +79,7 @@ class OneDriveController extends Controller
             'name'                        => 'sometimes|string|max:255',
             'root'                        => 'sometimes|string|max:255',
             'is_default'                  => 'sometimes|boolean',
+            'expires'                     => 'sometimes|integer|min:1',
             'settings'                    => 'array',
             'settings.image_hosting'      => 'in:enabled,disabled,admin_enabled',
             'settings.image_home'         => 'boolean',
@@ -97,7 +98,8 @@ class OneDriveController extends Controller
         ]);
 
         $oneDrive = $this->model->where('admin_id', $this->user()->id)->findOrFail($id);
-        $oneDrive->update(array_merge(config('onedrive'), $data));
+        $data['settings'] = array_merge(config('onedrive'), Arr::get($data, 'settings', config(config('onedrive'))));
+        $oneDrive->update($data);
 
         return success();
     }
@@ -122,7 +124,7 @@ class OneDriveController extends Controller
             return redirect()->route('admin.onedrive.index')->withErrors(["{$oneDrive->name} 已经绑定"]);
         }
 
-        return themeView('admin.onedrive.init', compact('oneDrive'));
+        return themeView('admin.onedrive.bind', compact('oneDrive'));
     }
 
     public function apply(Request $request, $id)
@@ -148,5 +150,42 @@ class OneDriveController extends Controller
         $oneDrive->update($data);
 
         return redirect()->away($app_url);
+    }
+
+    public function bind(Request $request, $id)
+    {
+        $data = $request->validate([
+            'redirect_uri'  => 'required|url',
+            'client_id'     => 'required|string',
+            'client_secret' => 'required|string',
+            'account_type'  => 'required|in:com,cn',
+        ]);
+
+        $oneDrive = $this->model->where('admin_id', $this->user()->id)->findOrFail($id);
+
+        if ($oneDrive->is_binded) {
+            return redirect()->route('admin.onedrive.index')->withErrors(["{$oneDrive->name} 已经绑定"]);
+        }
+
+        $data['is_configured'] = 1;
+        $oneDrive->update($data);
+
+        return redirect()->route('oauth');
+    }
+
+    public function unbind($id)
+    {
+        $oneDrive = $this->model->where('admin_id', $this->user()->id)->findOrFail($id);
+
+        if (!$oneDrive->is_binded) {
+            return redirect()->route('admin.onedrive.index')->withErrors(["{$oneDrive->name} 请先绑定"]);
+        }
+
+        // TODO: OneDriveObserver
+        $oneDrive->update([
+            'is_binded' => 0
+        ]);
+
+        return success();
     }
 }
