@@ -21,10 +21,22 @@
             <input type="text" class="form-control" id="root" name="root" value="{{ setting('root') }}">
             <span class="form-text text-danger">目录索引起始文件夹地址，文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ | 否则无法索引。</span>
         </div>
-
+        <div class="form-group">
+            <label class="form-control-label">路径兼容模式</label>
+            <div class="custom-control custom-radio">
+                <input type="radio" id="origin_path1" name="origin_path" class="custom-control-input"
+                       @if((int)setting('origin_path',0) === 1) checked @endif value="1">
+                <label class="custom-control-label" for="origin_path1">是</label>
+            </div>
+            <div class="custom-control custom-radio">
+                <input type="radio" id="origin_path0" name="origin_path" class="custom-control-input"
+                       @if((int)setting('origin_path',0) === 0) checked @endif value="0">
+                <label class="custom-control-label" for="origin_path0">否</label>
+            </div>
+        </div>
         <div class="form-group">
             <label class="form-control-label" for="expires">缓存时间(秒)</label>
-            <input type="text" class="form-control" id="expires" name="expires" value="{{ setting('expires') }}">
+            <input type="text" class="form-control" id="expires" name="expires" value="{{ setting('expires',1800) }}">
             <span class="form-text text-danger">建议缓存时间小于60分钟，否则会导致缓存失效</span>
         </div>
         <div class="form-group">
@@ -60,13 +72,11 @@
                        @if(in_array('list',setting('encrypt_option',[]),false)) checked @endif>
                 <label class="custom-control-label" for="c1">加密目录列表</label>
             </div>
-
             <div class="custom-control custom-checkbox">
                 <input type="checkbox" class="custom-control-input" id="c2" name="encrypt_option[]" value="show"
                        @if(in_array('show',setting('encrypt_option',[]),false)) checked @endif>
                 <label class="custom-control-label" for="c2">加密文件预览</label>
             </div>
-
             <div class="custom-control custom-checkbox">
                 <input type="checkbox" class="custom-control-input" id="c3" name="encrypt_option[]" value="download"
                        @if(in_array('download',setting('encrypt_option',[]),false)) checked @endif>
@@ -78,6 +88,12 @@
                 <label class="custom-control-label" for="c4">加密图片查看页</label>
             </div>
             <span class="form-text text-danger">选择需要加密强度，默认加密列表</span>
+        </div>
+        <div class="form-group">
+            <label for="encrypt_tip">自定义加密文案</label>
+            <textarea class="form-control" id="encrypt_tip" name="encrypt_tip"
+                      rows="5">{{ setting('encrypt_tip') }}</textarea>
+            <span class="form-text text-danger">加密页提示文案（支持markdown）</span>
         </div>
         <div class="form-group">
             <label class="form-control-label">是否开启图床</label>
@@ -137,6 +153,12 @@
             <span class="form-text text-danger">搜索资源（过度开放会增加账号封禁风险）</span>
         </div>
         <div class="form-group">
+            <label class="form-control-label" for="search_throttle">搜索频次限制</label>
+            <input type="text" class="form-control" id="search_throttle" name="search_throttle"
+                   value="{{ setting('search_throttle') }}">
+            <span class="form-text text-danger">重试等待时间默认是1分钟（格式：5,10，每10分钟最多搜索5次；5 每分钟最多搜索5次）</span>
+        </div>
+        <div class="form-group">
             <label class="form-control-label">开启批量下载</label>
             <div class="custom-control custom-radio">
                 <input type="radio" id="export_download1" name="export_download" class="custom-control-input"
@@ -148,30 +170,8 @@
                        @if((int)setting('export_download',0) === 0) checked @endif value="0">
                 <label class="custom-control-label" for="export_download0">关闭</label>
             </div>
-            <span class="form-text text-danger">搜索资源（过度开放会增加账号封禁风险）</span>
+            <span class="form-text text-danger">前台显示资源批量下载地址</span>
         </div>
-
-        <div class="form-group">
-            <label class="form-control-label" for="search_throttle">搜索频次限制</label>
-            <input type="text" class="form-control" id="search_throttle" name="search_throttle"
-                   value="{{ setting('search_throttle') }}">
-            <span class="form-text text-danger">重试等待时间默认是1分钟（格式：5,10，每10分钟最多搜索5次；5 每分钟最多搜索5次）</span>
-        </div>
-
-        <div class="form-group">
-            <label class="form-control-label">路径兼容模式</label>
-            <div class="custom-control custom-radio">
-                <input type="radio" id="origin_path1" name="origin_path" class="custom-control-input"
-                       @if((int)setting('origin_path',0) === 1) checked @endif value="1">
-                <label class="custom-control-label" for="origin_path1">是</label>
-            </div>
-            <div class="custom-control custom-radio">
-                <input type="radio" id="origin_path0" name="origin_path" class="custom-control-input"
-                       @if((int)setting('origin_path',0) === 0) checked @endif value="0">
-                <label class="custom-control-label" for="origin_path0">否</label>
-            </div>
-        </div>
-
         <div class="form-group">
             <label class="form-control-label" for="hotlink_protection">防盗链</label>
             <input type="text" class="form-control" id="hotlink_protection" name="hotlink_protection"

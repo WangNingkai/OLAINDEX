@@ -39,12 +39,18 @@ class ResetPassword extends Command
      */
     public function handle()
     {
-        $password = Str::random(8);
-
-        User::query()->update([
-            'name' => 'admin',
-            'password' => bcrypt($password),
-        ]);
-        $this->info("New Password:[ {$password} ]");
+        $defaultPassword = Str::random(8);
+        $name = $this->ask('Please input your username');
+        $password = $this->ask('Please input your new password (default: ' . $defaultPassword . ')');
+        $password = $password ?: $defaultPassword;
+        $this->info('username: ' . $name);
+        $this->info('password: ' . $password);
+        if ($this->confirm('Confirm reset password?')) {
+            User::query()->update([
+                'name' => $name,
+                'password' => bcrypt($password),
+            ]);
+            $this->info("New Password:[ {$password} ]");
+        }
     }
 }

@@ -23,12 +23,26 @@
                 </div>
             </div>
             <br>
+            <label for="origin_path" class="mdui-textfield-label">路径兼容模式</label> &nbsp; &nbsp;
+            <br>
+            <select name="origin_path" id="origin_path" class="mdui-select" mdui-select="{position: 'bottom'}">
+                <option value="1" @if(setting('origin_path',0) === 1) selected @endif>开启</option>
+                <option value="0" @if(setting('origin_path',0) === 0) selected @endif>关闭</option>
+            </select>
+            <br>
             <div class="mdui-textfield mdui-textfield-floating-label">
                 <label class="mdui-textfield-label" for="expires">缓存时间(秒)</label>
                 <input type="text" class="mdui-textfield-input" id="expires" name="expires"
                        value="{{ setting('expires',0) }}">
                 <div class="mdui-textfield-helper">建议缓存时间小于60分钟，否则会导致缓存失效</div>
             </div>
+            <br>
+            <label for="queue_refresh" class="mdui-textfield-label">队列刷新缓存</label> &nbsp; &nbsp;
+            <br>
+            <select name="queue_refresh" id="queue_refresh" class="mdui-select" mdui-select="{position: 'bottom'}">
+                <option value="1" @if(setting('queue_refresh',0) === 1) selected @endif>开启</option>
+                <option value="0" @if(setting('queue_refresh',0) === 0) selected @endif>关闭</option>
+            </select>
             <br>
             <div class="mdui-textfield mdui-textfield-floating-label">
                 <label class="mdui-textfield-label" for="hide_path">隐藏目录</label>
@@ -73,6 +87,13 @@
                 加密图片查看页
             </label> &nbsp; &nbsp;
             <br>
+            <div class="mdui-textfield mdui-textfield-floating-label">
+                <label class="mdui-textfield-label" for="encrypt_path">自定义加密文案</label>
+                <textarea name="encrypt_tip" id="encrypt_tip" class="mdui-textfield-input"
+                          rows="3">{{ setting('encrypt_tip') }}</textarea>
+                <div class="mdui-textfield-helper">加密页文案（支持markdown）
+                </div>
+            </div>
             <br>
             <label for="image_hosting" class="mdui-textfield-label">是否开启图床</label> &nbsp; &nbsp;
             <br>
@@ -82,7 +103,6 @@
                 <option value="2" @if(setting('image_hosting') === 2) selected @endif>仅管理员开启</option>
             </select>
             <br>
-            <br>
             <label for="image_home" class="mdui-textfield-label">是否将图床设为首页</label> &nbsp; &nbsp;
             <br>
             <select name="image_home" id="image_home" class="mdui-select" mdui-select="{position: 'bottom'}">
@@ -90,15 +110,6 @@
                 <option value="1" @if(setting('image_home',0) === 1) selected @endif>开启</option>
                 <option value="0" @if(setting('image_home',0) === 0) selected @endif>关闭</option>
             </select>
-            <br>
-            <br>
-            <label for="queue_refresh" class="mdui-textfield-label">队列刷新缓存</label> &nbsp; &nbsp;
-            <br>
-            <select name="queue_refresh" id="queue_refresh" class="mdui-select" mdui-select="{position: 'bottom'}">
-                <option value="1" @if(setting('queue_refresh',0) === 1) selected @endif>开启</option>
-                <option value="0" @if(setting('queue_refresh',0) === 0) selected @endif>关闭</option>
-            </select>
-
             <br>
             <div class="mdui-textfield mdui-textfield-floating-label">
                 <label class="mdui-textfield-label" for="image_hosting_path">OneDrive中图床保存地址</label>
@@ -114,22 +125,12 @@
                 <div class="mdui-textfield-helper">重试等待时间默认是1分钟（格式：5,10，每10分钟最多上传5次；5 每分钟最多上传5次）</div>
             </div>
             <br>
-            <br>
             <label for="open_search" class="mdui-textfield-label">开启搜索</label> &nbsp; &nbsp;
             <br>
             <select name="open_search" id="open_search" class="mdui-select" mdui-select="{position: 'bottom'}">
                 <option value="1" @if(setting('open_search') === 1) selected @endif>开启</option>
                 <option value="0" @if(setting('open_search') === 0) selected @endif>关闭</option>
             </select>
-            <br>
-            <br>
-            <label for="export_download" class="mdui-textfield-label">开启批量下载</label> &nbsp; &nbsp;
-            <br>
-            <select name="export_download" id="export_download" class="mdui-select" mdui-select="{position: 'bottom'}">
-                <option value="1" @if(setting('export_download',0) === 1) selected @endif>开启</option>
-                <option value="0" @if(setting('export_download',0) === 0) selected @endif>关闭</option>
-            </select>
-            <br>
             <br>
             <div class="mdui-textfield mdui-textfield-floating-label">
                 <label class="mdui-textfield-label" for="search_throttle">搜索频次限制</label>
@@ -138,11 +139,11 @@
                 <div class="mdui-textfield-helper">重试等待时间默认是1分钟（格式：5,10，每10分钟最多搜索5次；5 每分钟最多搜索5次）</div>
             </div>
             <br>
-            <label for="origin_path" class="mdui-textfield-label">路径兼容模式</label> &nbsp; &nbsp;
+            <label for="export_download" class="mdui-textfield-label">开启批量下载</label> &nbsp; &nbsp;
             <br>
-            <select name="origin_path" id="origin_path" class="mdui-select" mdui-select="{position: 'bottom'}">
-                <option value="1" @if(setting('origin_path',0) === 1) selected @endif>开启</option>
-                <option value="0" @if(setting('origin_path',0) === 0) selected @endif>关闭</option>
+            <select name="export_download" id="export_download" class="mdui-select" mdui-select="{position: 'bottom'}">
+                <option value="1" @if(setting('export_download',0) === 1) selected @endif>开启</option>
+                <option value="0" @if(setting('export_download',0) === 0) selected @endif>关闭</option>
             </select>
             <br>
             <div class="mdui-textfield mdui-textfield-floating-label">
@@ -167,7 +168,6 @@
                        value="{{ setting('statistics') }}">
                 <div class="mdui-textfield-helper">站点统计代码</div>
             </div>
-
             <br>
             <div class="mdui-textfield mdui-textfield-floating-label">
                 <label class="mdui-textfield-label" for="third_access_token">第三方接口token</label>
@@ -175,9 +175,7 @@
                        value="{{ setting('third_access_token') }}">
                 <div class="mdui-textfield-helper">第三方接口token</div>
             </div>
-
             <br>
-
             <button class="mdui-btn mdui-color-theme-accent mdui-ripple mdui-float-right" type="submit"><i
                     class="mdui-icon material-icons">check</i> 保存
             </button>

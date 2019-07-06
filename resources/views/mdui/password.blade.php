@@ -1,7 +1,26 @@
 @extends('mdui.layouts.main')
+@section('js')
+    <script src="https://cdn.staticfile.org/marked/0.6.2/marked.min.js"></script>
+    <script>
+        $(function(){
+            @if (!blank(setting('encrypt_tip')))
+            document.getElementById('head').innerHTML = marked(`{!! setting('encrypt_tip') !!}`);
+            @endif
+        })
+    </script>
+@stop
 @section('content')
     <div class="mdui-container-fluid">
-        <div class="mdui-col-md-6 mdui-col-offset-md-3">
+        @if (!blank(setting('encrypt_tip')))
+            <div class="mdui-typo mdui-shadow-2 mdui-p-a-3 mdui-m-a-2">
+                <div class="mdui-chip mdui-m-a-2">
+                    <span class="mdui-chip-icon"><i class="mdui-icon material-icons">face</i></span>
+                    <span class="mdui-chip-title">Info</span>
+                </div>
+                <div id="head"></div>
+            </div>
+        @endif
+        <div class="mdui-col-md-6 mdui-col-offset-md-3 mdui-p-a-3">
             <form action="{{ route('password') }}" method="post">
                 @csrf
                 <div class="mdui-textfield mdui-textfield-floating-label">
