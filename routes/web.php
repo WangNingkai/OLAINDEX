@@ -15,13 +15,14 @@ use Illuminate\Support\Str;
 
 // 授权
 Route::get('/oauth', 'OauthController@oauth')->name('oauth');
+Route::get('/callback/onedrive/{onedrive}', 'OauthController@callback')->name('callback');
 // 安装
-Route::prefix('install')->group(function () {
-    Route::any('/', 'InstallController@install')->name('_1stInstall');
-    Route::any('apply', 'InstallController@apply')->name('apply');
-    Route::any('reset', 'InstallController@reset')->name('reset');
-    Route::any('bind', 'InstallController@bind')->name('bind');
-});
+// Route::prefix('install')->group(function () {
+//     Route::any('/', 'InstallController@install')->name('_1stInstall');
+//     Route::any('apply', 'InstallController@apply')->name('apply');
+//     Route::any('reset', 'InstallController@reset')->name('reset');
+//     Route::any('bind', 'InstallController@bind')->name('bind');
+// });
 
 // 索引
 Route::group(['namespace' => 'Index\Auth'], function () {
@@ -70,8 +71,8 @@ Route::group(['prefix' => 'admin'], function () {
         // 基础设置
         Route::get('/', 'AdminController@showBasic')->name('admin.basic');
         Route::post('/', 'AdminController@basic')->name('admin.basic.post');
-        Route::any('bind', 'AdminController@bind')->name('admin.bind');
-        Route::post('show', 'AdminController@settings')->name('admin.settings');
+        // Route::any('bind', 'AdminController@bind')->name('admin.bind');
+        // Route::post('show', 'AdminController@settings')->name('admin.settings');
         Route::post('profile', 'AdminController@profile')->name('admin.profile.post');
         Route::any('clear', 'AdminController@clear')->name('admin.cache.clear');
         Route::any('refresh', 'AdminController@refresh')->name('admin.cache.refresh');
@@ -81,6 +82,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::group(['prefix' => 'onedrive'], function () {
             Route::get('{onedrive}/bind', 'OneDriveController@showBind')->name('admin.onedrive.showBind');
             Route::post('{onedrive}/bind', 'OneDriveController@bind')->name('admin.onedrive.bind');
+            Route::post('{onedrive}/unbind', 'OneDriveController@unbind')->name('admin.onedrive.unbind');
             Route::post('{onedrive}/apply', 'OneDriveController@apply')->name('admin.onedrive.apply');
         });
 

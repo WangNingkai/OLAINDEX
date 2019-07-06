@@ -26,9 +26,16 @@
             <td>{{ $oneDrive->is_binded ? '是' : '否' }}</td>
             <td>
                 <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                    <a href="{{ route('admin.onedrive.edit', ['onedrive' => $oneDrive->id]) }}" data-id="{{ $oneDrive->id }}" class="btn btn-primary">编辑</a>
+                    <a href="{{ route('admin.onedrive.edit', ['onedrive' => $oneDrive->id]) }}" class="btn btn-primary">编辑</a>
                     <button type="button" data-id="{{ $oneDrive->id }}" class="btn btn-primary btn-delete">删除</button>
-
+                @if ($oneDrive->is_binded)
+                    <button type="button" class="btn btn-primary btn-unbind">解绑</button>
+                    <form id="onedrive-unbind-form" action="{{ route('admin.onedrive.unbind', ['onedrive' => $oneDrive->id]) }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                @else
+                    <a href="{{ route('admin.onedrive.bind', ['onedrive' => $oneDrive->id]) }}" class="btn btn-primary">绑定</a>                    
+                @endif
                     <div class="btn-group" role="group">
                         <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -57,7 +64,6 @@
     $(function () {
         $(".btn-delete").click(function (e) {
             var $this = this;
-            {{--  {{ dd(url()->current() . '/') }}  --}}
             var confirmResult = confirm('是否确定删除!')
             if (confirmResult) {
                 $.ajaxSetup({
@@ -74,6 +80,15 @@
                 });
             }
         });
+
+        $(".btn-unbind").click(function (e) {
+            e.preventDefault();
+            var confirmUnbindResult = confirm('是否确定解除绑定!');
+
+            if (confirmUnbindResult) {
+                document.getElementById('onedrive-unbind-form').submit();
+            }
+        })
     });
 </script>
 @endSection

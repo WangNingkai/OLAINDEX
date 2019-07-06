@@ -42,42 +42,16 @@ class AdminController extends Controller
             'statistics'         => 'sometimes|nullable|string',
         ]);
 
-        $user = $this->user();
+        $admin = $this->user();
         $data = array_map(function (&$item) {
             return is_null($item) ? $item = '' : $item;
         }, $data);
 
-        $user->update($data);
+        $admin->update($data);
         // Tool::updateConfig($data);
         // Tool::showMessage('保存成功！');
 
         return success();
-    }
-
-    /**
-     * 显示设置
-     *
-     * @param Request $request
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     */
-    public function settings(Request $request)
-    {
-        $data = $request->validate([
-            'video'  => 'sometimes|nullable|string',
-            'audio'  => 'sometimes|nullable|string',
-            'image'  => 'sometimes|nullable|string',
-            'dash'   => 'sometimes|nullable|string',
-            'code'   => 'sometimes|nullable|string',
-            'doc'    => 'sometimes|nullable|string',
-            'stream' => 'sometimes|nullable|string'
-        ]);
-
-        $data = array_filter($data);
-        Tool::updateConfig($data);
-        Tool::showMessage('保存成功！');
-
-        return redirect()->back();
     }
 
     /**
@@ -99,7 +73,7 @@ class AdminController extends Controller
         // Tool::updateConfig($data);
         // Tool::showMessage('保存成功！');
 
-        return redirect()->back();
+        return success();
     }
 
     /**
@@ -126,36 +100,5 @@ class AdminController extends Controller
         Tool::showMessage('刷新成功');
 
         return redirect()->route('admin.basic');
-    }
-
-    /**
-     * 账号绑定
-     *
-     * @param Request $request
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     */
-    public function bind(Request $request)
-    {
-        if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme') . 'admin.bind');
-        }
-
-        if (!Tool::hasBind()) {
-            return redirect()->route('bind');
-        }
-        $data = [
-            'access_token'         => '',
-            'refresh_token'        => '',
-            'access_token_expires' => 0,
-            'root'                 => '/',
-            'image_hosting'        => 0,
-            'image_hosting_path'   => '',
-        ];
-        Tool::updateConfig($data);
-        Cache::forget('one:account');
-        Tool::showMessage('保存成功！');
-
-        return redirect()->route('bind');
     }
 }

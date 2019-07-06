@@ -19,6 +19,14 @@
             <span class="form-text text-danger">目录索引起始文件夹地址，文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ | 否则无法索引。</span>
         </div>
     </div>
+
+    <div class="form-group row">
+        <label class="form-control-label col-sm-2" for="expires">缓存时间(秒)</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="expires" name="expires" value="{{ $oneDrive->expires }}">
+            <span class="form-text text-danger">建议缓存时间小于60分钟，否则会导致缓存失效</span>
+        </div>
+    </div>
     <div class="form-group row">
         <label class="form-control-label col-sm-2">是否开启图床</label>
         <div class="col-sm-10">

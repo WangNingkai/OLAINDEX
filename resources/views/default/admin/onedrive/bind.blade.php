@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>绑定帐号</title>
+    <title>初始化安装</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://fonts.loli.net/css?family=Lato:400,700,400italic">
     <link rel="stylesheet"
@@ -16,7 +16,7 @@
 <body>
 <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-primary">
     <div class="container">
-        <a class="navbar-brand" href="{{ route('home') }}">{{ \App\Helpers\Tool::config('name','OLAINDEX') }}</a>
+        <a class="navbar-brand" href="{{ route('home') }}">{{ getAdminConfig('name') }}</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01"
                 aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -40,38 +40,47 @@
         </div>
     @endif
     <div class="card border-light mb-3">
-        <div class="card-header">绑定帐号
-            <small class="text-danger">请确认以下信息</small>
-        </div>
+        <div class="card-header">申请</div>
         <div class="card-body">
-            <div class="form-group">
-                <label class="form-control-label" for="client_id">client_id </label>
-                <input type="text" class="form-control" id="client_id" name="client_id"
-                       value="{{ \App\Helpers\Tool::config('client_id') }}" disabled>
-            </div>
-            <div class="form-group">
-                <label class="form-control-label" for="client_secret">client_secret </label>
-                <input type="text" class="form-control" id="client_secret" name="client_secret"
-                       value="{{ substr_replace(\App\Helpers\Tool::config('client_secret'),"*****",3,5)}}"
-                       disabled>
-            </div>
-            <div class="form-group">
-                <label class="form-control-label" for="redirect_uri">redirect_uri </label>
-                <input type="text" class="form-control" id="redirect_uri" name="redirect_uri"
-                       value="{{ \App\Helpers\Tool::config('redirect_uri') }}" disabled>
-            </div>
-            <div class="form-group">
-                <label class="form-control-label" for="account_type">账号类型 </label>
-                <input type="text" class="form-control" id="account_type" name="account_type"
-                       value="{{ \App\Helpers\Tool::config('account_type') }}" disabled>
-            </div>
-            <form id="bind-form" action="{{ route('bind') }}" method="POST"
-                  class="invisible">
+            <form action="{{ route('admin.onedrive.apply', ['onedrive' => $oneDrive->id]) }}" method="POST" target="_blank">
                 @csrf
+                <div class="form-group">
+                    <label class="form-control-label" for="redirect_uri">redirect_uri </label>
+                    <input type="text" class="form-control" id="redirect_uri" name="redirect_uri" value="{{ url('callback') }}">
+                    <span class="form-text text-danger">如已申请，请直接在下面配置中填写；也可使用 https://olaindex.ningkai.wang 中转。<b>注：此申请流程仅支持国际版OneDrive，世纪互联版需单独申请。</b></span>
+                </div>
+                <button type="submit" class="btn btn-info">申请</button>
             </form>
-            <a href="javascript:void(0)" onclick="event.preventDefault();document.getElementById('bind-form').submit();"
-               class="btn btn-info">绑定</a>
-            <a href="{{ route('reset') }}" class="btn btn-danger">返回更改</a>
+        </div>
+    </div>
+    <div class="card border-light mb-3">
+        <div class="card-header">初始化配置</div>
+        <div class="card-body">
+            <form action="{{ route('admin.onedrive.bind', ['onedrive' => $oneDrive->id]) }}" method="POST">
+                @csrf
+                <div class="form-group">
+                    <label class="form-control-label" for="redirect_uri">redirect_uri </label>
+                    <input type="text" class="form-control" id="redirect_uri" name="redirect_uri" value="{{ url('callback')  }}">
+                    <span class="form-text text-danger">确保回调地址格式为此形式 http(s)://you.domain/oauth，使用中转域名无需https协议（注意：如果通过CDN开启HTTPS而非配置SSL证书，部分回调CDN会跳转http地址，从而导致申请失败） </span>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="client_id"><b>client_id</b></label>
+                    <input type="text" class="form-control" id="client_id" name="client_id">
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="client_secret"><b>client_secret</b></label>
+                    <input type="text" class="form-control" id="client_secret" name="client_secret">
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="account_type">账户类型</label>
+                    <select class="custom-select" name="account_type" id="account_type">
+                        <option value="">选择账户类型</option>
+                        <option value="com" selected>国际版</option>
+                        <option value="cn">国内版（世纪互联）</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">保存</button>
+            </form>
         </div>
     </div>
     <footer id="footer">

@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\OneDrive;
+use Illuminate\Support\Arr;
 
 class OneDriveObserver
 {
@@ -18,14 +19,22 @@ class OneDriveObserver
     }
 
     /**
-     * Handle the one drive "updated" event.
+     * Handle the one drive "saving" event.
      *
      * @param  \App\OneDrive  $oneDrive
      * @return void
      */
-    public function updated(OneDrive $oneDrive)
+    public function saving(OneDrive $oneDrive)
     {
-        //
+        $newData = $oneDrive->getDirty();
+
+        if (!empty($is_default = Arr::get($newData, 'is_default'))) {
+            if ($is_default) {
+                OneDrive::where('id', '!=', $oneDrive->id)->update([
+                    'is_default' => 0
+                ]);
+            }
+        }
     }
 
     /**

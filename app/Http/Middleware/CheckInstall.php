@@ -17,10 +17,11 @@ class CheckInstall
      */
     public function handle($request, Closure $next)
     {
+        getDefaultOneDriveAccount(route_parameter('onedrive'));
         // 检测是否配置client_id等信息
-        if (!Tool::hasConfig()) {
-            return redirect()->route('_1stInstall');
-        }
+        // if (!Tool::hasConfig()) {
+        //     return redirect()->route('_1stInstall');
+        // }
 
         return $next($request);
     }

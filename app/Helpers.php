@@ -5,6 +5,8 @@ use App\Helpers\Tool;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use App\Helpers\Constants;
+use App\Models\OneDrive;
+use Illuminate\Support\Arr;
 
 if (!function_exists('convertSize')) {
     /**
@@ -264,9 +266,13 @@ if (!function_exists('getOrderByStatus')) {
 if (!function_exists('getDefaultOneDriveAccount')) {
     function getDefaultOneDriveAccount($one_drive_id)
     {
-        if (is_null($one_drive_id)) {
-            // TODO:
+        if (empty($one_drive_id)) {
+            $oneDrive = OneDrive::where('is_default', 1)->firstOrFail();
+        } else {
+            $oneDrive = OneDrive::findOrFail($one_drive_id);
         }
+        
+        app()->instance('onedrive', $oneDrive);
     }
 }
 
@@ -280,7 +286,7 @@ if (!function_exists('success')) {
 if (!function_exists('redirectSuccess')) {
     function redirectSuccess($route, $parameters = [], $status = 302, $headers = [], $message = '操作成功')
     {
-        return app('redirect')->route($route, $parameters = [], $status = 302, $headers = [])->with('message', $message);
+        return app('redirect')->route($route, $parameters, $status, $headers)->with('message', $message);
     }
 }
 
@@ -291,5 +297,33 @@ if (!function_exists('themeView')) {
     function themeView($view, $data = [])
     {
         return view(config('olaindex.theme') . '.' . $view, $data);
+    }
+}
+
+if (!function_exists('getAdminConfig')) {
+    function getAdminConfig($key = '')
+    {
+        $admin = auth('admin')->user();
+        if (!empty($admin)) {
+            return $admin->$key;
+        } else {
+            return Arr::get(config('olaindex.admin'), $key, '暂无数据');
+        }
+    }
+}
+
+if (!function_exists('route_parameter')) {
+    /**
+     * Get a given parameter from the route.
+     *
+     * @param $name
+     * @param null $default
+     * @return mixed
+     */
+    function route_parameter($name, $default = null)
+    {
+        $routeInfo = app('request')->route();
+
+        return Arr::get($routeInfo->parameters, $name, $default);
     }
 }
