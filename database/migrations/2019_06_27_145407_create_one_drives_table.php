@@ -18,12 +18,14 @@ class CreateOneDrivesTable extends Migration
             $table->integer('admin_id')->unsigned()->index()->comment('管理员ID');
             $table->string('name')->comment('名称');
             $table->boolean('is_default')->default(0)->comment('是否默认');
-            $table->boolean('is_default')->default(0)->comment('是否绑定');
+            $table->boolean('is_configuraed')->default(0)->comment('是否配置client信息');
+            $table->boolean('is_binded')->default(0)->comment('是否绑定');
             $table->string('app_version')->default('v3.2.1')->comment('app版本');
             $table->string('root')->default('/')->comment('OneDrive根目录');
             $table->text('access_token')->nullable()->comment('访问token');
             $table->text('refresh_token')->nullable()->comment('刷新token');
             $table->integer('access_token_expires')->nullable()->comment('过期时间');
+            $table->integer('expires')->default(90)->comment('缓存时间');
             $table->string('client_id')->nullable()->comment('microsoftgraph连接id');
             $table->string('client_secret')->nullable()->comment('microsoftgraph连接秘钥');
             $table->string('redirect_uri')->nullable()->comment('重定向地址');
