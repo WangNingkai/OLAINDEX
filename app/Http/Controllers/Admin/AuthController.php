@@ -29,6 +29,10 @@ class AuthController extends Controller
      */
     public function showLoginForm()
     {
+        if (!empty(Auth::guard('admin')->user())) {
+            return redirect()->route('admin.basic');
+        }
+
         return view(config('olaindex.theme') . 'admin.login');
     }
 
