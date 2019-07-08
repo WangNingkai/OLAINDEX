@@ -168,7 +168,7 @@ class OneDriveController extends Controller
             return redirect()->route('admin.onedrive.index')->withErrors(["{$oneDrive->name} 已经绑定"]);
         }
 
-        $data['is_configured'] = 1;
+        $data['is_configuraed'] = 1;
         $oneDrive->update($data);
 
         return redirect()->route('oauth');
