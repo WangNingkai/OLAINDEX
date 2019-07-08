@@ -37,7 +37,7 @@ class OneDriveObserver
                 'is_default' => 0
             ]);
         } elseif (Arr::get($newData, 'is_binded') == false && !empty(Arr::get($oldData, 'is_binded'))) {
-            $oneDrive->is_configured = 0;
+            $oneDrive->is_configuraed = 0;
             $oneDrive->access_token = null;
             $oneDrive->refresh_token = null;
             $oneDrive->access_token_expires = null;
