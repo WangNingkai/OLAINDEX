@@ -146,7 +146,7 @@ class OauthController extends Controller
         // $state = str_random(32);
         $state = urlencode($url ? 'http://' . $url : config('app.url')); // 添加中转
         Session::put('state', $state);
-        $oneDrive = app('oneDrive');
+        $oneDrive = app('onedrive');
         $values = [
             'client_id'     => $oneDrive->client_id,
             'redirect_uri'  => $oneDrive->redirect_uri,
