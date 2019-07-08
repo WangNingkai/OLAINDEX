@@ -65,11 +65,11 @@
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" for="client_id"><b>client_id</b></label>
-                    <input type="text" class="form-control" id="client_id" name="client_id">
+                    <input type="text" class="form-control" id="client_id" name="client_id" value="{{ $oneDrive->client_id }}">
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" for="client_secret"><b>client_secret</b></label>
-                    <input type="text" class="form-control" id="client_secret" name="client_secret">
+                    <input type="text" class="form-control" id="client_secret" name="client_secret" value="{{ $oneDrive->client_secret }}">
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" for="account_type">账户类型</label>
