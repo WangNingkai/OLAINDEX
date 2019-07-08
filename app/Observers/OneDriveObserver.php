@@ -46,6 +46,8 @@ class OneDriveObserver
             $oneDrive->redirect_uri = null;
             $oneDrive->account_type = null;
         }
+
+        unset($oneDrive->authorize_url, $oneDrive->access_token_url, $oneDrive->scopes);
     }
 
     /**

@@ -129,7 +129,7 @@ class OauthController extends Controller
                 'access_token_expires' => $expires,
             ];
 
-            $oneDrive->update(Arr::except($data, ['authorize_url', 'access_token_url', 'scopes']));
+            $oneDrive->update($data);
             // Tool::updateConfig($data);
 
             return redirect()->route('home');
