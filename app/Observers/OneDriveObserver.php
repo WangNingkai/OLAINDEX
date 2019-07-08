@@ -45,6 +45,16 @@ class OneDriveObserver
             $oneDrive->client_secret = null;
             $oneDrive->redirect_uri = null;
             $oneDrive->account_type = null;
+        } elseif (!empty(Arr::get($newData, 'access_token'))
+            && !empty(Arr::get($newData, 'refresh_token'))
+            && !empty(Arr::get($newData, 'access_token_expires'))
+        ) {
+            foreach (['access_token', 'refresh_token', 'access_token_expires'] as $key) {
+                if (empty(Arr::get($oldData, $key))) {
+                    $oneDrive->is_binded = 1;
+                    break;
+                }
+            }
         }
 
         unset($oneDrive->authorize_url, $oneDrive->access_token_url, $oneDrive->scopes);
