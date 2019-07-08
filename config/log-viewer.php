@@ -50,12 +50,12 @@ return [
      */
 
     'route' => [
-        'enabled' => true,
+        'enabled' => env('ARCANEDEV_LOGVIEWER_ENABLED', true),
 
         'attributes' => [
-            'prefix' => 'admin/debug',
+            'prefix' => env('ARCANEDEV_LOGVIEWER_PREFIX', 'log-viewer'),
 
-            'middleware' => ['auth:admin'],
+            'middleware' => env('ARCANEDEV_LOGVIEWER_MIDDLEWARE') ? explode(',', env('ARCANEDEV_LOGVIEWER_MIDDLEWARE')) : null,
         ],
     ],
 
