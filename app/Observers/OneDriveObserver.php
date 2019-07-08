@@ -16,6 +16,9 @@ class OneDriveObserver
     public function creating(OneDrive $oneDrive)
     {
         $oneDrive->settings = config('onedrive');
+        if (OneDrive::doesntExist()) {
+            $oneDrive->is_default = 1;
+        }
     }
 
     /**
