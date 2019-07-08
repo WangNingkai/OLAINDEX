@@ -148,7 +148,7 @@ class OauthController extends Controller
         $state = urlencode($url ? 'http://' . $url : config('app.url')); // 添加中转
         session(['state' => $state]);
         // Session::put('state', $state);
-        dd(session('state'));
+        \Log::info('oauth-state:' . session('state'));
         $oneDrive = app('onedrive');
         $values = [
             'client_id'     => $oneDrive->client_id,
