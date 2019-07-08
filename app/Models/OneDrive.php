@@ -5,11 +5,11 @@ namespace App\Models;
 class OneDrive extends Model
 {
     protected $casts = [
-        'admin_id'      => 'integer',
-        'is_default'    => 'boolean',
-        'is_binded'     => 'boolean',
-        'is_configured' => 'boolean',
-        'settings'      => 'array'
+        'admin_id'       => 'integer',
+        'is_default'     => 'boolean',
+        'is_binded'      => 'boolean',
+        'is_configuraed' => 'boolean',
+        'settings'       => 'array'
     ];
 
     protected $columns = [
@@ -19,7 +19,7 @@ class OneDrive extends Model
         'root',
         'is_default',
         'is_binded',
-        'is_configured',
+        'is_configuraed',
         'app_version',
         'access_token',
         'refresh_token',
