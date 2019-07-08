@@ -102,6 +102,7 @@ php artisan route:cache
 
 ### TODO
 
+ - [ ] aria2
  - [ ] Console/OneDrive
  - [ ] ManggeController
  - [ ] IndexConttroller
