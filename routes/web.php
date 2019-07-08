@@ -14,8 +14,8 @@ use Illuminate\Support\Str;
 */
 
 // 授权
-Route::get('/oauth', 'OauthController@oauth')->name('oauth');
-Route::get('/callback/onedrive/{onedrive}', 'OauthController@callback')->name('callback');
+Route::any('/oauth', 'OauthController@oauth')->name('oauth');
+Route::any('/callback/onedrive/{onedrive}', 'OauthController@callback')->name('callback');
 // 安装
 // Route::prefix('install')->group(function () {
 //     Route::any('/', 'InstallController@install')->name('_1stInstall');
