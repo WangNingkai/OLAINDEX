@@ -48,23 +48,23 @@ class OauthController extends Controller
      */
     protected $scopes;
 
-    /**
-     * OauthController constructor.
-     */
-    public function __construct()
-    {
-        $this->middleware('checkInstall');
-        $this->client_id = app('onedrive')->client_id;
-        $this->client_secret = app('onedrive')->client_secret;
-        $this->redirect_uri = app('onedrive')->redirect_uri;
-        $this->authorize_url = app('onedrive')->account_type == 'com'
-            ? Constants::AUTHORITY_URL . Constants::AUTHORIZE_ENDPOINT
-            : Constants::AUTHORITY_URL_21V . Constants::AUTHORIZE_ENDPOINT_21V;
-        $this->access_token_url = app('onedrive')->account_type == 'com'
-            ? Constants::AUTHORITY_URL . Constants::TOKEN_ENDPOINT
-            : Constants::AUTHORITY_URL_21V . Constants::TOKEN_ENDPOINT_21V;
-        $this->scopes = Constants::SCOPES;
-    }
+    // /**
+    //  * OauthController constructor.
+    //  */
+    // public function __construct()
+    // {
+    //     // $this->middleware('checkInstall');
+    //     $this->client_id = app('onedrive')->client_id;
+    //     $this->client_secret = app('onedrive')->client_secret;
+    //     $this->redirect_uri = app('onedrive')->redirect_uri;
+    //     $this->authorize_url = app('onedrive')->account_type == 'com'
+    //         ? Constants::AUTHORITY_URL . Constants::AUTHORIZE_ENDPOINT
+    //         : Constants::AUTHORITY_URL_21V . Constants::AUTHORIZE_ENDPOINT_21V;
+    //     $this->access_token_url = app('onedrive')->account_type == 'com'
+    //         ? Constants::AUTHORITY_URL . Constants::TOKEN_ENDPOINT
+    //         : Constants::AUTHORITY_URL_21V . Constants::TOKEN_ENDPOINT_21V;
+    //     $this->scopes = Constants::SCOPES;
+    // }
 
     /**
      * @param Request $request
@@ -85,15 +85,16 @@ class OauthController extends Controller
 
         Session::forget('state'); // 兼容下次登陆
         $code = $request->get('code');
+        $oneDrive = app('onedrive');
         $form_params = [
-            'client_id'     => $this->client_id,
-            'client_secret' => $this->client_secret,
-            'redirect_uri'  => $this->redirect_uri,
+            'client_id'     => $oneDrive->client_id,
+            'client_secret' => $oneDrive->client_secret,
+            'redirect_uri'  => $oneDrive->redirect_uri,
             'code'          => $code,
             'grant_type'    => 'authorization_code',
         ];
 
-        if (app('onedrive')->account_type === 'cn') {
+        if ($oneDrive->account_type === 'cn') {
             $form_params = Arr::add(
                 $form_params,
                 'resource',
@@ -102,7 +103,7 @@ class OauthController extends Controller
         }
 
         $curl = new Curl();
-        $curl->post($this->access_token_url, $form_params);
+        $curl->post($oneDrive->access_token_url, $form_params);
 
         if ($curl->error) {
             Log::error(
@@ -127,7 +128,7 @@ class OauthController extends Controller
                 'access_token_expires' => $expires,
             ];
 
-            app('onedrive')->update($data);
+            $oneDrive->update($data);
             // Tool::updateConfig($data);
 
             return redirect()->route('home');
@@ -145,15 +146,16 @@ class OauthController extends Controller
         // $state = str_random(32);
         $state = urlencode($url ? 'http://' . $url : config('app.url')); // 添加中转
         Session::put('state', $state);
+        $oneDrive = app('oneDrive');
         $values = [
-            'client_id'     => $this->client_id,
-            'redirect_uri'  => $this->redirect_uri,
-            'scope'         => $this->scopes,
+            'client_id'     => $oneDrive->client_id,
+            'redirect_uri'  => $oneDrive->redirect_uri,
+            'scope'         => $oneDrive->scopes,
             'response_type' => 'code',
             'state'         => $state,
         ];
         $query = http_build_query($values, '', '&', PHP_QUERY_RFC3986);
-        $authorizationUrl = $this->authorize_url . "?{$query}";
+        $authorizationUrl = $oneDrive->authorize_url . "?{$query}";
 
         return redirect()->away($authorizationUrl);
     }

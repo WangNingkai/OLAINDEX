@@ -171,7 +171,7 @@ class OneDriveController extends Controller
         $data['is_configuraed'] = 1;
         $oneDrive->update($data);
 
-        return redirect()->route('oauth');
+        return redirect()->route('oauth', ['onedrive' => $oneDrive->id]);
     }
 
     public function unbind($id)
