@@ -134,7 +134,7 @@ class OauthController extends Controller
             $oneDrive->update($data);
             // Tool::updateConfig($data);
 
-            return redirect()->route('home');
+            return redirectSuccess('admin.onedrive.index');
         }
     }
 
