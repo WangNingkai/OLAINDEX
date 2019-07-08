@@ -25,7 +25,7 @@ class CreateOneDrivesTable extends Migration
             $table->text('access_token')->nullable()->comment('访问token');
             $table->text('refresh_token')->nullable()->comment('刷新token');
             $table->integer('access_token_expires')->nullable()->comment('过期时间');
-            $table->integer('expires')->default(90)->comment('缓存时间');
+            $table->integer('expires')->default(900)->comment('缓存时间');
             $table->string('client_id')->nullable()->comment('microsoftgraph连接id');
             $table->string('client_secret')->nullable()->comment('microsoftgraph连接秘钥');
             $table->string('redirect_uri')->nullable()->comment('重定向地址');
