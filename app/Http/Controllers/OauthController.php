@@ -77,7 +77,7 @@ class OauthController extends Controller
         if (empty($request->get('state')) || !Session::has('state')
             || ($request->get('state') !== Session::get('state'))
         ) {
-            dd($request, Session::get('state'));
+            dd($request->paramaters, Session::get('state'), $request->session()->get('state'), $request->session()->forget('state'));
             Tool::showMessage('Invalid state', false);
             Session::forget('state');
 
@@ -146,7 +146,9 @@ class OauthController extends Controller
         // 跳转授权登录
         // $state = str_random(32);
         $state = urlencode($url ? 'http://' . $url : config('app.url')); // 添加中转
-        Session::put('state', $state);
+        session(['state' => $state]);
+        // Session::put('state', $state);
+        dd(session('state'));
         $oneDrive = app('onedrive');
         $values = [
             'client_id'     => $oneDrive->client_id,
