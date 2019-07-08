@@ -77,7 +77,9 @@ class OauthController extends Controller
         if (empty($request->get('state')) || !Session::has('state')
             || ($request->get('state') !== Session::get('state'))
         ) {
-            \Log::info($request->paramaters, Session::get('state'), $request->session()->get('state'), $request->session()->forget('state'));
+            \Log::info($request->paramaters);
+            \Log::info(Session::get('state'));
+            \Log::info($request->session()->get('state'));
             Tool::showMessage('Invalid state', false);
             Session::forget('state');
 
