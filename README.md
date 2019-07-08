@@ -99,3 +99,9 @@ chown -R www:www *
 php artisan config:cache
 php artisan route:cache
 ```
+
+### TODO
+
+ - [ ] Console/OneDrive
+ - [ ] ManggeController
+ - [ ] IndexConttroller

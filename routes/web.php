@@ -20,13 +20,6 @@ Route::group(['middleware' => 'checkInstall'], function () {
     Route::any('/callback/onedrive/{onedrive}', 'OauthController@callback')->name('callback');
 });
 
-// 安装
-// Route::prefix('install')->group(function () {
-//     Route::any('/', 'InstallController@install')->name('_1stInstall');
-//     Route::any('apply', 'InstallController@apply')->name('apply');
-//     Route::any('reset', 'InstallController@reset')->name('reset');
-//     Route::any('bind', 'InstallController@bind')->name('bind');
-// });
 
 // 索引
 Route::group(['namespace' => 'Index\Auth'], function () {
