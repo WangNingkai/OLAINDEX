@@ -267,11 +267,11 @@ if (!function_exists('getDefaultOneDriveAccount')) {
     function getDefaultOneDriveAccount($one_drive_id)
     {
         if (empty($one_drive_id)) {
-            $oneDrive = OneDrive::where('is_default', 1)->firstOrFail();
+            $oneDrive = OneDrive::where('is_default', true)->firstOrFail();
         } else {
             $oneDrive = OneDrive::findOrFail($one_drive_id);
         }
-        
+
         $oneDrive->authorize_url = $oneDrive->account_type == 'com'
             ? Constants::AUTHORITY_URL . Constants::AUTHORIZE_ENDPOINT
             : Constants::AUTHORITY_URL_21V . Constants::AUTHORIZE_ENDPOINT_21V;

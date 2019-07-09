@@ -29,6 +29,6 @@ class Command extends BaseCommand
     public function __construct()
     {
         parent::__construct();
-        $this->addOption('one_drive_id', 'od_id', InputOption::VALUE_OPTIONAL, '', $this->description);
+        $this->addOption('one_drive_id', 'od_id', InputOption::VALUE_OPTIONAL, $this->description, null);
     }
 }

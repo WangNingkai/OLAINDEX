@@ -34,12 +34,11 @@ class OneDrive
      */
     public function __construct()
     {
-        $access_token = Tool::config('access_token');
-        $base_url = Tool::config('account_type', 'com') === 'com'
+        $base_url = app('onedrive')->account_type == 'com'
             ? Constants::REST_ENDPOINT : Constants::REST_ENDPOINT_21V;
         $api_version = Constants::API_VERSION;
         $this->graph = new GraphRequest();
-        $this->graph->setAccessToken($access_token);
+        $this->graph->setAccessToken(app('onedrive')->access_token);
         $this->graph->setBaseUrl($base_url);
         $this->graph->setApiVersion($api_version);
         $this->baseUrl = $base_url;
