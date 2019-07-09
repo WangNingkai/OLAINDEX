@@ -18,14 +18,7 @@ class Tool
      */
     public static function hasConfig()
     {
-        if (!empty(self::config('client_id'))
-            && !empty(self::config('client_secret'))
-            && !empty(self::config('redirect_uri'))
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+        return app('onedrive')->is_configuraed;
     }
 
     /**
@@ -35,14 +28,7 @@ class Tool
      */
     public static function hasBind()
     {
-        if (!empty(self::config('access_token'))
-            && !empty(self::config('refresh_token'))
-            && !empty(self::config('access_token_expires'))
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+        return app('onedrive')->is_binded;
     }
 
     /**
@@ -131,11 +117,12 @@ class Tool
      */
     public static function canEdit($file)
     {
-        $code = explode(' ', self::config('code'));
-        $stream = explode(' ', self::config('stream'));
+        $code = explode(' ', Arr::get(app('onedrive')->settings, 'code'));
+        $stream = explode(' ', Arr::get(app('onedrive')->settings, 'stream'));
         $canEditExt = array_merge($code, $stream);
         $isText = in_array($file['ext'], $canEditExt);
         $isBigFile = $file['size'] > 5 * 1024 * 1024 ?: false;
+
         if (!$isBigFile && $isText) {
             return true;
         } else {
@@ -248,7 +235,7 @@ class Tool
             return $query_path;
         }
         $query_path = self::getEncodeUrl(rawurldecode($query_path));
-        $root = trim(self::getEncodeUrl(self::config('root')), '/');
+        $root = trim(self::getEncodeUrl(app('onedrive')->root), '/');
         if ($query_path) {
             $request_path = empty($root) ? ":/{$query_path}:/"
                 : ":/{$root}/{$query_path}:/";
@@ -276,7 +263,7 @@ class Tool
             return $query_path;
         }
         $query_path = self::getEncodeUrl(rawurldecode($query_path));
-        $root = trim(self::getEncodeUrl(self::config('root')), '/');
+        $root = trim(self::getEncodeUrl(app('onedrive')->root), '/');
         if ($query_path) {
             $request_path = empty($root) ?
                 $query_path
@@ -324,8 +311,8 @@ class Tool
     {
         if (self::refreshToken()) {
             $quota = Cache::remember(
-                'one:quota',
-                self::config('expires'),
+                'one_' . app('onedrive')->id . ':quota',
+                app('onedrive')->expires,
                 function () {
                     $response = OneDrive::getDrive();
                     if ($response['errno'] === 0) {
@@ -355,7 +342,7 @@ class Tool
      */
     public static function refreshToken()
     {
-        $expires = Tool::config('access_token_expires', 0);
+        $expires = app('onedrive')->access_token_expires;
         $hasExpired = $expires - time() <= 0 ? true : false;
         if ($hasExpired) {
             $oauth = new OauthController();
@@ -375,8 +362,8 @@ class Tool
     {
         if (self::refreshToken()) {
             $account = Cache::remember(
-                'one:account',
-                Tool::config('expires'),
+                'one_' . app('onedrive')->id . ':account',
+                app('onedrive')->expires,
                 function () {
                     $response = OneDrive::getMe();
                     if ($response['errno'] == 0) {
