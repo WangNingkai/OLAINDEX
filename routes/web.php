@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 
 // 授权
 
-Route::group(['middleware' => 'checkInstall'], function () {
+Route::group(['middleware' => 'detectOneDrive'], function () {
     Route::any('/oauth/onedrive/{onedrive}', 'OauthController@oauth')->name('oauth');
     Route::any('/callback/onedrive/{onedrive}', 'OauthController@callback')->name('callback');
 });
@@ -29,6 +29,7 @@ Route::group(['namespace' => 'Index\Auth'], function () {
 });
 
 Route::group(['middleware' => ['auth:web'], 'namespace' => 'Index'], function () {
+    // TODO: onedrive 选择
     Route::group(['prefix' => 'home'], function () {
         Route::get('{query?}', 'IndexController@list')->where('query', '.*')->name('home');
     });
@@ -71,8 +72,8 @@ Route::group(['prefix' => 'admin'], function () {
         // Route::any('bind', 'AdminController@bind')->name('admin.bind');
         // Route::post('show', 'AdminController@settings')->name('admin.settings');
         Route::post('profile', 'AdminController@profile')->name('admin.profile.post');
-        Route::any('clear', 'AdminController@clear')->name('admin.cache.clear');
-        Route::any('refresh', 'AdminController@refresh')->name('admin.cache.refresh');
+        // Route::any('clear', 'AdminController@clear')->name('admin.cache.clear');
+        // Route::any('refresh', 'AdminController@refresh')->name('admin.cache.refresh');
 
         // onedrive
         Route::resource('onedrive', 'OneDriveController', ['as' => 'admin', 'except' => 'show']);
@@ -81,6 +82,10 @@ Route::group(['prefix' => 'admin'], function () {
             Route::post('{onedrive}/bind', 'OneDriveController@bind')->name('admin.onedrive.bind');
             Route::post('{onedrive}/unbind', 'OneDriveController@unbind')->name('admin.onedrive.unbind');
             Route::post('{onedrive}/apply', 'OneDriveController@apply')->name('admin.onedrive.apply');
+            Route::group(['middleware' => 'DetectOneDrive'], function () {
+                Route::any('{onedrive}/clear', 'OneDriveController@clear')->name('admin.onedrive.clear');
+                Route::any('{onedrive}/refresh', 'OneDriveController@refresh')->name('admin.onedrive.refresh');
+            });
         });
 
         // 文件夹操作

@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Models\OneDrive;
 use App\Observers\OneDriveObserver;
+use App\Models\Admin;
+use App\Observers\AdminObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
             \Debugbar::enable();
         }
 
+        Admin::observe(AdminObserver::class);
         OneDrive::observe(OneDriveObserver::class);
     }
 }

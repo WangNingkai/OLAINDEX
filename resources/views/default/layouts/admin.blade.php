@@ -65,15 +65,6 @@
                         <a class="dropdown-item" href="{{ route('admin.other') }}">其它操作 </a>
                     </div>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                       aria-haspopup="true" aria-expanded="false"><i class="fa fa-bolt"></i> 缓存</a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{{ route('admin.cache.clear') }}">缓存清理 </a>
-                        <a class="dropdown-item" href="{{ route('admin.cache.refresh') }}"
-                           onclick="swal('正在刷新缓存，请稍等');">刷新缓存 </a>
-                    </div>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('log-viewer::dashboard') }}" target="_blank"><i
                             class="fa fa-bug"></i>

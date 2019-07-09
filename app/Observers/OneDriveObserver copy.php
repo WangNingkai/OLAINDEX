@@ -36,7 +36,7 @@ class OneDriveObserver
             OneDrive::where('id', '!=', $oneDrive->id)->update([
                 'is_default' => 0
             ]);
-        } elseif (Arr::get($newData, 'is_binded') === false && !empty(Arr::get($oldData, 'is_binded'))) {
+        } elseif (Arr::get($newData, 'is_binded') === 0 && !empty(Arr::get($oldData, 'is_binded'))) {
             $oneDrive->is_configuraed = 0;
             $oneDrive->access_token = null;
             $oneDrive->refresh_token = null;

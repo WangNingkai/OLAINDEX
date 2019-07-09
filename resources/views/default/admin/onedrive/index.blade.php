@@ -31,7 +31,7 @@
                     <button type="button" data-id="{{ $oneDrive->id }}" class="btn btn-primary btn-delete">删除</button>
                 @if ($oneDrive->is_binded)
                     <button type="button" class="btn btn-primary btn-unbind">解绑</button>
-                    <form id="onedrive-unbind-form" action="{{ route('admin.onedrive.unbind', ['onedrive' => $oneDrive->id]) }}" method="POST" style="display: none;">
+                    <form action="{{ route('admin.onedrive.unbind', ['onedrive' => $oneDrive->id]) }}" method="POST" style="display: none;">
                         @csrf
                     </form>
                 @else
@@ -65,30 +65,51 @@
     $(function () {
         $(".btn-delete").click(function (e) {
             var $this = this;
-            var confirmResult = confirm('是否确定删除!')
-            if (confirmResult) {
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-                $.ajax({
-                    type: "DELETE",
-                    url: "{{ url()->current()  . '/' }}" + $this.dataset.id,
-                    success: function () {
-                        console.log($($this).parents("tr").remove());
-                    }
-                });
-            }
+            swal({
+                title: '确定删除吗？',
+                text: "删除后无法恢复",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '确定删除',
+                cancelButtonText: '取消',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+                    $.ajax({
+                        type: "DELETE",
+                        url: "{{ url()->current()  . '/' }}" + $this.dataset.id,
+                        success: function () {
+                            console.log($($this).parents("tr").remove());
+                        }
+                    });
+                } else if (result.dismiss === swal.DismissReason.cancel) {
+                    swal('已取消', '', 'error');
+                }
+            })
         });
 
         $(".btn-unbind").click(function (e) {
             e.preventDefault();
-            var confirmUnbindResult = confirm('是否确定解除绑定!');
-
-            if (confirmUnbindResult) {
-                document.getElementById('onedrive-unbind-form').submit();
-            }
+            var $this = this;
+            swal({
+                title: '确定解绑吗？',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '确定解绑',
+                cancelButtonText: '取消',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+                    $($this).next().submit();
+                } else if (result.dismiss === swal.DismissReason.cancel) {
+                    swal('已取消', '', 'info');
+                }
+            })
         })
     });
 </script>

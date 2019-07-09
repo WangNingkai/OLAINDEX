@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use App\Helpers\Constants;
 use App\Models\OneDrive;
 use Illuminate\Support\Arr;
+use App\Models\Admin;
 
 if (!function_exists('convertSize')) {
     /**
@@ -311,7 +312,10 @@ if (!function_exists('themeView')) {
 if (!function_exists('getAdminConfig')) {
     function getAdminConfig($key = '')
     {
-        $admin = auth('admin')->user();
+        $admin = Cache::rememberForever('admin_settings', function () {
+            return Admin::firstOrFail();
+        });
+        
         if (!empty($admin)) {
             return $admin->$key;
         } else {

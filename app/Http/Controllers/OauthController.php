@@ -19,54 +19,6 @@ use Illuminate\Support\Facades\Session;
 class OauthController extends Controller
 {
     /**
-     * @var string
-     */
-    protected $client_id;
-
-    /**
-     * @var string
-     */
-    protected $client_secret;
-
-    /**
-     * @var string
-     */
-    protected $redirect_uri;
-
-    /**
-     * @var string
-     */
-    protected $authorize_url;
-
-    /**
-     * @var string
-     */
-    protected $access_token_url;
-
-    /**
-     * @var string
-     */
-    protected $scopes;
-
-    // /**
-    //  * OauthController constructor.
-    //  */
-    // public function __construct()
-    // {
-    //     // $this->middleware('checkInstall');
-    //     $this->client_id = app('onedrive')->client_id;
-    //     $this->client_secret = app('onedrive')->client_secret;
-    //     $this->redirect_uri = app('onedrive')->redirect_uri;
-    //     $this->authorize_url = app('onedrive')->account_type == 'com'
-    //         ? Constants::AUTHORITY_URL . Constants::AUTHORIZE_ENDPOINT
-    //         : Constants::AUTHORITY_URL_21V . Constants::AUTHORIZE_ENDPOINT_21V;
-    //     $this->access_token_url = app('onedrive')->account_type == 'com'
-    //         ? Constants::AUTHORITY_URL . Constants::TOKEN_ENDPOINT
-    //         : Constants::AUTHORITY_URL_21V . Constants::TOKEN_ENDPOINT_21V;
-    //     $this->scopes = Constants::SCOPES;
-    // }
-
-    /**
      * @param Request $request
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
@@ -146,8 +98,6 @@ class OauthController extends Controller
         // $state = str_random(32);
         $state = urlencode($url ? 'http://' . $url : config('app.url')); // 添加中转
         session(['state' => $state]);
-        // Session::put('state', $state);
-        \Log::info('oauth-state:' . session('state'));
         $oneDrive = app('onedrive');
         $values = [
             'client_id'     => $oneDrive->client_id,

@@ -2,10 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use App\Helpers\Tool;
 use Closure;
 
-class CheckInstall
+class DetectOneDrive
 {
     /**
      * 处理验证安装
@@ -18,10 +17,6 @@ class CheckInstall
     public function handle($request, Closure $next)
     {
         getDefaultOneDriveAccount(route_parameter('onedrive'));
-        // 检测是否配置client_id等信息
-        // if (!Tool::hasConfig()) {
-        //     return redirect()->route('_1stInstall');
-        // }
 
         return $next($request);
     }
