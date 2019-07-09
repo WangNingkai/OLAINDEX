@@ -3,7 +3,6 @@
 namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\OneDrive;
-use Illuminate\Console\Command;
 
 class WhereIs extends Command
 {
@@ -36,7 +35,11 @@ class WhereIs extends Command
      */
     public function handle()
     {
-        $this->call('od:refresh');
+        $this->call(
+            !empty($one_drive_id  = $this->option('one_drive_id')) 
+                ? 'od:refresh --one_drive_id=' . $one_drive_id
+                : 'od:refresh'
+        );
         $id = $this->argument('id');
         $response = OneDrive::itemIdToPath($id);
         if ($response['errno'] === 0) {

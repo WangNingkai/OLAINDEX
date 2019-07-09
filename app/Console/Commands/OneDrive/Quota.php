@@ -4,7 +4,6 @@ namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\Constants;
 use App\Helpers\Tool;
-use Illuminate\Console\Command;
 
 class Quota extends Command
 {
@@ -37,7 +36,11 @@ class Quota extends Command
      */
     public function handle()
     {
-        $this->call('od:refresh');
+        $this->call(
+            !empty($one_drive_id  = $this->option('one_drive_id')) 
+                ? 'od:refresh --one_drive_id=' . $one_drive_id
+                : 'od:refresh'
+        );
         $headers = array_keys(is_array(Tool::getOneDriveInfo())
             ? Tool::getOneDriveInfo() : []);
         if (!$headers) {

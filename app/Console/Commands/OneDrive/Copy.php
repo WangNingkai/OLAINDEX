@@ -3,7 +3,6 @@
 namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\OneDrive;
-use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 
 class Copy extends Command
@@ -40,7 +39,11 @@ class Copy extends Command
     public function handle()
     {
         $this->info('开始复制...');
-        $this->call('od:refresh');
+        $this->call(
+            !empty($one_drive_id  = $this->option('one_drive_id')) 
+                ? 'od:refresh --one_drive_id=' . $one_drive_id
+                : 'od:refresh'
+        );
         $origin = $this->argument('origin');
         $_origin = OneDrive::pathToItemId($origin);
         $origin_id = $_origin['errno'] === 0 ? Arr::get($_origin, 'data.id')

@@ -38,7 +38,7 @@ class CacheService
 
         if ($response['errno'] === 0) {
             $item = $response['data'];
-            Cache::put($key, $item, Tool::config('expires', 600));
+            Cache::put($key, $item, app('onedrive')->expires);
         } else {
             $this->error($response['msg']);
         }

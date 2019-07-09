@@ -2,9 +2,7 @@
 
 namespace App\Console\Commands\OneDrive;
 
-use App\Helpers\Tool;
 use App\Helpers\OneDrive;
-use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 
 class Find extends Command
@@ -44,24 +42,32 @@ class Find extends Command
     public function handle()
     {
         $this->info('请稍等...');
-        $this->call('od:refresh');
+        $this->call(
+            !empty($one_drive_id  = $this->option('one_drive_id')) 
+                ? 'od:refresh --one_drive_id=' . $one_drive_id
+                : 'od:refresh'
+        );
         $keywords = $this->argument('keywords');
         $remote = $this->option('remote');
         $offset = $this->option('offset');
         $length = $this->option('limit');
+
         if ($id = $this->option('id')) {
             $response = OneDrive::getItem($id);
         } else {
             $response = OneDrive::search($remote, $keywords);
         }
+
         $data = $response['errno'] === 0 ? $response['data'] : [];
         if (!$data) {
             $this->warn('Please try again later');
             exit;
         }
+
         if ($id = $this->option('id')) {
             $data = [$data];
         }
+
         $data = $this->format($data);
         $items = array_slice($data, $offset, $length);
         $headers = [];
@@ -110,6 +116,7 @@ class Find extends Command
                     $item['name'],
                 ];
             }
+
             $list[] = $content;
         }
 
