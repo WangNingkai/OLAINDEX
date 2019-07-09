@@ -82,7 +82,7 @@ Route::group(['prefix' => 'admin'], function () {
             Route::post('{onedrive}/bind', 'OneDriveController@bind')->name('admin.onedrive.bind');
             Route::post('{onedrive}/unbind', 'OneDriveController@unbind')->name('admin.onedrive.unbind');
             Route::post('{onedrive}/apply', 'OneDriveController@apply')->name('admin.onedrive.apply');
-            Route::group(['middleware' => 'DetectOneDrive'], function () {
+            Route::group(['middleware' => 'DetectOnedrive'], function () {
                 Route::any('{onedrive}/clear', 'OneDriveController@clear')->name('admin.onedrive.clear');
                 Route::any('{onedrive}/refresh', 'OneDriveController@refresh')->name('admin.onedrive.refresh');
             });

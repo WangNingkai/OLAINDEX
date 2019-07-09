@@ -22,7 +22,7 @@ class AdminController extends Controller
     {
         $admin = $this->user();
 
-        return view(config('olaindex.theme') . 'admin.new_basic', compact('admin'));
+        return view(config('olaindex.theme') . 'admin.basic', compact('admin'));
     }
 
     /**
@@ -76,29 +76,5 @@ class AdminController extends Controller
         return success();
     }
 
-    /**
-     * 缓存清理
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function clear()
-    {
-        Artisan::call('cache:clear');
-        Tool::showMessage('清理成功');
 
-        return redirect()->route('admin.basic');
-    }
-
-    /**
-     * 刷新缓存
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function refresh()
-    {
-        Artisan::call('od:cache');
-        Tool::showMessage('刷新成功');
-
-        return redirect()->route('admin.basic');
-    }
 }

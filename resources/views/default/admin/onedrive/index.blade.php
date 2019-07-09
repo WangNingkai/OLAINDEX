@@ -43,8 +43,8 @@
                             缓存
                         </button>
                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                            <a class="dropdown-item" data-id="{{ $oneDrive->id }}" href="#">清理</a>
-                            <a class="dropdown-item" data-id="{{ $oneDrive->id }}" href="#">刷新</a>
+                            <a class="dropdown-item" href="{{ route('admin.onedrive.clear', ['onedrive' => $oneDrive->id]) }}">清理</a>
+                            <a class="dropdown-item" href="{{ route('admin.onedrive.refresh', ['onedrive' => $oneDrive->id]) }}">刷新</a>
                         </div>
                     </div>
                 </div>

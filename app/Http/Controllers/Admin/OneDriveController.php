@@ -189,4 +189,39 @@ class OneDriveController extends Controller
 
         return success();
     }
+    /**
+     * 缓存清理
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function clear($id)
+    {
+        $oneDrive = $this->model->where('admin_id', $this->user()->id)->findOrFail($id);
+
+        if (!$oneDrive->is_binded) {
+            return redirect()->route('admin.onedrive.index')->withErrors(["{$oneDrive->name} 请先绑定"]);
+        }
+
+        Artisan::call('od:cache --one_drive_id=' . $oneDrive->id);
+
+        return success();
+    }
+
+    /**
+     * 刷新缓存
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function refresh($id)
+    {
+        $oneDrive = $this->model->where('admin_id', $this->user()->id)->findOrFail($id);
+        
+        if (!$oneDrive->is_binded) {
+            return redirect()->route('admin.onedrive.index')->withErrors(["{$oneDrive->name} 请先绑定"]);
+        }
+
+        Artisan::call('od:cache --one_drive_id=' . $oneDrive->id);
+
+        return success();
+    }
 }
