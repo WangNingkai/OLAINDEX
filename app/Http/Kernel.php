@@ -62,7 +62,6 @@ class Kernel extends HttpKernel
         'verified'          => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'checkToken'        => \App\Http\Middleware\CheckAccessToken::class,
         'checkAuth'         => \App\Http\Middleware\CheckAuth::class,
-        'checkUserAuth'     => \App\Http\Middleware\CheckUserAuth::class,
         'checkImage'        => \App\Http\Middleware\CheckImage::class,
         'detectOneDrive'    => \App\Http\Middleware\DetectOneDrive::class,
         'hotlinkProtection' => \App\Http\Middleware\HotlinkProtection::class,

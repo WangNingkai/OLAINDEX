@@ -72,8 +72,6 @@ Route::group(['prefix' => 'admin'], function () {
         // Route::any('bind', 'AdminController@bind')->name('admin.bind');
         // Route::post('show', 'AdminController@settings')->name('admin.settings');
         Route::post('profile', 'AdminController@profile')->name('admin.profile.post');
-        // Route::any('clear', 'AdminController@clear')->name('admin.cache.clear');
-        // Route::any('refresh', 'AdminController@refresh')->name('admin.cache.refresh');
 
         // onedrive
         Route::resource('onedrive', 'OneDriveController', ['as' => 'admin', 'except' => 'show']);
@@ -82,7 +80,7 @@ Route::group(['prefix' => 'admin'], function () {
             Route::post('{onedrive}/bind', 'OneDriveController@bind')->name('admin.onedrive.bind');
             Route::post('{onedrive}/unbind', 'OneDriveController@unbind')->name('admin.onedrive.unbind');
             Route::post('{onedrive}/apply', 'OneDriveController@apply')->name('admin.onedrive.apply');
-            Route::group(['middleware' => 'DetectOnedrive'], function () {
+            Route::group(['middleware' => 'detectOneDrive'], function () {
                 Route::any('{onedrive}/clear', 'OneDriveController@clear')->name('admin.onedrive.clear');
                 Route::any('{onedrive}/refresh', 'OneDriveController@refresh')->name('admin.onedrive.refresh');
             });

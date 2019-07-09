@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\OneDrive;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Redis;
 
 class OneDriveController extends Controller
 {
@@ -202,7 +204,7 @@ class OneDriveController extends Controller
             return redirect()->route('admin.onedrive.index')->withErrors(["{$oneDrive->name} 请先绑定"]);
         }
 
-        Artisan::call('od:cache --one_drive_id=' . $oneDrive->id);
+        dd(Redis::keys('one_' . $oneDrive->id . ':*'));
 
         return success();
     }
@@ -215,12 +217,13 @@ class OneDriveController extends Controller
     public function refresh($id)
     {
         $oneDrive = $this->model->where('admin_id', $this->user()->id)->findOrFail($id);
-        
+
         if (!$oneDrive->is_binded) {
             return redirect()->route('admin.onedrive.index')->withErrors(["{$oneDrive->name} 请先绑定"]);
         }
 
-        Artisan::call('od:cache --one_drive_id=' . $oneDrive->id);
+        getDefaultOneDriveAccount($oneDrive->id);
+        Artisan::call('od:cache');
 
         return success();
     }

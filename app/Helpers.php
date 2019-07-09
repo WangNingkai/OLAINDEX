@@ -104,13 +104,14 @@ if (!function_exists('getFileContent')) {
      */
     function getFileContent($url, $cache = true)
     {
-        $key = 'one:content:' . $url;
+        $key = 'one_' . app('onedrive')->id . ':content:' . $url;
         if ($cache && Cache::has($key)) {
             $content = Cache::get($key);
             if ($content) {
                 return $content;
             }
         }
+
         $curl = new Curl();
         $curl->setConnectTimeout(5);
         $curl->setTimeout(120);
@@ -123,6 +124,7 @@ if (!function_exists('getFileContent')) {
         ]);
         $curl->get($url);
         $curl->close();
+        
         if ($curl->error) {
             Log::error(
                 'Get OneDrive file content error.',
@@ -141,7 +143,7 @@ if (!function_exists('getFileContent')) {
                 Cache::put(
                     $key,
                     $content,
-                    Tool::config('expires')
+                    app('onedrive')->expires
                 );
             }
 
