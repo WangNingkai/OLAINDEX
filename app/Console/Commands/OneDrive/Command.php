@@ -2,11 +2,10 @@
 
 namespace App\Console\Commands\OneDrive;
 
-use App\Helpers\OneDrive;
-use Illuminate\Console\Command;
+use Illuminate\Console\Command as BaseCommand;
 use Symfony\Component\Console\Input\InputOption;
 
-class BaseOneDriveCommand extends Command
+class Command extends BaseCommand
 {
     /**
      * The name and signature of the console command.

@@ -2,9 +2,7 @@
 
 namespace App\Console\Commands\OneDrive;
 
-use App\Helpers\Tool;
 use App\Http\Controllers\OauthController;
-use Illuminate\Console\Command;
 
 class RefreshToken extends Command
 {
@@ -37,7 +35,8 @@ class RefreshToken extends Command
      */
     public function handle()
     {
-        $expires = Tool::config('access_token_expires', 0);
+        getDefaultOneDriveAccount($this->option('one_drive_id'));
+        $expires = app('onedrive')->expires;
         $hasExpired = $expires - time() <= 0 ? true : false;
         if (!$hasExpired) {
             return;

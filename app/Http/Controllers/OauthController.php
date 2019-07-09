@@ -77,9 +77,6 @@ class OauthController extends Controller
         if (empty($request->get('state')) || !Session::has('state')
             || ($request->get('state') !== Session::get('state'))
         ) {
-            \Log::info($request->paramaters);
-            \Log::info(Session::get('state'));
-            \Log::info($request->session()->get('state'));
             Tool::showMessage('Invalid state', false);
             Session::forget('state');
 
@@ -178,7 +175,7 @@ class OauthController extends Controller
         if (!$hasExpired) {
             return response()->json(['code' => 400, 'msg' => 'Bad Request']);
         }
-        
+
         $existingRefreshToken = app('onedrive')->refresh_token;
         $form_params = [
             'client_id'     => app('onedrive')->client_id,
@@ -187,7 +184,7 @@ class OauthController extends Controller
             'refresh_token' => $existingRefreshToken,
             'grant_type'    => 'refresh_token',
         ];
-        if (Tool::config('account_type', 'com') === 'cn') {
+        if (app('onedrive')->account_type === 'cn') {
             $form_params = Arr::add(
                 $form_params,
                 'resource',
