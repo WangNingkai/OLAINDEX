@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Helpers\Tool;
 use App\Http\Controllers\OauthController;
 use Closure;
 use Illuminate\Support\Facades\Session;
@@ -18,12 +17,7 @@ class CheckAccessToken
      */
     public function handle($request, Closure $next)
     {
-        if (!Tool::hasBind()) {
-            Tool::showMessage('请绑定帐号！', false);
-
-            return redirect()->route('bind');
-        }
-        $expires = Tool::config('access_token_expires', 0);
+        $expires = app('onedrive')->access_token_expires;
         $hasExpired = $expires - time() <= 0 ? true : false;
         if ($hasExpired) {
             $current = url()->current();

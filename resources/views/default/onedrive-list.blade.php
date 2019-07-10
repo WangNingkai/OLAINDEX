@@ -15,7 +15,7 @@
 			trigger:'mouse'
         });
 
-        {{--  $('.fsbanner > div').hover(
+        $('.fsbanner > div').hover(
             function () {
                 $(this).children('.join-box').css({
                     'display': 'flex'
@@ -26,7 +26,7 @@
                     'display': 'none'
                 })
             }
-        );  --}}
+        );
     });
 </script>
 @stop
@@ -39,11 +39,11 @@
             <div class='ex' name='2'>
                 <div class='fsbanner'>
                     @foreach ($oneDrives as $oneDrive)
+                    {{--  TODO:cover  --}}
                     <div style='background-image:url({{ asset("img/3.jpg") }})'>
                         <span class='name'>{{ $oneDrive->name }}</span>
                         <span class="join-box fsbanner-button clockwise fsbanner-both">
                             <a href="{{ route('home', ['oneDrive' => $oneDrive->id]) }}" class="join"> 进&nbsp;&nbsp;入 </a>
-                            <p class="fsbanner-inner"></p>
                         </span>
                     </div>   
                     @endforeach

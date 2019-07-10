@@ -1,14 +1,11 @@
 .fsbanner,
 .fsbanner > div > span {
-  /* obrigatório */
   display: none;
 }
 
 div.fsbanner {
-  /* obrigatorio */
   position: relative;
   overflow: hidden;
-  /* opcional */
   height: 300px;
   color: white;
   font-size: 20px;
@@ -37,7 +34,6 @@ div.fsbanner {
   /* css3 */
   transform: rotate(-90deg);
   transform-origin: left top 0;
-  /* pode ser necessário ajustar isso dependendo da fonte escolhida */
   bottom: -13px;
   left: 7px;
 }
@@ -48,19 +44,28 @@ div.fsbanner {
   margin: 0.625rem;
   text-align: center;
   font-size: 2rem;
-  border: 2px solid #42b983;
   justify-content: center;
   align-items: center;
-  display: flex;
+  transition: ease-in 0.3s;
+  background: linear-gradient(0, #42b983 2px, #42b983 2px) no-repeat,
+    linear-gradient(-90deg, #42b983 2px, #42b983 2px) no-repeat,
+    linear-gradient(-180deg, #42b983 2px, #42b983 2px) no-repeat,
+    linear-gradient(-270deg, #42b983 2px, #42b983 2px) no-repeat;
+  background-size: 0 2px, 2px 0, 0 2px, 2px 0;
+  background-position: left top, right top, right bottom, left bottom;
+}
+
+.fsbanner > div .join-box:hover {
+  background-size: 100% 2px, 2px 100%, 100% 2px, 2px 100%;
 }
 
 .fsbanner > div .join {
-  display: block;
   margin: 0 auto;
-  width: 20%;
+  width: 30%;
   display: block;
   font-size: 2rem;
   text-decoration: none;
   color: #373a3c;
+  line-height: 7rem;
+  background-color: rgba(33, 33, 33, 0.33);
 }
-

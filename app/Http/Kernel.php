@@ -67,6 +67,6 @@ class Kernel extends HttpKernel
         'detectOneDrive'    => \App\Http\Middleware\DetectOneDrive::class,
         'hotlinkProtection' => \App\Http\Middleware\HotlinkProtection::class,
         'handleIllegalFile' => \App\Http\Middleware\HandleIllegalFile::class,
-        'HandleEncryptDir'  => \App\Http\Middleware\HandleEncryptDir::class,
+        'handleEncryptDir'  => \App\Http\Middleware\HandleEncryptDir::class,
     ];
 }

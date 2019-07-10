@@ -28,10 +28,14 @@ Route::group(['namespace' => 'Index'], function () {
         Route::post('/logout', 'Auth\\LoginController@logout')->name('logout');
         // TODO: onedrive 选择
         Route::get('onedrive', 'OneDriveController@index')->name('onedrive.list');
-        Route::group(['middleware' => ['detectOneDrive', 'checkOneDrive'], 'prefix' => 'onedrive/{onedrive}'], function () {
-            Route::group(['prefix' => 'home'], function () {
-                Route::get('{query?}', 'IndexController@list')->where('query', '.*')->name('home');
-            });
+        Route::group(['middleware' => [
+            'detectOneDrive',
+            'checkOneDrive',
+            'checkToken',
+            'handleIllegalFile',
+            'HandleEncryptDir' => ['only' => Arr::get(app('onedrive')->settings, 'encrypt_option', config('onedrive.encrypt_option'))]
+        ], 'prefix' => 'onedrive/{onedrive}'], function () {
+            Route::get('home/{query?}', 'IndexController@list')->where('query', '.*')->name('home');
             Route::get('show/{query}', 'IndexController@show')->where('query', '.*')->name('show');
             Route::group(['middleware' => ['hotlinkProtection']], function () {
                 Route::get('down/{query}', 'IndexController@download')->where('query', '.*')->name('download');
