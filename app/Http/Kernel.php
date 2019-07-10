@@ -63,6 +63,7 @@ class Kernel extends HttpKernel
         'checkToken'        => \App\Http\Middleware\CheckAccessToken::class,
         'checkAuth'         => \App\Http\Middleware\CheckAuth::class,
         'checkImage'        => \App\Http\Middleware\CheckImage::class,
+        'checkOneDrive'     => \App\Http\Middleware\CheckOneDrive::class,
         'detectOneDrive'    => \App\Http\Middleware\DetectOneDrive::class,
         'hotlinkProtection' => \App\Http\Middleware\HotlinkProtection::class,
         'handleIllegalFile' => \App\Http\Middleware\HandleIllegalFile::class,

@@ -176,7 +176,7 @@ class IndexController extends Controller
         $name = array_pop($absolutePathArr);
         $absolutePath = implode('/', $absolutePathArr);
         $listPath = Tool::getOriginPath($absolutePath);
-        $list = Cache::get('one:list:' . $listPath, '');
+        $list = Cache::get('one' . app('oneDrive')->id . ':list:' . $listPath, '');
         $graphPath = Tool::getOriginPath($realPath);
 
         if ($list && array_key_exists($name, $list)) {

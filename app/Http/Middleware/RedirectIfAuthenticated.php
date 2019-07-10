@@ -15,10 +15,18 @@ class RedirectIfAuthenticated
      * @param  string|null $guard
      * @return mixed
      */
-    public function handle($request, Closure $next, $guard = null)
+    public function handle($request, Closure $next, $guard = 'web')
     {
+        if ($request->segment(1) == 'admin') {
+            $guard = 'admin';
+        }
+
         if (Auth::guard($guard)->check()) {
-            return redirect('/home');
+            if ($guard == 'admin') {
+                return redirect()->route('admin.basic');
+            }
+
+            return redirect()->route('onedrive.list');
         }
 
         return $next($request);

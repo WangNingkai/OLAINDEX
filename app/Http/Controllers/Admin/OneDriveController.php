@@ -184,7 +184,6 @@ class OneDriveController extends Controller
             return redirect()->route('admin.onedrive.index')->withErrors(["{$oneDrive->name} 请先绑定"]);
         }
 
-        // TODO: OneDriveObserver
         $oneDrive->update([
             'is_binded' => 0
         ]);
@@ -203,7 +202,6 @@ class OneDriveController extends Controller
         if (!$oneDrive->is_binded) {
             return redirect()->route('admin.onedrive.index')->withErrors(["{$oneDrive->name} 请先绑定"]);
         }
-
 
         $redis = Redis::connection('cache');
         $caches = $redis->keys(config('cache.prefix') . ':one_' . $oneDrive->id . '*');

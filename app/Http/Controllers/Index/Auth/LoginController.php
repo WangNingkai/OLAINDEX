@@ -10,7 +10,7 @@ class LoginController extends Controller
 {
     use AuthenticatesUsers;
 
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/onedrive';
 
     /**
      * Create a new controller instance.
@@ -29,6 +29,10 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
+        if (!empty(Auth::guard('web')->user())) {
+            return redirect()->route('onedrive.list');
+        }
+
         return view('auth.login');
     }
 
