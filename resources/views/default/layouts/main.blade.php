@@ -86,7 +86,6 @@
         </div>
     </div>
 </nav>
-
 <div class="container mt-3">
     @if (session()->has('alertMessage'))
         <div class="alert alert-dismissible alert-{{ session()->pull('alertType')}}">

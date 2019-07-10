@@ -14,7 +14,7 @@ class OneDriveController extends Controller
 
     public function index()
     {
-        $oneDrives = $this->model->exclude('settings')->where('is_binded')->get();
+        $oneDrives = $this->model->exclude('settings')->where('is_binded', 1)->get();
 
         return themeView('onedrive-list', compact('oneDrives'));
     }

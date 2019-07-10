@@ -1,0 +1,66 @@
+.fsbanner,
+.fsbanner > div > span {
+  /* obrigatório */
+  display: none;
+}
+
+div.fsbanner {
+  /* obrigatorio */
+  position: relative;
+  overflow: hidden;
+  /* opcional */
+  height: 300px;
+  color: white;
+  font-size: 20px;
+  font-family: Verdana;
+  font-weight: bold;
+  border-radius: 5px;
+  -webkit-text-stroke: 1px black;
+}
+
+.fsbanner > div {
+  position: absolute;
+  background-size: cover;
+  cursor: pointer;
+  top: 0px;
+  left: 0px;
+}
+
+.fsbanner > div .name {
+  display: block;
+  position: absolute;
+  left: 0.875rem;
+  bottom: 0.875rem;
+}
+
+.fsbanner > div .name.minimized {
+  /* css3 */
+  transform: rotate(-90deg);
+  transform-origin: left top 0;
+  /* pode ser necessário ajustar isso dependendo da fonte escolhida */
+  bottom: -13px;
+  left: 7px;
+}
+
+.fsbanner > div .join-box {
+  box-sizing: border-box;
+  height: calc(100% - 1.25rem);
+  margin: 0.625rem;
+  text-align: center;
+  font-size: 2rem;
+  border: 2px solid #42b983;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.fsbanner > div .join {
+  display: block;
+  margin: 0 auto;
+  width: 20%;
+  display: block;
+  font-size: 2rem;
+  text-decoration: none;
+  color: #373a3c;
+}
+
