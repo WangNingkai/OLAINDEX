@@ -41,7 +41,7 @@ class IndexController extends Controller
         $queryPath = trim(Tool::getAbsolutePath($realPath), '/');
         $origin_path = rawurldecode($queryPath);
         $path_array = $origin_path ? explode('/', $origin_path) : [];
-        $pathKey = 'one_' . app('onedrive') . ':path:' . $graphPath;
+        $pathKey = 'one_' . app('onedrive')->id . ':path:' . $graphPath;
         $item = (new CacheService('getItemByPath', $graphPath))->get($pathKey);
 
         if (Arr::has($item, '@microsoft.graph.downloadUrl')) {
