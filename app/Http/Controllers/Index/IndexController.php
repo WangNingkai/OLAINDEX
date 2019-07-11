@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Index;
 
-use App\Helpers\Constants;
-use App\Helpers\OneDrive;
 use App\Helpers\Tool;
+use App\Helpers\OneDrive;
+use App\Helpers\Constants;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Str;
 use App\Http\Resources\ItemResource;
 use App\Services\CacheService;
 use App\Http\Controllers\Controller;
@@ -36,6 +36,7 @@ class IndexController extends Controller
      */
     public function home(Request $request)
     {
+        dd(app('onedrive'));
         return $this->list($request);
     }
 
