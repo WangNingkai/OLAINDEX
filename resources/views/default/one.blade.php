@@ -154,7 +154,7 @@
                             </div>
                             <div class="modal-body">
                                 <p class="text-danger">
-                                    链接将在 {{ date('m/d/Y H:i', app('onedrive')->access_token_expires)) }}
+                                    链接将在 {{ date('m/d/Y H:i', app('onedrive')->access_token_expires) }}
                                     后失效</p>
                                 <p><a href="javascript:void(0)" style="text-decoration: none" data-toggle="tooltip"
                                         data-placement="right" data-clipboard-target="#dl" class="clipboard">点击复制</a>
