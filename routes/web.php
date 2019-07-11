@@ -33,7 +33,7 @@ Route::group(['namespace' => 'Index'], function () {
             'checkOneDrive',
             'checkToken',
             'handleIllegalFile',
-            'hadnleEncryptDir'
+            'handleEncryptDir'
         ], 'prefix' => 'onedrive/{onedrive}'], function () {
             Route::get('home/{query?}', 'IndexController@list')->where('query', '.*')->name('home');
             Route::get('show/{query}', 'IndexController@show')->where('query', '.*')->name('show');
