@@ -217,7 +217,7 @@
                 </div>
                 <div class="col-4 col-sm-2">
                     <span class="pull-right">
-                        @if(! Arr::has($item,'folder'))
+                    @if(! Arr::has($item,'folder'))
                         @if( Arr::has($item,'image'))
                         <a href="{{ route('view', [
                             'query' => Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name']),
@@ -225,7 +225,7 @@
                         ]) }}"
                             data-fancybox="image-list"><i class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
                         @endif
-                        @if (auth('admin')->user() && Tool::canEdit($item) )
+                        @if (auth()->guard('admin')->check() && Tool::canEdit($item) )
                         <a href="{{ route('admin.file.update', $item['id']) }}"><i
                                 class="fa fa-pencil"></i></a>&nbsp;&nbsp;
                         @endif
@@ -236,18 +236,18 @@
                             ]) }}">
                             <i class="fa fa-download" title="下载"></i>
                         </a>&nbsp;&nbsp;
-                        @else
+                    @else
                         <a href="{{ route('home', [
                             'query'    => Tool::getEncodeUrl($origin_path ? $origin_path . '/' . $item['name'] : $item['name']),
                             'onedrive' => app('onedrive')->id
-                        ) }}"
+                        )] }}"
                             title="{{ $item['name'] }}"><i class="fa fa-folder-open"></i></a>&nbsp;&nbsp;
-                        @endif
-                        @if (auth('admin')->user())
+                    @endif
+                    @if (auth()->guard('admin')->check())
                         <a onclick="deleteItem('{{ encrypt($item['id'] . '.' . $item['eTag']) }}')"
                             href="javascript:void(0)"><i class="fa fa-trash" title="删除"></i></a>&nbsp;
                         &nbsp;
-                        @endif
+                    @endif
                     </span>
                 </div>
             </div>
@@ -258,7 +258,7 @@
                 <div class="col-8 col-sm-6" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
                     <span class="text-muted font-weight-light">
                         共 {{ $parent_item['folder']['childCount'] }} 个项目
-                        @if (auth('admin')->user())
+                        @if (auth()->guard('admin')->check())
                         {{ convertSize($parent_item['size']) }}
                         @endif
                     </span>
