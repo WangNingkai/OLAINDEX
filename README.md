@@ -81,7 +81,6 @@ chown -R www:www *
 
 - develop: 开发版
 
-- test: 测试版（不推荐使用）
 
 ### 其他：
 
@@ -93,13 +92,31 @@ chown -R www:www *
 
 ---
 
-### .env 修改需要清除缓存，routes/web.php 文件同样
+### Install (已安装PHP、MySql、Nginx环境和Composer)
+ 1. 在web站点下克隆github项目
+    
+        git clone https://github.com/dongdongGit/OLAINDEX.git
+ 2. 配置 .env 数据库信息
 
-```
-php artisan config:cache
-php artisan route:cache
-```
+        cp .env-example .env && vim .env
 
+        DB_HOST=127.0.0.1
+        DB_PORT=你的数据库端口
+        DB_DATABASE=你的数据库名
+        DB_USERNAME=你的数据库用户名
+        DB_PASSWORD=你的数据库密码
+
+
+ 3. 安装laravel环境
+
+        composer install --no-dev
+
+ 4. 生成表结构
+
+        php artisan migrate
+        php artisan db:seed --class=AdminTableSeeder // 生成默认管理员
+        php artisan db:seed --class=UserTableSeeder // 生成默认前端用户
+ 5. 登录Admin端（/admin/login），点击OneDrive 列表 创建并绑定 OneDrive 账号
 ### TODO
 
  - [ ] aria2
