@@ -11,8 +11,8 @@
                             <li class="breadcrumb-item "><a
                                     href="{{ route(
                                         'home', [
-                                            'query' => Tool::getEncodeUrl(getBreadcrumbUrl($key + 1, $path_array)),
-                                            'onedrive' => app('onedrive')->id;
+                                            'query'    => Tool::getEncodeUrl(getBreadcrumbUrl($key + 1, $path_array)),
+                                            'onedrive' => app('onedrive')->id
                                         ]) }}">{{ Str::limit($value, 20) }}</a>
                             </li>
                         @endif
