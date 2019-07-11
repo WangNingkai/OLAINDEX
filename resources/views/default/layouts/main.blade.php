@@ -12,7 +12,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="{{ url('/favicon.ico') }}">
     <link rel="stylesheet" href="https://fonts.loli.net/css?family=Lato:400,700,400italic">
     <link rel="stylesheet"
-          href="https://cdnjs.loli.net/ajax/libs/bootswatch/4.3.1/{{ \App\Helpers\Tool::config('theme','materia') }}/bootstrap.min.css">
+          href="https://cdnjs.loli.net/ajax/libs/bootswatch/4.3.1/{{ getAdminConfig('theme') }}/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
     <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.css">
     <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css">
@@ -24,20 +24,12 @@
             border: 0;
         }
     </style>
-    <script>
-        Config = {
-            'routes': {
-                'upload_image': '{{ route('image.upload') }}'
-            },
-            '_token': '{{ csrf_token() }}',
-        };
-    </script>
 </head>
 
 <body>
 <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-primary">
     <div class="container">
-        <a class="navbar-brand" href="{{ route('home') }}">{{ \App\Helpers\Tool::config('name','OLAINDEX') }}</a>
+        <a class="navbar-brand" href="{{ route('onedrive.list') }}">{{ getAdminConfig('site_name') }}</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01"
                 aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -46,28 +38,33 @@
         <div class="collapse navbar-collapse" id="navbarColor01">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('home') }}"><i class="fa fa-home"></i> 首页</a>
+                    <a class="nav-link" href="{{ route('onedrive.list') }}"><i class="fa fa-home"></i> 首页</a>
                 </li>
-                @if (\App\Helpers\Tool::config('image_hosting',0))
-                    @if( (int)\App\Helpers\Tool::config('image_hosting') === 2 && session()->has('LogInfo') || (int)\App\Helpers\Tool::config('image_hosting') === 1)
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('image') }}"><i class="fa fa-cloud-upload"></i> 图床</a>
-                        </li>
-                    @endif
+        @if (app()->bound('onedrive'))
+            @if (Arr::get(app('onedrive')->settings, 'image_hosting') != 'disabled')
+                @if(
+                    Arr::get(app('onedrive')->settings, 'image_hosting') == 'admin_enabled' && auth()->guard('admin')->check()
+                        || Arr::get(app('onedrive')->settings, 'image_hosting') == 'enabled'
+                )
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('image') }}"><i class="fa fa-cloud-upload"></i> 图床</a>
+                </li>
                 @endif
-                @if (session()->has('LogInfo'))
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.basic') }}"><i class="fa fa-tachometer"></i> 管理</a>
-                    </li>
-                @endif
+            @endif
+        @endif
+            @if (auth()->guard('admin')->check())
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.basic') }}"><i class="fa fa-tachometer"></i> 管理</a>
+                </li>
+            @endif
             </ul>
-            @if (session()->has('LogInfo'))
-                <form class="form-inline my-2 my-lg-0" action="{{ route('search') }}">
+            @if (app()->bound('onedrive') && auth()->guard('admin')->check())
+                <form class="form-inline my-2 my-lg-0" action="{{ route('search', ['onedrive' => app('onedrive')->id]) }}">
                     <input class="form-control mr-sm-2" type="text" name="keywords" placeholder="搜索">
                     <button class="btn btn-secondary my-2 my-sm-0" type="submit">搜索</button>
                 </form>
             @endif
-            @if (session()->has('index_log_info'))
+            @if (auth()->guard('web')->check())
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a href="{{ route('logout') }}" class="nav-link"
@@ -81,7 +78,6 @@
         </div>
     </div>
 </nav>
-
 <div class="container mt-3">
     @if (session()->has('alertMessage'))
         <div class="alert alert-dismissible alert-{{ session()->pull('alertType')}}">
@@ -94,8 +90,12 @@
         <div class="row text-center">
             <div class="col-lg-12">
                 <p class="text-muted">
-                    {!! markdown2Html(\App\Helpers\Tool::config('copyright','Designed
-                    by [IMWNK](https://imwnk.cn/) | Powered by [OLAINDEX](https://git.io/OLAINDEX)'),true) !!}.
+                    {!! markdown2Html(
+                        !empty(getAdminConfig('copyright'))
+                            ? !empty(getAdminConfig('copyright'))
+                            : 'Designed by [IMWNK](https://imwnk.cn/) | Powered by [OLAINDEX](https://git.io/OLAINDEX)',
+                        true
+                    ) !!}.
                 </p>
             </div>
         </div>
@@ -109,7 +109,7 @@
 <script src="https://cdnjs.loli.net/ajax/libs/fancybox/3.5.6/jquery.fancybox.min.js"></script>
 <script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
 @yield('js')
-{!! \App\Helpers\Tool::config('statistics') !!}
+{!! getAdminConfig('statistics') !!}
 <script>
     $(function () {
         $('[data-fancybox="image-list"]').fancybox({

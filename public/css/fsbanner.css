@@ -1,0 +1,71 @@
+.fsbanner,
+.fsbanner > div > span {
+  display: none;
+}
+
+div.fsbanner {
+  position: relative;
+  overflow: hidden;
+  height: 300px;
+  color: white;
+  font-size: 20px;
+  font-family: Verdana;
+  font-weight: bold;
+  border-radius: 5px;
+  -webkit-text-stroke: 1px black;
+}
+
+.fsbanner > div {
+  position: absolute;
+  background-size: cover;
+  cursor: pointer;
+  top: 0px;
+  left: 0px;
+}
+
+.fsbanner > div .name {
+  display: block;
+  position: absolute;
+  left: 0.875rem;
+  bottom: 0.875rem;
+}
+
+.fsbanner > div .name.minimized {
+  /* css3 */
+  transform: rotate(-90deg);
+  transform-origin: left top 0;
+  bottom: -13px;
+  left: 7px;
+}
+
+.fsbanner > div .join-box {
+  box-sizing: border-box;
+  height: calc(100% - 1.25rem);
+  margin: 0.625rem;
+  text-align: center;
+  font-size: 2rem;
+  justify-content: center;
+  align-items: center;
+  transition: ease-in 0.3s;
+  background: linear-gradient(0, #42b983 2px, #42b983 2px) no-repeat,
+    linear-gradient(-90deg, #42b983 2px, #42b983 2px) no-repeat,
+    linear-gradient(-180deg, #42b983 2px, #42b983 2px) no-repeat,
+    linear-gradient(-270deg, #42b983 2px, #42b983 2px) no-repeat;
+  background-size: 0 2px, 2px 0, 0 2px, 2px 0;
+  background-position: left top, right top, right bottom, left bottom;
+}
+
+.fsbanner > div .join-box:hover {
+  background-size: 100% 2px, 2px 100%, 100% 2px, 2px 100%;
+}
+
+.fsbanner > div .join {
+  margin: 0 auto;
+  width: 30%;
+  display: block;
+  font-size: 2rem;
+  text-decoration: none;
+  color: #373a3c;
+  line-height: 7rem;
+  background-color: rgba(33, 33, 33, 0.33);
+}

@@ -3,7 +3,6 @@
 namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\OneDrive;
-use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 
 class Direct extends Command
@@ -37,7 +36,11 @@ class Direct extends Command
      */
     public function handle()
     {
-        $this->call('od:refresh');
+        $this->call(
+            !empty($one_drive_id  = $this->option('one_drive_id')) 
+                ? 'od:refresh --one_drive_id=' . $one_drive_id
+                : 'od:refresh'
+        );
         $this->info('Please waiting...');
         $remote = $this->argument('remote');
         $_remote = OneDrive::pathToItemId($remote);

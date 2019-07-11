@@ -2,13 +2,29 @@
 
 namespace App\Http\Controllers\Index\Auth;
 
-use App\Helpers\Tool;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
+    use AuthenticatesUsers;
+
+    protected $redirectTo = '/onedrive';
+
+    protected $redirectToLogin = '/';
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('guest')->except('logout');
+    }
+
     /**
      * Show the application's login form.
      *
@@ -16,69 +32,18 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        if (Session::has('index_log_info')) {
-            return redirect()->route($this->getRedirect());
-        }
-
         return view('auth.login');
-    }
-
-    public function login(Request $request)
-    {
-        $data = $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required|string',
-        ]);
-
-        array_walk($data, function (&$value, $key) {
-            return trim($value);
-        });
-
-        $redirect = $this->getRedirect();
-
-        if (Session::has('index_log_info')) {
-            return redirect()->route($redirect);
-        }
-
-        if ($this->attemptLogin($data)) {
-            $logInfo = [
-                'LastLoginTime'    => time(),
-                'LastLoginIP'      => $request->getClientIp(),
-                'LastActivityTime' => time(),
-            ];
-            Session::put('index_log_info', $logInfo);
-
-            return redirect()->route($redirect);
-        } else {
-            Tool::showMessage('密码错误', false);
-
-            return redirect()->back();
-        }
     }
 
     public function logout(Request $request)
     {
-        $request->session()->forget('index_log_info');
-        Tool::showMessage('用户已退出');
+        $this->guard()->logout();
 
-        return redirect()->route('login');
-    }
+        return $this->loggedOut($request) ?: redirect($this->redirectToLogin);
+    } 
 
-    public function getRedirect()
+    protected function guard()
     {
-        return Tool::config('image_home', 0) ? 'image' : 'home';
-    }
-
-    protected function attemptLogin($data)
-    {
-        $users = Tool::config('users');
-
-        foreach ($users as $user) {
-            if ($user['email'] === $data['email'] && $user['password'] === md5($data['password'])) {
-                return true;
-            }
-        }
-
-        return false;
+        return Auth::guard('web');
     }
 }

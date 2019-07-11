@@ -40,7 +40,11 @@ class Remove extends Command
     public function handle()
     {
         $this->info('请稍等...');
-        $this->call('od:refresh');
+        $this->call(
+            !empty($one_drive_id  = $this->option('one_drive_id')) 
+                ? 'od:refresh --one_drive_id=' . $one_drive_id
+                : 'od:refresh'
+        );
         if ($this->option('force')) {
             return $this->delete();
         }

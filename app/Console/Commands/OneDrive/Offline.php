@@ -3,7 +3,6 @@
 namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\OneDrive;
-use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 
 class Offline extends Command
@@ -38,7 +37,11 @@ class Offline extends Command
      */
     public function handle()
     {
-        $this->call('refresh:token');
+        $this->call(
+            !empty($one_drive_id  = $this->option('one_drive_id')) 
+                ? 'od:refresh --one_drive_id=' . $one_drive_id
+                : 'od:refresh'
+        );
         $remote = $this->argument('remote');
         $url = $this->argument('url');
         $response = OneDrive::uploadUrl($remote, $url);

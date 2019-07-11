@@ -41,6 +41,7 @@
     </div>
     <button type="submit" id="submit_btn" class="btn btn-primary">提交</button>
 @stop
+@include('default.widgets.config')
 @section('js')
     <script src="https://cdnjs.loli.net/ajax/libs/axios/0.18.0/axios.js"></script>
     <script>

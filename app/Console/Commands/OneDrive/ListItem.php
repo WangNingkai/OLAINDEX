@@ -3,8 +3,6 @@
 namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\OneDrive;
-use App\Helpers\Tool;
-use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 
@@ -41,15 +39,19 @@ class ListItem extends Command
 
     public function handle()
     {
-        $this->call('od:refresh');
+        $this->call(
+            !empty($one_drive_id  = $this->option('one_drive_id')) 
+                ? 'od:refresh --one_drive_id=' . $one_drive_id
+                : 'od:refresh'
+        );
         $remote = $this->argument('remote');
         $id = $this->option('id');
         $offset = $this->option('offset');
         $length = $this->option('limit');
         if ($id) {
             $data = Cache::remember(
-                'one:list:id:'.$id,
-                Tool::config('expires'),
+                'one_' . app('onedrive')->id . ':list:id:' . $id,
+                app('onedrive')->expires,
                 function () use ($id) {
                     $response = OneDrive::getChildren($id);
 
@@ -58,8 +60,8 @@ class ListItem extends Command
             );
         } else {
             $data = Cache::remember(
-                'one:list:path:'.$remote,
-                Tool::config('expires'),
+                'one_' . app('onedrive')->id . ':list:path:'.$remote,
+                app('onedrive')->expires,
                 function () use ($remote) {
                     $response = OneDrive::getChildrenByPath($remote);
 
@@ -67,11 +69,13 @@ class ListItem extends Command
                 }
             );
         }
+
         if (!$data) {
             $this->error('Please confirm your options and try again later!');
             $this->call('cache:clear');
             exit;
         }
+
         $data = $this->format($data);
         $items = array_slice($data, $offset, $length);
         $headers = [];

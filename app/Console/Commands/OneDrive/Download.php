@@ -3,7 +3,6 @@
 namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\OneDrive;
-use Illuminate\Console\Command;
 
 class Download extends Command
 {
@@ -38,7 +37,11 @@ class Download extends Command
      */
     public function handle()
     {
-        $this->call('od:refresh');
+        $this->call(
+            !empty($one_drive_id  = $this->option('one_drive_id')) 
+                ? 'od:refresh --one_drive_id=' . $one_drive_id
+                : 'od:refresh'
+        );
         $remote = $this->argument('remote');
         $id = $this->option('id');
         if ($id) {

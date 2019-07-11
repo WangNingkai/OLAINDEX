@@ -93,9 +93,16 @@ chown -R www:www *
 
 ---
 
-### .env 修改需要清除缓存，routes 文件同样
+### .env 修改需要清除缓存，routes/web.php 文件同样
 
 ```
 php artisan config:cache
 php artisan route:cache
 ```
+
+### TODO
+
+ - [ ] aria2
+ - [x] Console/OneDrive
+ - [ ] ManggeController
+ - [ ] IndexConttroller

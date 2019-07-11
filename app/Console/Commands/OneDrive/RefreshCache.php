@@ -4,8 +4,8 @@ namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\OneDrive;
 use App\Helpers\Tool;
-use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 
 class RefreshCache extends Command
 {
@@ -51,7 +51,11 @@ class RefreshCache extends Command
      */
     public function getChildren($path)
     {
-        \Illuminate\Support\Facades\Artisan::call('od:refresh');
+        $this->call(
+            !empty($one_drive_id  = $this->option('one_drive_id')) 
+                ? 'od:refresh --one_drive_id=' . $one_drive_id
+                : 'od:refresh'
+        );
         $response = OneDrive::getChildrenByPath(
             $path,
             '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl'
@@ -72,14 +76,15 @@ class RefreshCache extends Command
         $this->info($path);
         $data = $this->getChildren($path);
         if (is_array($data)) {
-            \Illuminate\Support\Facades\Cache::put(
-                'one:list:' . $path,
+            Cache::put(
+                'one_' . app('onedrive')->id .  ':list:' . $path,
                 $data,
-                Tool::config('expires')
+                app('onedrive')->expires
             );
         } else {
             exit('Cache Error!');
         }
+
         foreach ((array)$data as $item) {
             if (Arr::has($item, 'folder')) {
                 $this->getRecursive($path . $item['name'] . '/');

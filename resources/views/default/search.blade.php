@@ -32,7 +32,7 @@
                         <div class="row">
                             <div class="col-8 col-sm-6"
                                  style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
-                                <a href="{{ route('search.show',$item['id']) }}"
+                                <a href="{{ route('search.show', ['query' => $item['id'], 'onedrive' => app('onedrive')->id]) }}"
                                    title="{{ $item['name'] }}">
                                     <i class="fa {{ getExtIcon($item['ext']) }}"></i> {{ $item['name'] }}
                                 </a>
@@ -46,7 +46,7 @@
                             </div>
                             <div class="col-4 col-sm-2">
                                 <span class="pull-right">
-                                    <a href="{{ route('search.show',$item['id']) }}"><i
+                                    <a href="{{ route('search.show', ['query' => $item['id'], 'ondrive' => app('onedrive')->id]) }}"><i
                                             class="fa fa-info-circle"
                                             title="详情"></i></a>&nbsp;&nbsp;
                                 </span>

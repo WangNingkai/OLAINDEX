@@ -5,6 +5,9 @@ use App\Helpers\Tool;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use App\Helpers\Constants;
+use App\Models\OneDrive;
+use Illuminate\Support\Arr;
+use App\Models\Admin;
 
 if (!function_exists('convertSize')) {
     /**
@@ -101,13 +104,14 @@ if (!function_exists('getFileContent')) {
      */
     function getFileContent($url, $cache = true)
     {
-        $key = 'one:content:' . $url;
+        $key = 'one_' . app('onedrive')->id . ':content:' . $url;
         if ($cache && Cache::has($key)) {
             $content = Cache::get($key);
             if ($content) {
                 return $content;
             }
         }
+
         $curl = new Curl();
         $curl->setConnectTimeout(5);
         $curl->setTimeout(120);
@@ -120,6 +124,7 @@ if (!function_exists('getFileContent')) {
         ]);
         $curl->get($url);
         $curl->close();
+        
         if ($curl->error) {
             Log::error(
                 'Get OneDrive file content error.',
@@ -138,7 +143,7 @@ if (!function_exists('getFileContent')) {
                 Cache::put(
                     $key,
                     $content,
-                    Tool::config('expires')
+                    app('onedrive')->expires
                 );
             }
 
@@ -255,5 +260,84 @@ if (!function_exists('getOrderByStatus')) {
         }
 
         return true;
+    }
+}
+
+/**
+ * 选择默认的OneDrive
+ */
+if (!function_exists('getDefaultOneDriveAccount')) {
+    function getDefaultOneDriveAccount($one_drive_id)
+    {
+        if (empty($one_drive_id)) {
+            $oneDrive = OneDrive::where('is_default', true)->firstOrFail();
+        } else {
+            $oneDrive = OneDrive::findOrFail($one_drive_id);
+        }
+
+        $oneDrive->authorize_url = $oneDrive->account_type == 'com'
+            ? Constants::AUTHORITY_URL . Constants::AUTHORIZE_ENDPOINT
+            : Constants::AUTHORITY_URL_21V . Constants::AUTHORIZE_ENDPOINT_21V;
+        $oneDrive->access_token_url = $oneDrive->account_type == 'com'
+            ? Constants::AUTHORITY_URL . Constants::TOKEN_ENDPOINT
+            : Constants::AUTHORITY_URL_21V . Constants::TOKEN_ENDPOINT_21V;
+        $oneDrive->scopes = Constants::SCOPES;
+
+        app()->instance('onedrive', $oneDrive);
+    }
+}
+
+if (!function_exists('success')) {
+    function success($message = '操作成功', $status = 302, $headers = [], $fallback = false)
+    {
+        return app('redirect')->back($status, $headers, $fallback)->with('message', $message);
+    }
+}
+
+if (!function_exists('redirectSuccess')) {
+    function redirectSuccess($route, $parameters = [], $status = 302, $headers = [], $message = '操作成功')
+    {
+        return app('redirect')->route($route, $parameters, $status, $headers)->with('message', $message);
+    }
+}
+
+/**
+ * 返回主题的view路径
+ */
+if (!function_exists('themeView')) {
+    function themeView($view, $data = [])
+    {
+        return view(config('olaindex.theme') . '.' . $view, $data);
+    }
+}
+
+if (!function_exists('getAdminConfig')) {
+    function getAdminConfig($key = '')
+    {
+        $admin = Cache::rememberForever('admin_settings', function () {
+            return Admin::firstOrFail();
+        });
+        
+        if (!empty($admin)) {
+            return $admin->$key;
+        } else {
+            return Arr::get(config('olaindex.admin'), $key, '暂无数据');
+        }
+    }
+}
+
+if (!function_exists('route_parameter')) {
+    /**
+     * Get a given parameter from the route.
+     *
+     * @param $name
+     * @param null $default
+     * @return mixed
+     */
+    function route_parameter($name, $default = null)
+    {
+        $routeInfo = app('request')->route();
+
+        return Arr::get($routeInfo->parameters, $name, $default);
     }
 }

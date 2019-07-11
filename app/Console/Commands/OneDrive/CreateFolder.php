@@ -3,7 +3,6 @@
 namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\OneDrive;
-use Illuminate\Console\Command;
 
 class CreateFolder extends Command
 {
@@ -38,7 +37,11 @@ class CreateFolder extends Command
      */
     public function handle()
     {
-        $this->call('od:refresh');
+        $this->call(
+            !empty($one_drive_id  = $this->option('one_drive_id')) 
+                ? 'od:refresh --one_drive_id=' . $one_drive_id
+                : 'od:refresh'
+        );
         $name = $this->argument('name');
         $remote = $this->argument('remote');
         $response = OneDrive::mkdirByPath($name, $remote);

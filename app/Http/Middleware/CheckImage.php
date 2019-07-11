@@ -2,9 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use App\Helpers\Tool;
 use Closure;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Arr;
 
 class CheckImage
 {
@@ -18,8 +17,8 @@ class CheckImage
      */
     public function handle($request, Closure $next)
     {
-        $status = Tool::config('image_hosting', 0);
-        if (!$status || $status == 2 && !Session::has('LogInfo')) {
+        $status = Arr::get(app('onedrive')->settings, 'image_hosting');
+        if ($status == 'disabled' || $status == 'admin_enabled' && auth()->guard('admin')->check()) {
             return redirect()->route('home');
         }
 

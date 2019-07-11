@@ -3,19 +3,13 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Models\OneDrive;
+use App\Observers\OneDriveObserver;
+use App\Models\Admin;
+use App\Observers\AdminObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        //
-    }
-
     /**
      * Register any application services.
      *
@@ -24,5 +18,20 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         //
+    }
+
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        if (app('env') == 'local') {
+            \Debugbar::enable();
+        }
+
+        Admin::observe(AdminObserver::class);
+        OneDrive::observe(OneDriveObserver::class);
     }
 }

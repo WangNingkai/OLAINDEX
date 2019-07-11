@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Helpers\Tool;
 use App\Helpers\OneDrive;
@@ -9,10 +9,10 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use App\Http\Controllers\Controller;
 
 /**
  * 管理员 OneDriveGraph 操作
- * Class ManageController
  *
  * @package App\Http\Controllers
  */

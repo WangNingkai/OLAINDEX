@@ -4,7 +4,6 @@ namespace App\Console\Commands\OneDrive;
 
 use App\Helpers\Tool;
 use App\Helpers\OneDrive;
-use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 
 class UploadFile extends Command
@@ -42,7 +41,11 @@ class UploadFile extends Command
      */
     public function handle()
     {
-        $this->call('od:refresh');
+        $this->call(
+            !empty($one_drive_id  = $this->option('one_drive_id')) 
+                ? 'od:refresh --one_drive_id=' . $one_drive_id
+                : 'od:refresh'
+        );
         $local = $this->argument('local');
         $remote = $this->argument('remote');
         $chuck = $this->option('chuck');
@@ -105,12 +108,14 @@ class UploadFile extends Command
         $file_name = basename($local);
         $target_path = Tool::getAbsolutePath($remote);
         $url_response = OneDrive::createUploadSession($target_path . $file_name);
+
         if ($url_response['errno'] === 0) {
             $url = Arr::get($url_response, 'data.uploadUrl');
         } else {
             $this->warn($url_response['msg']);
             exit;
         }
+
         $this->info("File Path:\n{$local}");
         $this->info("Upload Url:\n{$url}");
         $done = false;
@@ -124,6 +129,7 @@ class UploadFile extends Command
                 $offset,
                 $length
             );
+
             if ($response['errno'] === 0) {
                 $data = $response['data'];
                 if (!empty($data['nextExpectedRanges'])) {

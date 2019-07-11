@@ -3,12 +3,11 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Session;
 
-class CheckUserAuth
+class DetectOneDrive
 {
     /**
-     * 处理登陆
+     * 处理验证安装
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \Closure                 $next
@@ -17,10 +16,7 @@ class CheckUserAuth
      */
     public function handle($request, Closure $next)
     {
-        if (!Session::has('index_log_info') && !Session::has('LogInfo')) {
-            return redirect()->route('login');
-        }
-        Session::put('index_log_info.LastActivityTime', time());
+        getDefaultOneDriveAccount(route_parameter('onedrive'));
 
         return $next($request);
     }
