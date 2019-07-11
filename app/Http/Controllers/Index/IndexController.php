@@ -30,7 +30,6 @@ class IndexController extends Controller
      */
     public function list(Request $request)
     {
-        dd(app('onedrive'));
         $realPath = $request->route()->parameter('query') ?? '/';
         $data = $request->validate([
             'by'    => 'string|in:name,lastModifiedDateTime,size',
@@ -42,7 +41,7 @@ class IndexController extends Controller
         $queryPath = trim(Tool::getAbsolutePath($realPath), '/');
         $origin_path = rawurldecode($queryPath);
         $path_array = $origin_path ? explode('/', $origin_path) : [];
-        $pathKey = 'one:path:' . $graphPath;
+        $pathKey = 'one_' . app('onedrive') . ':path:' . $graphPath;
         $item = (new CacheService('getItemByPath', $graphPath))->get($pathKey);
 
         if (Arr::has($item, '@microsoft.graph.downloadUrl')) {
@@ -50,7 +49,7 @@ class IndexController extends Controller
         }
 
         // 获取列表
-        $key = 'one:list:' . $graphPath;
+        $key = 'one_' . app('onedrive')->id . ':list:' . $graphPath;
         $origin_items = (new CacheService('getChildrenByPath', $graphPath))->get($key, [
             '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl&expand=thumbnails'
         ]);
@@ -79,7 +78,7 @@ class IndexController extends Controller
         $readme = array_key_exists('README.md', $origin_items)
             ? markdown2Html(getFileContent($origin_items['README.md']['@microsoft.graph.downloadUrl']))
             : '';
-        if (empty(auth()->guard('admin')->user())) {
+        if (!auth()->guard('admin')->check()) {
             $origin_items = Arr::except(
                 $origin_items,
                 ['README.md', 'HEAD.md', '.password', '.deny']
@@ -120,13 +119,13 @@ class IndexController extends Controller
         $name = array_pop($absolutePathArr);
         $absolutePath = implode('/', $absolutePathArr);
         $listPath = Tool::getOriginPath($absolutePath);
-        $list = Cache::get('one' . app('oneDrive')->id . ':list:' . $listPath, '');
+        $list = Cache::get('one_' . app('oneDrive')->id . ':list:' . $listPath, '');
         $graphPath = Tool::getOriginPath($realPath);
 
         if ($list && array_key_exists($name, $list)) {
             return $list[$name];
         } else {
-            return (new CacheService('getItemByPath', $graphPath))->get('one:file:' . $graphPath, [
+            return (new CacheService('getItemByPath', $graphPath))->get('one_' . app('onedrive')->id . ':file:' . $graphPath, [
                 '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl&expand=thumbnails'
             ]);
         }
