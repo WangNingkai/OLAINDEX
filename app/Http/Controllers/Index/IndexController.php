@@ -22,24 +22,6 @@ use App\Http\Controllers\Controller;
  */
 class IndexController extends Controller
 {
-    public function __construct()
-    {
-        // getDefaultOneDriveAccount(route_parameter('onedrive'));
-        // $this->middleware('handleEncryptDir')->only(Arr::get(app('onedrive')->settings, 'encrypt_option', config('onedrive.encrypt_option')));
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
-     * @throws \ErrorException
-     */
-    public function home(Request $request)
-    {
-        dd(app('onedrive'));
-        return $this->list($request);
-    }
-
     /**
      * @param Request $request
      *
@@ -48,6 +30,7 @@ class IndexController extends Controller
      */
     public function list(Request $request)
     {
+        dd(app('onedrive'));
         $realPath = $request->route()->parameter('query') ?? '/';
         $data = $request->validate([
             'by'    => 'string|in:name,lastModifiedDateTime,size',
