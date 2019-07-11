@@ -24,6 +24,7 @@ class HandleEncryptDir
         }
 
         $route = $request->route()->getName();
+        dd($route);
         $realPath = $request->route()->parameter('query') ?? '/';
         $encryptDir = Tool::handleEncryptDir(app('onedrive')->encrypt_path);
 

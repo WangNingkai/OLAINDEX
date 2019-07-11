@@ -24,8 +24,8 @@ class IndexController extends Controller
 {
     public function __construct()
     {
-        getDefaultOneDriveAccount(route_parameter('onedrive'));
-        $this->middleware('handleEncryptDir')->only(Arr::get(app('onedrive')->settings, 'encrypt_option', config('onedrive.encrypt_option')));
+        // getDefaultOneDriveAccount(route_parameter('onedrive'));
+        // $this->middleware('handleEncryptDir')->only(Arr::get(app('onedrive')->settings, 'encrypt_option', config('onedrive.encrypt_option')));
     }
 
     /**

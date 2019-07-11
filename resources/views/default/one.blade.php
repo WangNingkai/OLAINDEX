@@ -1,8 +1,7 @@
 @extends('default.layouts.main')
-@section('title',\App\Helpers\Tool::config('name','OLAINDEX'))
+@section('title', getAdminConfig('site_name'))
 @section('css')
-    <link rel="stylesheet"
-          href="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/css/blueimp-gallery-indicator.min.css">
+    <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/css/blueimp-gallery-indicator.min.css">
     <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/css/blueimp-gallery.min.css">
 @stop
 @section('js')
@@ -12,7 +11,7 @@
     <script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/jquery.blueimp-gallery.min.js"></script>
     <script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/blueimp-gallery-fullscreen.min.js"></script>
     <script>
-        @if(session()->has('LogInfo'))
+        @if(auth('admin')->user())
         function deleteItem($sign) {
             swal({
                 title: '确定删除吗？',
@@ -184,7 +183,7 @@
         <div class="list-group item-list">
             @if(!blank($path_array))
                 <li class="list-group-item list-group-item-action"><a
-                        href="{{ route('home',\App\Helpers\Tool::getEncodeUrl(getParentUrl($path_array))) }}"><i
+                        href="{{ route('home', \App\Helpers\Tool::getEncodeUrl(getParentUrl($path_array))) }}"><i
                             class="fa fa-level-up"></i> 返回上一层</a></li>
             @endif
             @foreach($items as $item)
@@ -192,7 +191,7 @@
                     <div class="row">
                         <div class="col-8 col-sm-6" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
                             @if( Arr::has($item,'folder'))
-                                <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path . '/'. $item['name'] : $item['name'])) }}"
+                                <a href="{{ route('home', \App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path . '/'. $item['name'] : $item['name'])) }}"
                                    title="{{ $item['name'] }}">
                                     <i class="fa fa-folder"></i> {{ $item['name'] }}
                                 </a>
@@ -219,7 +218,7 @@
                                            data-fancybox="image-list"><i
                                                 class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
                                     @endif
-                                    @if(session()->has('LogInfo') && \App\Helpers\Tool::canEdit($item) )
+                                    @if (auth('admin')->user() && \App\Helpers\Tool::canEdit($item) )
                                         <a href="{{ route('admin.file.update', $item['id']) }}"><i
                                                 class="fa fa-pencil"></i></a>&nbsp;&nbsp;
                                     @endif
@@ -231,10 +230,9 @@
                                     <a href="{{ route('home',\App\Helpers\Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name'])) }}"
                                        title="{{ $item['name'] }}"><i class="fa fa-folder-open"></i></a>&nbsp;&nbsp;
                                 @endif
-                                @if (session()->has('LogInfo'))
+                                @if (auth('admin')->user())
                                     <a onclick="deleteItem('{{ encrypt($item['id'] . '.' . $item['eTag']) }}')"
-                                       href="javascript:void(0)"><i class="fa fa-trash"
-                                                                    title="删除"></i></a>&nbsp;
+                                       href="javascript:void(0)"><i class="fa fa-trash" title="删除"></i></a>&nbsp;
                                     &nbsp;
                                 @endif
                             </span>
@@ -247,7 +245,7 @@
                     <div class="col-8 col-sm-6" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
                             <span class="text-muted font-weight-light">
                                 共 {{ $parent_item['folder']['childCount'] }} 个项目
-                                @if(session()->has('LogInfo'))
+                                @if (auth('admin')->user())
                                     {{ convertSize($parent_item['size']) }}
                                 @endif
                             </span>

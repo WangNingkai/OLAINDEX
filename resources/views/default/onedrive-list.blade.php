@@ -43,7 +43,7 @@
                     <div style='background-image:url({{ asset("img/3.jpg") }})'>
                         <span class='name'>{{ $oneDrive->name }}</span>
                         <span class="join-box fsbanner-button clockwise fsbanner-both">
-                            <a href="{{ route('home', ['oneDrive' => $oneDrive->id]) }}" class="join"> 进&nbsp;&nbsp;入 </a>
+                            <a href="{{ route('home', ['onedrive' => $oneDrive->id]) }}" class="join"> 进&nbsp;&nbsp;入 </a>
                         </span>
                     </div>   
                     @endforeach
