@@ -240,7 +240,7 @@
                         <a href="{{ route('home', [
                             'query'    => Tool::getEncodeUrl($origin_path ? $origin_path . '/' . $item['name'] : $item['name']),
                             'onedrive' => app('onedrive')->id
-                        )] }}"
+                        ]) }}"
                             title="{{ $item['name'] }}"><i class="fa fa-folder-open"></i></a>&nbsp;&nbsp;
                     @endif
                     @if (auth()->guard('admin')->check())
