@@ -19,15 +19,16 @@ class HandleEncryptDir
      */
     public function handle($request, Closure $next)
     {
-        $route = $request->route()->getName();
-        dd($request->route());
         if (auth()->guard('admin')->user()) {
             return $next($request);
         }
 
-        if (!in_array($route, Arr::get(app('onedrive')->settings, 'encrypt_options'))) {
+        $methodName = explode('@', Arr::get($request->route()->action, 'uses', 'home'));
+        if (count($methodName) > 1 && !in_array($methodName[1], Arr::get(app('onedrive')->settings, 'encrypt_options'))) {
+            return $next($request);
         }
-
+        
+        $route = $request->route()->getName();
         $realPath = $request->route()->parameter('query') ?? '/';
         $encryptDir = Tool::handleEncryptDir(app('onedrive')->encrypt_path);
 
