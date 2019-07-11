@@ -38,6 +38,9 @@
         <article class="htmleaf-container">
             <div class='ex' name='2'>
                 <div class='fsbanner'>
+                @if ($oneDrives->isEmpty()) 
+                    <h1 class="display-3">请先绑定 OneDrive 账号</h1>
+                @else
                     @foreach ($oneDrives as $oneDrive)
                     {{--  TODO:cover  --}}
                     <div style='background-image:url({{ asset("img/3.jpg") }})'>
@@ -47,6 +50,7 @@
                         </span>
                     </div>   
                     @endforeach
+                @endif
                 </div>
             </div>
         </article>

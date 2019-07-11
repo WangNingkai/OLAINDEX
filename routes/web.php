@@ -26,7 +26,6 @@ Route::group(['namespace' => 'Index'], function () {
 
     Route::group(['middleware' => ['auth:web']], function () {
         Route::post('/logout', 'Auth\\LoginController@logout')->name('logout');
-        // TODO: onedrive 选择
         Route::get('onedrive', 'OneDriveController@index')->name('onedrive.list');
         Route::group(['middleware' => [
             'detectOneDrive',
@@ -49,17 +48,17 @@ Route::group(['namespace' => 'Index'], function () {
             // 搜索
             Route::get('search', 'IndexController@search')->name('search')->middleware('throttle:10,2');
             Route::get('search/file/{id}', 'IndexController@searchShow')->name('search.show');
+
+            // 图床
+            Route::get('image', 'Admin\\ManageController@uploadImage')->name('image')->middleware('checkImage');
+            Route::post('image/upload', 'Admin\\ManageController@uploadImage')
+                ->name('image.upload')->middleware('throttle:10,2', 'checkImage');
+            Route::get('file/delete/{sign}', 'Admin\\ManageController@deleteItem')->name('delete');
         });
     });
 });
 
 Route::view('message', config('olaindex.theme') . 'message')->name('message');
-
-// 图床
-Route::get('image', 'Admin\\ManageController@uploadImage')->name('image')->middleware('checkImage');
-Route::post('image/upload', 'Admin\\ManageController@uploadImage')
-    ->name('image.upload')->middleware('throttle:10,2', 'checkImage');
-Route::get('file/delete/{sign}', 'Admin\\ManageController@deleteItem')->name('delete');
 
 // 后台设置管理
 Route::group(['prefix' => 'admin'], function () {

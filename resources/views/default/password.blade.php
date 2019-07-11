@@ -6,7 +6,7 @@
             此文件夹或文件受到保护，您需要提供访问密码才能查看
         </div>
         <div class="card-body">
-            <form action="{{ route('password') }}" method="post">
+            <form action="{{ route('password', ['onedrive' => app('onedrive')->id]) }}" method="post">
                 @csrf
                 <div class="form-group">
                     <label class="form-control-label" for="password">请输入密码</label>

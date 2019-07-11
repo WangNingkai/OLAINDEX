@@ -15,7 +15,7 @@
             {{ $file['name'] }}
         </div>
         <div class="card-body">
-            <div class="text-center"><a href="{{ route('download',\App\Helpers\Tool::getEncodeUrl($origin_path)) }}"
+            <div class="text-center"><a href="{{ route('download',Tool::getEncodeUrl($origin_path)) }}"
                                         class="btn btn-success"><i
                         class="fa fa-download"></i> 下载</a></div>
             <br>
