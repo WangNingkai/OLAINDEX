@@ -21,6 +21,7 @@
         }
     </style>
 @stop
+@include('default.widgets.config')
 @section('js')
     <script src="https://cdnjs.loli.net/ajax/libs/dropzone/5.5.1/min/dropzone.min.js"></script>
     <script>

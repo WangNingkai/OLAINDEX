@@ -24,14 +24,6 @@
             border: 0;
         }
     </style>
-    <script>
-        Config = {
-            'routes': {
-                'upload_image': '{{ route('image.upload') }}'
-            },
-            '_token': '{{ csrf_token() }}',
-        };
-    </script>
 </head>
 
 <body>
