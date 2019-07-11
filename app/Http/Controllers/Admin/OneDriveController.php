@@ -101,6 +101,7 @@ class OneDriveController extends Controller
         ]);
 
         $oneDrive = $this->model->where('admin_id', $this->user()->id)->findOrFail($id);
+        // TODO: is_default 如果已经是默认 取消默认 返回error
         $data['settings'] = array_merge(config('onedrive'), Arr::get($data, 'settings', config(config('onedrive'))));
         $oneDrive->update($data);
 
