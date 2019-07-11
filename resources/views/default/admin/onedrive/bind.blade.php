@@ -16,7 +16,7 @@
 <body>
 <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-primary">
     <div class="container">
-        <a class="navbar-brand" href="{{ route('home') }}">{{ getAdminConfig('name') }}</a>
+        <a class="navbar-brand" href="{{ route('onedrive') }}">{{ getAdminConfig('name') }}</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01"
                 aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -25,7 +25,7 @@
         <div class="collapse navbar-collapse" id="navbarColor01">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('home') }}"><i class="fa fa-home"></i> 首页</a>
+                    <a class="nav-link" href="{{ route('onedrive') }}"><i class="fa fa-home"></i> 首页</a>
                 </li>
             </ul>
         </div>
