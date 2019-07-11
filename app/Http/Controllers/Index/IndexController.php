@@ -22,6 +22,12 @@ use App\Http\Controllers\Controller;
  */
 class IndexController extends Controller
 {
+    public function __construct()
+    {
+        getDefaultOneDriveAccount(route_parameter('onedrive'));
+        $this->middleware('handleEncryptDir')->only(Arr::get(app('onedrive')->settings, 'encrypt_option', config('onedrive.encrypt_option')));
+    }
+
     /**
      * @param Request $request
      *
@@ -89,7 +95,7 @@ class IndexController extends Controller
         $readme = array_key_exists('README.md', $origin_items)
             ? markdown2Html(getFileContent($origin_items['README.md']['@microsoft.graph.downloadUrl']))
             : '';
-        if (!Session::has('LogInfo')) {
+        if (empty(auth()->guard('admin')->user())) {
             $origin_items = Arr::except(
                 $origin_items,
                 ['README.md', 'HEAD.md', '.password', '.deny']

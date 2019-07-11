@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
     use AuthenticatesUsers;
 
     protected $redirectTo = '/admin';
+
+    protected $redirectToLogin = '/admin/login';
 
     /**
      * Create a new controller instance.
@@ -29,12 +32,20 @@ class AuthController extends Controller
      */
     public function showLoginForm()
     {
-        // if (!empty(Auth::guard('admin')->user())) {
-        //     return redirect()->route('admin.basic');
-        // }
-
         return view(config('olaindex.theme') . 'admin.login');
     }
+
+    public function authenticated(Request $request, $user)
+    {
+        Auth::guard('web')->login($user);
+    }
+
+    public function logout(Request $request)
+    {
+        $this->guard()->logout();
+
+        return $this->loggedOut($request) ?: redirect($this->redirectToLogin);
+    } 
 
     protected function guard()
     {

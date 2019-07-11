@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Index\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
     use AuthenticatesUsers;
 
     protected $redirectTo = '/onedrive';
+
+    protected $redirectToLogin = '/';
 
     /**
      * Create a new controller instance.
@@ -29,12 +32,15 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        if (!empty(Auth::guard('web')->user())) {
-            return redirect()->route('onedrive.list');
-        }
-
         return view('auth.login');
     }
+
+    public function logout(Request $request)
+    {
+        $this->guard()->logout();
+
+        return $this->loggedOut($request) ?: redirect($this->redirectToLogin);
+    } 
 
     protected function guard()
     {
