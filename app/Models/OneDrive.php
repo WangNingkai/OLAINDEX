@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Str;
+
 class OneDrive extends Model
 {
     protected $casts = [
         'admin_id'       => 'integer',
+        'cover_id'       => 'integer',
         'is_default'     => 'boolean',
         'is_binded'      => 'boolean',
         'is_configuraed' => 'boolean',
@@ -15,6 +18,7 @@ class OneDrive extends Model
     protected $columns = [
         'id',
         'admin_id',
+        'cover_id',
         'name',
         'root',
         'is_default',
@@ -37,5 +41,10 @@ class OneDrive extends Model
     public function admin()
     {
         return $this->belongsTo(Admin::class);
+    }
+
+    public function cover()
+    {
+        return $this->belongsTo(Image::class, 'cover_id');
     }
 }

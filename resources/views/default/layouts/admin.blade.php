@@ -7,30 +7,12 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="https://fonts.loli.net/css?family=Lato:400,700,400italic">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet"
-          href="https://cdnjs.loli.net/ajax/libs/bootswatch/4.3.1/{{ getAdminConfig('theme') }}/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
-    <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.css">
+    <link href="https://fonts.loli.net/css?family=Lato:400,700,400italic" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootswatch/4.3.1/{{ getAdminConfig('theme') }}/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/limonte-sweetalert2/7.33.1/sweetalert2.min.css" rel="stylesheet">
     @yield('css')
-    <script>
-        Config = {
-            'routes': {
-                'upload_image': '{{ route('image.upload') }}',
-                'upload_file': '{{ route('admin.file.upload') }}',
-                'copy': '{{ route('admin.copy') }}',
-                'move': '{{ route('admin.move') }}',
-                'path2id': '{{ route('admin.path2id') }}',
-                'share': '{{ route('admin.share') }}',
-                'delete_share': '{{ route('admin.share.delete') }}',
-                'upload_url': '{{ route('admin.url.upload') }}'
-            },
-            '_token': '{{ csrf_token() }}',
-        };
-    </script>
 </head>
-
 <body>
 <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-primary">
     <div class="container">
@@ -122,10 +104,10 @@
         </div>
     </footer>
 </div>
-<script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.loli.net/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://cdnjs.loli.net/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.loli.net/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.all.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.bootcss.com/limonte-sweetalert2/7.33.1/sweetalert2.all.min.js"></script>
 @yield('js')
 </body>
 

@@ -69,6 +69,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('logout', 'AuthController@logout')->name('admin.logout');
         Route::view('show', config('olaindex.theme') . 'admin.show')->name('admin.show');
         Route::view('profile', config('olaindex.theme') . 'admin.profile')->name('admin.profile.show');
+        Route::post('image', 'UtilController@storeImage')->name('admin.image');
+        Route::post('image/delete', 'UtilController@destroyImage')->name('admin.image.delete');
 
         // 基础设置
         Route::get('/', 'AdminController@showBasic')->name('admin.basic');
