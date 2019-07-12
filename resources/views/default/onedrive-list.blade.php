@@ -1,10 +1,9 @@
 @extends ('default.layouts.main')
 @section('title', getAdminConfig('name'))
 @section('css')
-<link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/css/blueimp-gallery-indicator.min.css">
-<link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/css/blueimp-gallery.min.css">
-<link rel="stylesheet" type="text/css" href="{{ asset('css/normalize.css') }}" />
-{{--  <link rel="stylesheet" type="text/css" href="{{ asset('css/default.css') }}"> --}}
+<link href="https://cdn.bootcss.com/blueimp-gallery/2.33.0/css/blueimp-gallery-indicator.min.css" rel="stylesheet">
+<link href="https://cdn.bootcss.com/blueimp-gallery/2.33.0/css/blueimp-gallery.min.css" rel="stylesheet">
+<link href="https://cdn.bootcss.com/normalize/8.0.1/normalize.min.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="{{ asset('css/fsbanner.css') }}">
 @stop
 @section('js')
@@ -42,8 +41,7 @@
                     <h1 class="display-3">请先绑定 OneDrive 账号</h1>
                 @else
                     @foreach ($oneDrives as $oneDrive)
-                    {{--  TODO:cover  --}}
-                    <div style='background-image:url({{ asset("img/3.jpg") }})'>
+                    <div style='background-image:url({{ $oneDrive->cover ? $oneDrive->cover->path : '' }})'>
                         <span class='name'>{{ $oneDrive->name }}</span>
                         <span class="join-box fsbanner-button clockwise fsbanner-both">
                             <a href="{{ route('home', ['onedrive' => $oneDrive->id]) }}" class="join"> 进&nbsp;&nbsp;入 </a>

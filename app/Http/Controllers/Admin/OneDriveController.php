@@ -47,9 +47,9 @@ class OneDriveController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name'  => 'required|string|max:255',
-            'root'  => 'required|string|max:255',
-            'cover' => 'required|string',
+            'name'     => 'required|string|max:255',
+            'root'     => 'required|string|max:255',
+            'cover_id' => 'required|exists:images,id',
         ]);
 
         $this->user()->oneDrives()->create($data);
@@ -65,7 +65,7 @@ class OneDriveController extends Controller
      */
     public function edit($id)
     {
-        $oneDrive = $this->model->where('admin_id', $this->user()->id)->findOrFail($id);
+        $oneDrive = $this->model->where('admin_id', $this->user()->id)->with('cover')->findOrFail($id);
 
         return themeView('admin.onedrive.edit', compact('oneDrive'));
     }
@@ -84,7 +84,7 @@ class OneDriveController extends Controller
             'root'                        => 'sometimes|string|max:255',
             'is_default'                  => 'sometimes|boolean',
             'expires'                     => 'sometimes|integer|min:1',
-            'cover'                       => 'string',
+            'cover_id'                    => 'sometimes|exists:images,id',
             'settings'                    => 'array',
             'settings.image_hosting'      => 'in:enabled,disabled,admin_enabled',
             'settings.image_home'         => 'boolean',
@@ -102,10 +102,9 @@ class OneDriveController extends Controller
             'settings.encrypt_option.*'   => 'string|in:list,show,download,view',
         ]);
 
-        // upload cover
-        $oneDrive = $this->model->where('admin_id', $this->user()->id)->findOrFail($id);
+        $oneDrive = $this->model->where('admin_id', $this->user()->id)->with('cover')->findOrFail($id);
 
-        if ($oneDrive->is_default) {
+        if ($oneDrive->is_default && !Arr::get($data, 'is_default')) {
             return redirect()->back()->withErrors(['要更换默认OneDrive，请选择除当前之外的OneDrive设置为默认']);
         }
 

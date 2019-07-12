@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\OneDrive;
 use Illuminate\Support\Arr;
+use App\Services\ImageService;
 
 class OneDriveObserver
 {
@@ -68,6 +69,8 @@ class OneDriveObserver
      */
     public function deleted(OneDrive $oneDrive)
     {
-        //
+        if ($oneDrive->cover) {
+            (new ImageService($oneDrive->cover))->delete();
+        }
     }
 }

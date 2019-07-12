@@ -1,5 +1,9 @@
 @extends('default.layouts.admin')
-@section('title','新增 OneDrive')
+@section('css')
+<link href="https://cdn.bootcss.com/bootstrap-fileinput/5.0.4/css/fileinput.min.css" rel="stylesheet">
+<link href="https://cdn.bootcss.com/bootstrap-fileinput/5.0.4/css/fileinput-rtl.min.css" rel="stylesheet">
+@endSection
+@section('title','修改 OneDrive')
 @section('content')
 @includeWhen(!empty(session('message')), 'default.widgets.success')
 @includeWhen($errors->isNotEmpty(), 'default.widgets.errors')
@@ -19,7 +23,13 @@
             <span class="form-text text-danger">目录索引起始文件夹地址，文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ | 否则无法索引。</span>
         </div>
     </div>
-
+    <div class="form-group row">
+        <input type="hidden" name="cover_id" value="{{ !empty($oneDrive->cover) ? $oneDrive->cover->path : '' }}" data-image-id="{{ $oneDrive->cover_id }}">
+        <label for="image" class="col-sm-2 col-form-label">封面</label>
+        <div class="col-sm-10">
+            <input id="image" name="image" type="file">
+        </div>
+    </div>
     <div class="form-group row">
         <label class="form-control-label col-sm-2" for="expires">缓存时间(秒)</label>
         <div class="col-sm-10">
@@ -166,15 +176,68 @@
 @stop
 
 @section('js')
+<script src="https://cdn.bootcss.com/bootstrap-fileinput/5.0.4/js/plugins/piexif.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap-fileinput/5.0.4/js/fileinput.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap-fileinput/5.0.4/themes/fa/theme.min.js"></script>
 <script type="text/javascript">
-    $(function() {
-        $('input[type="checkbox"]').on('click', function (e) {
-            if (e.toElement.value == 'on' || e.toElement.value == 0) {
-                e.toElement.value = 1;
-            } else {
-                e.toElement.value = 0;
+$(function () {
+    $('input[type="checkbox"]').on('click', function (e) {
+        if (e.toElement.value == 'on' || e.toElement.value == 0) {
+            e.toElement.value = 1;
+        } else {
+            e.toElement.value = 0;
+        }
+    });
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    $("#image").fileinput({
+        theme: 'fa',
+        showUpload: false,
+        dropZoneEnabled: false,
+        maxFileCount: 1,
+        uploadUrl: "{{ route('admin.image') }}",
+        allowedFileExtensions: ['jpg','png', 'jpeg'],
+        allowedFileTypes: ['image'],
+        
+        @if (!empty($oneDrive->cover))
+        initialPreview: [
+            "<img src='{{ $oneDrive->cover->path }}' class='file-preview-image kv-preview-data' alt='{{ $oneDrive->cover->path }}' title='{{ $oneDrive->cover->path }}'>",
+        ],
+        initialPreviewConfig: [
+            {
+                caption: "{{ $oneDrive->cover->path }}"
+            }
+        ]     
+        @endif
+    }).on('fileuploaded', function(event, previewId, index, fileId) {
+        var path = previewId.response.data.path;
+        var image_id = previewId.response.data.id;
+        $("input[name='cover_id']").val(image_id)
+        $("input[name='cover_id']").data('image-id', image_id);
+        var $index = $('#' + index);
+        $index.find('img').attr('title', path);
+        $index.find('.file-caption-info').text(path);
+        $(".file-caption-name").attr('title', path);
+        $(".file-caption-name").val(path);
+    }).on('filesuccessremove', function(event, id) {
+        var image_ids = [$("input[name='cover_id']").data('image-id')];
+
+        $.ajax({
+            type: "POST",
+            url: "{{ route('admin.image.delete') }}",
+            data: {
+                "image_ids": image_ids
+            },
+            success: function () {
+                $("input[name='cover_id']").val('');
             }
         });
     });
+})
 </script>
 @endSection

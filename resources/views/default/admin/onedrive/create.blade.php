@@ -22,7 +22,7 @@
         </div>
     </div>
     <div class="form-group row">
-        <input type="hidden" name="cover">
+        <input type="hidden" name="cover_id">
         <label for="image" class="col-sm-2 col-form-label">封面</label>
         <div class="col-sm-10">
             <input id="image" name="image" type="file">
@@ -57,17 +57,16 @@ $(function () {
         allowedFileTypes: ['image'],
     }).on('fileuploaded', function(event, previewId, index, fileId) {
         var path = previewId.response.data.path;
-        $("input[name='cover']").val(path)
-        $("input[name='cover']").data('image-id', previewId.response.data.id);
+        var image_id = previewId.response.data.id;
+        $("input[name='cover_id']").val(image_id)
+        $("input[name='cover_id']").data('image-id', image_id);
         var $index = $('#' + index);
-        console.log($index);
         $index.find('img').attr('title', path);
         $index.find('.file-caption-info').text(path);
         $(".file-caption-name").attr('title', path);
         $(".file-caption-name").val(path);
     }).on('filesuccessremove', function(event, id) {
-        console.log(id);
-        var image_ids = [$("input[name='cover']").data('image-id')];
+        var image_ids = [$("input[name='cover_id']").data('image-id')];
 
         $.ajax({
             type: "POST",
@@ -76,7 +75,7 @@ $(function () {
                 "image_ids": image_ids
             },
             success: function () {
-                $("input[name='cover']").val('');
+                $("input[name='cover_id']").val('');
             }
         });
     });

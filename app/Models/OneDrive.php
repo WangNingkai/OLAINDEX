@@ -8,6 +8,7 @@ class OneDrive extends Model
 {
     protected $casts = [
         'admin_id'       => 'integer',
+        'cover_id'       => 'integer',
         'is_default'     => 'boolean',
         'is_binded'      => 'boolean',
         'is_configuraed' => 'boolean',
@@ -17,13 +18,13 @@ class OneDrive extends Model
     protected $columns = [
         'id',
         'admin_id',
+        'cover_id',
         'name',
         'root',
         'is_default',
         'is_binded',
         'is_configuraed',
         'app_version',
-        'cover',
         'access_token',
         'refresh_token',
         'access_token_expires',
@@ -42,17 +43,8 @@ class OneDrive extends Model
         return $this->belongsTo(Admin::class);
     }
 
-    public function getCoverAttribute($path)
+    public function cover()
     {
-        return app('filesystem')->disk('public')->url($path);
-    }
-
-    public function setCoverAttribute($cover)
-    {
-        $this->attributes['cover'] = $cover;
-
-        if (Str::startsWith($cover, env('APP_URL'))) {
-            $this->attributes['cover'] = str_replace(env('APP_URL'), '', $cover);
-        }
+        return $this->belongsTo(Image::class, 'cover_id');
     }
 }
