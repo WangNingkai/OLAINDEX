@@ -12,8 +12,7 @@ class Admin extends Authenticatable
     protected $guarded = [];
 
     protected $casts = [
-        'is_binded'     => 'boolean',
-        'is_image_home' => 'boolean'
+        'is_binded' => 'boolean'
     ];
 
     /**
@@ -34,5 +33,10 @@ class Admin extends Authenticatable
     public function oneDrives()
     {
         return $this->hasMany(OneDrive::class);
+    }
+
+    public function images()
+    {
+        return $this->hasMany(Image::class);
     }
 }

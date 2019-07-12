@@ -9,28 +9,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://fonts.loli.net/css?family=Lato:400,700,400italic">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet"
-          href="https://cdnjs.loli.net/ajax/libs/bootswatch/4.3.1/{{ getAdminConfig('theme') }}/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/bootswatch/4.3.1/{{ getAdminConfig('theme') }}/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
     <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.css">
     @yield('css')
-    <script>
-        Config = {
-            'routes': {
-                'upload_image': '{{ route('image.upload') }}',
-                'upload_file': '{{ route('admin.file.upload') }}',
-                'copy': '{{ route('admin.copy') }}',
-                'move': '{{ route('admin.move') }}',
-                'path2id': '{{ route('admin.path2id') }}',
-                'share': '{{ route('admin.share') }}',
-                'delete_share': '{{ route('admin.share.delete') }}',
-                'upload_url': '{{ route('admin.url.upload') }}'
-            },
-            '_token': '{{ csrf_token() }}',
-        };
-    </script>
 </head>
-
 <body>
 <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-primary">
     <div class="container">

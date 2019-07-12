@@ -22,6 +22,7 @@ class CreateOneDrivesTable extends Migration
             $table->boolean('is_binded')->default(0)->comment('是否绑定');
             $table->string('app_version')->default('v3.2.1')->comment('app版本');
             $table->string('root')->default('/')->comment('OneDrive根目录');
+            $table->string('cover')->comment('OneDrive封面');
             $table->text('access_token')->nullable()->comment('访问token');
             $table->text('refresh_token')->nullable()->comment('刷新token');
             $table->integer('access_token_expires')->nullable()->comment('过期时间');

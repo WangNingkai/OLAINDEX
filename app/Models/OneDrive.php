@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Str;
+
 class OneDrive extends Model
 {
     protected $casts = [
@@ -21,6 +23,7 @@ class OneDrive extends Model
         'is_binded',
         'is_configuraed',
         'app_version',
+        'cover',
         'access_token',
         'refresh_token',
         'access_token_expires',
@@ -37,5 +40,19 @@ class OneDrive extends Model
     public function admin()
     {
         return $this->belongsTo(Admin::class);
+    }
+
+    public function getCoverAttribute($path)
+    {
+        return app('filesystem')->disk('public')->url($path);
+    }
+
+    public function setCoverAttribute($cover)
+    {
+        $this->attributes['cover'] = $cover;
+
+        if (Str::startsWith($cover, env('APP_URL'))) {
+            $this->attributes['cover'] = str_replace(env('APP_URL'), '', $cover);
+        }
     }
 }
