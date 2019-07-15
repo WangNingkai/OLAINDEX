@@ -9,6 +9,7 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use App\Http\Controllers\Controller;
 
 /**
@@ -18,15 +19,6 @@ use App\Http\Controllers\Controller;
  */
 class ManageController extends Controller
 {
-    /**
-     * GraphController constructor.
-     */
-    public function __construct()
-    {
-        $this->middleware('checkAuth')->except(['uploadImage', 'deleteItem']);
-        $this->middleware('checkToken');
-    }
-
     /**
      * @param Request $request
      *
@@ -63,8 +55,7 @@ class ManageController extends Controller
 
         if (file_exists($path) && is_readable($path)) {
             $content = file_get_contents($path);
-            $hostingPath
-                = Tool::getEncodeUrl(Tool::config('image_hosting_path'));
+            $hostingPath = Tool::getEncodeUrl(Tool::config('image_hosting_path'));
             $middleName = '/' . date('Y') . '/' . date('m') . '/'
                 . date('d') . '/' . Str::random(8) . '/';
             $filePath = trim($hostingPath . $middleName
@@ -98,6 +89,11 @@ class ManageController extends Controller
         }
     }
 
+    public function showFile()
+    {
+        return themeView('admin.onedrive.file');
+    }
+
     /**
      * @param Request $request
      *
@@ -106,43 +102,28 @@ class ManageController extends Controller
      */
     public function uploadFile(Request $request)
     {
-        if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme') . 'admin.file');
-        }
-        $field = 'olaindex_file';
-        $target_directory = $request->get('root', '/');
-        if (!$request->hasFile($field)) {
-            return response('上传文件或目录为空', 400);
-        }
-        $file = $request->file($field);
-        $rule = [$field => 'required|max:4096']; // 上传文件规则，单文件指定大小4M
-        $validator = $request->validate($rule);
-        if ($validator->fails()) {
-            return response($validator->errors()->first(), 400);
-        }
-        if (!$file->isValid()) {
-            return response('文件上传出错', 400);
-        }
-        $path = $file->getRealPath();
+        $file = $request->file('olaindex_file');
+        $validator = $request->validate([
+            'olaindex_file' => 'required|file|max:4096',
+            'root'          => 'nullable|string',
+        ]);
+
+        $validator['root'] = Arr::get($validator, 'root', '/');
+        $path = $validator['olaindex_file']->path();
+
         if (file_exists($path) && is_readable($path)) {
             $content = file_get_contents($path);
-            $storeFilePath = trim(Tool::getEncodeUrl($target_directory), '/')
+            $storeFilePath = trim(Tool::getEncodeUrl($validator['root']), '/')
                 . '/' . $file->getClientOriginalName(); // 远程保存地址
             $remoteFilePath = Tool::getOriginPath($storeFilePath); // 远程文件保存地址
             $response = OneDrive::uploadByPath($remoteFilePath, $content);
             if ($response['errno'] === 0) {
-                $data = [
-                    'errno' => 200,
-                    'data'  => [
-                        'id'       => $response['data']['id'],
-                        'filename' => $response['data']['name'],
-                        'size'     => $response['data']['size'],
-                        'time'     => $response['data']['lastModifiedDateTime'],
-                    ],
-                ];
-                @unlink($path);
-
-                return response()->json($data, $data['errno']);
+                return $this->success([
+                    'id'       => Arr::get($response, 'data.id'),
+                    'filename' => Arr::get($response, 'data.name'),
+                    'size'     => Arr::get($response, 'data.size'),
+                    'time'     => Arr::get($response, 'data.lastModifiedDateTime'),
+                ]);
             } else {
                 return $response;
             }
@@ -186,8 +167,9 @@ class ManageController extends Controller
     public function createFile(Request $request)
     {
         if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme') . 'admin.add');
+            return themeView('admin.onedrive.add');
         }
+
         $name = $request->get('name');
         try {
             $path = decrypt($request->get('path'));
@@ -201,7 +183,7 @@ class ManageController extends Controller
         $remoteFilePath = Tool::getOriginPath($storeFilePath); // 远程md保存地址
         $response = OneDrive::uploadByPath($remoteFilePath, $content);
         $response['errno'] === 0 ? Tool::showMessage('添加成功！') : Tool::showMessage('添加失败！', false);
-        Cache::forget('one:list:' . Tool::getAbsolutePath($path));
+        Cache::forget('one' . app('onedrive')->id . ':list:' . Tool::getAbsolutePath($path));
 
         return redirect()->route('home', Tool::getEncodeUrl($path));
     }
@@ -225,7 +207,7 @@ class ManageController extends Controller
                 $file = '';
             }
 
-            return view(config('olaindex.theme') . 'admin.edit', compact('file'));
+            return themeView('admin.onedrive.edit', compact('file'));
         }
         $content = $request->get('content');
         $response = OneDrive::upload($id, $content);

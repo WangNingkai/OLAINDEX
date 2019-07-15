@@ -27,26 +27,45 @@
             <td>{{ $oneDrive->is_binded ? '是' : '否' }}</td>
             <td>
                 <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                    <a href="{{ route('admin.onedrive.edit', ['onedrive' => $oneDrive->id]) }}" class="btn btn-primary">编辑</a>
-                    <button type="button" data-id="{{ $oneDrive->id }}" class="btn btn-primary btn-delete">删除</button>
+                    <a href="{{ route('admin.onedrive.edit', ['onedrive' => $oneDrive->id]) }}" class="btn btn-primary">
+                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i> 编辑
+                    </a>
+                    <button type="button" data-id="{{ $oneDrive->id }}" class="btn btn-primary btn-delete">
+                        <i class="fa fa-trash-o" aria-hidden="true"></i> 删除
+                    </button>
                 @if ($oneDrive->is_binded)
-                    <button type="button" class="btn btn-primary btn-unbind">解绑</button>
+                    <button type="button" class="btn btn-primary btn-unbind">
+                        <i class="fa fa-unlock-alt" aria-hidden="true"></i> 解绑
+                    </button>
                     <form action="{{ route('admin.onedrive.unbind', ['onedrive' => $oneDrive->id]) }}" method="POST" style="display: none;">
                         @csrf
                     </form>
                 @else
-                    <a href="{{ route('admin.onedrive.bind', ['onedrive' => $oneDrive->id]) }}" class="btn btn-primary">绑定</a>                    
+                    <a href="{{ route('admin.onedrive.bind', ['onedrive' => $oneDrive->id]) }}" class="btn btn-primary">
+                        <i class="fa fa-lock" aria-hidden="true"></i> 绑定
+                    </a>                    
                 @endif
                     <div class="btn-group" role="group">
-                        <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle"
+                        <button id="btnGroupCache" type="button" class="btn btn-primary dropdown-toggle"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            缓存
+                            <i class="fa fa-cog" aria-hidden="true"></i> 缓存
                         </button>
-                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                        <div class="dropdown-menu" aria-labelledby="btnGroupCache">
                             <a class="dropdown-item" href="{{ route('admin.onedrive.clear', ['onedrive' => $oneDrive->id]) }}">清理</a>
                             <a class="dropdown-item" href="{{ route('admin.onedrive.refresh', ['onedrive' => $oneDrive->id]) }}">刷新</a>
                         </div>
                     </div>
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupFile" type="button" class="btn btn-primary dropdown-toggle"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-file-o" aria-hidden="true"></i> 文件操作
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupFile">
+                            <a class="dropdown-item" href="{{ route('admin.onedrive.file', ['onedrive' => $oneDrive->id]) }}">普通文件上传 </a>
+                            <a class="dropdown-item" href="{{ route('admin.onedrive.other', ['onedrive' => $oneDrive->id]) }}">其它操作 </a>
+                        </div>
+                    </div>
+
                 </div>
             </td>
         </tr>
@@ -63,6 +82,12 @@
 @section('js')
 <script>
     $(function () {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });     
+           
         $(".btn-delete").click(function (e) {
             var $this = this;
             swal({
@@ -75,11 +100,6 @@
                 reverseButtons: true
             }).then((result) => {
                 if (result.value) {
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        }
-                    });
                     $.ajax({
                         type: "DELETE",
                         url: "{{ url()->current()  . '/' }}" + $this.dataset.id,
@@ -87,9 +107,7 @@
                             console.log($($this).parents("tr").remove());
                         }
                     });
-                } else if (result.dismiss === swal.DismissReason.cancel) {
-                    swal('已取消', '', 'error');
-                }
+                } 
             })
         });
 
@@ -106,8 +124,6 @@
             }).then((result) => {
                 if (result.value) {
                     $($this).next().submit();
-                } else if (result.dismiss === swal.DismissReason.cancel) {
-                    swal('已取消', '', 'info');
                 }
             })
         })
