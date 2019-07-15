@@ -38,22 +38,29 @@ class ManageController extends Controller
         if (!$request->isMethod('post')) {
             return view(config('olaindex.theme') . 'image');
         }
+
         $field = 'olaindex_img';
+
         if (!$request->hasFile($field)) {
             $data = ['errno' => 400, 'message' => '上传文件为空'];
 
             return response()->json($data, $data['errno']);
         }
+
         $file = $request->file($field);
         $rule = [$field => 'required|max:4096|image'];
         $validator = $request->validate($rule);
+
         if ($validator->fails()) {
             return response($validator->errors()->first(), 400);
         }
+
         if (!$file->isValid()) {
             return response('文件上传出错', 400);
         }
+
         $path = $file->getRealPath();
+
         if (file_exists($path) && is_readable($path)) {
             $content = file_get_contents($path);
             $hostingPath
@@ -64,6 +71,7 @@ class ManageController extends Controller
                 . $file->getClientOriginalName(), '/');
             $remoteFilePath = Tool::getOriginPath($filePath); // 远程图片保存地址
             $response = OneDrive::uploadByPath($remoteFilePath, $content);
+
             if ($response['errno'] === 0) {
                 $sign = $response['data']['id'] . '.'
                     . encrypt($response['data']['eTag']);
@@ -164,7 +172,7 @@ class ManageController extends Controller
         $response = OneDrive::uploadByPath($remoteFilePath, $password);
         $response['errno'] === 0 ? Tool::showMessage('操作成功！')
             : Tool::showMessage('操作失败，请重试！', false);
-        Cache::forget('one:list:' . Tool::getAbsolutePath($path));
+        Cache::forget('one' . app('onedrive')->id . ':list:' . Tool::getAbsolutePath($path));
 
         return redirect()->back();
     }
@@ -295,13 +303,7 @@ class ManageController extends Controller
         $parentItemId = $request->get('target_id');
         $response = OneDrive::copy($itemId, $parentItemId);
         if ($response['errno'] === 0) {
-            return response()->json(
-                [
-                    'code' => 200,
-                    'data' => $response['data'],
-                    'msg'  => 'OK',
-                ]
-            );
+            return $this->success($response['data']);
         } else {
             return $response;
         } // 返回复制进度链接
@@ -320,13 +322,7 @@ class ManageController extends Controller
         $response = OneDrive::move($itemId, $parentItemId);
 
         if ($response['errno'] === 0) {
-            return response()->json(
-                [
-                    'code' => 200,
-                    'data' => $response['data'],
-                    'msg'  => 'OK',
-                ]
-            );
+            return $this->success($response['data']);
         } else {
             return $response;
         }
@@ -345,13 +341,7 @@ class ManageController extends Controller
         $response = OneDrive::uploadUrl($remote, $url);
 
         if ($response['errno'] === 0) {
-            return response()->json(
-                [
-                    'code' => 200,
-                    'data' => $response['data'],
-                    'msg'  => 'OK',
-                ]
-            );
+            return $this->success($response['data']);
         } else {
             return $response;
         }
@@ -369,13 +359,7 @@ class ManageController extends Controller
         $response = OneDrive::createShareLink($itemId);
 
         if ($response['errno'] === 0) {
-            return response()->json(
-                [
-                    'code' => 200,
-                    'data' => $response['data'],
-                    'msg'  => 'OK',
-                ]
-            );
+            return $this->success($response['data']);
         } else {
             return $response;
         }
@@ -418,13 +402,7 @@ class ManageController extends Controller
         $response = OneDrive::pathToItemId($graphPath);
 
         if ($response['errno'] === 0) {
-            return response()->json(
-                [
-                    'code' => 200,
-                    'data' => $response['data'],
-                    'msg'  => 'OK',
-                ]
-            );
+            return $this->success($response['data']);
         } else {
             return $response;
         }

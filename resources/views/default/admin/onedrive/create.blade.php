@@ -41,6 +41,21 @@
 <script src="https://cdn.bootcss.com/bootstrap-fileinput/5.0.4/themes/fa/theme.min.js"></script>
 <script type="text/javascript">
 $(function () {
+    var deleteImage = function () {
+        var image_ids = [$("input[name='cover_id']").data('image-id')];
+        
+        $.ajax({
+            type: "POST",
+            url: "{{ route('admin.image.delete') }}",
+            data: {
+                "image_ids": image_ids
+            },
+            success: function () {
+                $("input[name='cover_id']").val('');
+            }
+        });
+    }
+    
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -65,19 +80,10 @@ $(function () {
         $index.find('.file-caption-info').text(path);
         $(".file-caption-name").attr('title', path);
         $(".file-caption-name").val(path);
+    }).on('fileclear', function(event) {
+        deleteImage();
     }).on('filesuccessremove', function(event, id) {
-        var image_ids = [$("input[name='cover_id']").data('image-id')];
-
-        $.ajax({
-            type: "POST",
-            url: "{{ route('admin.image.delete') }}",
-            data: {
-                "image_ids": image_ids
-            },
-            success: function () {
-                $("input[name='cover_id']").val('');
-            }
-        });
+        deleteImage();
     });
 })
 </script>

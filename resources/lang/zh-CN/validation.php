@@ -159,6 +159,7 @@ return [
         'content'   => '内容',
         'country'   => '国家',
         'copyright' => '版权',
+        'cover_id'  => '封面',
 
         // D
         'date'        => '日期',
