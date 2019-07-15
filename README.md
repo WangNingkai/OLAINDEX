@@ -119,7 +119,9 @@ chown -R www:www *
  5. 登录Admin端（/admin/login），点击OneDrive 列表 创建并绑定 OneDrive 账号
 ### TODO
 
+ - [ ] install
  - [ ] aria2
  - [x] Console/OneDrive
  - [ ] ManggeController
  - [ ] IndexConttroller
+ - [ ] themes 配置 (caffeinated/themes)
