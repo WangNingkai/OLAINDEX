@@ -29,6 +29,17 @@
                 this.on('success', function () {
                     swal('上传成功', '文件已上传至OneDrive', 'success');
                 });
+                this.on('error', function (file, message, xhr) {
+                    errorMessage = '';
+                    console.log(message);
+                    for (var field in message['errors']) {
+                        for (var index in message['errors'][field]) {
+                            errorMessage += message['errors'][field][index] + "<br/>";
+                        } 
+                    }
+
+                    swal('上传失败', errorMessage, 'error');
+                });
             },
             dictDefaultMessage: '拖拽文件至此上传 (最大支持4M)',
             dictFallbackMessage: '浏览器不支持拖拽上传',

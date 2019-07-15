@@ -11,6 +11,11 @@
     <link href="https://cdn.bootcss.com/bootswatch/4.3.1/{{ getAdminConfig('theme') }}/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/limonte-sweetalert2/7.33.1/sweetalert2.min.css" rel="stylesheet">
+    <style>
+        #logout-form {
+            margin: 0px;
+        }
+    </style>
     @yield('css')
 </head>
 <body>
@@ -38,14 +43,6 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('admin.onedrive.index') }}" ><i class="fa fa-cloud"></i>
                         OneDrive列表 </a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                       aria-haspopup="true" aria-expanded="false"><i class="fa fa-cogs"></i> 文件操作</a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{{ route('admin.file') }}">普通文件上传 </a>
-                        <a class="dropdown-item" href="{{ route('admin.other') }}">其它操作 </a>
-                    </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('log-viewer::dashboard') }}" target="_blank"><i
