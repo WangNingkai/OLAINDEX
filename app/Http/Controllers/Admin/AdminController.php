@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Helpers\Tool;
 use App\Helpers\Constants;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Cache;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Arr;
 
@@ -48,8 +45,6 @@ class AdminController extends Controller
         }, $data);
 
         $admin->update($data);
-        // Tool::updateConfig($data);
-        // Tool::showMessage('保存成功！');
 
         return success();
     }
@@ -70,8 +65,6 @@ class AdminController extends Controller
         ]);
 
         $this->user()->update(Arr::only($data, 'password'));
-        // Tool::updateConfig($data);
-        // Tool::showMessage('保存成功！');
 
         return success();
     }

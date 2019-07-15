@@ -1,7 +1,7 @@
 @extends('default.layouts.admin')
 @section('title','普通文件上传')
 @section('css')
-    <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/dropzone/5.5.1/min/dropzone.min.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/dropzone/5.5.1/min/dropzone.min.css"/>
     <style>
         .dropzone {
             border: 2px dashed #ccc;
@@ -12,7 +12,7 @@
 @stop
 @include('default.widgets.config')
 @section('js')
-    <script src="https://cdnjs.loli.net/ajax/libs/dropzone/5.5.1/min/dropzone.min.js"></script>
+    <script src="https://cdn.bootcss.com/dropzone/5.5.1/min/dropzone.min.js"></script>
     <script>
         Dropzone.options.fileDropzone = {
             url: Config.routes.upload_file,
@@ -28,6 +28,17 @@
                 });
                 this.on('success', function () {
                     swal('上传成功', '文件已上传至OneDrive', 'success');
+                });
+                this.on('error', function (file, message, xhr) {
+                    errorMessage = '';
+                    console.log(message);
+                    for (var field in message['errors']) {
+                        for (var index in message['errors'][field]) {
+                            errorMessage += message['errors'][field][index] + "<br/>";
+                        } 
+                    }
+
+                    swal('上传失败', errorMessage, 'error');
                 });
             },
             dictDefaultMessage: '拖拽文件至此上传 (最大支持4M)',

@@ -181,13 +181,20 @@
 <script src="https://cdn.bootcss.com/bootstrap-fileinput/5.0.4/themes/fa/theme.min.js"></script>
 <script type="text/javascript">
 $(function () {
-    $('input[type="checkbox"]').on('click', function (e) {
-        if (e.toElement.value == 'on' || e.toElement.value == 0) {
-            e.toElement.value = 1;
-        } else {
-            e.toElement.value = 0;
-        }
-    });
+    var deleteImage = function () {
+        var image_ids = [$("input[name='cover_id']").data('image-id')];
+        
+        $.ajax({
+            type: "POST",
+            url: "{{ route('admin.image.delete') }}",
+            data: {
+                "image_ids": image_ids
+            },
+            success: function () {
+                $("input[name='cover_id']").val('');
+            }
+        });
+    }
 
     $.ajaxSetup({
         headers: {
@@ -203,14 +210,17 @@ $(function () {
         uploadUrl: "{{ route('admin.image') }}",
         allowedFileExtensions: ['jpg','png', 'jpeg'],
         allowedFileTypes: ['image'],
-        
         @if (!empty($oneDrive->cover))
+        initialPreviewAsData: true, 
         initialPreview: [
-            "<img src='{{ $oneDrive->cover->path }}' class='file-preview-image kv-preview-data' alt='{{ $oneDrive->cover->path }}' title='{{ $oneDrive->cover->path }}'>",
+            "{{ $oneDrive->cover->path }}",
         ],
         initialPreviewConfig: [
             {
-                caption: "{{ $oneDrive->cover->path }}"
+                caption: "{{ $oneDrive->cover->path }}",
+                url: "{{ route('admin.image.delete') }}",// 预展示图片的删除调取路径  
+                key: 100,// 可修改 场景2中会用的  
+                extra: {image_ids: [ {{$oneDrive->cover_id}} ]} //调用删除路径所传参数  
             }
         ]     
         @endif
@@ -224,19 +234,10 @@ $(function () {
         $index.find('.file-caption-info').text(path);
         $(".file-caption-name").attr('title', path);
         $(".file-caption-name").val(path);
+    }).on('fileclear', function(event) {
+        deleteImage();
     }).on('filesuccessremove', function(event, id) {
-        var image_ids = [$("input[name='cover_id']").data('image-id')];
-
-        $.ajax({
-            type: "POST",
-            url: "{{ route('admin.image.delete') }}",
-            data: {
-                "image_ids": image_ids
-            },
-            success: function () {
-                $("input[name='cover_id']").val('');
-            }
-        });
+        deleteImage();
     });
 })
 </script>

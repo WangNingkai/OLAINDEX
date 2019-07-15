@@ -43,7 +43,7 @@
 @stop
 @include('default.widgets.config')
 @section('js')
-    <script src="https://cdnjs.loli.net/ajax/libs/axios/0.18.0/axios.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
     <script>
         $(function () {
             $("#submit_btn").on("click", function () {
