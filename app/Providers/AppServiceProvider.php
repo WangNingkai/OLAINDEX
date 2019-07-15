@@ -7,6 +7,8 @@ use App\Models\OneDrive;
 use App\Observers\OneDriveObserver;
 use App\Models\Admin;
 use App\Observers\AdminObserver;
+use App\Models\Image;
+use App\Observers\ImageObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Admin::observe(AdminObserver::class);
+        Image::observe(ImageObserver::class);
         OneDrive::observe(OneDriveObserver::class);
     }
 }

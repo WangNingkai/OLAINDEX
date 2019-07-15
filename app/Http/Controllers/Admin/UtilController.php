@@ -48,7 +48,7 @@ class UtilController extends Controller
             $images = Image::whereIn('id', $ids)->where('admin_id', $this->user()->id)->get();
 
             foreach ($images as $image) {
-                (new ImageService($image))->delete();
+                $image->delete();
             }
         }
 
