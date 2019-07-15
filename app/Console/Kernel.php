@@ -28,7 +28,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('od:refresh')->everyThirtyMinutes();
         $schedule->command('od:cache')->everyTenMinutes();
-        $schedule->command(':cacheclear:image')->dailyAt('3:00');
+        $schedule->command('clear:image')->dailyAt('3:00');
     }
 
     /**
