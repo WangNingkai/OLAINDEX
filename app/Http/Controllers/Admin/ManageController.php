@@ -236,7 +236,7 @@ class ManageController extends Controller
         $response = OneDrive::mkdirByPath($name, $graphPath);
         $response['errno'] === 0 ? Tool::showMessage('新建目录成功！')
             : Tool::showMessage('新建目录失败！', false);
-        Cache::forget('one:list:' . Tool::getAbsolutePath($path));
+        Cache::forget('one' . app('onedrive')->id . ':list:' . Tool::getAbsolutePath($path));
 
         return redirect()->back();
     }
