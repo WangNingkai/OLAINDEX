@@ -51,8 +51,8 @@
         <div class="card-body">
             <div class="text-center">
                 <a href="{{ route('download', [
-                        'query'    => Tool::getEncodeUrl($origin_path)
-                        'onedrive' => app('onedrive')->id
+                    'query'    => Tool::getEncodeUrl($origin_path),
+                    'onedrive' => app('onedrive')->id
                 ]) }}" class="btn btn-success">
                     <i class="fa fa-download"></i>下载</a>
             </div>
@@ -68,7 +68,7 @@
                     <div class="input-group mb-3">
                         <input type="text" id="link1" class="form-control"
                                value="{{ route('download', [
-                                    'query'    => Tool::getEncodeUrl($origin_path)
+                                    'query'    => Tool::getEncodeUrl($origin_path),
                                     'onedrive' => app('onedrive')->id
                                ]) }}">
                         <div class="input-group-append">

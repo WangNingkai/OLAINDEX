@@ -12,14 +12,14 @@
             <br>
             <div class="text-center">
                 <a href="{{ route('download', [
-                        'query'    => Tool::getEncodeUrl($origin_path)
+                        'query'    => Tool::getEncodeUrl($origin_path),
                         'onedrive' => app('onedrive')->id
                     ]) }}" class="btn btn-success">
                     <i class="fa fa-download"></i> 下载
                 </a>
                 &nbsp;&nbsp;
                 <a href="{{ route('view', [
-                        'query'    => Tool::getEncodeUrl($origin_path)
+                        'query'    => Tool::getEncodeUrl($origin_path),
                         'onedrive' => app('onedrive')->id
                     ]) }}" data-fancybox="image-list"
                    class="btn btn-info"><i class="fa fa-eye"></i>
@@ -31,7 +31,7 @@
                 <div class="input-group mb-3">
                     <input type="text" id="link1" class="form-control"
                            value="{{ route('view',[
-                                'query'    => Tool::getEncodeUrl($origin_path)
+                                'query'    => Tool::getEncodeUrl($origin_path),
                                 'onedrive' => app('onedrive')->id
                             ]) }}">
                     <div class="input-group-append">
@@ -46,7 +46,7 @@
                 <div class="input-group mb-3">
                     <input type="text" id="link2" class="form-control"
                            value="![]({{ route('view', [
-                                'query'    => Tool::getEncodeUrl($origin_path)
+                                'query'    => Tool::getEncodeUrl($origin_path),
                                 'onedrive' => app('onedrive')->id
                             ]) }})">
                     <div class="input-group-append">
@@ -61,7 +61,7 @@
                 <div class="input-group mb-3">
                     <input type="text" id="link3" class="form-control"
                            value="<img src='{{ route('view', [
-                                'query'    => Tool::getEncodeUrl($origin_path)
+                                'query'    => Tool::getEncodeUrl($origin_path),
                                 'onedrive' => app('onedrive')->id
                             ]) }}' />">
                     <div class="input-group-append">
