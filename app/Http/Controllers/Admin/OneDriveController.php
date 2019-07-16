@@ -231,8 +231,9 @@ class OneDriveController extends Controller
             return redirect()->route('admin.onedrive.index')->withErrors(["{$oneDrive->name} 请先绑定"]);
         }
 
-        getDefaultOneDriveAccount($oneDrive->id);
-        Artisan::call('od:cache');
+        Artisan::call('od:cache', [
+            '--one_drive_id' => $oneDrive->id
+        ]);
 
         return success();
     }

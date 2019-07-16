@@ -42,11 +42,11 @@ class Find extends Command
     public function handle()
     {
         $this->info('请稍等...');
-        $this->call(
-            !empty($one_drive_id  = $this->option('one_drive_id')) 
-                ? 'od:refresh --one_drive_id=' . $one_drive_id
-                : 'od:refresh'
-        );
+        if (!empty($this->option('one_drive_id'))) {
+            $this->call('od:refresh', ['--one_drive_id' => $this->option('one_drive_id')]);
+        } else {
+            $this->call('od:refresh');
+        }
         $keywords = $this->argument('keywords');
         $remote = $this->option('remote');
         $offset = $this->option('offset');

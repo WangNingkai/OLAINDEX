@@ -37,11 +37,12 @@ class CreateFolder extends Command
      */
     public function handle()
     {
-        $this->call(
-            !empty($one_drive_id  = $this->option('one_drive_id')) 
-                ? 'od:refresh --one_drive_id=' . $one_drive_id
-                : 'od:refresh'
-        );
+        if (!empty($this->option('one_drive_id'))) {
+            $this->call('od:refresh', ['--one_drive_id' => $this->option('one_drive_id')]);
+        } else {
+            $this->call('od:refresh');
+        }
+
         $name = $this->argument('name');
         $remote = $this->argument('remote');
         $response = OneDrive::mkdirByPath($name, $remote);

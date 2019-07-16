@@ -35,11 +35,11 @@ class WhereIs extends Command
      */
     public function handle()
     {
-        $this->call(
-            !empty($one_drive_id  = $this->option('one_drive_id')) 
-                ? 'od:refresh --one_drive_id=' . $one_drive_id
-                : 'od:refresh'
-        );
+        if (!empty($this->option('one_drive_id'))) {
+            $this->call('od:refresh', ['--one_drive_id' => $this->option('one_drive_id')]);
+        } else {
+            $this->call('od:refresh');
+        }
         $id = $this->argument('id');
         $response = OneDrive::itemIdToPath($id);
         if ($response['errno'] === 0) {
