@@ -91,21 +91,35 @@
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">操作</a>
                 <div class="dropdown-menu" aria-labelledby="actionDropdownLink">
                     @if (array_key_exists('README.md', $origin_items))
-                    <a class="dropdown-item" href="{{ route('admin.file.update',$origin_items['README.md']['id']) }}"><i
+                    <a class="dropdown-item" href="{{ route('admin.onedrive.file.update', [
+                            'id' => $origin_items['README.md']['id'],
+                            'onedrive' => app('onedrive')->id
+                        ]) }}"><i
                             class="fa fa-pencil-square-o"></i> 编辑 README</a>
                     @else
                     <a class="dropdown-item"
-                        href="{{ route('admin.file.create',['name' => 'README', 'path' => encrypt($origin_path)]) }}"><i
+                        href="{{ route('admin.onedrive.file.create', [
+                            'name' => 'README',
+                            'path' => encrypt($origin_path),
+                            'onedrive' => app('onedrive')->id
+                        ]) }}"><i
                             class="fa fa-plus-circle"></i> 添加
                         README</a>
                     @endif
                     @if (array_key_exists('HEAD.md', $origin_items))
-                    <a class="dropdown-item" href="{{ route('admin.file.update',$origin_items['HEAD.md']['id']) }}"><i
+                    <a class="dropdown-item" href="{{ route('admin.onedrive.file.update', [
+                            'id' => $origin_items['HEAD.md']['id'],
+                            'onedrive' => app('onedrive')->id
+                        ]) }}"><i
                             class="fa fa-pencil-square-o"></i> 编辑 HEAD</a>
 
                     @else
                     <a class="dropdown-item"
-                        href="{{ route('admin.file.create',['name' => 'HEAD', 'path' => encrypt($origin_path)]) }}"><i
+                        href="{{ route('admin.onedrive.file.create', [
+                            'name' => 'HEAD',
+                            'path' => encrypt($origin_path),
+                            'onedrive' => app('onedrive')->id
+                        ]) }}"><i
                             class="fa fa-plus-circle"></i> 添加
                         HEAD</a>
                     @endif
@@ -116,7 +130,7 @@
                 </div>
                 <div class="modal fade" id="newFolderModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog" role="document">
-                        <form action="{{ route('admin.folder.create') }}" method="post">
+                        <form action="{{ route('admin.onedrive.folder.create', ['onedrive' => app('onedrive')->id]) }}" method="post">
                             @csrf
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -182,7 +196,7 @@
         @if(!blank($path_array))
         <li class="list-group-item list-group-item-action"><a
                 href="{{ route('home', [
-                    'query' => Tool::getEncodeUrl(getParentUrl($path_array)),
+                    'query'    => Tool::getEncodeUrl(getParentUrl($path_array)),
                     'onedrive' => app('onedrive')->id
                 ]) }}"><i class="fa fa-level-up"></i>
                 返回上一层</a></li>
@@ -220,13 +234,16 @@
                     @if(! Arr::has($item,'folder'))
                         @if( Arr::has($item,'image'))
                         <a href="{{ route('view', [
-                            'query' => Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name']),
+                            'query'    => Tool::getEncodeUrl($origin_path ? $origin_path.'/'.$item['name'] : $item['name']),
                             'onedrive' => app('onedrive')->id
                         ]) }}"
                             data-fancybox="image-list"><i class="fa fa-eye" title="查看"></i></a>&nbsp;&nbsp;
                         @endif
                         @if (auth()->guard('admin')->check() && Tool::canEdit($item) )
-                        <a href="{{ route('admin.file.update', $item['id']) }}"><i
+                        <a href="{{ route('admin.onedrive.file.update', [
+                                'id' => $item['id'],
+                                'onedrive' => app('onedrive')->id
+                            ] ) }}"><i
                                 class="fa fa-pencil"></i></a>&nbsp;&nbsp;
                         @endif
                         <a class="download_url"
