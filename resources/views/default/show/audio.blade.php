@@ -49,7 +49,7 @@
     </script>
 @stop
 @section('content')
-    @include('default.breadcrumb')
+    @include('default.widgets.breadcrumb')
     <div class="card border-light mb-3">
         <div class="card-header">
             {{ $file['name'] }}

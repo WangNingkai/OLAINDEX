@@ -194,8 +194,7 @@ class IndexController extends Controller
                     if (!strpos(
                         $file['@microsoft.graph.downloadUrl'],
                         'sharepoint.com'
-                    )
-                    ) {
+                    )) {
                         return redirect()->away($file['download']);
                     }
                     $replace = str_replace(
@@ -340,6 +339,7 @@ class IndexController extends Controller
         $items = [];
         $path = Tool::getEncodeUrl(app('onedrive')->root);
         $response = OneDrive::search($path, $data['keywords']);
+        $path_array = [];
 
         if ($response['errno'] === 0) {
             // 过滤结果中的文件夹\过滤微软OneNote文件
@@ -352,7 +352,7 @@ class IndexController extends Controller
 
         $items = Tool::paginate($items, $limit);
 
-        return view(config('olaindex.theme') . 'search', compact('items'));
+        return view(config('olaindex.theme') . 'search', compact('items', 'path_array'));
     }
 
     /**

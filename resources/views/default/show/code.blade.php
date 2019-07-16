@@ -7,7 +7,7 @@
     <script src="https://cdn.bootcss.com/prism/1.15.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
 @stop
 @section('content')
-    @include('default.breadcrumb')
+    @include('default.widgets.breadcrumb')
     <div class="card border-light mb-3">
         <div class="card-header">
             {{ $file['name'] }}

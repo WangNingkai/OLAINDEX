@@ -45,7 +45,7 @@
 @stop
 @section('content')
 @includeWhen($errors->isNotEmpty(), 'default.widgets.errors')
-@include('default.breadcrumb')
+@include('default.widgets.breadcrumb')
 @if (!blank($head))
 <div class="card border-light mb-3">
     <div class="card-header"><i class="fa fa-leaf"></i> HEAD</div>
