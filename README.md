@@ -121,7 +121,7 @@ chown -R www:www *
 
  - [ ] install
  - [ ] aria2
- - [x] Console/OneDrive
- - [ ] ManggeController
- - [ ] IndexConttroller
+ - [ ] Console/OneDrive (cache、refresh)
+ - [x] ManggeController
+ - [x] IndexConttroller
  - [ ] themes 配置 (caffeinated/themes)

@@ -39,7 +39,7 @@ class RefreshCache extends Command
     public function handle()
     {
         $path = $this->argument('path');
-
+        getDefaultOneDriveAccount($this->option('one_drive_id'));
         $this->getRecursive(Tool::getOriginPath($path));
     }
 
@@ -51,10 +51,8 @@ class RefreshCache extends Command
      */
     public function getChildren($path)
     {
-        $this->call(
-            !empty($one_drive_id  = $this->option('one_drive_id')) 
-                ? 'od:refresh --one_drive_id=' . $one_drive_id
-                : 'od:refresh'
+        $this->call('od:refresh', [
+            '--one_drive_id' => app('onedrive')->id]
         );
         $response = OneDrive::getChildrenByPath(
             $path,

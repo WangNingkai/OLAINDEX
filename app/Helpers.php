@@ -267,7 +267,7 @@ if (!function_exists('getOrderByStatus')) {
  * 选择默认的OneDrive
  */
 if (!function_exists('getDefaultOneDriveAccount')) {
-    function getDefaultOneDriveAccount($one_drive_id)
+    function getDefaultOneDriveAccount($one_drive_id = null)
     {
         if (empty($one_drive_id)) {
             $oneDrive = OneDrive::where('is_default', true)->firstOrFail();

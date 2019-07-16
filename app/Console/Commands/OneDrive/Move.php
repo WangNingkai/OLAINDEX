@@ -41,11 +41,11 @@ class Move extends Command
     {
         $this->info('开始移动...');
         $this->info('Please waiting...');
-        $this->call(
-            !empty($one_drive_id  = $this->option('one_drive_id')) 
-                ? 'od:refresh --one_drive_id=' . $one_drive_id
-                : 'od:refresh'
-        );
+        if (!empty($this->option('one_drive_id'))) {
+            $this->call('od:refresh', ['--one_drive_id' => $this->option('one_drive_id')]);
+        } else {
+            $this->call('od:refresh');
+        }
         $origin = $this->argument('origin');
         $_origin = OneDrive::pathToItemId($origin);
         $origin_id = $_origin['errno'] === 0 ? Arr::get($_origin, 'data.id')
