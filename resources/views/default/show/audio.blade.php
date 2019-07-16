@@ -1,10 +1,10 @@
 @extends('default.layouts.main')
 @section('title', $file['name'])
 @section('css')
-    <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/aplayer/1.10.1/APlayer.min.css">
+    <link href="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">
 @stop
 @section('js')
-    <script src="https://cdnjs.loli.net/ajax/libs/aplayer/1.10.1/APlayer.min.js"></script>
+    <script src="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.js"></script>
     <script>
         $(function () {
             const ap = new APlayer({
@@ -13,7 +13,7 @@
                     name: '{{ $file['name'] }}',
                     artist: '{{ $file['name'] }}',
                     url: "{{ route('download', [
-                        'query => Tool::getEncodeUrl($origin_path), 
+                        'query'    => Tool::getEncodeUrl($origin_path), 
                         'onedrive' => app('onedrive')->id
                     ]) }}",
                     cover: 'cover.jpg'
@@ -24,7 +24,7 @@
                 console.log('获取资源错误，开始重新加载！');
                 let last = dp.audio.currentTime;
                 ap.audio.src = "{{ route('download', [
-                    'query => Tool::getEncodeUrl($origin_path), 
+                    'query'    => Tool::getEncodeUrl($origin_path), 
                     'onedrive' => app('onedrive')->id
                 ]) }}";
                 ap.audio.load();
@@ -37,7 +37,7 @@
                     console.log('开始重新加载！');
                     let last = ap.audio.currentTime;
                     ap.audio.src = "{{ route('download', [
-                        'query => Tool::getEncodeUrl($origin_path), 
+                        'query'    => Tool::getEncodeUrl($origin_path), 
                         'onedrive' => app('onedrive')->id
                     ]) }}";
                     ap.audio.load();
@@ -58,7 +58,7 @@
             <div class="blank-div"></div>
             <div class="text-center">
                 <a href="{{ route('download', [
-                    'query => Tool::getEncodeUrl($origin_path), 
+                    'query'    => Tool::getEncodeUrl($origin_path), 
                     'onedrive' => app('onedrive')->id
                 ]) }}" class="btn btn-success">
                 <i class="fa fa-download"></i> 下载</a>
@@ -73,7 +73,7 @@
                 <div class="input-group mb-3">
                     <input type="text" id="link1" class="form-control"
                            value="{{ route('download', [
-                               'query => Tool::getEncodeUrl($origin_path), 
+                               'query'    => Tool::getEncodeUrl($origin_path), 
                                'onedrive' => app('onedrive')->id
                             ]) }}">
                     <div class="input-group-append">
