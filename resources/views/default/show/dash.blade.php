@@ -1,11 +1,11 @@
 @extends('default.layouts.main')
 @section('title',$file['name'])
 @section('css')
-    <link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/dplayer/1.25.0/DPlayer.min.css">
+    <link href="https://cdn.bootcss.com/dplayer/1.25.0/DPlayer.min.css" rel="stylesheet">
 @stop
 @section('js')
-    <script src="https://cdn.jsdelivr.net/npm/dashjs/dist/dash.all.min.js"></script>
-    <script src="https://cdnjs.loli.net/ajax/libs/dplayer/1.25.0/DPlayer.min.js"></script>
+    <script src="https://cdn.bootcss.com/dashjs/3.0.0/dash.all.min.js"></script>
+    <script src="https://cdn.bootcss.com/dplayer/1.25.0/DPlayer.min.js"></script>
     <script>
         const dp = new DPlayer({
             container: document.getElementById('dash-player'),
@@ -44,8 +44,12 @@
         <div class="card-header">{{ $file['name'] }}</div>
         <div class="card-body">
             <div class="text-center">
-                <a href="{{ route('download',Tool::getEncodeUrl($origin_path)) }}" class="btn btn-success">
-                    <i class="fa fa-download"></i>下载</a>
+                <a href="{{ route('download', [
+                        'query' => Tool::getEncodeUrl($origin_path),
+                        'onedrive' => app('onedrive')->id
+                    ]) }}" class="btn btn-success">
+                    <i class="fa fa-download"></i>下载
+                </a>
             </div>
             <br>
             <div class="text-center">
@@ -58,7 +62,10 @@
                 <div class="form-group">
                     <div class="input-group mb-3">
                         <input type="text" id="link1" class="form-control"
-                               value="{{ route('download',Tool::getEncodeUrl($origin_path)) }}">
+                               value="{{ route('download', [
+                                    'query' => Tool::getEncodeUrl($origin_path),
+                                    'onedrive' => app('onedrive')->id
+                                ]) }}">
                         <div class="input-group-append">
                             <a href="javascript:void(0)" style="text-decoration: none" data-toggle="tooltip"
                                data-placement="right" data-clipboard-target="#link1" class="clipboard">
