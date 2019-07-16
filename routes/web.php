@@ -48,13 +48,25 @@ Route::group(['namespace' => 'Index'], function () {
             // 搜索
             Route::get('search', 'IndexController@search')->name('search')->middleware('throttle:10,2');
             Route::get('search/file/{id}', 'IndexController@searchShow')->name('search.show');
-
-            // 图床
-            Route::get('image', 'Admin\\ManageController@uploadImage')->name('image')->middleware('checkImage');
-            Route::post('image/upload', 'Admin\\ManageController@uploadImage')->name('image.upload')->middleware('throttle:10,2', 'checkImage');
-            Route::get('file/delete/{sign}', 'Admin\\ManageController@deleteItem')->name('delete');
         });
     });
+});
+
+Route::group([
+    'middleware' => [
+        'auth:web',
+        'detectOneDrive',
+        'checkOneDrive',
+        'checkToken',
+        'handleIllegalFile',
+        'handleEncryptDir'
+    ],
+    'prefix' => 'onedrive/{onedrive}'
+], function () {
+    // 图床
+    Route::get('image', 'Admin\\ManageController@uploadImage')->name('image')->middleware('checkImage');
+    Route::post('image/upload', 'Admin\\ManageController@uploadImage')->name('image.upload')->middleware('throttle:10,2', 'checkImage');
+    Route::get('file/delete/{sign}', 'Admin\\ManageController@deleteItem')->name('delete');
 });
 
 Route::view('message', config('olaindex.theme') . 'message')->name('message');
@@ -113,9 +125,6 @@ Route::group(['prefix' => 'admin'], function () {
             });
         });
     });
-
-    // Route::post('login', 'AdminController@login')->name('admin.login');
-    // Route::post('logout', 'AdminController@logout')->name('admin.logout');
 });
 
 if (Str::contains(config('app.url'), ['localhost', 'dev.ningkai.wang'])) {

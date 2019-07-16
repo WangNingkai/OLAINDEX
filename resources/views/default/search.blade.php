@@ -2,6 +2,7 @@
 @section('title','搜索：'.request()->get('keywords'))
 @section('content')
     @includeWhen($errors->isNotEmpty(), 'default.widgets.errors')
+    @include('default.widgets.breadcrumb')
     @if (blank($items))
         <div class="card border-light mb-3">
             <div class="card-body">
