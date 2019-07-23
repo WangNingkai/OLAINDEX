@@ -36,8 +36,9 @@ class RefreshToken extends Command
     public function handle()
     {
         getDefaultOneDriveAccount($this->option('one_drive_id'));
-        $expires = app('onedrive')->expires;
+        $expires = app('onedrive')->access_token_expires;
         $hasExpired = $expires - time() <= 0 ? true : false;
+
         if (!$hasExpired) {
             return;
         } else {
