@@ -107,7 +107,6 @@ chown -R www:www *
         DB_USERNAME=你的数据库用户名
         DB_PASSWORD=你的数据库密码
 
-
  3. 安装laravel环境以及aria-ng包需要
 
         composer install --no-dev
@@ -123,7 +122,7 @@ chown -R www:www *
 
  - [ ] install
  - [ ] aria2
- - [ ] Console/OneDrive (cache、refresh)
+ - [x] Console/OneDrive (cache、refresh)
  - [x] ManggeController
  - [x] IndexConttroller
  - [ ] themes 配置 (caffeinated/themes)

@@ -13,4 +13,9 @@ class Model extends BaseModel
     {
         return $query->select(array_diff($this->columns, $value));
     }
+
+    public function getColumns()
+    {
+        return $this->columns;
+    }
 }

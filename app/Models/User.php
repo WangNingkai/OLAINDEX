@@ -11,6 +11,17 @@ class User extends Authenticatable
 
     protected $guarded = [];
 
+    protected $columns = [
+        'id',
+        'name',
+        'email',
+        'email_verified_at',
+        'password',
+        'remember_token',
+        'created_at',
+        'updated_at',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *

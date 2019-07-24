@@ -15,6 +15,23 @@ class Admin extends Authenticatable
         'is_binded' => 'boolean'
     ];
 
+    protected $columns = [
+        'id',
+        'name',
+        'email',
+        'site_name',
+        'theme',
+        'hotlink_protection',
+        'copyright',
+        'statistics',
+        'is_binded',
+        'email_verified_at',
+        'password',
+        'remember_token',
+        'created_at',
+        'updated_at'
+    ];
+
     /**
      * The attributes that should be hidden for arrays.
      *
