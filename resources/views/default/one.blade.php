@@ -261,7 +261,7 @@
                                         <a href="{{ route('view',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}"
                                            data-fancybox="image-list" data-caption="{{ $item['name'] }}"
                                            data-toggle="popover" data-placement="bottom"
-                                           data-content="<img src='{{ $item['thumbnails'][0]['medium']['url'] }}' alt='{{ $item['name'] }}' class='img-fluid'>"
+                                           data-content="<img src='{{ $item['thumbnails'][0] ?? $item['thumbnails'][0]['medium']['url'] }}' alt='{{ $item['name'] }}' class='img-fluid'>"
                                            class="view"><i
                                                 class="fa fa-eye"></i></a>&nbsp;&nbsp;
                                     @endif
