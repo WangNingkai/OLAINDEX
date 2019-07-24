@@ -1,0 +1,3 @@
+[submodule "resources/aria-ng"]
+	path = resources/aria-ng
+	url = git@github.com:dongdongGit/onedrive-aria-ng.git
