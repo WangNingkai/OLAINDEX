@@ -96,6 +96,7 @@ chown -R www:www *
  1. 在web站点下克隆github项目
     
         git clone https://github.com/dongdongGit/OLAINDEX.git
+        git submodule update --init
  2. 配置 .env 数据库信息
 
         cp .env-example .env && vim .env
