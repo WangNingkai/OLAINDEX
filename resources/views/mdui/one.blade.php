@@ -180,7 +180,7 @@
                             <div class="col-icon">
                                 @if(in_array($item['ext'],explode(' ',setting('image')),false))
                                     <img class="lazy"
-                                         data-original="{{  \Illuminate\Support\Arr::get($item,'thumbnails.0.small.url') }}"
+                                         data-original="{{  \Illuminate\Support\Arr::get($item,'thumbnails.0.small.url','') }}"
                                          src="{{ asset('img/loading.gif') }}" alt="">
                                 @else
                                     <img
