@@ -108,9 +108,10 @@ chown -R www:www *
         DB_PASSWORD=你的数据库密码
 
 
- 3. 安装laravel环境
+ 3. 安装laravel环境以及aria-ng包需要
 
         composer install --no-dev
+        npm install
 
  4. 生成表结构
 
