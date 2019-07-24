@@ -23,25 +23,22 @@ class CacheService
 
     public function get($key = '', ...$params)
     {
-        if (Cache::has($key)) {
-            return Cache::get($key);
-        }
-
-        if (!method_exists($this->onedrive, $this->method)) {
-            $this->error('没有该方法: ' . $this->method);
-        }
-
-        $response = call_user_func_array(
-            [$this->onedrive, $this->method],
-            array_merge([$this->path], $params)
-        );
-
-        if ($response['errno'] === 0) {
-            $item = $response['data'];
-            Cache::put($key, $item, app('onedrive')->expires);
-        } else {
-            $this->error($response['msg']);
-        }
+        $item = Cache::remember($key, app('onedrive')->expires, function() use ($params) {
+            if (!method_exists($this->onedrive, $this->method)) {
+                $this->error('没有该方法: ' . $this->method);
+            }
+    
+            $response = call_user_func_array(
+                [$this->onedrive, $this->method],
+                array_merge([$this->path], $params)
+            );
+    
+            if ($response['errno'] === 0) {
+                return $response['data'];
+            } else {
+                $this->error($response['msg']);
+            }
+        });
 
         return $item;
     }
