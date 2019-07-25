@@ -8,6 +8,16 @@ use Illuminate\Support\Arr;
 class TaskObserver
 {
     /**
+     * Handle the one drive "creating" event.
+     *
+     * @param  \App\Models\Task  $task
+     * @return void
+     */
+    public function creating(Task $task)
+    {
+    }
+
+    /**
      * Handle the task "saving" event.
      *
      * @param  \App\Models\Task  $task

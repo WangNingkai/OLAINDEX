@@ -33,6 +33,7 @@ class CreateOneDrivesTable extends Migration
             $table->string('account_type')->nullable()->comment('onedrive账号类型');
             $table->text('settings')->nullable()->comment('设置项');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 class OneDriveUpload extends Job
 {
+    public $task = null;
     /**
      * The number of times the job may be attempted.
      *
@@ -23,9 +24,9 @@ class OneDriveUpload extends Job
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Task $task)
     {
-        //
+        $this->task = $task;
     }
 
     /**

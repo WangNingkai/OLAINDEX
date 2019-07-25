@@ -4,13 +4,15 @@ namespace App\Observers;
 
 use App\Models\OneDrive;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 
 class OneDriveObserver
 {
     /**
      * Handle the one drive "creating" event.
      *
-     * @param  \App\OneDrive  $oneDrive
+     * @param  \App\Models\OneDrive  $oneDrive
      * @return void
      */
     public function creating(OneDrive $oneDrive)
@@ -24,7 +26,7 @@ class OneDriveObserver
     /**
      * Handle the one drive "saving" event.
      *
-     * @param  \App\OneDrive  $oneDrive
+     * @param  \App\Models\OneDrive  $oneDrive
      * @return void
      */
     public function saving(OneDrive $oneDrive)
@@ -36,6 +38,10 @@ class OneDriveObserver
             OneDrive::where('id', '!=', $oneDrive->id)->update([
                 'is_default' => 0
             ]);
+
+            $redis = Redis::connection('cache');
+            $caches = $redis->keys(config('cache.prefix') . 'instance:onedrive_*');
+            $redis->del($caches);
         } elseif (Arr::get($newData, 'is_binded') === 0 && !empty(Arr::get($oldData, 'is_binded'))) {
             $oneDrive->is_configuraed = 0;
             $oneDrive->access_token = null;
@@ -57,13 +63,17 @@ class OneDriveObserver
             }
         }
 
+        if (!empty($newData) && !isset($newData['is_default'])) {
+            Cache::forget($oneDrive->is_default ? 'instance:onedrive_0' : 'instance:onedrive_' . $oneDrive->id);
+        }
+
         unset($oneDrive->authorize_url, $oneDrive->access_token_url, $oneDrive->scopes);
     }
 
     /**
      * Handle the one drive "deleted" event.
      *
-     * @param  \App\OneDrive  $oneDrive
+     * @param  \App\Models\OneDrive  $oneDrive
      * @return void
      */
     public function deleted(OneDrive $oneDrive)
@@ -71,5 +81,7 @@ class OneDriveObserver
         if ($oneDrive->cover) {
             $oneDrive->cover->delete();
         }
+
+        $oneDrive->tasks()->delete();
     }
 }

@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OneDrive extends Model
 {
+    use SoftDeletes;
+
     protected $casts = [
         'admin_id'       => 'integer',
         'cover_id'       => 'integer',
@@ -36,6 +38,7 @@ class OneDrive extends Model
         'settings',
         'created_at',
         'updated_at',
+        'deleted_at'
     ];
 
     public function admin()
@@ -46,5 +49,10 @@ class OneDrive extends Model
     public function cover()
     {
         return $this->belongsTo(Image::class, 'cover_id');
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
     }
 }

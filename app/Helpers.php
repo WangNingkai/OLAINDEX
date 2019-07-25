@@ -269,6 +269,22 @@ if (!function_exists('getOrderByStatus')) {
 if (!function_exists('getDefaultOneDriveAccount')) {
     function getDefaultOneDriveAccount($one_drive_id = null)
     {
+        if (app()->bound('onedrive')) {
+            if (!empty($one_drive_id) && app('onedrive')->id == $one_drive_id) {
+                return;
+            }
+
+            if (empty($one_drive_id) && app('onedrive')->is_default) {
+                return;
+            }
+        }
+
+        $key = 'instance:onedrive_' . $one_drive_id ?? 0;
+        if (Cache::has($key)) {
+            app()->instance('onedrive', Cache::get($key));
+            return;
+        }
+
         if (empty($one_drive_id)) {
             $oneDrive = OneDrive::where('is_default', true)->firstOrFail();
         } else {
@@ -282,6 +298,8 @@ if (!function_exists('getDefaultOneDriveAccount')) {
             ? Constants::AUTHORITY_URL . Constants::TOKEN_ENDPOINT
             : Constants::AUTHORITY_URL_21V . Constants::TOKEN_ENDPOINT_21V;
         $oneDrive->scopes = Constants::SCOPES;
+
+        Cache::put($key, $oneDrive, now()->addDay());
 
         app()->instance('onedrive', $oneDrive);
     }
