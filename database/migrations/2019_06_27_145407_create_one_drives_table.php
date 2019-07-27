@@ -16,7 +16,7 @@ class CreateOneDrivesTable extends Migration
         Schema::create('one_drives', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('admin_id')->unsigned()->index()->comment('管理员ID');
-            $table->string('cover_id')->unsigned()->index()->comment('封面ID');
+            $table->integer('cover_id')->unsigned()->index()->comment('封面ID');
             $table->string('name')->comment('名称');
             $table->boolean('is_default')->default(0)->comment('是否默认');
             $table->boolean('is_configuraed')->default(0)->comment('是否配置client信息');
@@ -33,6 +33,7 @@ class CreateOneDrivesTable extends Migration
             $table->string('account_type')->nullable()->comment('onedrive账号类型');
             $table->text('settings')->nullable()->comment('设置项');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

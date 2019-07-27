@@ -3,6 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Models\Task;
+use Illuminate\Support\Arr;
+use App\Jobs\OneDriveUpload;
 
 class Aria2cToOnedriveUpload extends Command
 {
@@ -11,7 +14,9 @@ class Aria2cToOnedriveUpload extends Command
      *
      * @var string
      */
-    protected $signature = 'aria2c:upload_to_onedrive';
+    protected $signature = 'aria2c:upload_to_onedrive
+                                {--gid=}
+                                {--path=}';
 
     /**
      * The console command description.
@@ -38,5 +43,33 @@ class Aria2cToOnedriveUpload extends Command
     public function handle()
     {
         // TODO: job
+        $gid = $this->option('gid');
+        $path = $this->option('path');
+        if (empty($gid) || empty($path)) {
+            // 错误记录
+            return;
+        }
+
+        $data = [
+            'type'   => is_file($path) ? 'file' : 'folder',
+            'source' => $path,
+        ];
+
+        $result = explode('@@', $path);
+        foreach ($result as $item) {
+            $match = [];
+            
+            if (preg_match('/(odid|path)=([\S]+)/', $item, $match)) {
+                if ($match[1] == 'path') {
+                    Arr::set($data, 'target', $match[2]);
+                } else {
+                    Arr::set($data, 'odid', $match[2]);
+                }
+            }
+        }
+
+        $task = Task::create($data);
+
+        dispatch(new OneDriveUpload($task));
     }
 }
