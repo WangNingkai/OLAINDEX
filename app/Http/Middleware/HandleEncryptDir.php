@@ -6,6 +6,7 @@ use App\Helpers\Tool;
 use Closure;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 
 class HandleEncryptDir
 {
@@ -27,7 +28,7 @@ class HandleEncryptDir
         if (count($methodName) > 1 && !in_array($methodName[1], Arr::get(app('onedrive')->settings, 'encrypt_options'))) {
             return $next($request);
         }
-        
+
         $route = $request->route()->getName();
         $realPath = $request->route()->parameter('query') ?? '/';
         $encryptDir = Tool::handleEncryptDir(app('onedrive')->encrypt_path);
@@ -39,7 +40,8 @@ class HandleEncryptDir
                 if (Session::has('password:' . $key)) {
                     $data = Session::get('password:' . $key);
                     $encryptKey = $data['encryptKey'];
-                    if (strcmp($encryptDir[$encryptKey], decrypt($data['password'])) !== 0
+                    if (
+                        strcmp($encryptDir[$encryptKey], decrypt($data['password'])) !== 0
                         || time() > $data['expires']
                     ) {
                         Session::forget($key);
