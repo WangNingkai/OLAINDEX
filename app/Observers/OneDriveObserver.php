@@ -51,7 +51,8 @@ class OneDriveObserver
             $oneDrive->client_secret = null;
             $oneDrive->redirect_uri = null;
             $oneDrive->account_type = null;
-        } elseif (!empty(Arr::get($newData, 'access_token'))
+        } elseif (
+            !empty(Arr::get($newData, 'access_token'))
             && !empty(Arr::get($newData, 'refresh_token'))
             && !empty(Arr::get($newData, 'access_token_expires'))
         ) {

@@ -124,7 +124,7 @@ if (!function_exists('getFileContent')) {
         ]);
         $curl->get($url);
         $curl->close();
-        
+
         if ($curl->error) {
             Log::error(
                 'Get OneDrive file content error.',
@@ -201,8 +201,7 @@ if (!function_exists('fileIcon')) {
             'gif',
             'ico',
             'jpe',
-        ])
-        ) {
+        ])) {
             return 'image';
         }
         if (in_array($ext, [
@@ -218,8 +217,7 @@ if (!function_exists('fileIcon')) {
             'wmv',
             'mkv',
             'asf',
-        ])
-        ) {
+        ])) {
             return 'ondemand_video';
         }
         if (in_array($ext, [
@@ -234,8 +232,7 @@ if (!function_exists('fileIcon')) {
             'sh',
             'md',
             'php',
-        ])
-        ) {
+        ])) {
             return 'code';
         }
 
@@ -299,6 +296,10 @@ if (!function_exists('getDefaultOneDriveAccount')) {
             : Constants::AUTHORITY_URL_21V . Constants::TOKEN_ENDPOINT_21V;
         $oneDrive->scopes = Constants::SCOPES;
 
+        if ($oneDrive->is_default) {
+            $key = 'instance:onedrive_0';
+        }
+
         Cache::put($key, $oneDrive, now()->addDay());
 
         app()->instance('onedrive', $oneDrive);
@@ -335,7 +336,7 @@ if (!function_exists('getAdminConfig')) {
         $admin = Cache::rememberForever('admin_settings', function () {
             return Admin::firstOrFail();
         });
-        
+
         if (!empty($admin)) {
             return $admin->$key;
         } else {

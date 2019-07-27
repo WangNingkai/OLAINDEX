@@ -26,7 +26,8 @@ class OauthController extends Controller
      */
     public function callback(Request $request, $oneDrive)
     {
-        if (empty($request->get('state')) || !Session::has('state')
+        if (
+            empty($request->get('state')) || !Session::has('state')
             || ($request->get('state') !== Session::get('state'))
         ) {
             Tool::showMessage('Invalid state', false);
@@ -73,7 +74,7 @@ class OauthController extends Controller
             $token = collect($curl->response)->toArray();
             $access_token = $token['access_token'];
             $refresh_token = $token['refresh_token'];
-            $expires = (int)$token['expires_in'] != 0 ? time() + $token['expires_in'] : 0;
+            $expires = (int) $token['expires_in'] != 0 ? time() + $token['expires_in'] : 0;
             $data = [
                 'access_token'         => $access_token,
                 'refresh_token'        => $refresh_token,
@@ -158,17 +159,13 @@ class OauthController extends Controller
             ]);
         } else {
             $token = collect($curl->response)->toArray();
-            $access_token = $token['access_token'];
-            $refresh_token = $token['refresh_token'];
-            $expires = (int)$token['expires_in'] != 0 ? time() + $token['expires_in'] : 0;
+            $expires = (int) $token['expires_in'] != 0 ? time() + $token['expires_in'] : 0;
             $data = [
-                'access_token'         => $access_token,
-                'refresh_token'        => $refresh_token,
+                'access_token'         => $token['access_token'],
+                'refresh_token'        => $token['refresh_token'],
                 'access_token_expires' => $expires,
             ];
-            // Tool::updateConfig($data);
-            // TODO:cache;
-            app('onedrive')->update($data);
+            $result = app('onedrive')->update($data);
             if ($redirect) {
                 $redirect = Session::get('refresh_redirect') ?? '/';
 
