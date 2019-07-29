@@ -17,7 +17,7 @@ class OneDriveUpload extends Job
      *
      * @var int
      */
-    public $timeout = 60;
+    public $timeout = 7200;
 
     /**
      * Create a new job instance.
@@ -36,6 +36,9 @@ class OneDriveUpload extends Job
      */
     public function handle()
     {
-        //
+        if ($this->task->type == 'padding') {
+            if ($this->task->type == 'file') {
+            }
+        }
     }
 }
