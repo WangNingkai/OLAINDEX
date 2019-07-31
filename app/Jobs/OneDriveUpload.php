@@ -44,7 +44,7 @@ class OneDriveUpload extends Job
             $parameters = [
                 '--one_drive_id' => $this->task->onedrive_id,
                 'local'          => $this->task->source,
-                'target'         => $this->task
+                'target'         => $this->task->target
             ];
 
             if ($this->task->type == 'folder') {
