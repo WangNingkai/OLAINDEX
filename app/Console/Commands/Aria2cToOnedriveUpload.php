@@ -58,12 +58,12 @@ class Aria2cToOnedriveUpload extends Command
         $result = explode('@@', $path);
         foreach ($result as $item) {
             $match = [];
-            
+
             if (preg_match('/(odid|path)=([\S]+)/', $item, $match)) {
                 if ($match[1] == 'path') {
                     Arr::set($data, 'target', $match[2]);
                 } else {
-                    Arr::set($data, 'odid', $match[2]);
+                    Arr::set($data, 'onedrive_id', $match[2]);
                 }
             }
         }

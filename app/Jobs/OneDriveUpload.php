@@ -2,6 +2,10 @@
 
 namespace App\Jobs;
 
+use Exception;
+use App\Models\Task;
+use Illuminate\Support\Facades\Artisan;
+
 class OneDriveUpload extends Job
 {
     public $task = null;
@@ -17,7 +21,7 @@ class OneDriveUpload extends Job
      *
      * @var int
      */
-    public $timeout = 7200;
+    public $timeout = 3600;
 
     /**
      * Create a new job instance.
@@ -37,8 +41,28 @@ class OneDriveUpload extends Job
     public function handle()
     {
         if ($this->task->type == 'padding') {
-            if ($this->task->type == 'file') {
+            $parameters = [
+                '--one_drive_id' => $this->task->onedrive_id,
+                'local'          => $this->task->source,
+                'target'         => $this->task
+            ];
+
+            if ($this->task->type == 'folder') {
+                $parameters = array_merge($parameters, [
+                    '--folder'
+                ]);
             }
+            
+            try {
+                Artisan::call('od:upload', $parameters);
+                $this->task->status = 'completed';
+            } catch (Exception $e) {
+                if (app()->bound('sentry')) {
+                    app('sentry')->captureException($e);
+                }
+            }
+
+            $this->task->save();
         }
     }
 }
