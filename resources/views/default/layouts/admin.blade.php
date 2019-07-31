@@ -45,6 +45,10 @@
                         OneDrive列表 </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.aria2c') }}" target="_blank"><i class="fa fa-cloud-download"></i>
+                        Aria2c下载 </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{{ route('log-viewer::dashboard') }}" target="_blank"><i
                             class="fa fa-bug"></i>
                         调试日志 </a>

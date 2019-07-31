@@ -54,4 +54,9 @@ class UtilController extends Controller
 
         return $this->success();
     }
+
+    public function aria2c()
+    {
+        return view('ng');
+    }
 }
