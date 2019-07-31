@@ -48,7 +48,7 @@ gulp.task('process-langs', ['prepare-langs'], function () {
 gulp.task('prepare-styles', function () {
     return gulp.src([
         'resources/aria-ng/src/styles/**/*.css'
-    ]).pipe($.autoprefixer({browsers: ['> 1%', 'last 2 versions', 'Firefox ESR']}))
+    ]).pipe($.autoprefixer({overrideBrowserslist: ['> 1%', 'last 2 versions', 'Firefox ESR']}))
         .pipe(gulp.dest('resources/aria-ng/.tmp/styles'))
         .pipe(reload({stream: true}));
 });
@@ -86,9 +86,8 @@ gulp.task('prepare-html', ['prepare-styles', 'prepare-scripts', 'prepare-views']
 });
 
 gulp.task('process-html', ['prepare-html'], function () {
-    return gulp.src([
-        'resources/aria-ng/.tmp/*.html'
-    ]).pipe($.replace(/<!-- AriaNg-Bundle:\w+ -->/, ''))
+    return gulp.src(['resources/aria-ng/.tmp/*.html'])
+        .pipe($.replace(/<!-- AriaNg-Bundle:\w+ -->/, ''))
         .pipe($.replace(
             /\{\{(([a-zA-Z ]+)|'([a-zA-z ]+)' \| translate|\('([a-zA-Z ]+)' \| translate\))\}\}/g, 
             function (match, p1, p2, p3, p4) {
@@ -108,7 +107,9 @@ gulp.task('process-html', ['prepare-html'], function () {
             }
         ))
         .pipe($.rename('ng.blade.php'))
-        .pipe($.replace(/(css|js)\/([A-Za-z0-9\-\.]+)\.(css|js)/g, 'aria-ng/$1/$2.$3'))
+        .pipe($.replace(/(css|js)\/([A-Za-z0-9\-\.]+)\.(css|js)/g, "{{ asset('aria-ng/$1/$2.$3') }}"))
+        .pipe($.replace(/\<link rel="icon" href="([a-zA-Z0-9\.])"\>/g, "<link rel=icon\" href=\"{{ asset('aria-ng/$1') }}\">"))
+        .pipe($.replace(/\<link rel="shortcut icon" href="([a-zA-Z0-9\.])"\>/g, "<link rel=\"shortcut icon\" href=\"{{ asset('aria-ng/$1') }}\">"))
         .pipe(gulp.dest('resources/views/'));
 });
 
@@ -117,6 +118,7 @@ gulp.task('process-assets', ['process-html'], function () {
         'resources/aria-ng/.tmp/css/**/*',
         'resources/aria-ng/.tmp/js/**/*'
     ],{ base: 'resources/aria-ng/.tmp' })
+        // .pipe($.if('css/plugins*.css', $.replace(/url\((\.\.)\/((fonts\/[a-zA-Z0-9\-]+\.woff)(\?[a-zA-Z0-9\-_=.]+)?\))/g, 'url(./aria-ng/$3$4)')))
         .pipe(gulp.dest('public/aria-ng'));
 });
 
@@ -217,12 +219,12 @@ gulp.task('build', $.sequence('lint', 'process-fonts', 'process-langs', 'process
 gulp.task('build-bundle', $.sequence('lint', 'process-assets-bundle', 'info'));
 // gulp.task('build-bundle', $.sequence('lint', 'process-assets-bundle', 'process-tiny-extras', 'info'));
 
-gulp.task('serve', ['prepare-styles', 'prepare-scripts', 'prepare-fonts'], function () {
+gulp.task('serve', ['clean', 'build'], function () {
     browserSync.init({
         notify: true,
         port: 3030,
         online: true,
-        proxy: "http://ariang.test",
+        proxy: "http://onedrive.test",
         files: [
             'resources/aria-ng/src/*.html',
             'resources/aria-ng/src/*.ico',
