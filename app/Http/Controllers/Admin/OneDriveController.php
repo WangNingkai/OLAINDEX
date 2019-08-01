@@ -211,9 +211,7 @@ class OneDriveController extends Controller
             return redirect()->route('admin.onedrive.index')->withErrors(["{$oneDrive->name} 请先绑定"]);
         }
 
-        $redis = Redis::connection('cache');
-        $caches = $redis->keys(config('cache.prefix') . ':one_' . $oneDrive->id . '*');
-        $redis->del($caches);
+        clearOnedriveCache($oneDrive->id);
 
         return success();
     }

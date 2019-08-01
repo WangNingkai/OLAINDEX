@@ -4,6 +4,8 @@ namespace App\Observers;
 
 use App\Models\Task;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class TaskObserver
 {
@@ -27,8 +29,14 @@ class TaskObserver
     {
         $newData = $task->getDirty();
 
-        if (!empty($status = Arr::get($newData, 'status')) && in_array($status . '_at', $task->getColumns())) {
-            $task->setAttribute($status . '_at', now());
+        if (!empty($status = Arr::get($newData, 'status'))) {
+            if (in_array($status . '_at', $task->getColumns())) {
+                $task->setAttribute($status . '_at', now());
+            }
+
+            if ($status == 'completed') {
+                clearOnedriveCache($task->onedrive_id);
+            }
         }
     }
 }

@@ -5,6 +5,7 @@ namespace App\Console\Commands\OneDrive;
 use App\Helpers\Tool;
 use App\Helpers\OneDrive;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class UploadFile extends Command
 {
@@ -84,11 +85,18 @@ class UploadFile extends Command
     {
         $content = file_get_contents($local);
         $file_name = basename($local);
-        $response = OneDrive::uploadByPath($remote . $file_name, $content);
+        $remote_path = Str::finish($remote, '/') . $file_name;
+        $basenameRemote = basename($remote);
+        
+        if (preg_match('/(.+)(?<!\\\\)\.[^.]+$/', $basenameRemote)) {
+            $remote_path = $remote;
+        }
+        
+        $response = OneDrive::uploadByPath($remote_path, $content);
 
         if ($response['errno'] === 0) {
             $this->info('Upload Success!');
-            @unlink($local);
+            // @unlink($local);
         } else {
             $this->warn('Failed!');
         }

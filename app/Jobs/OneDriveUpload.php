@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Artisan;
 
 class OneDriveUpload extends Job
 {
-    public $task = null;
+    protected $task = null;
     /**
      * The number of times the job may be attempted.
      *
@@ -40,11 +40,11 @@ class OneDriveUpload extends Job
      */
     public function handle()
     {
-        if ($this->task->type == 'padding') {
+        if ($this->task->status == 'pending') {
             $parameters = [
                 '--one_drive_id' => $this->task->onedrive_id,
                 'local'          => $this->task->source,
-                'target'         => $this->task->target
+                'remote'         => $this->task->target
             ];
 
             if ($this->task->type == 'folder') {
@@ -52,11 +52,12 @@ class OneDriveUpload extends Job
                     '--folder'
                 ]);
             }
-            
+
             try {
                 Artisan::call('od:upload', $parameters);
                 $this->task->status = 'completed';
             } catch (Exception $e) {
+                $this->task->status = 'failed';
                 if (app()->bound('sentry')) {
                     app('sentry')->captureException($e);
                 }
