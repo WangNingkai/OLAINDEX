@@ -65,6 +65,6 @@ class UtilController extends Controller
 
     public function aria2c()
     {
-        return view('ng');
+        return view()->exists('ng') ? view('ng') : abort(404, '请先编译Aria2c');
     }
 }
