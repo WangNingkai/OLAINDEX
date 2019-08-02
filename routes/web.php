@@ -83,6 +83,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::view('profile', config('olaindex.theme') . 'admin.profile')->name('admin.profile.show');
         Route::post('image', 'UtilController@storeImage')->name('admin.image');
         Route::post('image/delete', 'UtilController@destroyImage')->name('admin.image.delete');
+        Route::get('onedrive_list', 'UtilController@list')->name('admin.onedrive.list');
 
         // 基础设置
         Route::get('/', 'AdminController@showBasic')->name('admin.basic');

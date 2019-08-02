@@ -6,6 +6,7 @@ use App\Models\Image;
 use Illuminate\Http\Request;
 use App\Services\ImageService;
 use App\Http\Controllers\Controller;
+use App\Models\OneDrive;
 
 class UtilController extends Controller
 {
@@ -53,6 +54,13 @@ class UtilController extends Controller
         }
 
         return $this->success();
+    }
+
+    public function list()
+    {
+        $onedrives = OneDrive::get();
+
+        return $this->success($onedrives);
     }
 
     public function aria2c()

@@ -8,7 +8,6 @@ use stdClass;
 
 trait ProvidesConvenienceMethods
 {
-
     public function success($data = [], $code = 200, $params = [])
     {
         $result = [
@@ -32,7 +31,7 @@ trait ProvidesConvenienceMethods
         } else {
             $result['data'] = $data;
         }
-        
+
         return response()->json($result, substr($code, 0, 3));
     }
 
