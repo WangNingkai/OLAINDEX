@@ -61,9 +61,19 @@ class Aria2cToOnedriveUpload extends Command
 
             if (preg_match('/(odid|path)=([\S]+)/', $item, $match)) {
                 if ($match[1] == 'path') {
-                    Arr::set($data, 'target', $match[2]);
+                    $target_path = 'upload/';
+                    if ($match[2]) {
+                        $target_path = str_replace('\\', '/', $match[2]);
+                    }
+                    Arr::set($data, 'target', $target_path);
                 } else {
-                    Arr::set($data, 'onedrive_id', $match[2]);
+                    $onedrive_id = $match[2];
+                    if ($match[2]) {
+                        getDefaultOneDriveAccount();
+                        $onedrive_id = app('onedrive')->id;
+                    }
+
+                    Arr::set($data, 'onedrive_id', $onedrive_id);
                 }
             }
         }
