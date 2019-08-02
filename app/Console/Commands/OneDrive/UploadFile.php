@@ -87,16 +87,16 @@ class UploadFile extends Command
         $file_name = basename($local);
         $remote_path = Str::finish($remote, '/') . $file_name;
         $basenameRemote = basename($remote);
-        
+
         if (preg_match('/(.+)(?<!\\\\)\.[^.]+$/', $basenameRemote)) {
             $remote_path = $remote;
         }
-        
+
         $response = OneDrive::uploadByPath($remote_path, $content);
 
         if ($response['errno'] === 0) {
             $this->info('Upload Success!');
-            // @unlink($local);
+        // @unlink($local);
         } else {
             $this->warn('Failed!');
         }
@@ -114,8 +114,12 @@ class UploadFile extends Command
         ini_set('memory_limit', '-1');
         $file_size = OneDrive::readFileSize($local);
         $file_name = basename($local);
-        $target_path = Tool::getAbsolutePath($remote);
-        $url_response = OneDrive::createUploadSession($target_path . $file_name);
+        $remote_path = Tool::getAbsolutePath($remote) . $file_name;
+        $basenameRemote = basename($remote);
+        if (preg_match('/(.+)(?<!\\\\)\.[^.]+$/', $basenameRemote)) {
+            $remote_path = $remote;
+        }
+        $url_response = OneDrive::createUploadSession($remote_path);
 
         if ($url_response['errno'] === 0) {
             $url = Arr::get($url_response, 'data.uploadUrl');
