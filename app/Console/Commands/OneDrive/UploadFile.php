@@ -96,7 +96,7 @@ class UploadFile extends Command
 
         if ($response['errno'] === 0) {
             $this->info('Upload Success!');
-        // @unlink($local);
+            @unlink($local);
         } else {
             $this->warn('Failed!');
         }
