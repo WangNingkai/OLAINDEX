@@ -25,6 +25,7 @@
         "illuminate/redis": "^5.8",
         "intervention/image": "^2.5",
         "laravel/framework": "5.8.*",
+        "laravel/horizon": "^3.2",
         "laravel/tinker": "^1.0",
         "overtrue/laravel-lang": "^3.0",
         "php-curl-class/php-curl-class": "^8.3",

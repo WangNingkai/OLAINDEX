@@ -8,6 +8,7 @@ use App\Helpers\Constants;
 use App\Models\OneDrive;
 use Illuminate\Support\Arr;
 use App\Models\Admin;
+use Illuminate\Support\Facades\Redis;
 
 if (!function_exists('convertSize')) {
     /**
@@ -326,7 +327,7 @@ if (!function_exists('redirectSuccess')) {
 if (!function_exists('themeView')) {
     function themeView($view, $data = [])
     {
-        return view(config('olaindex.theme') . '.' . $view, $data);
+        return view(config('olaindex.theme') . $view, $data);
     }
 }
 
@@ -358,5 +359,14 @@ if (!function_exists('route_parameter')) {
         $routeInfo = app('request')->route();
 
         return Arr::get($routeInfo->parameters, $name, $default);
+    }
+}
+
+if (!function_exists('clearOnedriveCache')) {
+    function clearOnedriveCache($id = 0)
+    {
+        $redis = Redis::connection('cache');
+        $caches = $redis->keys(config('cache.prefix') . ':one_' . $id . '*');
+        $redis->del($caches);
     }
 }
