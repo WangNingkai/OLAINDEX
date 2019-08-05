@@ -53,17 +53,26 @@ class OneDriveUpload extends Job
                 ]);
             }
 
-            try {
-                Artisan::call('od:upload', $parameters);
-                $this->task->status = 'completed';
-            } catch (Exception $e) {
-                $this->task->status = 'failed';
-                if (app()->bound('sentry')) {
-                    app('sentry')->captureException($e);
-                }
-            }
-
+            Artisan::call('od:upload', $parameters);
+            $this->task->status = 'completed';
             $this->task->save();
         }
+    }
+
+    /**
+     * The job failed to process.
+     *
+     * @param  Exception  $exception
+     * @return void
+     */
+    public function failed(Exception $exception)
+    {
+        if (app()->bound('sentry')) {
+            app('sentry')->captureException($exception);
+        }
+
+        $this->task->update([
+            'status' => 'failed'
+        ]);
     }
 }
