@@ -42,11 +42,13 @@ class Aria2cToOnedriveUpload extends Command
      */
     public function handle()
     {
-        // TODO: job
         $gid = $this->option('gid');
         $path = $this->option('path');
         if (empty($gid) || empty($path)) {
-            // 错误记录
+            info('上传缺少参数', [
+                'gid'  => $gid,
+                'path' => $path
+            ]);
             return;
         }
 

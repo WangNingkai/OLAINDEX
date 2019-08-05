@@ -76,6 +76,5 @@ class OneDriveUpload extends Job
                 'status' => 'failed'
             ]);
         }
-
     }
 }
