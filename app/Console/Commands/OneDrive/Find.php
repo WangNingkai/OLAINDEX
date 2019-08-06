@@ -71,7 +71,7 @@ class Find extends Command
         $data = $this->format($data);
         $items = array_slice($data, $offset, $length);
         $headers = [];
-        $this->line('total '.count($items));
+        $this->line('total ' . count($items));
         $this->table($headers, $items, 'compact');
     }
 

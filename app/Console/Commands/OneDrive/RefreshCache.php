@@ -51,9 +51,7 @@ class RefreshCache extends Command
      */
     public function getChildren($path)
     {
-        $this->call('od:refresh', [
-            '--one_drive_id' => app('onedrive')->id]
-        );
+        $this->call('od:refresh', ['--one_drive_id' => app('onedrive')->id]);
         $response = OneDrive::getChildrenByPath(
             $path,
             '?select=id,eTag,name,size,lastModifiedDateTime,file,image,folder,@microsoft.graph.downloadUrl'
@@ -75,7 +73,7 @@ class RefreshCache extends Command
         $data = $this->getChildren($path);
         if (is_array($data)) {
             Cache::put(
-                'one_' . app('onedrive')->id .  ':list:' . $path,
+                'one_' . app('onedrive')->id . ':list:' . $path,
                 $data,
                 app('onedrive')->expires
             );

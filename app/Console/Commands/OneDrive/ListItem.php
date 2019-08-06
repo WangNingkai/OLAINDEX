@@ -60,7 +60,7 @@ class ListItem extends Command
             );
         } else {
             $data = Cache::remember(
-                'one_' . app('onedrive')->id . ':list:path:'.$remote,
+                'one_' . app('onedrive')->id . ':list:path:' . $remote,
                 app('onedrive')->expires,
                 function () use ($remote) {
                     $response = OneDrive::getChildrenByPath($remote);
@@ -79,7 +79,7 @@ class ListItem extends Command
         $data = $this->format($data);
         $items = array_slice($data, $offset, $length);
         $headers = [];
-        $this->line('total '.count($items));
+        $this->line('total ' . count($items));
         $this->table($headers, $items, 'compact');
     }
 
@@ -95,7 +95,7 @@ class ListItem extends Command
             $type = Arr::has($item, 'folder') ? 'd' : '-';
             $size = convertSize($item['size']);
             $time = date('M m H:i', strtotime($item['lastModifiedDateTime']));
-            $folder = Arr::has($item, 'folder') ? Arr::get($item, 'folder.childCount'): '1';
+            $folder = Arr::has($item, 'folder') ? Arr::get($item, 'folder.childCount') : '1';
             $owner = Arr::get($item, 'createdBy.user.displayName');
             if ($this->option('all')) {
                 $content = [

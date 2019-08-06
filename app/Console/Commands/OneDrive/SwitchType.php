@@ -31,7 +31,6 @@ class SwitchType extends Command
         parent::__construct();
     }
 
-
     public function handle()
     {
         if ($this->option('type')) {
