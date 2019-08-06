@@ -56,7 +56,7 @@ class Move extends Command
             : exit('Target Path Abnormal');
         $rename = $this->option('rename') ?? '';
         $response = OneDrive::move($origin_id, $target_id, $rename);
-        $response['errno'] === 0 ? $this->info("Move Success!")
+        $response['errno'] === 0 ? $this->info('Move Success!')
             : $this->warn("Failed!\n{$response['msg']} ");
     }
 }

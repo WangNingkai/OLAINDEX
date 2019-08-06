@@ -49,8 +49,8 @@ class Quota extends Command
         }
         $quota[] = Tool::getOneDriveInfo();
         $this->info(Constants::LOGO);
-        $this->info('Account ['.Tool::getBindAccount().']');
-        $this->info('App Version  ['.Tool::config('app_version').']');
+        $this->info('Account [' . Tool::getBindAccount() . ']');
+        $this->info('App Version  [' . Tool::config('app_version') . ']');
         $this->table($headers, $quota, 'default');
     }
 }

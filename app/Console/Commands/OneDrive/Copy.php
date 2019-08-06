@@ -46,12 +46,10 @@ class Copy extends Command
         }
         $origin = $this->argument('origin');
         $_origin = OneDrive::pathToItemId($origin);
-        $origin_id = $_origin['errno'] === 0 ? Arr::get($_origin, 'data.id')
-            : exit('Origin Path Abnormal');
+        $origin_id = $_origin['errno'] === 0 ? Arr::get($_origin, 'data.id') : exit('Origin Path Abnormal');
         $target = $this->argument('target');
         $_target = OneDrive::pathToItemId($target);
-        $target_id = $_origin['errno'] === 0 ? Arr::get($_target, 'data.id')
-            : exit('Target Path Abnormal');
+        $target_id = $_origin['errno'] === 0 ? Arr::get($_target, 'data.id') : exit('Target Path Abnormal');
         $response = OneDrive::copy($origin_id, $target_id);
         if ($response['errno'] === 0) {
             $redirect = Arr::get($response, 'data.redirect');
@@ -67,17 +65,11 @@ class Copy extends Command
                     $this->error(Arr::get($resp, 'data.error.message'));
                     $done = true;
                 } elseif ($status === 'inProgress') {
-                    $this->info(
-                        'Progress: '
-                        . Arr::get($resp, 'data.percentageComplete')
-                    );
+                    $this->info('Progress: ' . Arr::get($resp, 'data.percentageComplete'));
                     sleep(3);
                     $done = false;
                 } elseif ($status === 'completed') {
-                    $this->info(
-                        'Progress: '
-                        . Arr::get($resp, 'data.percentageComplete')
-                    );
+                    $this->info('Progress: ' . Arr::get($resp, 'data.percentageComplete'));
                     $done = true;
                 } elseif ($status === 'notStarted') {
                     $this->error('Status:' . $status);

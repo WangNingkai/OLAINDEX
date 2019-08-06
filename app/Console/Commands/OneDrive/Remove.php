@@ -78,7 +78,7 @@ class Remove extends Command
         }
         $response = OneDrive::delete($id);
         $this->call('cache:clear');
-        $response['errno'] === 0 ? $this->info("Deleted!")
+        $response['errno'] === 0 ? $this->info('Deleted!')
             : $this->warn("Failed!\n{$response['msg']} ");
     }
 }
