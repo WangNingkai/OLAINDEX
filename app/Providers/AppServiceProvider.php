@@ -33,10 +33,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (app('env') == 'local') {
-            \Debugbar::enable();
-        }
-
         Task::observe(TaskObserver::class);
         Admin::observe(AdminObserver::class);
         Image::observe(ImageObserver::class);
