@@ -84,7 +84,19 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('image', 'UtilController@storeImage')->name('admin.image');
         Route::post('image/delete', 'UtilController@destroyImage')->name('admin.image.delete');
         Route::get('onedrive_list', 'UtilController@list')->name('admin.onedrive.list');
+        Route::get('test', function () {
+            $google2fa = app('pragmarx.google2fa');
+            $admin = auth('admin')->user();
 
+            $qrcode = $google2fa->getQRCodeInline(
+                $admin->name,
+                $admin->email,
+                $google2fa->generateSecretKey()
+            );
+
+            return view('default.admin.qrcode', compact('qrcode'));
+            // return $google2fa->generateSecretKey();
+        });
         // 基础设置
         Route::get('/', 'AdminController@showBasic')->name('admin.basic');
         Route::post('/', 'AdminController@basic')->name('admin.basic.post');

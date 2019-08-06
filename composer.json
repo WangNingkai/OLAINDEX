@@ -29,6 +29,7 @@
         "laravel/tinker": "^1.0",
         "overtrue/laravel-lang": "^3.0",
         "php-curl-class/php-curl-class": "^8.3",
+        "pragmarx/google2fa-laravel": "^1.0",
         "sentry/sentry-laravel": "^1.0.0"
     },
     "require-dev": {
