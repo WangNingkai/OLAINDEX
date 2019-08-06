@@ -14,7 +14,7 @@ class OneDriveUpload extends Job
      *
      * @var int
      */
-    public $tries = 1;
+    public $tries = 2;
 
     /**
      * The number of seconds the job can run before timing out.
@@ -53,17 +53,28 @@ class OneDriveUpload extends Job
                 ]);
             }
 
-            try {
-                Artisan::call('od:upload', $parameters);
-                $this->task->status = 'completed';
-            } catch (Exception $e) {
-                $this->task->status = 'failed';
-                if (app()->bound('sentry')) {
-                    app('sentry')->captureException($e);
-                }
-            }
-
+            Artisan::call('od:upload', $parameters);
+            $this->task->status = 'completed';
             $this->task->save();
+        }
+    }
+
+    /**
+     * The job failed to process.
+     *
+     * @param  Exception  $exception
+     * @return void
+     */
+    public function failed(Exception $exception)
+    {
+        if (app()->bound('sentry')) {
+            app('sentry')->captureException($exception);
+        }
+
+        if ($this->attempts() == $this->tries) {
+            $this->task->update([
+                'status' => 'failed'
+            ]);
         }
     }
 }
