@@ -1,16 +1,15 @@
 @extends('default.layouts.main')
 @section('title', getAdminConfig('site_name'))
 @section('css')
-<link rel="stylesheet"
-    href="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/css/blueimp-gallery-indicator.min.css">
-<link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/css/blueimp-gallery.min.css">
+<link href="https://cdn.bootcss.com/blueimp-gallery/2.33.0/css/blueimp-gallery-indicator.min.css" rel="stylesheet">
+<link href="https://cdn.bootcss.com/blueimp-gallery/2.33.0/css/blueimp-gallery.min.css" rel="stylesheet">
 @stop
 @section('js')
-<script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/blueimp-helper.min.js"></script>
-<script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/blueimp-gallery.min.js"></script>
-<script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/blueimp-gallery-indicator.min.js"></script>
-<script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/jquery.blueimp-gallery.min.js"></script>
-<script src="https://cdnjs.loli.net/ajax/libs/blueimp-gallery/2.33.0/js/blueimp-gallery-fullscreen.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-gallery/2.33.0/js/blueimp-helper.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-gallery/2.33.0/js/blueimp-gallery.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-gallery/2.33.0/js/blueimp-gallery-indicator.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-gallery/2.33.0/js/jquery.blueimp-gallery.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-gallery/2.33.0/js/blueimp-gallery-fullscreen.min.js"></script>
 <script>
     @if (auth('admin') -> user())
         function deleteItem($sign) {
@@ -301,10 +300,10 @@
             @foreach($items as $item)
             @if( Arr::has($item,'image'))
             <a href="{{ route('view', [
-                                'query' => $origin_path ? $origin_path.'/'.$item['name'] : $item['name'],
-                                'onedrive' => app('onedrive')->id
-                            ]) }}" title="{{ $item['name'] }}" data-gallery>
-                <img class="lazy" data-original="{{ Arr::get($item, 'thumbnails.0.small.url') }}"
+                    'query' => $origin_path ? $origin_path . '/'. $item['name'] : $item['name'],
+                    'onedrive' => app('onedrive')->id
+                ]) }}" title="{{ $item['name'] }}" data-gallery>
+                <img class="lazy" data-original="{{ Arr::get($item, 'thumbnails.0.small.url', '') }}"
                     src="{{ asset('img/loading.gif') }}" alt="{{ $item['name'] }}" width="10%" height="10%">
             </a>
             @endif
