@@ -38,7 +38,6 @@
         <div class="card-header"><i class="fa fa-leaf"></i> 关于反馈</div>
         <div class="card-body markdown-body px-3">
             {!! $markdown !!}
-
         </div>
         @if (Str::contains(config('app.url'), ['localhost','dev.ningkai.wang']))
             <script src="https://utteranc.es/client.js"
