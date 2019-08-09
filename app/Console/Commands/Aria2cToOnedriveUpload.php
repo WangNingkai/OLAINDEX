@@ -52,9 +52,11 @@ class Aria2cToOnedriveUpload extends Command
             return;
         }
 
+        getDefaultOneDriveAccount();
         $data = [
-            'type'   => is_file($path) ? 'file' : 'folder',
-            'source' => $path,
+            'type'        => is_file($path) ? 'file' : 'folder',
+            'source'      => $path,
+            'onedrive_id' => app('onedrive')->id,
         ];
 
         $result = explode('@@', $path);
@@ -69,13 +71,11 @@ class Aria2cToOnedriveUpload extends Command
                     }
                     Arr::set($data, 'target', $target_path);
                 } else {
-                    $onedrive_id = $match[2];
                     if ($match[2]) {
-                        getDefaultOneDriveAccount();
-                        $onedrive_id = app('onedrive')->id;
+                        $onedrive_id = $match[2];
                     }
 
-                    Arr::set($data, 'onedrive_id', $onedrive_id);
+                    $data['onedrive'] = $onedrive_id;
                 }
             }
         }
