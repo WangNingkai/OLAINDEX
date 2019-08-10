@@ -91,7 +91,7 @@ class UploadFile extends Command
         if (preg_match('/(.+)(?<!\\\\)\.[^.]+$/', $basenameRemote)) {
             $remote_path = $remote;
         }
-
+        info("upload:{$remote_path}");
         $response = OneDrive::uploadByPath($remote_path, $content);
         app('sentry')->captureMessage('upload %s done', [$local], [
             'level' => 'info',
