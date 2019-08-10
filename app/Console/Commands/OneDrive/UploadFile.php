@@ -151,7 +151,8 @@ class UploadFile extends Command
                     $status = @floor($offset / $file_size * 100) . '%';
                     $this->info("success. progress:{$status}");
                     $done = false;
-                } elseif (!empty($data['@content.downloadUrl'])
+                } elseif (
+                    !empty($data['@content.downloadUrl'])
                     || !empty($data['id'])
                 ) {
                     $this->info('Upload Success!');

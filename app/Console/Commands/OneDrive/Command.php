@@ -4,9 +4,12 @@ namespace App\Console\Commands\OneDrive;
 
 use Illuminate\Console\Command as BaseCommand;
 use Symfony\Component\Console\Input\InputOption;
+use App\Traits\Command\Info;
+
 
 class Command extends BaseCommand
 {
+    use Info;
     /**
      * The name and signature of the console command.
      *
