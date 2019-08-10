@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command\Traits;
+namespace App\Traits\Command;
 
 trait Info
 {
