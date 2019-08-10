@@ -114,11 +114,15 @@ class UploadFile extends Command
         ini_set('memory_limit', '-1');
         $file_size = OneDrive::readFileSize($local);
         $file_name = basename($local);
+        info($file_name);
         $remote_path = Tool::getAbsolutePath($remote) . $file_name;
+        info($remote_path);
         $basenameRemote = basename($remote);
+        info($basenameRemote);
         if (preg_match('/(.+)(?<!\\\\)\.[^.]+$/', $basenameRemote)) {
             $remote_path = $remote;
         }
+        info($remote_path);
         $url_response = OneDrive::createUploadSession($remote_path);
 
         if ($url_response['errno'] === 0) {
