@@ -93,7 +93,13 @@ class UploadFile extends Command
         }
 
         $response = OneDrive::uploadByPath($remote_path, $content);
-
+        app('sentry')->captureMessage('upload %s done', [$local], [
+            'level' => 'info',
+            'extra' => [
+                'local'  => $local,
+                'remote' => $remote_path
+            ]
+        ]);
         if ($response['errno'] === 0) {
             $this->info('Upload Success!');
             @unlink($local);
@@ -123,6 +129,13 @@ class UploadFile extends Command
             $remote_path = $remote;
         }
         info($remote_path);
+        app('sentry')->captureMessage('upload %s done', [$local], [
+            'level' => 'info',
+            'extra' => [
+                'local'  => $local,
+                'remote' => $remote_path
+            ]
+        ]);
         $url_response = OneDrive::createUploadSession($remote_path);
 
         if ($url_response['errno'] === 0) {
