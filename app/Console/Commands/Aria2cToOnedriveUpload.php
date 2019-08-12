@@ -56,6 +56,7 @@ class Aria2cToOnedriveUpload extends Command
 
         getDefaultOneDriveAccount();
         $data = [
+            'gid'         => $gid,
             'type'        => is_file($path) ? 'file' : 'folder',
             'source'      => $path,
             'target'      => 'upload/',
