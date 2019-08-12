@@ -881,6 +881,7 @@ class OneDrive
     {
         Log::info('join compressedFile');
         if (!file_exists($path)) {
+            Log::info('文件不存在!');
             return false;
         }
 
