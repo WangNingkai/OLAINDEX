@@ -4,8 +4,8 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Task;
-use Illuminate\Support\Arr;
 use App\Jobs\OneDriveUpload;
+use Illuminate\Support\Facades\Log;
 
 class Aria2cToOnedriveUpload extends Command
 {
@@ -60,6 +60,8 @@ class Aria2cToOnedriveUpload extends Command
             'onedrive_id' => app('onedrive')->id,
         ];
 
+        Log::info('start upload');
+
         $result = explode('@@', $path);
         foreach ($result as $item) {
             $match = [];
@@ -84,5 +86,6 @@ class Aria2cToOnedriveUpload extends Command
         $task = Task::create($data);
 
         dispatch(new OneDriveUpload($task));
+        Log::info('push job');
     }
 }

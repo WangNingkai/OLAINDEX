@@ -6,6 +6,7 @@ use App\Helpers\Tool;
 use App\Helpers\OneDrive;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class UploadFile extends Command
 {
@@ -59,8 +60,12 @@ class UploadFile extends Command
         }
 
         if (!empty($folder)) {
+            Log::info('folder upload');
+
             $this->uploadFolder($local, $remote, $chuck);
         } else {
+            Log::info('file upload');
+
             $this->uploadFile($local, $remote, $chuck);
         }
     }
@@ -69,8 +74,11 @@ class UploadFile extends Command
     {
         $file_size = OneDrive::readFileSize($local);
         if ($file_size < 4194304) {
+            Log::info('直接上传');
             return $this->upload($local, $remote);
         } else {
+            Log::info('session 上传');
+
             return $this->uploadBySession($local, $remote, $chuck);
         }
     }
@@ -91,7 +99,7 @@ class UploadFile extends Command
         if (preg_match('/(.+)(?<!\\\\)\.[^.]+$/', $basenameRemote)) {
             $remote_path = $remote;
         }
-        info("upload:{$remote_path}");
+        Log::info("上传路径:{$remote_path}");
         $response = OneDrive::uploadByPath($remote_path, $content);
         if ($response['errno'] === 0) {
             $this->info('Upload Success!');
@@ -113,15 +121,12 @@ class UploadFile extends Command
         ini_set('memory_limit', '-1');
         $file_size = OneDrive::readFileSize($local);
         $file_name = basename($local);
-        info($file_name);
         $remote_path = Tool::getAbsolutePath($remote) . $file_name;
-        info($remote_path);
         $basenameRemote = basename($remote);
-        info($basenameRemote);
         if (preg_match('/(.+)(?<!\\\\)\.[^.]+$/', $basenameRemote)) {
             $remote_path = $remote;
         }
-        info($remote_path);
+        Log::info("上传路径:{$remote_path}");
         $url_response = OneDrive::createUploadSession($remote_path);
 
         if ($url_response['errno'] === 0) {
