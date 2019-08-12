@@ -61,7 +61,7 @@ class Aria2cToOnedriveUpload extends Command
             'onedrive_id' => app('onedrive')->id,
         ];
 
-        Log::info('start upload');
+        Log::info('start create task');
 
         $result = explode('@@', $path);
         foreach ($result as $item) {
@@ -87,6 +87,6 @@ class Aria2cToOnedriveUpload extends Command
         $task = Task::create($data);
 
         dispatch(new OneDriveUpload($task));
-        Log::info('push job');
+        Log::info('push queue');
     }
 }

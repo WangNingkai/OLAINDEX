@@ -5,6 +5,7 @@ namespace App\Jobs;
 use Exception;
 use App\Models\Task;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 
 class OneDriveUpload extends Job
 {
@@ -40,6 +41,7 @@ class OneDriveUpload extends Job
      */
     public function handle()
     {
+        Log::info('start job');
         if ($this->task->status == 'pending') {
             $parameters = [
                 '--one_drive_id' => $this->task->onedrive_id,
@@ -67,6 +69,7 @@ class OneDriveUpload extends Job
      */
     public function failed(Exception $exception)
     {
+        Log::info('upload error');
         if (app()->bound('sentry')) {
             app('sentry')->captureException($exception);
         }
@@ -76,5 +79,15 @@ class OneDriveUpload extends Job
                 'status' => 'failed'
             ]);
         }
+    }
+        
+    /**
+     * Determine the time at which the job should timeout.
+     *
+     * @return \DateTime
+     */
+    public function retryUntil()
+    {
+        return now()->addSeconds(3);
     }
 }
