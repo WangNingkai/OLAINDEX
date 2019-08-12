@@ -109,7 +109,7 @@ class UploadFile extends Command
         $response = OneDrive::uploadByPath($remote_path, $content);
         if ($response['errno'] === 0) {
             $this->info('Upload Success!');
-            @unlink($local);
+            // @unlink($local);
         } else {
             $this->warn('Failed!');
         }

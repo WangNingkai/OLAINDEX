@@ -74,7 +74,10 @@ class OneDriveUpload extends Job
             app('sentry')->captureException($exception);
         }
 
+        Log::info("attempts:{$this->attempts()}");
+        Log::info("tries:{$this->tries}");
         if ($this->attempts() == $this->tries) {
+
             $this->task->update([
                 'status' => 'failed'
             ]);
