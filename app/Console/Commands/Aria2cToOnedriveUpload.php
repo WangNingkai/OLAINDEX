@@ -44,8 +44,6 @@ class Aria2cToOnedriveUpload extends Command
     {
         $gid = $this->option('gid');
         $path = $this->option('path');
-        Log::info("gid:{$gid}");
-        Log::info("path:{$path}");
         if (empty($gid) || empty($path)) {
             info('上传缺少参数', [
                 'gid'  => $gid,

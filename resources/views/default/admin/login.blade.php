@@ -43,7 +43,7 @@
                     <i class="fa fa-sign-in"></i> {{ __('messages.admin_login') }}
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('admin.login') }}" method="post">
+                    <form action="{{ route('admin.login') }}" method="POST">
                         @csrf
                         <div class="form-group row {{ $errors->has('email') ? 'has-danger' : '' }}">
                             <label for="email" class="col-md-4 col-form-label text-md-right">E-mail</label>
