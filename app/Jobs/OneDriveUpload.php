@@ -5,7 +5,6 @@ namespace App\Jobs;
 use Exception;
 use App\Models\Task;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Log;
 
 class OneDriveUpload extends Job
 {
@@ -41,7 +40,6 @@ class OneDriveUpload extends Job
      */
     public function handle()
     {
-        Log::info('start job');
         if ($this->task->status == 'pending') {
             $parameters = [
                 '--one_drive_id' => $this->task->onedrive_id,
@@ -69,15 +67,11 @@ class OneDriveUpload extends Job
      */
     public function failed(Exception $exception)
     {
-        Log::info('upload error');
         if (app()->bound('sentry')) {
             app('sentry')->captureException($exception);
         }
 
-        Log::info("attempts:{$this->attempts()}");
-        Log::info("tries:{$this->tries}");
         if ($this->attempts() == $this->tries) {
-
             $this->task->update([
                 'status' => 'failed'
             ]);

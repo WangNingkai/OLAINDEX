@@ -6,7 +6,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Chumper\Zipper\Zipper;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 
 /**
  * Class OneDrive
@@ -879,10 +878,9 @@ class OneDrive
 
     public static function compressedFile($path, $archive)
     {
-        Log::info('join compressedFile');
         if (!file_exists($path)) {
-            Log::info('文件不存在!');
-            Log::info($path);
+            info("{$path}文件不存在!");
+
             return false;
         }
 

@@ -6,8 +6,6 @@ use App\Helpers\Tool;
 use App\Helpers\OneDrive;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
 
 class UploadFile extends Command
 {
@@ -61,13 +59,8 @@ class UploadFile extends Command
         }
 
         if (!empty($folder)) {
-            Log::info('folder upload');
-            Cache::put('upload_type', 'folder');
             $this->uploadFolder($local, $remote, $chuck);
         } else {
-            Log::info('file upload');
-            Cache::put('upload_type', 'file');
-
             $this->uploadFile($local, $remote, $chuck);
         }
     }
@@ -76,13 +69,8 @@ class UploadFile extends Command
     {
         $file_size = OneDrive::readFileSize($local);
         if ($file_size < 4194304) {
-            Cache::put('upload_session', 'direct');
-            Log::info('直接上传');
             return $this->upload($local, $remote);
         } else {
-            Cache::put('upload_session', 'session');
-            Log::info('session 上传');
-
             return $this->uploadBySession($local, $remote, $chuck);
         }
     }
@@ -103,13 +91,12 @@ class UploadFile extends Command
         if (preg_match('/(.+)(?<!\\\\)\.[^.]+$/', $basenameRemote)) {
             $remote_path = $remote;
         }
-        Cache::put('remote_path', $remote_path);
 
-        Log::info("上传路径:{$remote_path}");
+        info("上传路径:{$remote_path}");
         $response = OneDrive::uploadByPath($remote_path, $content);
         if ($response['errno'] === 0) {
             $this->info('Upload Success!');
-            // @unlink($local);
+            @unlink($local);
         } else {
             $this->warn('Failed!');
         }
@@ -132,9 +119,8 @@ class UploadFile extends Command
         if (preg_match('/(.+)(?<!\\\\)\.[^.]+$/', $basenameRemote)) {
             $remote_path = $remote;
         }
-        Cache::put('remote_path', $remote_path);
 
-        Log::info("上传路径:{$remote_path}");
+        info("上传路径:{$remote_path}");
         $url_response = OneDrive::createUploadSession($remote_path);
 
         if ($url_response['errno'] === 0) {
