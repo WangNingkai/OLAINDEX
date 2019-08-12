@@ -126,3 +126,8 @@ chown -R www:www *
  - [x] ManggeController
  - [x] IndexConttroller
  - [ ] themes 配置 (caffeinated/themes)
+
+### 注意事项
+    修改Job时，需要重启supervisorctl
+    
+    supervisorctl restart onedrive:*
