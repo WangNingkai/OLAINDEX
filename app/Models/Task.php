@@ -19,8 +19,7 @@ class Task extends Model
         'path',
         'created_at',
         'completed_at',
-        'failed_at',
-        'deleted_at'
+        'failed_at'
     ];
 
     public function onedrive()
