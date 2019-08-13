@@ -17,7 +17,7 @@ class AdminController extends Controller
 {
     public function showBasic()
     {
-        $admin = $this->user();
+        $admin = auth('admin')->user();
 
         return view(config('olaindex.theme') . 'admin.basic', compact('admin'));
     }
@@ -39,7 +39,7 @@ class AdminController extends Controller
             'statistics'         => 'sometimes|nullable|string',
         ]);
 
-        $admin = $this->user();
+        $admin = auth('admin')->user();
         $data = array_map(function (&$item) {
             return is_null($item) ? $item = '' : $item;
         }, $data);
@@ -64,7 +64,8 @@ class AdminController extends Controller
             'password_confirm' => 'required|string|same:password',
         ]);
 
-        $this->user()->update(Arr::only($data, 'password'));
+        $admin = auth('admin')->user();
+        $admin->update(Arr::only($data, 'password'));
 
         return success();
     }

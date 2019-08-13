@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Index;
 
 use App\Helpers\Tool;
 use App\Helpers\OneDrive;
-use App\Helpers\Constants;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -87,7 +86,7 @@ class IndexController extends Controller
         }
 
         $origin_items = ItemResource::collection(collect($origin_items));
-        $items = Tool::paginate($origin_items->toArray(request()), Arr::get($data, 'limit', 20));
+        $items = Tool::paginate($origin_items->toArray($request), Arr::get($data, 'limit', 20));
         $parent_item = $item;
         $data = compact(
             'parent_item',
@@ -154,7 +153,7 @@ class IndexController extends Controller
 
         $file['realPath'] = $realPath;
         $file['download'] = $file['@microsoft.graph.downloadUrl'];
-        
+
         return (new ShowResource($file))->toArray($request);
     }
 

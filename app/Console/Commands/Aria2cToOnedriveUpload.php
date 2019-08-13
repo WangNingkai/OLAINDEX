@@ -4,8 +4,8 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Task;
-use Illuminate\Support\Arr;
 use App\Jobs\OneDriveUpload;
+use Illuminate\Support\Facades\Log;
 
 class Aria2cToOnedriveUpload extends Command
 {
@@ -52,9 +52,13 @@ class Aria2cToOnedriveUpload extends Command
             return;
         }
 
+        getDefaultOneDriveAccount();
         $data = [
-            'type'   => is_file($path) ? 'file' : 'folder',
-            'source' => $path,
+            'gid'         => $gid,
+            'type'        => is_file($path) ? 'file' : 'folder',
+            'source'      => $path,
+            'target'      => '/upload/',
+            'onedrive_id' => app('onedrive')->id,
         ];
 
         $result = explode('@@', $path);
@@ -63,19 +67,17 @@ class Aria2cToOnedriveUpload extends Command
 
             if (preg_match('/(odid|path)=([\S]+)/', $item, $match)) {
                 if ($match[1] == 'path') {
-                    $target_path = 'upload/';
                     if ($match[2]) {
                         $target_path = str_replace('\\', '/', $match[2]);
                     }
-                    Arr::set($data, 'target', $target_path);
+
+                    $data['target'] = $target_path;
                 } else {
-                    $onedrive_id = $match[2];
                     if ($match[2]) {
-                        getDefaultOneDriveAccount();
-                        $onedrive_id = app('onedrive')->id;
+                        $onedrive_id = $match[2];
                     }
 
-                    Arr::set($data, 'onedrive_id', $onedrive_id);
+                    $data['onedrive'] = $onedrive_id;
                 }
             }
         }

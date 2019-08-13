@@ -92,8 +92,8 @@ class UploadFile extends Command
             $remote_path = $remote;
         }
 
+        info("上传路径:{$remote_path}");
         $response = OneDrive::uploadByPath($remote_path, $content);
-
         if ($response['errno'] === 0) {
             $this->info('Upload Success!');
             @unlink($local);
@@ -119,6 +119,8 @@ class UploadFile extends Command
         if (preg_match('/(.+)(?<!\\\\)\.[^.]+$/', $basenameRemote)) {
             $remote_path = $remote;
         }
+
+        info("上传路径:{$remote_path}");
         $url_response = OneDrive::createUploadSession($remote_path);
 
         if ($url_response['errno'] === 0) {
@@ -151,7 +153,8 @@ class UploadFile extends Command
                     $status = @floor($offset / $file_size * 100) . '%';
                     $this->info("success. progress:{$status}");
                     $done = false;
-                } elseif (!empty($data['@content.downloadUrl'])
+                } elseif (
+                    !empty($data['@content.downloadUrl'])
                     || !empty($data['id'])
                 ) {
                     $this->info('Upload Success!');

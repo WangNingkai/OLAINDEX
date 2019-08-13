@@ -879,6 +879,8 @@ class OneDrive
     public static function compressedFile($path, $archive)
     {
         if (!file_exists($path)) {
+            info("{$path}文件不存在!");
+
             return false;
         }
 

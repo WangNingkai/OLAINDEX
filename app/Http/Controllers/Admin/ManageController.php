@@ -212,7 +212,7 @@ class ManageController extends Controller
         $content = $request->get('content');
         $response = OneDrive::upload($id, $content);
         $response['errno'] === 0 ? Tool::showMessage('修改成功！') : Tool::showMessage('修改失败！', false);
-        Artisan::call('cache:clear');
+        clearOnedriveCache(app('onedrive')->id);
         return redirect()->back();
     }
 
@@ -247,13 +247,12 @@ class ManageController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \ErrorException
      */
-    public function deleteItem($sign)
+    public function deleteItem($onedrive, $sign)
     {
         try {
             $deCode = decrypt($sign);
         } catch (DecryptException $e) {
             Tool::showMessage($e->getMessage(), false);
-
             return view(config('olaindex.theme') . 'message');
         }
         $reCode = explode('.', $deCode);
@@ -268,7 +267,7 @@ class ManageController extends Controller
         $response = OneDrive::delete($id, $eTag);
         $response['errno'] === 0 ? Tool::showMessage('文件已删除')
             : Tool::showMessage('文件删除失败', false);
-        Artisan::call('cache:clear');
+        clearOnedriveCache(app('onedrive')->id);
 
         return view(config('olaindex.theme') . 'message');
     }
