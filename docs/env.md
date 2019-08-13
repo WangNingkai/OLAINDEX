@@ -44,7 +44,8 @@ oneinstack php安装路径 `/usr/local/php/etc/php.ini`
 ```
 1、进入php.ini文件，找到disable_function=，删除proc_open函数，即可。
 2、进入php.ini文件，找到disable_function=，删除proc_get_status函数，即可。
-3、sudo service php-fpm restart # 重启 php 进程
+3、进入php.ini文件，找到disable_function=，删除putenv函数，即可。
+4、sudo service php-fpm restart # 重启 php 进程
 ```
 
 **3.0更新了命令行操作，另外需要开启禁用的两个方法**
