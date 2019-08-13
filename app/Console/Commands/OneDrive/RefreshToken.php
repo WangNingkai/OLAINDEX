@@ -56,6 +56,7 @@ class RefreshToken extends Command
             } else {
                 $oauth = new OauthController();
                 $res = json_decode($oauth->refreshToken(false), true);
+                info($onedrive->id);
                 $res['code'] === 200 or exit('Refresh Token Error!');
             }
         }
