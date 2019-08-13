@@ -224,6 +224,9 @@ class Tool
         $code = explode(' ', setting('code'));
         $stream = explode(' ', setting('stream'));
         $canEditExt = array_merge($code, $stream);
+        if (!isset($file['ext'])) {
+            return false;
+        }
         $isText = in_array($file['ext'], $canEditExt, false);
         $isBigFile = $file['size'] > 5 * 1024 * 1024 ?: false;
 
