@@ -121,6 +121,7 @@ class OauthController extends Controller
      */
     public function refreshToken($redirect = true)
     {
+        info(app('onedrive'));
         $expires = app('onedrive')->access_token_expires;
         $hasExpired = $expires - time() <= 0;
         if (!$hasExpired) {
