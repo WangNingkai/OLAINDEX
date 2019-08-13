@@ -71,13 +71,13 @@ class OneDriveUpload extends Job
             app('sentry')->captureException($exception);
         }
 
-        if ($this->attempts() == $this->tries) {
+        if ($this->attempts() >= $this->tries) {
             $this->task->update([
                 'status' => 'failed'
             ]);
         }
     }
-        
+
     /**
      * Determine the time at which the job should timeout.
      *
