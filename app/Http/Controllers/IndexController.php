@@ -287,7 +287,7 @@ class IndexController extends Controller
         }
         $file['download'] = $file['@microsoft.graph.downloadUrl'];
         foreach ($this->show as $key => $suffix) {
-            if (in_array($file['ext'], $suffix, false)) {
+            if (in_array($file['ext'] ?? '', $suffix, false)) {
                 $view = 'show.' . $key;
                 // 处理文本文件
                 if (in_array($key, ['stream', 'code'])) {
@@ -299,9 +299,9 @@ class IndexController extends Controller
                     $file['content'] = Tool::getFileContent($file['@microsoft.graph.downloadUrl'], false);
                     if ($key === 'stream') {
                         $fileType
-                            = empty(Extension::FILE_STREAM[$file['ext']])
+                            = empty(Extension::FILE_STREAM[$file['ext'] ?? 'file'])
                             ? 'application/octet-stream'
-                            : Extension::FILE_STREAM[$file['ext']];
+                            : Extension::FILE_STREAM[$file['ext'] ?? 'file'];
 
                         return response($file['content'], 200, ['Content-type' => $fileType,]);
                     }

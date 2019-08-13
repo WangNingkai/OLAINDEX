@@ -84,6 +84,7 @@ class Extension
     ];
 
     const FILE_STREAM = [
+        'file' => 'application/octet-stream',
         'chm' => 'application/octet-stream',
         'ppt' => 'application/vnd.ms-powerpoint',
         'xls' => 'application/vnd.ms-excel',

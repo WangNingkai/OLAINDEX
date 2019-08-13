@@ -94,7 +94,7 @@
                         <a target="_blank"
                            href="{{ route('search.show',$item['id']) }}">
                             <div class="col-icon">
-                                @if(in_array($item['ext'],['bmp','jpg','jpeg','png','gif']))
+                                @if(in_array($item['ext']??'',['bmp','jpg','jpeg','png','gif']))
                                     <img class="lazy"
                                          data-original="{{ route('thumb',['id'=>$item['id'],'size'=>'small']) }}"
                                          src="https://i.loli.net/2018/12/04/5c0625755d6ce.gif" alt="">

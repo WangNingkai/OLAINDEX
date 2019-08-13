@@ -33,7 +33,7 @@
                                  style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
                                 <a href="{{ route('search.show',$item['id']) }}"
                                    title="{{ $item['name'] }}">
-                                    <i class="fa {{\App\Utils\Tool::getExtIcon($item['ext'])}}"></i> {{ $item['name'] }}
+                                    <i class="fa {{\App\Utils\Tool::getExtIcon($item['ext'] ?? '')}}"></i> {{ $item['name'] }}
                                 </a>
                             </div>
                             <div class="col-sm-2 d-none d-md-block d-md-none">

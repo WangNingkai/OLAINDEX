@@ -115,7 +115,7 @@
                             <a href="{{ route('show',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}"
                                target="_blank">
                                 <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
-                                    <i class="mdui-icon material-icons">{{ \App\Utils\Extension::getFileIcon($item['ext']) }}</i>
+                                    <i class="mdui-icon material-icons">{{ \App\Utils\Extension::getFileIcon($item['ext']??'') }}</i>
                                     {{ $item['name'] }}
                                 </div>
                                 <div
@@ -178,13 +178,13 @@
                         <a target="_blank"
                            href="{{ route('show',\App\Utils\Tool::encodeUrl($originPath ? $originPath.'/'.$item['name'] : $item['name'])) }}">
                             <div class="col-icon">
-                                @if(in_array($item['ext'],explode(' ',setting('image')),false))
+                                @if(in_array($item['ext']??'',explode(' ',setting('image')),false))
                                     <img class="lazy"
                                          data-original="{{  \Illuminate\Support\Arr::get($item,'thumbnails.0.small.url','') }}"
                                          src="{{ asset('img/loading.gif') }}" alt="">
                                 @else
                                     <img
-                                        src="{{ asset('img/'.\App\Utils\Tool::getExtIcon($item['ext'],true).'.png') }}"
+                                        src="{{ asset('img/'.\App\Utils\Tool::getExtIcon($item['ext']??'',true).'.png') }}"
                                         alt="">
                                 @endif
                             </div>
