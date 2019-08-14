@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Constants;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OneDrive extends Model
@@ -54,5 +55,29 @@ class OneDrive extends Model
     public function tasks()
     {
         return $this->hasMany(Task::class);
+    }
+
+    public function getIpAttribute($value)
+    {
+        return long2ip($value);
+    }
+
+    public function getAuthorizeUrlAttribute($value)
+    {
+        return $this->account_type == 'com'
+            ? Constants::AUTHORITY_URL . Constants::AUTHORIZE_ENDPOINT
+            : Constants::AUTHORITY_URL_21V . Constants::AUTHORIZE_ENDPOINT_21V;
+    }
+
+    public function getAccessTokenUrlAttribute($value)
+    {
+        return $this->account_type == 'com'
+            ? Constants::AUTHORITY_URL . Constants::AUTHORIZE_ENDPOINT
+            : Constants::AUTHORITY_URL_21V . Constants::AUTHORIZE_ENDPOINT_21V;
+    }
+
+    public function getScopesAttribute($value)
+    {
+        return $this->scopes = Constants::SCOPES;
     }
 }
