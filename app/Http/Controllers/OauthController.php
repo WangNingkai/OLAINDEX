@@ -121,10 +121,9 @@ class OauthController extends Controller
      */
     public function refreshToken($redirect = true)
     {
-        info(app('onedrive'));
         $expires = app('onedrive')->access_token_expires;
         $hasExpired = $expires - time() <= 0;
-        if (!$hasExpired && !env('ONEDRIVE_DEBUG')) {
+        if (!$hasExpired) {
             return response()->json(['code' => 400, 'msg' => 'Bad Request']);
         }
 
@@ -143,11 +142,10 @@ class OauthController extends Controller
                 Constants::REST_ENDPOINT_21V
             );
         }
-        info('form_params', $form_params);
-        info(app('onedrive')->name . ': start curl');
+
         $curl = new Curl();
         $curl->post(app('onedrive')->access_token_url, $form_params);
-        info(app('onedrive')->name . ': end curl');
+
         if ($curl->error) {
             Log::error(
                 'OneDrive Refresh Token Err',
@@ -169,6 +167,7 @@ class OauthController extends Controller
                 'refresh_token'        => $token['refresh_token'],
                 'access_token_expires' => $expires,
             ];
+
             $result = app('onedrive')->update($data);
             if ($redirect) {
                 $redirect = Session::get('refresh_redirect') ?? '/';

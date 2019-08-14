@@ -57,11 +57,6 @@ class OneDrive extends Model
         return $this->hasMany(Task::class);
     }
 
-    public function getIpAttribute($value)
-    {
-        return long2ip($value);
-    }
-
     public function getAuthorizeUrlAttribute($value)
     {
         return $this->account_type == 'com'
