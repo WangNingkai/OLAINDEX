@@ -67,8 +67,8 @@ class OneDrive extends Model
     public function getAccessTokenUrlAttribute($value)
     {
         return $this->account_type == 'com'
-            ? Constants::AUTHORITY_URL . Constants::AUTHORIZE_ENDPOINT
-            : Constants::AUTHORITY_URL_21V . Constants::AUTHORIZE_ENDPOINT_21V;
+            ? Constants::AUTHORITY_URL . Constants::TOKEN_ENDPOINT
+            : Constants::AUTHORITY_URL_21V . Constants::TOKEN_ENDPOINT_21V;
     }
 
     public function getScopesAttribute($value)
