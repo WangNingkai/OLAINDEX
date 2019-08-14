@@ -42,15 +42,14 @@ class RefreshToken extends Command
         } else {
             getDefaultOneDriveAccount($this->option('one_drive_id'));
             $onedrives = collect([
-                app('onedrive')  
+                app('onedrive')
             ]);
         }
-        
+
         foreach ($onedrives as $onedrive) {
             app()->instance('onedrive', $onedrive);
             $expires = app('onedrive')->access_token_expires;
             $hasExpired = $expires - time() <= 0 ? true : false;
-    
             if (!$hasExpired) {
                 return;
             } else {
