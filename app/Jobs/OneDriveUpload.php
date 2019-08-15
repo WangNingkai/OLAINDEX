@@ -40,6 +40,8 @@ class OneDriveUpload extends Job
      */
     public function handle()
     {
+        info('handle-attempts():' . $this->attempts());
+  
         if ($this->task->status == 'pending') {
             $parameters = [
                 '--one_drive_id' => $this->task->onedrive_id,
@@ -53,7 +55,7 @@ class OneDriveUpload extends Job
                 ]);
             }
             info('parameters', $parameters);
-            Artisan::call('od:upload', $parameters);
+            Artisan::call('od:uploads', $parameters);
             $this->task->status = 'completed';
             $this->task->save();
         }
@@ -71,20 +73,8 @@ class OneDriveUpload extends Job
             app('sentry')->captureException($exception);
         }
 
-        if ($this->attempts() >= $this->tries) {
-            $this->task->update([
-                'status' => 'failed'
-            ]);
-        }
-    }
-
-    /**
-     * Determine the time at which the job should timeout.
-     *
-     * @return \DateTime
-     */
-    public function retryUntil()
-    {
-        return now()->addSeconds(3);
+        $this->task->update([
+            'status' => 'failed'
+        ]);
     }
 }
