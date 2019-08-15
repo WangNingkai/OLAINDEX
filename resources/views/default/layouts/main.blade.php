@@ -85,6 +85,9 @@
         </div>
     @endif
     @yield('content')
+
+</div>
+<div class="container mt-3">
     <footer id="footer">
         <div class="row text-center">
             <div class="col-lg-12">

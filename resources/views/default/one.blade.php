@@ -283,13 +283,17 @@
         </li>
     </div>
 </div>
+@if ($items->lastPage() != 1)
 <div>
-    {{ $items->appends([
+{{ 
+    $items->appends([
             'limit' => request()->get('limit'),
             'by'    => request()->get('by'),
             'sort'  => request()->get('sort'),
-        ])->links() }}
+        ])->links() 
+}}
 </div>
+@endif
 @if ($hasImage && Arr::get(app('onedrive')->settings, 'image_view'))
 <div class="card border-light mb-3">
     <div class="card-header">
@@ -297,7 +301,7 @@
     </div>
     <div class="card-body">
         <div id="links">
-            @foreach($items as $item)
+        @foreach($items as $item)
             @if( Arr::has($item,'image'))
             <a href="{{ route('view', [
                     'query' => $origin_path ? $origin_path . '/'. $item['name'] : $item['name'],
@@ -307,7 +311,7 @@
                     src="{{ asset('img/loading.gif') }}" alt="{{ $item['name'] }}" width="10%" height="10%">
             </a>
             @endif
-            @endforeach
+        @endforeach
         </div>
         <div id="blueimp-gallery" class="blueimp-gallery" data-start-slideshow="true" data-filter=":even">
             <div class="slides"></div>
