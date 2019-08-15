@@ -55,7 +55,7 @@ class OneDriveUpload extends Job
                 ]);
             }
             info('parameters', $parameters);
-            Artisan::call('od:uploads', $parameters);
+            Artisan::call('od:upload', $parameters);
             $this->task->status = 'completed';
             $this->task->save();
         }
