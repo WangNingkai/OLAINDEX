@@ -51,7 +51,7 @@ class OneDriveUpload extends Job
 
             if ($this->task->type == 'folder') {
                 $parameters = array_merge($parameters, [
-                    '--folder'
+                    '--folder' => true
                 ]);
             }
             info('parameters', $parameters);
