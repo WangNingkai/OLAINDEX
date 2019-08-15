@@ -78,7 +78,7 @@ class Aria2cToOnedriveUpload extends Command
                         $onedrive_id = $match[2];
                     }
 
-                    $data['onedrive'] = $onedrive_id;
+                    $data['onedrive_id'] = $onedrive_id;
                 }
             }
         }
