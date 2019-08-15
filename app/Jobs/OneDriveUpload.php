@@ -40,8 +40,6 @@ class OneDriveUpload extends Job
      */
     public function handle()
     {
-        info('handle-attempts():' . $this->attempts());
-  
         if ($this->task->status == 'pending') {
             $parameters = [
                 '--one_drive_id' => $this->task->onedrive_id,
@@ -54,7 +52,7 @@ class OneDriveUpload extends Job
                     '--folder' => true
                 ]);
             }
-            info('parameters', $parameters);
+
             Artisan::call('od:upload', $parameters);
             $this->task->status = 'completed';
             $this->task->save();
@@ -73,8 +71,7 @@ class OneDriveUpload extends Job
             app('sentry')->captureException($exception);
         }
 
-        $this->task->update([
-            'status' => 'failed'
-        ]);
+        $this->task->status = 'failed';
+        $this->task->save();
     }
 }

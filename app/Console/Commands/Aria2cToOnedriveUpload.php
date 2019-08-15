@@ -41,7 +41,6 @@ class Aria2cToOnedriveUpload extends Command
      */
     public function handle()
     {
-        info('start create task');
         $gid = $this->option('gid');
         $path = $this->option('path');
         if (empty($gid) || empty($path)) {
@@ -81,12 +80,8 @@ class Aria2cToOnedriveUpload extends Command
                 }
             }
         }
-        info('task data', $data);
-        info('onedrive', collect(app('onedrive'))->toArray());
+
         $task = Task::create($data);
-        info('end create task');
-        info('push queue');
         dispatch(new OneDriveUpload($task));
-        info('push end queue');
     }
 }
