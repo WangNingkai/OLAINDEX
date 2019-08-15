@@ -157,6 +157,7 @@ class OauthController extends Controller
             return json_encode([
                 'code' => $curl->errorCode,
                 'msg'  => $curl->errorMessage,
+                'response' => $curl->response
             ]);
         } else {
             $token = collect($curl->response)->toArray();

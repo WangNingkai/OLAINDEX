@@ -49,7 +49,7 @@ class OneDriveUpload extends Job
 
             if ($this->task->type == 'folder') {
                 $parameters = array_merge($parameters, [
-                    '--folder'
+                    '--folder' => true
                 ]);
             }
 
@@ -71,20 +71,7 @@ class OneDriveUpload extends Job
             app('sentry')->captureException($exception);
         }
 
-        if ($this->attempts() >= $this->tries) {
-            $this->task->update([
-                'status' => 'failed'
-            ]);
-        }
-    }
-
-    /**
-     * Determine the time at which the job should timeout.
-     *
-     * @return \DateTime
-     */
-    public function retryUntil()
-    {
-        return now()->addSeconds(3);
+        $this->task->status = 'failed';
+        $this->task->save();
     }
 }

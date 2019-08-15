@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\Task;
 use App\Jobs\OneDriveUpload;
-use Illuminate\Support\Facades\Log;
 
 class Aria2cToOnedriveUpload extends Command
 {
@@ -77,13 +76,12 @@ class Aria2cToOnedriveUpload extends Command
                         $onedrive_id = $match[2];
                     }
 
-                    $data['onedrive'] = $onedrive_id;
+                    $data['onedrive_id'] = $onedrive_id;
                 }
             }
         }
 
         $task = Task::create($data);
-
         dispatch(new OneDriveUpload($task));
     }
 }

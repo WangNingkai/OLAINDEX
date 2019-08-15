@@ -128,6 +128,9 @@ chown -R www:www *
  - [ ] themes 配置 (caffeinated/themes)
 
 ### 注意事项
-    修改Job时，需要重启supervisorctl
+修改Job时，需要重启supervisorctl
     
     supervisorctl restart onedrive:*
+
+
+修改redirect_uri时 需要登录 [https://apps.dev.microsoft.com](https://apps.dev.microsoft.com) 选择对应的应用修改重定向 URL

@@ -47,6 +47,7 @@ class UploadFile extends Command
         } else {
             $this->call('od:refresh');
         }
+
         $local = $this->argument('local');
         $remote = $this->argument('remote');
         $chuck = $this->option('chuck');

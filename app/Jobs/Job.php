@@ -21,4 +21,11 @@ abstract class Job implements ShouldQueue
     |
     */
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    /**
+     * The number of seconds to wait before retrying the job.
+     *
+     * @var int
+     */
+    public $retryAfter = 3;
 }
