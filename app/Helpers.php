@@ -289,14 +289,6 @@ if (!function_exists('getDefaultOneDriveAccount')) {
             $oneDrive = OneDrive::findOrFail($one_drive_id);
         }
 
-        // $oneDrive->authorize_url = $oneDrive->account_type == 'com'
-        //     ? Constants::AUTHORITY_URL . Constants::AUTHORIZE_ENDPOINT
-        //     : Constants::AUTHORITY_URL_21V . Constants::AUTHORIZE_ENDPOINT_21V;
-        // $oneDrive->access_token_url = $oneDrive->account_type == 'com'
-        //     ? Constants::AUTHORITY_URL . Constants::TOKEN_ENDPOINT
-        //     : Constants::AUTHORITY_URL_21V . Constants::TOKEN_ENDPOINT_21V;
-        // $oneDrive->scopes = Constants::SCOPES;
-
         if ($oneDrive->is_default) {
             $key = 'instance:onedrive_0';
         }
