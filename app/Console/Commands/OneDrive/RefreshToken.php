@@ -50,13 +50,16 @@ class RefreshToken extends Command
             app()->instance('onedrive', $onedrive);
             $expires = app('onedrive')->access_token_expires;
             $hasExpired = $expires - time() <= 0 ? true : false;
+
             if (!$hasExpired) {
-                return;
+                continue;
             } else {
                 $oauth = new OauthController();
                 $res = json_decode($oauth->refreshToken(false), true);
-                info($onedrive->id);
-                $res['code'] === 200 or exit('Refresh Token Error!');
+
+                if (!in_array($res['code'], [200, 400])) {
+                    exit('Refresh Token Error!');
+                }
             }
         }
     }

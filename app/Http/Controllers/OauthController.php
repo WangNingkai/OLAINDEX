@@ -121,8 +121,7 @@ class OauthController extends Controller
      */
     public function refreshToken($redirect = true)
     {
-        $expires = app('onedrive')->access_token_expires;
-        $hasExpired = $expires - time() <= 0;
+        $hasExpired = app('onedrive')->access_token_expires - time() <= 0;
         if (!$hasExpired) {
             return response()->json(['code' => 400, 'msg' => 'Bad Request']);
         }
@@ -168,7 +167,8 @@ class OauthController extends Controller
                 'access_token_expires' => $expires,
             ];
 
-            $result = app('onedrive')->update($data);
+            app('onedrive')->update($data);
+
             if ($redirect) {
                 $redirect = Session::get('refresh_redirect') ?? '/';
 
