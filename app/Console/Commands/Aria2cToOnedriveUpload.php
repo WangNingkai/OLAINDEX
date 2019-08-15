@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\Task;
 use App\Jobs\OneDriveUpload;
-use Illuminate\Support\Facades\Log;
 
 class Aria2cToOnedriveUpload extends Command
 {
