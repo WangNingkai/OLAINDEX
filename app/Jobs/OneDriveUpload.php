@@ -42,9 +42,9 @@ class OneDriveUpload extends Job
     {
         if ($this->task->status == 'pending') {
             $parameters = [
-                '--one_drive_id' => $this->task->onedrive_id,
                 'local'          => $this->task->source,
-                'remote'         => $this->task->target
+                'remote'         => $this->task->target,
+                '--one_drive_id' => $this->task->onedrive_id,
             ];
 
             if ($this->task->type == 'folder') {
