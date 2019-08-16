@@ -1,0 +1,15 @@
+{
+    "apps": {
+        "name": "olaindex",
+        "args": "queue:work database --queue=olaindex --tries=3",
+        "script": "artisan",
+        "exec_interpreter": "php.exe",
+        "exec_mode": "fork",
+        "max_memory_restart": "100M",
+        "watch": [
+            "vendor"
+        ],
+        "error_file": "./storage/logs/pm2-err.log",
+        "out_file": "./storage/logs/pm2-out.log"
+    }
+}
