@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\Task;
 use App\Jobs\OneDriveUpload;
+use Illuminate\Support\Arr;
 
 class Aria2cToOnedriveUpload extends Command
 {
@@ -52,11 +53,12 @@ class Aria2cToOnedriveUpload extends Command
         }
 
         getDefaultOneDriveAccount();
+        $target = Arr::last(explode('/', pathinfo($path, PATHINFO_DIRNAME)), null, '/upload/');
         $data = [
             'gid'         => $gid,
             'type'        => is_file($path) ? 'file' : 'folder',
             'source'      => $path,
-            'target'      => '/upload/',
+            'target'      => $target,
             'onedrive_id' => app('onedrive')->id,
         ];
 
