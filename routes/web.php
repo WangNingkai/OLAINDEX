@@ -79,24 +79,15 @@ Route::group(['prefix' => 'admin'], function () {
     Route::group(['middleware' => 'auth:admin', 'namespace' => 'Admin'], function () {
         Route::post('logout', 'AuthController@logout')->name('admin.logout');
         Route::get('aria2c', 'UtilController@aria2c')->name('admin.aria2c');
+        Route::get('google2fa', 'UtilController@generateGoogle2fa')->name('admin.google2fa');
+        Route::post('bind_google2fa', 'UtilController@bindGoogle2fa')->name('admin.google2fa.bind');
+        Route::post('unbind_google2fa', 'UtilController@unbindGoogle2fa')->name('admin.google2fa.unbind');
         Route::view('show', config('olaindex.theme') . 'admin.show')->name('admin.show');
         Route::view('profile', config('olaindex.theme') . 'admin.profile')->name('admin.profile.show');
         Route::post('image', 'UtilController@storeImage')->name('admin.image');
         Route::post('image/delete', 'UtilController@destroyImage')->name('admin.image.delete');
         Route::get('onedrive_list', 'UtilController@list')->name('admin.onedrive.list');
-        Route::get('test', function () {
-            $google2fa = app('pragmarx.google2fa');
-            $admin = auth('admin')->user();
 
-            $qrcode = $google2fa->getQRCodeInline(
-                $admin->name,
-                $admin->email,
-                $google2fa->generateSecretKey()
-            );
-
-            return view('default.admin.qrcode', compact('qrcode'));
-            // return $google2fa->generateSecretKey();
-        });
         // 基础设置
         Route::get('/', 'AdminController@showBasic')->name('admin.basic');
         Route::post('/', 'AdminController@basic')->name('admin.basic.post');

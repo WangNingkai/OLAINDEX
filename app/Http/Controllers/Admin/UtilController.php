@@ -63,6 +63,36 @@ class UtilController extends Controller
         return $this->success($onedrives);
     }
 
+    public function generateGoogle2fa()
+    {
+        $admin = auth('admin')->user();
+
+        if ($admin->is_tfa) {
+            return redirect()->route('admin.basic')->withErrors(["{$admin->name} 已经绑定二步验证"]);
+        }
+
+        $google2fa = app('pragmarx.google2fa');
+        $secret = $google2fa->generateSecretKey();
+        $admin = auth('admin')->user();
+        $qrcode = $google2fa->getQRCodeInline(
+            $admin->name,
+            $admin->email,
+            $secret
+        );
+
+        return view('default.admin.qrcode', compact('qrcode', 'secret'));
+    }
+
+    public function bindGoogle2fa()
+    {
+        // TODO:
+    }
+
+    public function unbindGoogle2fa()
+    {
+        // TODO:   
+    }
+
     public function aria2c()
     {
         return view()->exists('ng') ? view('ng') : abort(404, '请先编译Aria2c');

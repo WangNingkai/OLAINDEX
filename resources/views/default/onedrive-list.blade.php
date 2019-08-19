@@ -1,5 +1,5 @@
 @extends ('default.layouts.main')
-@section('title', getAdminConfig('name'))
+@section('title', getAdminConfig('site_name'))
 @section('css')
 <link href="https://cdn.bootcss.com/blueimp-gallery/2.33.0/css/blueimp-gallery-indicator.min.css" rel="stylesheet">
 <link href="https://cdn.bootcss.com/blueimp-gallery/2.33.0/css/blueimp-gallery.min.css" rel="stylesheet">
