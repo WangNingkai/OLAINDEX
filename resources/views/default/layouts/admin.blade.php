@@ -13,6 +13,10 @@
     <link href="https://cdn.bootcss.com/limonte-sweetalert2/7.33.1/sweetalert2.min.css" rel="stylesheet">
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <style>
+        .card-body-color {
+            background-color: #f4f5f7;
+        }
+
         #logout-form {
             margin: 0px;
         }
@@ -95,7 +99,7 @@
         <div class="card-header">
             @yield('title')
         </div>
-        <div class="card-body">
+        <div class="card-body card-body-color">
             @yield('content')
         </div>
     </div>
