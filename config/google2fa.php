@@ -35,7 +35,7 @@ return [
     /*
      * One Time Password request input name
      */
-    'otp_input' => 'one_time_password',
+    'otp_input' => env('GOOGLE2FA_OTP_INPUT', 'one_time_password'),
 
     /*
      * One Time Password Window

@@ -77,6 +77,11 @@ class UtilController extends Controller
         return view('default.admin.google2fa', compact('qrcode', 'secret'));
     }
 
+    public function authGoogle2fa()
+    {
+        return redirect()->route('admin.basic');
+    }
+
     public function bindGoogle2fa(Request $request)
     {
         $data = $request->validate([

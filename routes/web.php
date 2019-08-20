@@ -76,10 +76,11 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('login', 'Admin\\AuthController@showLoginForm')->name('admin.login');
     Route::post('login', 'Admin\\AuthController@login');
 
-    Route::group(['middleware' => 'auth:admin', 'namespace' => 'Admin'], function () {
+    Route::group(['middleware' => ['auth:admin', '2fa'], 'namespace' => 'Admin'], function () {
         Route::post('logout', 'AuthController@logout')->name('admin.logout');
         Route::get('aria2c', 'UtilController@aria2c')->name('admin.aria2c');
         Route::get('google2fa', 'UtilController@generateGoogle2fa')->name('admin.google2fa');
+        Route::post('google2fa', 'UtilController@authGoogle2fa')->name('admin.google2fa.auth');
         Route::post('bind_google2fa', 'UtilController@bindGoogle2fa')->name('admin.google2fa.bind');
         Route::post('unbind_google2fa', 'UtilController@unbindGoogle2fa')->name('admin.google2fa.unbind');
         Route::view('show', config('olaindex.theme') . 'admin.show')->name('admin.show');
