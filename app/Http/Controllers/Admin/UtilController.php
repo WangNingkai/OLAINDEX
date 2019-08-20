@@ -65,12 +65,6 @@ class UtilController extends Controller
 
     public function generateGoogle2fa()
     {
-        $admin = auth('admin')->user();
-
-        if ($admin->is_tfa) {
-            return redirect()->route('admin.basic')->withErrors(["{$admin->name} 已经绑定二步验证"]);
-        }
-
         $google2fa = app('pragmarx.google2fa');
         $secret = $google2fa->generateSecretKey();
         $admin = auth('admin')->user();
@@ -80,17 +74,54 @@ class UtilController extends Controller
             $secret
         );
 
-        return view('default.admin.qrcode', compact('qrcode', 'secret'));
+        return view('default.admin.google2fa', compact('qrcode', 'secret'));
     }
 
-    public function bindGoogle2fa()
+    public function bindGoogle2fa(Request $request)
     {
-        // TODO:
+        $data = $request->validate([
+            'tfa_secret' => 'required|string|size:16',
+            'code'       => 'required|string|size:6'
+        ]);
+
+        $admin = auth('admin')->user();
+
+        if ($admin->is_tfa) {
+            return redirect()->route('admin.basic')->withErrors(["{$admin->name} 已经绑定二步验证"]);
+        }
+
+        if (app('pragmarx.google2fa')->verifyKey($data['tfa_secret'], $data['code'])) {
+            $admin->is_tfa = true;
+            $admin->tfa_secret = $data['tfa_secret'];
+            $admin->save();
+        } else {
+            return redirect()->back()->withErrors(["{$admin->name} 二步验证错误"]);
+        }
+
+        return redirectSuccess('admin.basic');
     }
 
-    public function unbindGoogle2fa()
+    public function unbindGoogle2fa(Request $request)
     {
-        // TODO:   
+        $data = $request->validate([
+            'code' => 'required|size:6'
+        ]);
+
+        $admin = auth('admin')->user();
+
+        if (!$admin->is_tfa) {
+            return redirect()->route('admin.basic')->withErrors(["{$admin->name} 请先绑定二步验证"]);
+        }
+
+        if (app('pragmarx.google2fa')->verifyKey($admin->tfa_secret, $data['code'])) {
+            $admin->is_tfa = false;
+            $admin->tfa_secret = null;
+            $admin->save();
+        } else {
+            return redirect()->back()->withErrors(["{$admin->name} 二步验证错误"]);
+        }
+
+        return redirectSuccess('admin.basic');
     }
 
     public function aria2c()

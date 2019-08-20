@@ -37,8 +37,11 @@
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                        aria-haspopup="true" aria-expanded="false"><i class="fa fa-cog"></i> 设置</a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{{ route('admin.basic') }}">基础设置 </a>
-                        <a class="dropdown-item" href="{{ route('admin.profile.show') }}">密码设置 </a>
+                        <a class="dropdown-item" href="{{ route('admin.basic') }}">基础设置</a>
+                        <a class="dropdown-item" href="{{ route('admin.profile.show') }}">密码设置</a>
+                        <a class="dropdown-item" href="{{ route('admin.google2fa') }}">
+                            {{ auth('admin')->user()->is_tfa ? '解绑二步验证' : '绑定二步验证' }}
+                        </a>
                     </div>
                 </li>
                 <li class="nav-item">

@@ -24,7 +24,7 @@ class CreateAdminsTable extends Migration
             $table->string('hotlink_protection')->nullable()->comment('防盗链');
             $table->string('copyright')->nullable()->comment('自定义版权显示');
             $table->string('statistics')->nullable()->comment('统计代码');
-            $table->string('tfa_secret')->nullable()->comment('google 2fa secret');
+            $table->string('tfa_secret', 16)->nullable()->comment('google2fa二步验证秘钥');
             $table->boolean('is_binded')->default(0)->comment('是否已绑定onedrive');
             $table->boolean('is_tfa')->default(0)->comment('是否已绑定google2fa');
             $table->rememberToken();
