@@ -63,6 +63,72 @@ class UtilController extends Controller
         return $this->success($onedrives);
     }
 
+    public function generateGoogle2fa()
+    {
+        $google2fa = app('pragmarx.google2fa');
+        $secret = $google2fa->generateSecretKey();
+        $admin = auth('admin')->user();
+        $qrcode = $google2fa->getQRCodeInline(
+            $admin->name,
+            $admin->email,
+            $secret
+        );
+
+        return view('default.admin.google2fa', compact('qrcode', 'secret'));
+    }
+
+    public function authGoogle2fa()
+    {
+        return redirect()->route('admin.basic');
+    }
+
+    public function bindGoogle2fa(Request $request)
+    {
+        $data = $request->validate([
+            'tfa_secret' => 'required|string|size:16',
+            'code'       => 'required|string|size:6'
+        ]);
+
+        $admin = auth('admin')->user();
+
+        if ($admin->is_tfa) {
+            return redirect()->route('admin.basic')->withErrors(["{$admin->name} 已经绑定二步验证"]);
+        }
+
+        if (app('pragmarx.google2fa')->verifyKey($data['tfa_secret'], $data['code'])) {
+            $admin->is_tfa = true;
+            $admin->tfa_secret = $data['tfa_secret'];
+            $admin->save();
+        } else {
+            return redirect()->back()->withErrors(["{$admin->name} 二步验证错误"]);
+        }
+
+        return redirectSuccess('admin.basic');
+    }
+
+    public function unbindGoogle2fa(Request $request)
+    {
+        $data = $request->validate([
+            'code' => 'required|size:6'
+        ]);
+
+        $admin = auth('admin')->user();
+
+        if (!$admin->is_tfa) {
+            return redirect()->route('admin.basic')->withErrors(["{$admin->name} 请先绑定二步验证"]);
+        }
+
+        if (app('pragmarx.google2fa')->verifyKey($admin->tfa_secret, $data['code'])) {
+            $admin->is_tfa = false;
+            $admin->tfa_secret = null;
+            $admin->save();
+        } else {
+            return redirect()->back()->withErrors(["{$admin->name} 二步验证错误"]);
+        }
+
+        return redirectSuccess('admin.basic');
+    }
+
     public function aria2c()
     {
         return view()->exists('ng') ? view('ng') : abort(404, '请先编译Aria2c');

@@ -12,7 +12,8 @@ class Admin extends Authenticatable
     protected $guarded = [];
 
     protected $casts = [
-        'is_binded' => 'boolean'
+        'is_binded' => 'boolean',
+        'is_tfa'    => 'boolean'
     ];
 
     protected $columns = [
@@ -24,7 +25,9 @@ class Admin extends Authenticatable
         'hotlink_protection',
         'copyright',
         'statistics',
+        'tfa_secret',
         'is_binded',
+        'is_tfa',
         'email_verified_at',
         'password',
         'remember_token',

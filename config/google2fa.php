@@ -1,12 +1,11 @@
 <?php
 
 return [
-
     /*
      * Auth container binding
      */
 
-    'enabled' => true,
+    'enabled' => env('GOOGLE2FA_ENABLED', true),
 
     /*
      * Lifetime in minutes.
@@ -36,7 +35,7 @@ return [
     /*
      * One Time Password request input name
      */
-    'otp_input' => 'one_time_password',
+    'otp_input' => env('GOOGLE2FA_OTP_INPUT', 'one_time_password'),
 
     /*
      * One Time Password Window
@@ -51,7 +50,7 @@ return [
     /*
      * User's table column for google2fa secret
      */
-    'otp_secret_column' => 'google2fa_secret',
+    'otp_secret_column' => env('GOOGLE2FA_OTP_SECRET_COLUMN', 'google2fa_secret'),
 
     /*
      * One Time Password View
@@ -69,5 +68,4 @@ return [
      * Throw exceptions or just fire events?
      */
     'throw_exceptions' => true,
-
 ];

@@ -54,7 +54,7 @@ class OneDrive extends Model
 
     public function tasks()
     {
-        return $this->hasMany(Task::class);
+        return $this->hasMany(Task::class, 'onedrive_id');
     }
 
     public function getAuthorizeUrlAttribute($value)

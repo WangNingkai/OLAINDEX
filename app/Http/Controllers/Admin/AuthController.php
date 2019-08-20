@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use PragmaRX\Google2FALaravel\Support\Authenticator;
 
 class AuthController extends Controller
 {
@@ -44,9 +45,10 @@ class AuthController extends Controller
     {
         $this->guard()->logout();
         Auth::guard('web')->logout();
+        (new Authenticator(request()))->logout();
 
         return $this->loggedOut($request) ?: redirect($this->redirectToLogin);
-    } 
+    }
 
     protected function guard()
     {
