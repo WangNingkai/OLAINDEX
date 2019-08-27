@@ -33,7 +33,7 @@ class AuthController extends Controller
      */
     public function showLoginForm()
     {
-        return view(config('olaindex.theme') . 'admin.login');
+        return view(config('olaindex.theme') . 'admin.login-v2');
     }
 
     public function authenticated(Request $request, $user)
