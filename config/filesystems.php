@@ -50,7 +50,7 @@ return [
         'public' => [
             'driver'     => 'local',
             'root'       => storage_path('app/public'),
-            'url'        => Str::endsWith(env('APP_URL'), '/') ? env('APP_URL') . 'storage' : env('APP_URL') . '/storage',
+            'url'        => Str::finish(env('APP_URL'), '/') . 'storage',
             'visibility' => 'public',
         ],
 
