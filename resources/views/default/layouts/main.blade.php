@@ -85,7 +85,6 @@
         </div>
     @endif
     @yield('content')
-
 </div>
 <div class="container mt-3">
     <footer id="footer">

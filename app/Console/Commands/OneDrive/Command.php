@@ -5,7 +5,6 @@ namespace App\Console\Commands\OneDrive;
 use Illuminate\Console\Command as BaseCommand;
 use Symfony\Component\Console\Input\InputOption;
 
-
 class Command extends BaseCommand
 {
     /**
@@ -13,7 +12,7 @@ class Command extends BaseCommand
      *
      * @var string
      */
-    protected $signature = 'test';
+    protected $signature = 'base';
 
     /**
      * The console command description.

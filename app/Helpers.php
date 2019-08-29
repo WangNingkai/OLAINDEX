@@ -9,6 +9,7 @@ use App\Models\OneDrive;
 use Illuminate\Support\Arr;
 use App\Models\Admin;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Str;
 
 if (!function_exists('convertSize')) {
     /**
@@ -360,5 +361,13 @@ if (!function_exists('clearOnedriveCache')) {
         $redis = Redis::connection('cache');
         $caches = $redis->keys(config('cache.prefix') . ':one_' . $id . '*');
         $redis->del($caches);
+    }
+}
+
+if (!function_exists('convertUnit')) {
+    function convertUnit($standard, $conver)
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $standard_unit = explode(' ', $standard);
     }
 }
