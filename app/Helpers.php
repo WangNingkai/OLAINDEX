@@ -369,5 +369,12 @@ if (!function_exists('convertUnit')) {
     {
         $units = ['B', 'KB', 'MB', 'GB', 'TB'];
         $standard_unit = explode(' ', $standard);
+        $conver_unit = explode(' ', $conver);
+        $flip_units = array_flip($units);
+        $standard_index = $flip_units[$standard_unit[1]];
+        $conver_index = $flip_units[$conver_unit[1]];
+        $sub = $conver_index - $standard_index;
+
+        return $sub >= 0 ? $conver_unit[0] * pow(1024, $sub) : round($conver_unit[0] / pow(1024, abs($sub)), 2);
     }
 }

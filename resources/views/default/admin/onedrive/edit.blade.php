@@ -274,7 +274,7 @@ $(function () {
                 label: '使用情况',
                 backgroundColor: ["#FF0039","#FF7518"],
                 {{--  borderColor: 'rgb(255, 99, 132)',  --}}
-                data: [{{ Str::before(Tool::getOneDriveInfo('used'), ' ') }}, {{ Str::before(Tool::getOneDriveInfo('remaining'), ' ') }}]
+                data: [{{ Str::before(Tool::getOneDriveInfo('used'), ' ') }}, {{ convertUnit(Tool::getOneDriveInfo('used'), Tool::getOneDriveInfo('remaining')) }}]
             }]
         },
 
