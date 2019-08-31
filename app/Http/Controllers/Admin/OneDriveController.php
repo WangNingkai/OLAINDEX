@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Models\OneDrive;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Redis;
 
 class OneDriveController extends Controller
 {
@@ -66,6 +65,7 @@ class OneDriveController extends Controller
     public function edit($id)
     {
         $oneDrive = $this->model->where('admin_id', $this->user()->id)->with('cover')->findOrFail($id);
+        getDefaultOneDriveAccount($id);
 
         return themeView('admin.onedrive.edit', compact('oneDrive'));
     }

@@ -2,11 +2,32 @@
 @section('css')
 <link href="https://cdn.bootcss.com/bootstrap-fileinput/5.0.4/css/fileinput.min.css" rel="stylesheet">
 <link href="https://cdn.bootcss.com/bootstrap-fileinput/5.0.4/css/fileinput-rtl.min.css" rel="stylesheet">
+<link href="https://cdn.bootcss.com/Chart.js/2.8.0/Chart.min.css" rel="stylesheet">
+<style>
+.pie-chart {
+    max-height: 400px;
+    max-width: 400px;
+    margin: 0px auto 20px auto;
+}
+</style>
 @endSection
 @section('title','修改 OneDrive')
 @section('content')
 @includeWhen(!empty(session('message')), 'default.widgets.success')
 @includeWhen($errors->isNotEmpty(), 'default.widgets.errors')
+    <div class="">
+        <p class="text-center text-muted">{{ Tool::getBindAccount() }}</p>
+        <p class="text-center">
+            <span class="text-info">状态: {{ Tool::getOneDriveInfo('state') }} &nbsp;&nbsp;</span>
+            <span class="text-danger">已使用: {{ Tool::getOneDriveInfo('used') }} &nbsp;&nbsp;</span>
+            <span class="text-warning">剩余: {{ Tool::getOneDriveInfo('remaining') }} &nbsp;&nbsp;</span>
+            <span class="text-success">全部: {{ Tool::getOneDriveInfo('total') }} &nbsp;&nbsp;</span>
+        </p>
+    </div>
+    <div>
+        <canvas id="myChart" class="pie-chart"></canvas>
+    </div>
+
 <form action="{{ route('admin.onedrive.update', ['onedrive' => $oneDrive->id]) }}" method="POST">
     {{ method_field('PUT') }}
     @csrf
@@ -20,7 +41,7 @@
         <label for="root" class="col-sm-2 col-form-label">根目录</label>
         <div class="col-sm-10">
             <input type="text" name="root" class="form-control" id="root" placeholder="根目录..." value="{{ $oneDrive->root }}">
-            <span class="form-text text-danger">目录索引起始文件夹地址，文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: " * : <>? / \ | 否则无法索引。</span>
+            <span class="form-text text-danger">目录索引起始文件夹地址，文件或文件夹名不能以点开始或结束，且不能包含以下任意字符: &quot; * : <>? / \ | 否则无法索引。</span>
         </div>
     </div>
     <div class="form-group row">
@@ -179,6 +200,7 @@
 <script src="https://cdn.bootcss.com/bootstrap-fileinput/5.0.4/js/plugins/piexif.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap-fileinput/5.0.4/js/fileinput.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap-fileinput/5.0.4/themes/fa/theme.min.js"></script>
+<script src="https://cdn.bootcss.com/Chart.js/2.8.0/Chart.min.js"></script>
 <script type="text/javascript">
 $(function () {
     var deleteImage = function () {
@@ -239,6 +261,27 @@ $(function () {
     }).on('filesuccessremove', function(event, id) {
         deleteImage();
     });
+
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'doughnut',
+
+        // The data for our dataset
+        data: {
+            labels: ['已使用', '剩余'],
+            datasets: [{
+                label: '使用情况',
+                backgroundColor: ["#FF0039","#FF7518"],
+                {{--  borderColor: 'rgb(255, 99, 132)',  --}}
+                data: [{{ Str::before(Tool::getOneDriveInfo('used'), ' ') }}, {{ convertUnit(Tool::getOneDriveInfo('used'), Tool::getOneDriveInfo('remaining')) }}]
+            }]
+        },
+
+        // Configuration options go here
+        options: {}
+    });
+
 })
 </script>
 @endSection
