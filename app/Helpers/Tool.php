@@ -320,6 +320,7 @@ class Tool
                         foreach ($quota as $k => $item) {
                             if (!is_string($item)) {
                                 $quota[$k] = convertSize($item);
+                                $quota['raw_' . $k] = $item;
                             }
                         }
 
