@@ -218,6 +218,16 @@ $(function () {
         });
     }
 
+    var convertSize = function ($size) {
+        var units = [' B', ' KB', ' MB', ' GB', ' TB'];
+        var i = 0;
+        for (i; $size >= 1024 && i < 4; i++) {
+            $size /= 1024;
+        }
+
+        return  $size.toFixed(2).toString() + units[i];
+    }
+
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -273,15 +283,30 @@ $(function () {
             datasets: [{
                 label: '使用情况',
                 backgroundColor: ["#FF0039","#FF7518"],
-                {{--  borderColor: 'rgb(255, 99, 132)',  --}}
-                data: [{{ Str::before(Tool::getOneDriveInfo('used'), ' ') }}, {{ convertUnit(Tool::getOneDriveInfo('used'), Tool::getOneDriveInfo('remaining')) }}]
+                data: [{{ Tool::getOneDriveInfo('raw_used') }}, {{ Tool::getOneDriveInfo('raw_remaining') }}]
             }]
         },
 
         // Configuration options go here
-        options: {}
-    });
+        options: {
+            tooltips: {
+                enabled: true,
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        var label = data.labels[tooltipItem.index] || '';
+                        var value = data.datasets[tooltipItem.datasetIndex]['data'][tooltipItem.index] || 0;
 
+                        if (label) {
+                            label += ': ';
+                        }
+
+                        label += convertSize(value);
+                        return label;
+                    }
+                }
+            }
+        }
+    });
 })
 </script>
 @endSection
