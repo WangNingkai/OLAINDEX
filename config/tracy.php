@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'enabled' => env('APP_TRACY') === true,
+    'enabled' => env('APP_DEBUG') === true,
     'showBar' => env('APP_ENV') !== 'production',
     'showException' => true,
     'route' => [

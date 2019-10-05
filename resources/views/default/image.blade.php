@@ -1,0 +1,145 @@
+@extends('default.layouts.main')
+@section('title','图床')
+@section('css')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/filepond@4.4.9/dist/filepond.min.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/filepond-plugin-image-preview@4.2.1/dist/filepond-plugin-image-preview.min.css">
+    <style>
+        .link-container {
+            margin-top: 15px;
+            padding: 10px;
+            border: solid 1px #dadada;
+            word-wrap: break-word;
+            background-color: #f7f7f7;
+        }
+
+        .link-container p {
+            margin: 5px 0;
+        }
+    </style>
+@stop
+@section('js')
+    <script src="https://cdn.jsdelivr.net/npm/filepond@4.4.9/dist/filepond.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/filepond-plugin-image-preview@4.2.1/dist/filepond-plugin-image-preview.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/filepond-plugin-file-validate-size@2.1.3/dist/filepond-plugin-file-validate-size.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/filepond-plugin-file-validate-type@1.2.4/dist/filepond-plugin-file-validate-type.min.js"></script>
+
+    <script>
+        FilePond.registerPlugin(
+            FilePondPluginImagePreview,
+            FilePondPluginFileValidateSize,
+            FilePondPluginFileValidateType
+        );
+        FilePond.setOptions({
+            dropOnPage: true,
+            dropOnElement: true,
+            dropValidation: true,
+            server: {
+                url: Config.routes.upload_image,
+                process: {
+                    url: '/',
+                    method: 'POST',
+                    withCredentials: false,
+                    headers: {},
+                    timeout: 5000,
+                    onload: (response) => {
+                        let res = JSON.parse(response);
+                        console.log(res);
+                        if (res.errno === 200) {
+                            $('#showUrl').removeClass('invisible');
+                            $('#urlCode').append('<p>' + res.data.url + '</p>');
+                            $('#htmlCode').append('<p>&lt;img src=\'' + res.data.url + '\' alt=\'' + res.data.filename + '\' title=\'' + res.data.filename + '\' /&gt;' + '</p>');
+                            $('#bbCode').append('<p>[img]' + res.data.url + '[/img]' + '</p>');
+                            $('#markdown').append('<p>![' + res.data.filename + '](' + res.data.url + ')' + '</p>');
+                            $('#markdownLinks').append('<p>[![' + res.data.filename + '](' + res.data.url + ')]' + '(' + res.data.url + ')' + '</p>');
+                            $('#deleteCode').append('<p>' + res.data.delete + '</p>');
+                        }
+                        return response.key
+                    },
+                    onerror: (response) => response.data,
+                    ondata: (formData) => {
+                        formData.append('_token', Config._token);
+                        return formData;
+                    }
+                },
+                revert: null,
+                restore: null,
+                load: null,
+                fetch: null
+            },
+        });
+        const pond = FilePond.create(document.querySelector('input[name=olaindex_img]'), {
+            acceptedFileTypes: ['image/*'],
+        });
+        pond.on('processfile', (error, file) => {
+            if (error) {
+                console.log('上传出错了');
+                return;
+            }
+            console.log('文件已上传', file);
+        });
+        pond.on('removefile', (file) => {
+            console.log('文件已删除', file);
+        });
+    </script>
+@stop
+@section('content')
+    <div class="card border-light mb-3">
+        <div class="card-body">
+            <div class="page-container">
+                <h4>图床</h4>
+                <p>您可以尝试文件拖拽或者点击虚线框进行文件上传，单张图片最大支持4MB.</p>
+                <input type="file" class="filepond" name="olaindex_img" multiple data-max-file-size="4MB"
+                       data-max-files="5" data-instant-upload="false"/>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="showUrl" class="invisible">
+        <ul id="navTab" class="nav nav-tabs">
+            <li class="nav-item active">
+                <a class="nav-link" data-toggle="tab" href="#urlPanel">URL</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#htmlPanel">HTML</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#bbPanel">bbCode</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#markdownPanel">Markdown</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#markdownLinkPanel">Markdown with Link</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#deletePanel">Delete Link</a>
+            </li>
+        </ul>
+        <div id="navTabContent" class="tab-content">
+            <div class="tab-pane fade in active show" id="urlPanel">
+                <div class="link-container" id="urlCode"></div>
+            </div>
+            <div class="tab-pane fade" id="htmlPanel">
+                <div class="link-container" id="htmlCode"></div>
+            </div>
+            <div class="tab-pane fade" id="bbPanel">
+                <div class="link-container" id="bbCode"></div>
+            </div>
+            <div class="tab-pane fade" id="markdownPanel">
+                <div class="link-container" id="markdown"></div>
+            </div>
+            <div class="tab-pane fade" id="markdownLinkPanel">
+                <div class="link-container" id="markdownLinks"></div>
+            </div>
+            <div class="tab-pane fade" id="deletePanel">
+                <div class="link-container" id="deleteCode"></div>
+            </div>
+        </div>
+    </div>
+@stop
+

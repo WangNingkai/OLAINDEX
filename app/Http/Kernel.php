@@ -17,7 +17,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\CheckForMaintenanceMode::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
-        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+//        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\TrustProxies::class,
     ];
 
@@ -60,8 +60,15 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'checkToken' => \App\Http\Middleware\VerifyAccessToken::class,
-        'checkAuth' => \App\Http\Middleware\VerifyAuth::class,
-        'checkImage' => \App\Http\Middleware\CheckImage::class,
+
+        // todo:完善路由
+        'verify.token' => \App\Http\Middleware\VerifyAccessToken::class,
+        'verify.third.token' => \App\Http\Middleware\VerifyThirdToken::class,
+        'verify.image' => \App\Http\Middleware\VerifyImageHost::class,
+        'verify.installation' => \App\Http\Middleware\VerifyInstallation::class,
+        'hotlink.protection' => \App\Http\Middleware\HotlinkProtection::class,
+        'handle.forbid' => \App\Http\Middleware\HandleForbidFile::class,
+        'handle.encrypt' => \App\Http\Middleware\HandleEncryptDir::class,
+        'handle.hide' => \App\Http\Middleware\HandleHideDir::class,
     ];
 }
