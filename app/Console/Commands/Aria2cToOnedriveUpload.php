@@ -59,7 +59,7 @@ class Aria2cToOnedriveUpload extends Command
             'gid'         => $gid,
             'type'        => is_file($path) ? 'file' : 'folder',
             'source'      => $path,
-            'target'      => is_file($path) && !empty($ext) ? $target . $ext : $target_path,
+            'target'      => is_file($path) && !empty($ext) ? $target . $ext : $target,
             'onedrive_id' => app('onedrive')->id,
         ];
 
