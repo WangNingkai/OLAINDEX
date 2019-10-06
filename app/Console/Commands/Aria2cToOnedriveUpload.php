@@ -54,11 +54,12 @@ class Aria2cToOnedriveUpload extends Command
 
         getDefaultOneDriveAccount();
         $target = Arr::last(explode('/', pathinfo($path, PATHINFO_DIRNAME)), null, '/upload/');
+        $ext = pathinfo($path, PATHINFO_EXTENSION);
         $data = [
             'gid'         => $gid,
             'type'        => is_file($path) ? 'file' : 'folder',
             'source'      => $path,
-            'target'      => $target,
+            'target'      => is_file($path) && !empty($ext) ? $target . $ext : $target_path,
             'onedrive_id' => app('onedrive')->id,
         ];
 
