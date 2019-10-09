@@ -120,7 +120,7 @@ chown -R www:www *
 ### TODO
 
  - [ ] install
- - [ ] aria2
+ - [ ] aria2 (自动填充上传到 onedrive 路径)
  - [x] Console/OneDrive (cache、refresh)
  - [x] ManggeController
  - [x] IndexConttroller
