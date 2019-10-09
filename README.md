@@ -125,6 +125,7 @@ chown -R www:www *
  - [x] ManggeController
  - [x] IndexConttroller
  - [ ] themes 配置 (caffeinated/themes)
+ - [ ] 记住二步验证
 
 ### 注意事项
 修改Job时，需要重启supervisorctl
