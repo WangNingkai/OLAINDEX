@@ -21,6 +21,7 @@ if (!function_exists('convertSize')) {
     function convertSize($size)
     {
         $units = [' B', ' KB', ' MB', ' GB', ' TB'];
+
         for ($i = 0; $size >= 1024 && $i < 4; $i++) {
             $size /= 1024;
         }
@@ -42,6 +43,7 @@ if (!function_exists('getBreadcrumbUrl')) {
     {
         $pathArr = array_slice($pathArr, 0, $key);
         $url = '';
+
         foreach ($pathArr as $param) {
             $url .= '/' . $param;
         }
@@ -61,10 +63,13 @@ if (!function_exists('getParentUrl')) {
     function getParentUrl($pathArr)
     {
         array_pop($pathArr);
+
         if (count($pathArr) === 0) {
             return '';
         }
+
         $url = '';
+
         foreach ($pathArr as $param) {
             $url .= '/' . $param;
         }
@@ -85,6 +90,7 @@ if (!function_exists('markdown2Html')) {
     function markdown2Html($markdown, $line = false)
     {
         $parser = new \Parsedown();
+
         if (!$line) {
             $html = $parser->text($markdown);
         } else {
@@ -106,8 +112,10 @@ if (!function_exists('getFileContent')) {
     function getFileContent($url, $cache = true)
     {
         $key = 'one_' . app('onedrive')->id . ':content:' . $url;
+
         if ($cache && Cache::has($key)) {
             $content = Cache::get($key);
+
             if ($content) {
                 return $content;
             }
@@ -134,12 +142,12 @@ if (!function_exists('getFileContent')) {
                     'msg'  => $curl->errorMessage,
                 ]
             );
-            Tool::showMessage('Error: ' . $curl->errorCode . ': '
-                . $curl->errorMessage, false);
+            Tool::showMessage('Error: ' . $curl->errorCode . ': ' . $curl->errorMessage, false);
 
             return '远程获取内容失败，请刷新重试';
         } else {
             $content = $curl->rawResponse;
+
             if ($cache) {
                 Cache::put(
                     $key,
@@ -164,9 +172,11 @@ if (!function_exists('getExtIcon')) {
     {
         $patterns = Constants::FILE_ICON;
         $icon = '';
+
         foreach ($patterns as $key => $suffix) {
             if (in_array($ext, $suffix[2])) {
                 $icon = $img ? $suffix[1] : $suffix[0];
+
                 break;
             } else {
                 $icon = $img ? 'file' : 'fa-file-text-o';
