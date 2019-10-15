@@ -77,9 +77,16 @@ class UtilController extends Controller
         return view('default.admin.google2fa', compact('qrcode', 'secret'));
     }
 
-    public function authGoogle2fa()
+    public function authGoogle2fa(Request $request)
     {
-        return redirect()->route('admin.basic');
+        $redirect = redirect()->route('admin.basic');
+
+        if ($request->input('remember') == 'on') {
+            $cookie_remember = cookie()->forever('remember_2fa', 1);
+            $redirect = $redirect->cookie($cookie_remember);
+        }
+
+        return $redirect;
     }
 
     public function bindGoogle2fa(Request $request)

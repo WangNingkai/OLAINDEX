@@ -74,7 +74,7 @@ Route::view('message', config('olaindex.theme') . 'message')->name('message');
 // 后台设置管理
 Route::group(['prefix' => 'admin'], function () {
     Route::get('login', 'Admin\\AuthController@showLoginForm')->name('admin.login');
-    Route::post('login', 'Admin\\AuthController@login');
+    Route::post('login', 'Admin\\AuthController@login')->name('admin.login.post');
 
     Route::group(['middleware' => ['auth:admin', '2fa'], 'namespace' => 'Admin'], function () {
         Route::post('logout', 'AuthController@logout')->name('admin.logout');

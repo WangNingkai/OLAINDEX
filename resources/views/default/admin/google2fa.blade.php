@@ -20,25 +20,5 @@
     </div>
 </div>  
 @endif
-<div class="row">
-    <div class="col-sm-6 center-block">
-        <form action="{{ !auth('admin')->user()->is_tfa ? route('admin.google2fa.bind') : route('admin.google2fa.unbind') }}" method="POST">
-            @csrf
-            @if (!auth('admin')->user()->is_tfa)
-            <input type="hidden" name="tfa_secret" value="{{ $secret }}" />
-            @endif 
-            <div class="form-group row">
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">二步验证码: </span>
-                    </div>
-                    <input type="text" class="form-control" name="code" aria-label="Amount (to the nearest dollar)">
-                    <div class="input-group-append">
-                        <input type="submit" value="提交" class="input-group-text">
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
+@include('default.widgets.google2fa')
 @stop

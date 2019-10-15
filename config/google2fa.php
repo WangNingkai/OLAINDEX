@@ -68,4 +68,9 @@ return [
      * Throw exceptions or just fire events?
      */
     'throw_exceptions' => true,
+
+    /*
+     * remember this device  
+     */
+    'remember_cookie_field' => env('GOOGLE2FA_REMEMBE_COOKIE_FIELD', 'remember_2fa')
 ];

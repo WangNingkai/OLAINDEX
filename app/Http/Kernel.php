@@ -68,6 +68,6 @@ class Kernel extends HttpKernel
         'hotlinkProtection' => \App\Http\Middleware\HotlinkProtection::class,
         'handleIllegalFile' => \App\Http\Middleware\HandleIllegalFile::class,
         'handleEncryptDir'  => \App\Http\Middleware\HandleEncryptDir::class,
-        '2fa'               => \PragmaRX\Google2FALaravel\Middleware::class,
+        '2fa'               => \App\Http\Middleware\Check2FA::class,
     ];
 }
