@@ -125,7 +125,7 @@ chown -R www:www *
  - [x] ManggeController
  - [x] IndexConttroller
  - [ ] themes 配置 (caffeinated/themes)
- - [ ] 二步验证记住设备 (cookie)
+ - [x] 二步验证记住设备 (google2fa cookie)
 
 ### 注意事项
 修改Job时，需要重启supervisorctl
