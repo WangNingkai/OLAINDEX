@@ -91,7 +91,7 @@ chown -R www:www *
 
 ---
 
-### Install (已安装PHP、MySql、Nginx环境和Composer)
+### Install (已安装PHP、MySql、Nginx环境和Composer的情况下)
  1. 在web站点下克隆github项目
     
         git clone https://github.com/dongdongGit/OLAINDEX.git

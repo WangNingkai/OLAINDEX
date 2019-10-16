@@ -9,13 +9,9 @@ class Check2FA
 {
     public function handle($request, Closure $next)
     {
-        if ($request->cookie('remember_2fa')) {
-            return $next($request);
-        }
-
         $authenticator = app(Authenticator::class)->boot($request);
 
-        if ($authenticator->isAuthenticated()) {
+        if ($authenticator->isAuthenticated() || $request->cookie('remember_2fa')) {
             return $next($request);
         }
 
