@@ -20,7 +20,8 @@
         auto2top: true,
         subMaxLevel: 3,
         maxLevel: 4,
-        search: {maxAge: 86400000, paths: 'auto', placeholder: {'/': '搜索'}, noData: {'/': '找不到结果'}, depth: 4}
+        search: {maxAge: 86400000, paths: 'auto', placeholder: {'/': '搜索'}, noData: {'/': '找不到结果'}, depth: 4},
+        disqus: 'olaindex'
     };
 </script>
 <script src="//cdn.staticfile.org/docsify/4.10.2/docsify.min.js"></script>
@@ -29,9 +30,6 @@
 <script src="//cdn.staticfile.org/docsify/4.10.2/plugins/gitalk.min.js"></script>
 <script src="//cdn.staticfile.org/docsify/4.10.2/plugins/disqus.min.js"></script>
 <script>
-    window.$docsify = {
-        disqus: 'olaindex'
-    };
     const gitalk = new Gitalk({
         clientID: '2de04433a71fe86618f1',
         clientSecret: 'f1e5e9012c5c3b418bc80986da7778cb097aeb8b',
