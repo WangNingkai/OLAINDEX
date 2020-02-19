@@ -53,6 +53,7 @@
         <div class="card border-light mb-3">
             <div class="card-header"><i class="fa fa-leaf"></i> HEAD</div>
             <div class="card-body markdown-body" id="head">
+                <?php $Parsedown = new Parsedown(); echo $Parsedown->text($head); ?>
             </div>
         </div>
     @endif
@@ -309,6 +310,7 @@
         <div class="card border-light mb-3">
             <div class="card-header"><i class="fa fa-bookmark"></i> README</div>
             <div class="card-body markdown-body" id="readme">
+                <?php $Parsedown = new Parsedown(); echo $Parsedown->text($readme); ?>
             </div>
         </div>
     @endif
