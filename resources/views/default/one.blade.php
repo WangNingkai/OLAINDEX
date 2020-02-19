@@ -1,3 +1,4 @@
+
 @extends('default.layouts.main')
 @section('title',setting('name','OLAINDEX'))
 @section('js')
