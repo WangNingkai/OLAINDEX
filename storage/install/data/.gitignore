@@ -1,0 +1,3 @@
+*.sqlite
+!*.sample.sqlite
+

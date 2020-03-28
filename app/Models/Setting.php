@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Traits\HelperModel;
+use App\Models\Traits\HelperModel;
 use Illuminate\Database\Eloquent\Model;
 use Cache;
 
@@ -57,6 +57,11 @@ class Setting extends Model
         $this->attributes['value'] = is_array($value) ? json_encode($value) : $value;
     }
 
+    /**
+     * 批量更新
+     * @param $data
+     * @return mixed
+     */
     public static function batchUpdate($data)
     {
         $editData = [];

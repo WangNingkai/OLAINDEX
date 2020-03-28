@@ -7,7 +7,7 @@
 [![GitHub forks](https://img.shields.io/github/forks/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/network)
 [![GitHub license](https://img.shields.io/github/license/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/blob/master/LICENSE)
 
-<div align=center><img alt="OLAINDEX" src="https://i.loli.net/2019/06/15/5d049d72309c376133.png"/></div>
+<div align=center><img alt="OLAINDEX" src="https://ojpoc641y.qnssl.com/FoO82Ql-AAn6TPIUa7RtbgWCPihl.png"/></div>
 
 
 > 👋 本项目受 Oneindex 启发，借鉴其部分功能，在这里感谢。 项目持续开发，会加入更多功能，欢迎大家提交 issue.
@@ -70,18 +70,7 @@ chown -R www:www *
 
 本次更新进行部分重构，不再兼容老版本，请删除原先代码重新拉取部署更新
 
-**2019.06 v4.0**
-
-1. 搜索功能增强(前台可搜索、后台设置搜索频次)
-2. 目录额外功能优化（文件隐藏、加密）
-3. 文件排序功能加强
-4. 静态资源CDN更换
-5. 路径优化（可自定义兼容模式）
-6. 后台刷新任务执行
-7. 整合部分命令
-8. 上传、搜索频次设置
-9. 更换信息存储为数据库存储
-10. 添加第三方接口
+**2020.04 v5.0**
 
 ### 分支说明
 
@@ -120,8 +109,6 @@ Email [imwnk@live.com](mailto:imwnk@live.com)
 ## 捐赠
 
 项目开发纯属个人爱好，如果你喜欢此项目，欢迎赞助。
-
-同时赞助可以获得一次安装技术服务。
 
 另可根据需求提供付费定制服务。
 
