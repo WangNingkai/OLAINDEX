@@ -20,4 +20,6 @@ Route::prefix('admin')->group(static function () {
         Route::any('reset', 'InstallController@reset')->name('reset');
         Route::any('bind', 'InstallController@bind')->name('bind');
     });
+    // 基础设置
+    Route::any('/', 'AdminController@config')->name('admin.config');
 });
