@@ -106,6 +106,7 @@ class InstallController extends BaseController
             'redirectUri' => $clientConfig->redirectUri,
             'urlAuthorize' => $clientConfig->getUrlAuthorize(),
             'urlAccessToken' => $clientConfig->getUrlAccessToken(),
+            'urlResourceOwnerDetails' => '',
             'scopes' => Client::SCOPES,
         ];
         $oauthClient = new GenericProvider($oauthConfig);
@@ -134,7 +135,7 @@ class InstallController extends BaseController
      */
     public function reset()
     {
-        return view(config('olaindex.theme') . 'install.install');
+        return redirect()->route('install');
     }
 
 }

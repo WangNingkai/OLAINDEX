@@ -29,6 +29,10 @@
             </div>
             <form id="bind-form" action="{{ route('bind') }}" method="POST"
                   class="invisible">
+                <input type="hidden" name="clientId" value="{{ $clientId }}">
+                <input type="hidden" name="clientSecret" value="{{ $clientSecret }}">
+                <input type="hidden" name="redirectUri" value="{{ $redirectUri }}">
+                <input type="hidden" name="accountType" value="{{ $accountType }}">
                 @csrf
             </form>
             <a href="javascript:void(0)" onclick="event.preventDefault();document.getElementById('bind-form').submit();"
