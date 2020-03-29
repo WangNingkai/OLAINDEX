@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Account;
 use Illuminate\Http\Request;
 use League\OAuth2\Client\Provider\GenericProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
@@ -19,19 +20,22 @@ class OauthController extends BaseController
     {
         $state = $request->get('state');
         $authCode = $request->get('code');
-        $oauthConfig = Cache::get($state);
+        $oauthConfig = Cache::pull($state);
         if (!$oauthConfig) {
             $this->showMessage('Invalid state');
-//            return '';
+            return redirect()->route('message');
         }
         unset($oauthConfig['accountType']);
         $oauthClient = new GenericProvider($oauthConfig);
         try {
             // Make the token request
-            $accessToken = $oauthClient->getAccessToken('authorization_code', [
+            $_accessToken = $oauthClient->getAccessToken('authorization_code', [
                 'code' => $authCode
             ]);
             // 保存账号
+            $accessToken = $_accessToken->getToken();
+            $refreshToken = $_accessToken->getRefreshToken();
+            $tokenExpires = $_accessToken->getExpires();
 
         } catch (IdentityProviderException $e) {
 

@@ -10,8 +10,13 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+// 消息通知
+Route::view('message', config('olaindex.theme') . 'message')->name('message');
+// 授权回调
 Route::get('/callback', 'OauthController@callback')->name('callback');
+// 首页
 Route::get('/', 'IndexController')->name('home');
+// 后台
 Route::prefix('admin')->group(static function () {
     // 安装
     Route::prefix('install')->group(static function () {
