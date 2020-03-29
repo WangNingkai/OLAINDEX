@@ -10,7 +10,6 @@ namespace App\Helpers;
 
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Arr;
 use Parsedown;
 use Log;
 

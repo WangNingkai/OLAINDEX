@@ -10,7 +10,14 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/callback', 'OauthController@callback')->name('callback');
+Route::get('/', 'IndexController')->name('home');
+Route::prefix('admin')->group(static function () {
+    // 安装
+    Route::prefix('install')->group(static function () {
+        Route::any('/', 'InstallController@install')->name('install');
+        Route::any('apply', 'InstallController@apply')->name('apply');
+        Route::any('reset', 'InstallController@reset')->name('reset');
+        Route::any('bind', 'InstallController@bind')->name('bind');
+    });
 });

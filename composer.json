@@ -24,6 +24,7 @@
         "ext-json": "*",
         "ext-mbstring": "*",
         "ext-openssl": "*",
+        "erusev/parsedown": "^1.7",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.2",
         "laravel/helpers": "^1.1",

@@ -29,6 +29,7 @@ class Setting extends Model
      * @var array $fillable
      */
     protected $fillable = ['name', 'value'];
+
     /**
      * @var array $casts
      */

@@ -9,7 +9,14 @@
 namespace App\Http\Controllers;
 
 
-use App\Utils\Tool;
+use Cache;
+use Validator;
+use App\Helpers\Tool;
+use App\Models\Client;
+use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
+use League\OAuth2\Client\Provider\GenericProvider;
 
 /**
  * 初始化安装操作
@@ -19,7 +26,7 @@ use App\Utils\Tool;
 class InstallController extends BaseController
 {
     /**
-     * 申请相关密钥
+     * 申请密钥(仅支持通用版)
      *
      * @param Request $request
      *
@@ -27,18 +34,12 @@ class InstallController extends BaseController
      */
     public function apply(Request $request): RedirectResponse
     {
+        $request->validate([
+            'redirectUri' => 'required',
+        ]);
+
         // 感谢 donwa 提供的方法
-        /*if (Tool::hasConfig()) {
-            $this->>showMessage('已配置相关信息', false);
-
-            return view(config('olaindex.theme') . 'message');
-        }*/
-        $redirect_uri = $request->get('redirect_uri');
-        if (!$redirect_uri) {
-            /*Tool::showMessage('重定向地址缺失', false);*/
-
-            return view(config('olaindex.theme') . 'message');
-        }
+        $redirect_uri = $request->get('redirectUri');
         $ru = 'https://developer.microsoft.com/en-us/graph/quick-start?appID=_appId_&appName=_appName_&redirectUrl='
             . $redirect_uri . '&platform=option-php';
         $deepLink = '/quickstart/graphIO?publicClientSupport=false&appName=OLAINDEX&redirectUrl='
@@ -47,6 +48,93 @@ class InstallController extends BaseController
         $app_url = 'https://apps.dev.microsoft.com/?deepLink=' . urlencode($deepLink);
 
         return redirect()->away($app_url);
+    }
+
+    /**
+     * 安装
+     * @param Request $request
+     * @return RedirectResponse|View
+     */
+    public function install(Request $request)
+    {
+        //  显示基础信息的填写、申请或提交应用信息、返回
+        if ($request->isMethod('get')) {
+            return view(config('olaindex.theme') . 'install.install');
+        }
+        $request->validate([
+            'accountType' => 'required',
+            'clientId' => 'required',
+            'clientSecret' => 'required',
+            'redirectUri' => 'required',
+        ]);
+        $accountType = strtoupper($request->get('accountType', 'COM'));
+        $redirectUri = $request->get('redirectUri', Client::DEFAULT_REDIRECT_URI);
+        $clientId = $request->get('clientId');
+        $clientSecret = $request->get('clientSecret');
+
+        return view(
+            config('olaindex.theme') . 'install.bind',
+            compact('accountType', 'clientId', 'clientSecret', 'redirectUri')
+        );
+    }
+
+    /**
+     * 绑定
+     * @param Request $request
+     * @return RedirectResponse|View
+     */
+    public function bind(Request $request)
+    {
+        $request->validate([
+            'accountType' => 'required',
+            'clientId' => 'required',
+            'clientSecret' => 'required',
+            'redirectUri' => 'required',
+        ]);
+
+        $accountType = strtoupper($request->get('accountType', 'COM'));
+        $redirectUri = $request->get('redirectUri', Client::DEFAULT_REDIRECT_URI);
+        $clientId = $request->get('clientId');
+        $clientSecret = $request->get('clientSecret');
+        $clientConfig = (new Client())
+            ->setAccountType($accountType)
+            ->setRedirectUri($redirectUri);
+
+        $oauthConfig = [
+            'clientId' => $clientId,
+            'clientSecret' => $clientSecret,
+            'redirectUri' => $clientConfig->redirectUri,
+            'urlAuthorize' => $clientConfig->getUrlAuthorize(),
+            'urlAccessToken' => $clientConfig->getUrlAccessToken(),
+            'scopes' => Client::SCOPES,
+        ];
+        $oauthClient = new GenericProvider($oauthConfig);
+
+        // 临时缓存
+        $tmpKey = str_random();
+        $oauthConfig = array_add($oauthConfig, 'accountType', $accountType);
+        Cache::add($tmpKey, $oauthConfig, 15 * 60);
+
+        // state :若代理跳转为<链接>否则为<缓存键>
+        $state = $tmpKey;
+        if (str_contains($redirectUri, 'ningkai.wang')) {
+            $state = Tool::addUrlQueryParams($redirectUri, 'state', $state);
+        }
+
+        $authUrl = $oauthClient->getAuthorizationUrl([
+            'state' => $state
+        ]);
+        return redirect()->away($authUrl);
+
+    }
+
+    /**
+     * 返回重置
+     * @return \Illuminate\Contracts\View\Factory|View
+     */
+    public function reset()
+    {
+        return view(config('olaindex.theme') . 'install.install');
     }
 
 }

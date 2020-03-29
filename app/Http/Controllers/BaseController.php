@@ -19,14 +19,15 @@ class BaseController extends Controller
      * 操作成功或者失败的提示
      *
      * @param string $message
-     * @param bool $success
+     * @param bool $error
      */
-    public function showMessage($message = 'ok', $success = true): void
+    public function showMessage($message = 'ok', $error = false): void
     {
-        $alertType = $success ? 'success' : 'danger';
+        $alertType = $error ? 'danger' : 'success';
         Session::put('alertMessage', $message);
         Session::put('alertType', $alertType);
     }
+
     /**
      * 数组分页
      * @param array $items
