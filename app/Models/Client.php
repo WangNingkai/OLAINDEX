@@ -15,7 +15,7 @@ namespace App\Models;
  */
 class Client
 {
-    const DEFAULT_REDIRECT_URI = 'https://olaindex.ningkai.wang';
+    const DEFAULT_REDIRECT_URI = 'https://olaindex.github.io/oauth.html';
     const API_VERSION = 'v1.0';
     const SCOPES = 'offline_access user.read files.readwrite.all';
 
@@ -45,7 +45,7 @@ class Client
     /**
      * @var string
      */
-    public $redirectUri = 'https://olaindex.ningkai.wang';
+    public $redirectUri = 'https://olaindex.github.io/oauth.html';
     /**
      * @var string
      */
