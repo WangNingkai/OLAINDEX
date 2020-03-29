@@ -28,6 +28,9 @@
         "laravel/framework": "^6.2",
         "laravel/helpers": "^1.1",
         "laravel/tinker": "^2.0",
+        "league/oauth2-client": "^2.4",
+        "microsoft/microsoft-graph": "^1.13",
+        "overtrue/laravel-lang": "^3.0",
         "php-curl-class/php-curl-class": "^8.0"
     },
     "require-dev": {
@@ -81,8 +84,8 @@
         ],
         "cs-check": "phpcs -p --standard=PSR2 app/",
         "cs-fix": "phpcbf -p --standard=PSR2 app/",
-        "install-app": "php ola install",
-        "uninstall-app": "php ola uninstall"
+        "install-app": "php artisan install",
+        "uninstall-app": "php artisan uninstall"
     },
     "repositories": {
         "packagist": {

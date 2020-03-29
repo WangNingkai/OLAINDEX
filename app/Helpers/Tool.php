@@ -17,6 +17,23 @@ use Log;
 class Tool
 {
     /**
+     * 链接动态添加参数
+     * @param $url
+     * @param $key
+     * @param $value
+     * @return string
+     */
+    public static function addUrlQueryParams($url, $key, $value)
+    {
+        $url = preg_replace('/(.*)(?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url . '&');
+        $url = substr($url, 0, -1);
+        if (strpos($url, '?') === false) {
+            return ($url . '?' . $key . '=' . $value);
+        }
+        return ($url . '&' . $key . '=' . $value);
+    }
+
+    /**
      *文件大小转换
      *
      * @param string $size 原始大小
