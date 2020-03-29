@@ -11,21 +11,33 @@ namespace App\Models;
 
 class AccessToken
 {
-    public function storeTokens($accessToken, $account)
+    /**
+     * @param $accessToken
+     */
+    public function storeTokens($accessToken)
     {
 
     }
 
+    /**
+     * @param $accessToken
+     */
     public function updateTokens($accessToken)
     {
 
     }
 
+    /**
+     *
+     */
     public function clearTokens()
     {
 
     }
 
+    /**
+     *
+     */
     public function getAccessToken()
     {
 
