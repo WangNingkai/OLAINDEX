@@ -1,9 +1,9 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: WangNingkai
- * Date: 2020/3/29
- * Time: 9:12
+ * This file is part of the wangningkai/olaindex.
+ * (c) wangningkai <i@ningkai.wang>
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
  */
 
 namespace App\Models;
