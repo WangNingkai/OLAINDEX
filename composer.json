@@ -24,6 +24,7 @@
         "ext-json": "*",
         "ext-mbstring": "*",
         "ext-openssl": "*",
+        "doctrine/dbal": "^2.10",
         "erusev/parsedown": "^1.7",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.2",
@@ -40,8 +41,7 @@
         "mockery/mockery": "^1.0",
         "nunomaduro/collision": "^3.0",
         "phpunit/phpunit": "^8.0",
-        "barryvdh/laravel-ide-helper": "^2.6",
-        "doctrine/dbal": "^2.9"
+        "barryvdh/laravel-ide-helper": "^2.6"
     },
     "config": {
         "optimize-autoloader": true,

@@ -51,7 +51,7 @@ class Account extends Model
      * @var array $fillable
      */
     protected $fillable = [
-        'accountType', 'clientId', 'redirectUri', 'accessToken', 'refreshToken', 'tokenExpires', 'status'
+        'remark', 'accountType', 'clientId', 'clientSecret', 'redirectUri', 'accessToken', 'refreshToken', 'tokenExpires', 'status'
     ];
 
 }

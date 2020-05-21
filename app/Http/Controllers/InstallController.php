@@ -37,8 +37,6 @@ class InstallController extends BaseController
         $request->validate([
             'redirectUri' => 'required',
         ]);
-
-        // 感谢 donwa 提供的方法
         $redirect_uri = $request->get('redirectUri');
         $ru = 'https://developer.microsoft.com/en-us/graph/quick-start?appID=_appId_&appName=_appName_&redirectUrl='
             . $redirect_uri . '&platform=option-php';
@@ -114,12 +112,12 @@ class InstallController extends BaseController
         // 临时缓存
         $tmpKey = str_random();
         $oauthConfig = array_add($oauthConfig, 'accountType', $accountType);
-        Cache::add($tmpKey, $oauthConfig, 15 * 60);
+        Cache::add($tmpKey, $oauthConfig, 15 * 60);// 限定15分钟内绑定成功
 
         // state :若代理跳转为<链接>否则为<缓存键>
         $state = $tmpKey;
-        if (str_contains($redirectUri, 'ningkai.wang')) {
-            $state = Tool::addUrlQueryParams($redirectUri, 'state', $state);
+        if (str_contains($redirectUri, 'github.io')) {
+            $state = Tool::addUrlQueryParams(route('callback'), 'state', $state);
         }
 
         $authUrl = $oauthClient->getAuthorizationUrl([

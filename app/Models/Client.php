@@ -97,6 +97,12 @@ class Client
         return $this;
     }
 
+    public function setApiVersion($apiVersion)
+    {
+        $this->apiVersion = $apiVersion;
+        return $this;
+    }
+
     public function setRedirectUri($redirectUri)
     {
         $this->redirectUri = $redirectUri;
@@ -105,14 +111,42 @@ class Client
 
     public function getUrlAuthorize()
     {
-
         return $this->authorizeUrl . $this->authorizeEndpoint;
-
     }
 
     public function getUrlAccessToken()
     {
         return $this->authorizeUrl . $this->tokenEndpoint;
+    }
+
+    public function getRedirectUri()
+    {
+        return $this->redirectUri ?? self::DEFAULT_REDIRECT_URI;
+    }
+
+    public function getScopes()
+    {
+        return $this->scopes ?? self::SCOPES;
+    }
+
+    public function getClientId()
+    {
+        return $this->clientId;
+    }
+
+    public function getclientSecret()
+    {
+        return $this->clientSecret;
+    }
+
+    public function getApiVersion()
+    {
+        return $this->apiVersion ?? self::API_VERSION;
+    }
+
+    public function getRestEndpoint()
+    {
+        return $this->restEndpoint;
     }
 
 }

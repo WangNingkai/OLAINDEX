@@ -15,14 +15,14 @@ class CreateAccountTable extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('accountType',5);
-            $table->string('clientId',128);
-            $table->string('clientSecret',128);
-            $table->string('redirectUri',125);
+            $table->string('accountType',8)->default('');
+            $table->string('clientId',128)->default('');
+            $table->string('clientSecret',128)->default('');
+            $table->string('redirectUri',128)->default('');
             $table->text('accessToken');
             $table->text('refreshToken');
             $table->integer('tokenExpires');
-            $table->tinyInteger('status');
+            $table->tinyInteger('status')->default(1);
             $table->timestamps();
         });
     }

@@ -25,20 +25,25 @@ class OauthController extends BaseController
             $this->showMessage('Invalid state');
             return redirect()->route('message');
         }
+        $config = $oauthConfig;
         unset($oauthConfig['accountType']);
         $oauthClient = new GenericProvider($oauthConfig);
         try {
-            // Make the token request
             $_accessToken = $oauthClient->getAccessToken('authorization_code', [
                 'code' => $authCode
             ]);
+            $remark = $state;
             // 保存账号
             $accessToken = $_accessToken->getToken();
             $refreshToken = $_accessToken->getRefreshToken();
             $tokenExpires = $_accessToken->getExpires();
+            $params = array_merge($config, compact('remark', 'accessToken', 'refreshToken', 'tokenExpires'));
+            Account::create($params);
+            return redirect()->route('admin.account.list');
 
         } catch (IdentityProviderException $e) {
-
+            $this->showMessage('Error requesting access token. ' . $e->getMessage());
+            return redirect()->route('message');
         }
     }
 
