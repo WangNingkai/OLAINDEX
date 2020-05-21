@@ -47,9 +47,9 @@ class AccessToken
         $clientConfig = (new Client())
             ->setAccountType($accountType);
         $oauthConfig = [
-            'clientId' => $clientConfig->getClientId(),
-            'clientSecret' => $clientConfig->getclientSecret(),
-            'redirectUri' => $clientConfig->getRedirectUri(),
+            'clientId' => $this->account->clientId,
+            'clientSecret' => $this->account->clientSecret,
+            'redirectUri' => $this->account->redirectUri,
             'urlAuthorize' => $clientConfig->getUrlAuthorize(),
             'urlAccessToken' => $clientConfig->getUrlAccessToken(),
             'urlResourceOwnerDetails' => '',
