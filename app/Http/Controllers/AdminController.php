@@ -15,8 +15,6 @@ use App\Models\Setting;
 use App\Service\GraphClient;
 use Illuminate\Http\Request;
 use Cache;
-use Microsoft\Graph\Model\DriveItem;
-use function GuzzleHttp\Psr7\parse_query;
 
 class AdminController extends BaseController
 {
@@ -28,46 +26,33 @@ class AdminController extends BaseController
         $data = $request->except('_token');
         Setting::batchUpdate($data);
         $this->showMessage('保存成功！');
-
         return redirect()->back();
     }
 
     public function account()
     {
-        $accounts = Account::all();
-        dd($accounts->toArray());
+        $accounts = Account::all(['id', 'accountType', 'remark', 'status']);
+        return response()->json($accounts->toArray());
 
     }
 
     public function accountDetail($id)
     {
-        $key = 'a:id:' . $id;
+        $key = 'ac:id:' . $id;
         if (!Cache::has($key)) {
-            $resp = $this->_request($id);
-            Cache::add($key, $resp, 300);
+            $resp = $this->_request($id, 'GET', '/me/drive');
+            $data = $resp->getBody();
+            Cache::add($key, $data, 300);
             $info = Cache::get($key);
         } else {
             $info = Cache::get($key);
         }
-
-        dd($info);
-    }
-
-    public function test()
-    {
-        $resp = $this->_request(2, 'get', '/me/drive/root:/图片:/children', ['$top' => 20]);
-        dd($resp->getBody());
-        $nextLink = $resp->getNextLink();
-        if ($nextLink) {
-            $queryParams = parse_query(parse_url($nextLink)['query']);
-        }
+        return response()->json($info);
     }
 
     private function _request($id, $method = 'GET', $query = '', $options = [])
     {
-        foreach ($options as $key => $value) {
-            $query = Tool::buildQueryParams($query, $key, $value);
-        }
+        $query .= '?' . build_query($options, false);
 
         $req = new GraphClient($id);
         $req->setMethod($method)

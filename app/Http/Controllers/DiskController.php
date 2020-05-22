@@ -9,6 +9,9 @@
 namespace App\Http\Controllers;
 
 
+use App\Helpers\Tool;
+use App\Service\GraphClient;
+
 class DiskController extends BaseController
 {
     public function list()
@@ -19,6 +22,19 @@ class DiskController extends BaseController
     public function view()
     {
 
+    }
+
+    private function _request($id, $method = 'GET', $query = '/me/drive/root/children', $options = [])
+    {
+        foreach ($options as $key => $value) {
+            $query = Tool::buildQueryParams($query, $key, $value);
+        }
+
+        $req = new GraphClient($id);
+        $req->setMethod($method)
+            ->setQuery($query)
+            ->setReturnStream(false);
+        return $req->execute();
     }
 
 }

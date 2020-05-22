@@ -35,5 +35,4 @@ Route::prefix('admin')->group(static function () {
     Route::any('/', 'AdminController@config')->name('admin.config');
     Route::any('/account/list', 'AdminController@account')->name('admin.account.list');
     Route::any('/account/{id}', 'AdminController@accountDetail')->name('admin.account.info');
-    Route::any('/test', 'AdminController@test')->name('test');
 });

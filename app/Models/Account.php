@@ -54,4 +54,9 @@ class Account extends Model
         'remark', 'accountType', 'clientId', 'clientSecret', 'redirectUri', 'accessToken', 'refreshToken', 'tokenExpires', 'status'
     ];
 
+    protected $casts = [
+        'tokenExpires' => 'int',
+        'status' => 'int'
+    ];
+
 }
