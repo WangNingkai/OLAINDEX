@@ -22,7 +22,7 @@ class Tool
      * @param $value
      * @return string
      */
-    public static function addUrlQueryParams($url, $key, $value)
+    public static function buildQueryParams($url, $key, $value)
     {
         $url = preg_replace('/(.*)(?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url . '&');
         $url = substr($url, 0, -1);

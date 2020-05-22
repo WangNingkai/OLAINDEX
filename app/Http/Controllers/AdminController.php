@@ -9,15 +9,14 @@
 namespace App\Http\Controllers;
 
 
-use App\Models\AccessToken;
+use App\Helpers\Tool;
 use App\Models\Account;
 use App\Models\Setting;
-use GuzzleHttp\Psr7\Stream;
+use App\Service\GraphClient;
 use Illuminate\Http\Request;
-use Microsoft\Graph\Exception\GraphException;
-use Microsoft\Graph\Graph;
-use Microsoft\Graph\Http\GraphResponse;
-use yii\helpers\Json;
+use Cache;
+use Microsoft\Graph\Model\DriveItem;
+use function GuzzleHttp\Psr7\parse_query;
 
 class AdminController extends BaseController
 {
@@ -42,28 +41,39 @@ class AdminController extends BaseController
 
     public function accountDetail($id)
     {
-        dd($this->_request($id));
+        $key = 'a:id:' . $id;
+        if (!Cache::has($key)) {
+            $resp = $this->_request($id);
+            Cache::add($key, $resp, 300);
+            $info = Cache::get($key);
+        } else {
+            $info = Cache::get($key);
+        }
+
+        dd($info);
     }
 
-    public function _request($id, $query = '/me/drive')
+    public function test()
     {
-        $accessToken = (new AccessToken($id))->getAccessToken();
-        // Create a Graph client
-        $graph = new Graph();
-        $graph->setAccessToken($accessToken);
-        /* @var \Microsoft\Graph\Http\GraphResponse $onenote */
-        try {
-            /* @var $response GraphResponse|Stream */
-            $response = $graph->createRequest('GET', $query)
-                ->setReturnType(Stream::class)
-                ->execute();
-        } catch (GraphException $e) {
-            return '';
+        $resp = $this->_request(2, 'get', '/me/drive/root:/图片:/children', ['$top' => 20]);
+        dd($resp->getBody());
+        $nextLink = $resp->getNextLink();
+        if ($nextLink) {
+            $queryParams = parse_query(parse_url($nextLink)['query']);
         }
-        $data = $response->getContents();
+    }
 
-        $response = is_json($data) ? json_decode($data, true) : $data;
-        return $response;
+    private function _request($id, $method = 'GET', $query = '', $options = [])
+    {
+        foreach ($options as $key => $value) {
+            $query = Tool::buildQueryParams($query, $key, $value);
+        }
+
+        $req = new GraphClient($id);
+        $req->setMethod($method)
+            ->setQuery($query)
+            ->setReturnStream(false);
+        return $req->execute();
     }
 
 }

@@ -22,11 +22,6 @@ class AccessToken
         $this->account = $account;
     }
 
-    private function getAccountType()
-    {
-        return $this->account->accountType;
-    }
-
     /**
      * Store the access_token
      * @param AccessTokenInterface $accessToken
@@ -59,7 +54,7 @@ class AccessToken
         $oauthClient = new GenericProvider($oauthConfig);
         try {
             $newToken = $oauthClient->getAccessToken('refresh_token', [
-                'refresh_token' => $this->account->accessToken
+                'refresh_token' => $this->account->refreshToken
             ]);
 
             // Store the new values
@@ -67,8 +62,14 @@ class AccessToken
 
             return $newToken->getToken();
         } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
+            \Log::error($e->getMessage(), $e->getTrace());
             return '';
         }
+    }
+
+    public function getAccountType()
+    {
+        return $this->account->accountType;
     }
 
     public function getAccessToken()
