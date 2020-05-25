@@ -21,6 +21,9 @@ class IndexController extends BaseController
         $options = [
             '$top' => $limit,
             '$skiptoken' => $cursor,
+            '$orderBy' => '',
+            '$select' => '',
+            '$expand' => ''
         ];
 
         $resp = $this->_request($id, 'get', '/me/drive/root/children', $options);

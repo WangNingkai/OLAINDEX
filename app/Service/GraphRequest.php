@@ -10,6 +10,7 @@ namespace App\Service;
 
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use Microsoft\Graph\Core\GraphConstants;
 use Microsoft\Graph\Exception\GraphException;
 
@@ -246,14 +247,19 @@ class GraphRequest
             $client = $this->createGuzzleClient();
         }
 
-        $result = $client->request(
-            $this->requestType,
-            $this->_getRequestUrl(),
-            [
-                'body' => $this->requestBody,
-                'timeout' => $this->timeout
-            ]
-        );
+        try {
+            $result = $client->request(
+                $this->requestType,
+                $this->_getRequestUrl(),
+                [
+                    'body' => $this->requestBody,
+                    'timeout' => $this->timeout
+                ]
+            );
+        }catch (\Exception $e){
+            throw new GraphException($e->getMessage(),$e->getCode());
+        }
+
 
         // Check to see if returnType is a stream, if so return it immediately
         if($this->returnsStream) {

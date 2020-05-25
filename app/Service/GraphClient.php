@@ -79,13 +79,14 @@ class GraphClient
     {
         try {
             $query = $this->graph->createRequest($this->method, $this->query)
+                ->setHttpErrors(true)
                 ->setReturnType($this->returnStream)
                 ->setTimeout(3000)
                 ->addHeaders($this->headers)
                 ->attachBody($this->body);
             $resp = $query->execute();
         } catch (\Microsoft\Graph\Exception\GraphException $e) {
-            Log::error($e->getMessage(), $e->getTrace());
+            Log::error($e->getMessage(),$e->getTrace());
             return null;
         }
         if ($resp instanceof Stream) {
