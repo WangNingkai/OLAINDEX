@@ -14,29 +14,30 @@ use App\Service\GraphClient;
 
 class IndexController extends BaseController
 {
-    public function __invoke()
+    public function __invoke($id)
     {
-        $limit = request()->get('limit', 2);
-        $offset = request()->get('offset');
-        $id = request()->get('id');
+        $limit = request()->get('limit', 20);
+        $cursor = request()->get('cursor');
         $options = [
             '$top' => $limit,
-            '$skiptoken' => $offset,
+            '$skiptoken' => $cursor,
         ];
 
         $resp = $this->_request($id, 'get', '/me/drive/root/children', $options);
         $nextLink = $resp->getNextLink();
-        $offset = '';
+        $totalCount = $resp->getCount();
+        $cursor = '';
         if ($nextLink) {
             $query = parse_query(parse_url($nextLink)['query']);
-            $offset = $query['$skiptoken'];
+            $cursor = $query['$skiptoken'];
         }
 
         $data = $resp->getBody();
         return response()->json([
             'items' => $data['value'],
-            'limit' => $limit,
-            'offset' => $offset
+            'perPage' => $limit,
+            'totalCount' => $totalCount,
+            'cursor' => $cursor
         ]);
 
     }

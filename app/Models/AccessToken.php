@@ -19,6 +19,9 @@ class AccessToken
     public function __construct($id)
     {
         $account = Account::find($id);
+        if (!$account) {
+            throw new \RuntimeException('Not Found Account.');
+        }
         $this->account = $account;
     }
 
@@ -26,7 +29,7 @@ class AccessToken
      * Store the access_token
      * @param AccessTokenInterface $accessToken
      */
-    private function storeTokens($accessToken)
+    private function storeTokens($accessToken): void
     {
         $data = [
             'accessToken' => $accessToken->getToken(),

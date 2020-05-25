@@ -31,6 +31,9 @@ class GraphClient
     public function __construct($id)
     {
         $token = new AccessToken($id);
+        if (!$token) {
+            throw new \RuntimeException('Not Found AccessToken.');
+        }
         $accountType = $token->getAccountType();
         $clientConfig = (new Client())
             ->setAccountType($accountType);
@@ -66,7 +69,7 @@ class GraphClient
         return $this;
     }
 
-    public function setReturnStream($returnStream)
+    public function setReturnStream($returnStream): GraphClient
     {
         $this->returnStream = $returnStream;
         return $this;

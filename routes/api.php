@@ -13,4 +13,4 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/test', 'IndexController');
+Route::get('/test/{id}', 'IndexController');
