@@ -184,7 +184,7 @@ class GraphResponse
         if (array_key_exists("@odata.count", $this->getBody())) {
             return $this->getBody()['@odata.count'];
         }
-        return null;
+        return 0;
     }
 
     /**
@@ -196,6 +196,14 @@ class GraphResponse
             return $this->getBody()['error'];
         }
         return null;
+    }
+
+    /**
+     * @return GraphRequest|object
+     */
+    public function getRequest()
+    {
+        return $this->_request;
     }
 
 }

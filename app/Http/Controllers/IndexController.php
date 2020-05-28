@@ -11,6 +11,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
 use App\Service\GraphClient;
+use App\Service\GraphResponse;
 
 class IndexController extends BaseController
 {
@@ -26,8 +27,10 @@ class IndexController extends BaseController
             '$skiptoken' => $cursor,
         ];
 
-        $resp = $this->_request($id, 'get', '/me/drive/root/children', $options);
-        $err = $resp->getError();
+        $resp = $this->_request($id, 'get', '/me/drive/root:/tmp:/children', $options);
+        $data = $this->_requestNextLink($id,$resp);
+        dd($data);
+        /*$err = $resp->getError();
         if ($resp->getError() !== null) {
             return response()->json($err);
         }
@@ -41,22 +44,49 @@ class IndexController extends BaseController
 
         $data = $resp->getBody();
         return response()->json([
-            'items' => $data['value'],
+            'items' => $data,
             'perPage' => $limit,
             'totalCount' => $totalCount,
             'cursor' => $cursor
-        ]);
+        ]);*/
 
     }
 
     private function _request($id, $method = 'GET', $query = '/me/drive/root/children', $options = [])
     {
-        $query .= '?' . build_query($options);
+        $query .= '?' . build_query($options, false);
 
         $req = new GraphClient($id);
         $req->setMethod($method)
             ->setQuery($query)
+            ->addHeaders([])
+            ->attachBody('')
             ->setReturnStream(false);
         return $req->execute();
     }
+
+    /**
+     * @param $id
+     * @param GraphResponse|array $response
+     * @param array $result
+     * @return array|mixed
+     */
+    private function _requestNextLink($id, $response, &$result = [])
+    {
+        $nextLink = $response->getNextLink();
+        if ($nextLink) {
+            $baseLength = strlen($response->getRequest()->getBaseUrl());
+            $query = substr($nextLink, $baseLength);
+            $resp = $this->_request($id, 'get', $query);
+            $result = $this->_requestNextLink($id, $resp, $result);
+        } else {
+            if ($response->getError()) {
+                return $result;
+            }
+            $result = array_merge($response->getBody()['value'], $result);
+        }
+        return $result;
+    }
+
+
 }

@@ -482,4 +482,9 @@ class GraphRequest
         return $client;
     }
 
+    public function getBaseUrl()
+    {
+        return $this->baseUrl . $this->apiVersion;
+    }
+
 }
