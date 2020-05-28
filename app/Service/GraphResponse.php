@@ -41,12 +41,17 @@ class GraphResponse
     private $_httpStatusCode;
 
     /**
+     * @var GraphRequest
+     */
+    private $_request;
+
+    /**
      * Creates a new Graph HTTP response entity
      *
-     * @param object $request        The request
-     * @param string $body           The body of the response
+     * @param object $request The request
+     * @param string $body The body of the response
      * @param string $httpStatusCode The returned status code
-     * @param array  $headers        The returned headers
+     * @param array $headers The returned headers
      */
     public function __construct($request, $body = null, $httpStatusCode = null, $headers = null)
     {
@@ -172,13 +177,23 @@ class GraphResponse
     }
 
     /**
-     *
      * @return string count, if provided
      */
     public function getCount()
     {
         if (array_key_exists("@odata.count", $this->getBody())) {
             return $this->getBody()['@odata.count'];
+        }
+        return null;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getError()
+    {
+        if (array_key_exists("error", $this->getBody())) {
+            return $this->getBody()['error'];
         }
         return null;
     }

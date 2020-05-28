@@ -246,7 +246,6 @@ class GraphRequest
         if (is_null($client)) {
             $client = $this->createGuzzleClient();
         }
-
         try {
             $result = $client->request(
                 $this->requestType,
@@ -256,8 +255,12 @@ class GraphRequest
                     'timeout' => $this->timeout
                 ]
             );
-        } catch (GuzzleException $e) {
-            throw new GraphException($e->getMessage(), $e->getCode());
+        } catch (RequestException $e) {
+            $result = $e->getResponse();
+        }
+
+        if (!$result) {
+            throw new GraphException(GraphConstants::UNABLE_TO_PARSE_RESPONSE);
         }
 
 

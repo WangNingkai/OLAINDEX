@@ -16,17 +16,21 @@ class IndexController extends BaseController
 {
     public function __invoke($id)
     {
-        $limit = request()->get('limit', 20);
-        $cursor = request()->get('cursor');
+        $limit = request()->get('limit', 10);
+        if (in_array($limit, [10, 20, 50], false)) {
+            $limit = 10;//默认每页显示10条
+        }
+        $cursor = request()->get('cursor', '');
         $options = [
             '$top' => $limit,
             '$skiptoken' => $cursor,
-            '$orderBy' => '',
-            '$select' => '',
-            '$expand' => ''
         ];
 
         $resp = $this->_request($id, 'get', '/me/drive/root/children', $options);
+        $err = $resp->getError();
+        if ($resp->getError() !== null) {
+            return response()->json($err);
+        }
         $nextLink = $resp->getNextLink();
         $totalCount = $resp->getCount();
         $cursor = '';
