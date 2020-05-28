@@ -10,6 +10,7 @@ namespace App\Service;
 
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use Microsoft\Graph\Core\GraphConstants;
 use Microsoft\Graph\Exception\GraphException;
@@ -94,11 +95,11 @@ class GraphRequest
      * Constructs a new Graph Request object
      *
      * @param string $requestType The HTTP method to use, e.g. "GET" or "POST"
-     * @param string $endpoint    The Graph endpoint to call
+     * @param string $endpoint The Graph endpoint to call
      * @param string $accessToken A valid access token to validate the Graph call
-     * @param string $baseUrl     The base URL to call
-     * @param string $apiVersion  The API version to use
-     * @param string $proxyPort   The url where to proxy through
+     * @param string $baseUrl The base URL to call
+     * @param string $apiVersion The API version to use
+     * @param string $proxyPort The url where to proxy through
      * @throws GraphException when no access token is provided
      */
     public function __construct($requestType, $endpoint, $accessToken, $baseUrl, $apiVersion, $proxyPort = null)
@@ -157,7 +158,7 @@ class GraphRequest
     {
         $this->returnType = $returnClass;
         if ($this->returnType == "GuzzleHttp\Psr7\Stream") {
-            $this->returnsStream  = true;
+            $this->returnsStream = true;
         } else {
             $this->returnsStream = false;
         }
@@ -200,8 +201,7 @@ class GraphRequest
         // Attach streams & JSON automatically
         if (is_string($obj) || is_a($obj, 'GuzzleHttp\\Psr7\\Stream')) {
             $this->requestBody = $obj;
-        }
-        // By default, JSON-encode
+        } // By default, JSON-encode
         else {
             $this->requestBody = json_encode($obj);
         }
@@ -236,10 +236,10 @@ class GraphRequest
      *
      * @param mixed $client The client to use in the request
      *
-     * @throws GraphException if response is invalid
-     *
      * @return mixed object or array of objects
      *         of class $returnType
+     * @throws GraphException if response is invalid
+     *
      */
     public function execute($client = null)
     {
@@ -256,13 +256,13 @@ class GraphRequest
                     'timeout' => $this->timeout
                 ]
             );
-        }catch (\Exception $e){
-            throw new GraphException($e->getMessage(),$e->getCode());
+        } catch (GuzzleException $e) {
+            throw new GraphException($e->getMessage(), $e->getCode());
         }
 
 
         // Check to see if returnType is a stream, if so return it immediately
-        if($this->returnsStream) {
+        if ($this->returnsStream) {
             return $result->getBody();
         }
 
@@ -309,7 +309,7 @@ class GraphRequest
             function ($result) {
 
                 // Check to see if returnType is a stream, if so return it immediately
-                if($this->returnsStream) {
+                if ($this->returnsStream) {
                     return $result->getBody();
                 }
 
@@ -339,12 +339,12 @@ class GraphRequest
     /**
      * Download a file from OneDrive to a given location
      *
-     * @param string $path   The path to download the file to
-     * @param mixed  $client The client to use in the request
-     *
-     * @throws GraphException if file path is invalid
+     * @param string $path The path to download the file to
+     * @param mixed $client The client to use in the request
      *
      * @return null
+     * @throws GraphException if file path is invalid
+     *
      */
     public function download($path, $client = null)
     {
@@ -365,11 +365,11 @@ class GraphRequest
                     'sink' => $file
                 ]
             );
-            if(is_resource($file)){
+            if (is_resource($file)) {
                 fclose($file);
             }
 
-        } catch(GraphException $e) {
+        } catch (GraphException $e) {
             throw new GraphException(GraphConstants::INVALID_FILE);
         }
 
@@ -379,12 +379,12 @@ class GraphRequest
     /**
      * Upload a file to OneDrive from a given location
      *
-     * @param string $path   The path of the file to upload
-     * @param mixed  $client The client to use in the request
-     *
-     * @throws GraphException if file is invalid
+     * @param string $path The path of the file to upload
+     * @param mixed $client The client to use in the request
      *
      * @return mixed DriveItem or array of DriveItems
+     * @throws GraphException if file is invalid
+     *
      */
     public function upload($path, $client = null)
     {
@@ -400,7 +400,7 @@ class GraphRequest
             } else {
                 throw new GraphException(GraphConstants::INVALID_FILE);
             }
-        } catch(GraphException $e) {
+        } catch (GraphException $e) {
             throw new GraphException(GraphConstants::INVALID_FILE);
         }
     }

@@ -11,6 +11,7 @@ namespace App\Service;
 
 use App\Models\AccessToken;
 use App\Models\Client;
+use Curl\Curl;
 use GuzzleHttp\Psr7\Stream;
 use Log;
 
@@ -86,7 +87,7 @@ class GraphClient
                 ->attachBody($this->body);
             $resp = $query->execute();
         } catch (\Microsoft\Graph\Exception\GraphException $e) {
-            Log::error($e->getMessage(),$e->getTrace());
+            Log::error($e->getMessage(), $e->getTrace());
             return null;
         }
         if ($resp instanceof Stream) {

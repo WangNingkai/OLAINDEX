@@ -117,7 +117,7 @@ class InstallController extends BaseController
         // state :若代理跳转为<链接>否则为<缓存键>
         $state = $tmpKey;
         if (str_contains($redirectUri, 'github.io')) {
-            $state = route('callback') . http_build_query(['state' => $state]);
+            $state = route('callback') .'?'. http_build_query(['state' => $state]);
         }
 
         $authUrl = $oauthClient->getAuthorizationUrl([
