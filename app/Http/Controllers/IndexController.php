@@ -17,17 +17,7 @@ class IndexController extends BaseController
 {
     public function __invoke($id)
     {
-        $limit = request()->get('limit', 10);
-        if (in_array($limit, [10, 20, 50], false)) {
-            $limit = 10;//默认每页显示10条
-        }
-        $cursor = request()->get('cursor', '');
-        $options = [
-            '$top' => $limit,
-            '$skiptoken' => $cursor,
-        ];
-
-        $resp = $this->_request($id, 'get', '/me/drive/root:/tmp:/children', $options);
+        $resp = $this->_request($id, 'get', '/me/drive/root:/tmp:/children');
         $data = $this->_requestNextLink($id, $resp);
         dd($data);
         /*$err = $resp->getError();
@@ -52,8 +42,12 @@ class IndexController extends BaseController
 
     }
 
-    private function _request($id, $method = 'GET', $query = '/me/drive/root/children', $options = [])
+    private function _request($id, $method = 'GET', $query = '/me/drive/root/children')
     {
+        $options = [
+            '$top' => 100,
+            '$skiptoken' => '',
+        ];
         $query = parse_url($query)['path'] ?? '';
         $query .= '?' . build_query($options, false);
         $req = new GraphClient($id);
