@@ -28,7 +28,7 @@ class IndexController extends BaseController
         ];
 
         $resp = $this->_request($id, 'get', '/me/drive/root:/tmp:/children', $options);
-        $data = $this->_requestNextLink($id,$resp);
+        $data = $this->_requestNextLink($id, $resp);
         dd($data);
         /*$err = $resp->getError();
         if ($resp->getError() !== null) {
@@ -54,13 +54,14 @@ class IndexController extends BaseController
 
     private function _request($id, $method = 'GET', $query = '/me/drive/root/children', $options = [])
     {
+        $query = parse_url($query)['path'] ?? '';
         $query .= '?' . build_query($options, false);
-
         $req = new GraphClient($id);
         $req->setMethod($method)
             ->setQuery($query)
             ->addHeaders([])
             ->attachBody('')
+            ->setProxy('socks5://127.0.0.1:1080')
             ->setReturnStream(false);
         return $req->execute();
     }
@@ -73,17 +74,21 @@ class IndexController extends BaseController
      */
     private function _requestNextLink($id, $response, &$result = [])
     {
+        if ($response->getError()) {
+            return $result;
+        }
         $nextLink = $response->getNextLink();
-        if ($nextLink) {
+        if (!$nextLink) {
+            $data = $response->getBody()['value'];
+            $result = array_merge_recursive($data, $result);
+        } else {
+            $data = array_merge_recursive($response->getBody()['value'], $result);
             $baseLength = strlen($response->getRequest()->getBaseUrl());
             $query = substr($nextLink, $baseLength);
-            $resp = $this->_request($id, 'get', $query);
-            $result = $this->_requestNextLink($id, $resp, $result);
-        } else {
-            if ($response->getError()) {
-                return $result;
-            }
-            $result = array_merge($response->getBody()['value'], $result);
+            $options = parse_query(parse_url($nextLink)['query']);
+            $resp = $this->_request($id, 'get', $query, $options);
+            $result = $this->_requestNextLink($id, $resp, $data);
+
         }
         return $result;
     }

@@ -46,6 +46,12 @@ class GraphClient
         $this->graph = $graph;
     }
 
+    public function setProxy($proxy): GraphClient
+    {
+        $this->graph->setProxyPort($proxy);
+        return $this;
+    }
+
     public function setMethod($method): GraphClient
     {
         $this->method = $method;
