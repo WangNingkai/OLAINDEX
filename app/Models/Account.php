@@ -42,6 +42,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Account whereTokenExpires($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Account whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string $remark
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Account whereRemark($value)
  */
 class Account extends Model
 {

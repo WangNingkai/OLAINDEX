@@ -12,14 +12,16 @@ namespace App\Http\Controllers;
 use App\Helpers\Tool;
 use App\Service\GraphClient;
 use App\Service\GraphResponse;
+use App\Service\OneDrive;
 
 class IndexController extends BaseController
 {
     public function __invoke($id)
     {
-        $resp = $this->_request($id, 'get', '/me/drive/root:/tmp:/children');
-        $data = $this->_requestNextLink($id, $resp);
-        dd($data);
+        // 文件列表
+        $path = request()->get('q', '/');
+        $data = (new OneDrive(3))->fetchInfo();
+        return response()->json($data);
         /*$err = $resp->getError();
         if ($resp->getError() !== null) {
             return response()->json($err);
@@ -45,7 +47,7 @@ class IndexController extends BaseController
     private function _request($id, $method = 'GET', $query = '/me/drive/root/children')
     {
         $options = [
-            '$top' => 100,
+            '$top' => 200,
             '$skiptoken' => '',
         ];
         $query = parse_url($query)['path'] ?? '';
