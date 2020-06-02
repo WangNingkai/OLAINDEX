@@ -195,7 +195,7 @@ class OneDrive
         return $err;
     }
 
-    public function fetchThumbnails($id, $size)
+    public function fetchThumbnails($id, $size = 'large')
     {
         $query = "/me/drive/items/{$id}/thumbnails/0/{$size}";
         $resp = $this->_request('get', $query);
@@ -204,5 +204,66 @@ class OneDrive
             return $resp->getBody();
         }
         return $err;
+    }
+
+    public function upload($query, $content)
+    {
+        $trans = trans_request_path($query, true, false);
+        $query = "/me/drive/root{$trans}content";
+        $resp = $this->_request('post', $query, ['body' => $content]);
+        $err = $resp->getError();
+        if (!$err) {
+            return $resp->getBody();
+        }
+        return $err;
+    }
+
+    public function uploadById($id, $content)
+    {
+        $query = "/me/drive/items/{$id}/content";
+        $resp = $this->_request('post', $query, ['body' => $content]);
+        $err = $resp->getError();
+        if (!$err) {
+            return $resp->getBody();
+        }
+        return $err;
+    }
+
+    public function id2Path($id)
+    {
+        $resp = $this->fetchItemById($id);
+        $id = array_get($resp, 'id', '');
+        if (!$id) {
+            return $resp;
+        }
+        if (!array_key_exists('path', $resp['parentReference']) && $resp['name'] === 'root') {
+            return '/';
+        }
+        $path = $resp['parentReference']['path'];
+        if (str_starts_with($path, '/drive/root:')) {
+            $path = str_after($path, '/drive/root:');
+        }
+
+        if ($path === '') {
+            $pathArr = [];
+        } else {
+            $pathArr = explode('/', $path);
+        }
+
+        $pathArr[] = $resp['name'];
+
+        $path = trans_absolute_path(implode('/', $pathArr));
+
+        return $path;
+    }
+
+    public function path2Id($path)
+    {
+        $resp = $this->fetchItem($path);
+        $id = array_get($resp, 'id', '');
+        if (!$id) {
+            return $resp;
+        }
+        return array_get($resp, 'id', '');
     }
 }

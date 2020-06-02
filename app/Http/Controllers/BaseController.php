@@ -31,9 +31,10 @@ class BaseController extends Controller
      * 数组分页
      * @param array $items
      * @param int $perPage
-     * @return array
+     * @param bool $toArray
+     * @return mixed
      */
-    public function paginate($items = [], $perPage = 10)
+    public function paginate($items = [], $perPage = 10, $toArray = true)
     {
         $pageStart = request()->get('page', 1);
         $offSet = ($pageStart * $perPage) - $perPage;
@@ -46,23 +47,26 @@ class BaseController extends Controller
             ['path' => Paginator::resolveCurrentPath()]
         );
 
-        $paginated = $data->toArray();
+        if ($toArray) {
+            $paginated = $data->toArray();
 
-        return [
-            'items' => $paginated['data'] ?? [],
-            'links' => [
-                'first' => $paginated['first_page_url'] ?? '',
-                'last' => $paginated['last_page_url'] ?? '',
-                'prev' => $paginated['prev_page_url'] ?? '',
-                'next' => $paginated['next_page_url'] ?? '',
-            ],
-            'meta' => array_except($paginated, [
-                'data',
-                'first_page_url',
-                'last_page_url',
-                'prev_page_url',
-                'next_page_url',
-            ]),
-        ];
+            return [
+                'items' => $paginated['data'] ?? [],
+                'links' => [
+                    'first' => $paginated['first_page_url'] ?? '',
+                    'last' => $paginated['last_page_url'] ?? '',
+                    'prev' => $paginated['prev_page_url'] ?? '',
+                    'next' => $paginated['next_page_url'] ?? '',
+                ],
+                'meta' => array_except($paginated, [
+                    'data',
+                    'first_page_url',
+                    'last_page_url',
+                    'prev_page_url',
+                    'next_page_url',
+                ]),
+            ];
+        }
+        return $data;
     }
 }
