@@ -17,6 +17,7 @@ class DiskController extends BaseController
     public function __invoke($id)
     {
         $data = (new OneDrive($id))->fetchList();
-        return response()->json($data);
+        $res = $this->paginate($data);
+        return response()->json($res);
     }
 }

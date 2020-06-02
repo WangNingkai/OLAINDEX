@@ -25,7 +25,7 @@ class OneDrive
         $isList = array_get($options, 'isList', false);
         if ($isList) {
             $pre_params = [
-                '$top' => 200,
+                '$top' => 500,
                 '$skiptoken' => '',
             ];
             $params = array_merge($pre_params, $params);
