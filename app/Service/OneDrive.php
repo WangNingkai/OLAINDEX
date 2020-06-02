@@ -26,7 +26,9 @@ class OneDrive
         ];
         $options = array_merge($pre_options, $options);
         $query = parse_url($query)['path'] ?? '';
-        $query .= '?' . build_query($options, false);
+        if (!empty($options)) {
+            $query .= '?' . build_query($options, false);
+        }
         $req = new GraphClient($this->id);
         $req->setMethod($method)
             ->setQuery($query)
