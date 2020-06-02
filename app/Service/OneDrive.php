@@ -22,11 +22,15 @@ class OneDrive
         $headers = array_get($options, 'headers', []);
         $body = array_get($options, 'body', '');
         $params = array_get($options, 'params', []);
-        $pre_params = [
-            '$top' => 200,
-            '$skiptoken' => '',
-        ];
-        $params = array_merge($pre_params, $params);
+        $isList = array_get($options, 'isList', false);
+        if ($isList) {
+            $pre_params = [
+                '$top' => 200,
+                '$skiptoken' => '',
+            ];
+            $params = array_merge($pre_params, $params);
+        }
+
         $query = parse_url($query)['path'] ?? '';
         if (!empty($params)) {
             $query .= '?' . build_query($params, false);
@@ -55,7 +59,7 @@ class OneDrive
             $baseLength = strlen($response->getRequest()->getBaseUrl());
             $query = substr($nextLink, $baseLength);
             $params = parse_query(parse_url($nextLink)['query']);
-            $resp = $this->_request('GET', $query, ['params' => $params]);
+            $resp = $this->_request('GET', $query, ['params' => $params, 'isList' => true]);
             $result = $this->_requestNextLink($resp, $data);
         }
         return $result;
@@ -76,14 +80,14 @@ class OneDrive
     {
         $trans = trans_request_path($query, true, false);
         $query = "/me/drive/root{$trans}children";
-        $resp = $this->_request('get', $query);
+        $resp = $this->_request('get', $query, ['isList' => true]);
         return $this->_requestNextLink($resp);
     }
 
     public function fetchListById($id)
     {
         $query = "/me/drive/items/{$id}/children";
-        $resp = $this->_request('get', $query);
+        $resp = $this->_request('get', $query, ['isList' => true]);
         return $this->_requestNextLink($resp);
     }
 
@@ -114,7 +118,7 @@ class OneDrive
     {
         $trans = trans_request_path($query, true, false);
         $query = "/me/drive/root{$trans}search(q='{$keyword}')";
-        $resp = $this->_request('get', $query);
+        $resp = $this->_request('get', $query, ['isList' => true]);
         return $this->_requestNextLink($resp);
     }
 
