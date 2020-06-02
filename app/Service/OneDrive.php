@@ -19,20 +19,23 @@ class OneDrive
 
     private function _request($method = 'GET', $query = '/me/drive/root/children', $options = [])
     {
-        $pre_options = [
+        $headers = array_get($options, 'headers', []);
+        $body = array_get($options, 'body', '');
+        $params = array_get($options, 'params', '');
+        $pre_params = [
             '$top' => 200,
             '$skiptoken' => '',
         ];
-        $options = array_merge($pre_options, $options);
+        $params = array_merge($pre_params, $params);
         $query = parse_url($query)['path'] ?? '';
-        if (!empty($options)) {
-            $query .= '?' . build_query($options, false);
+        if (!empty($params)) {
+            $query .= '?' . build_query($params, false);
         }
         $req = new GraphClient($this->id);
         $req->setMethod($method)
             ->setQuery($query)
-            ->addHeaders([])
-            ->attachBody('')
+            ->addHeaders($headers)
+            ->attachBody($body)
             ->setProxy('socks5://127.0.0.1:1080')
             ->setReturnStream(false);
         return $req->execute();
@@ -51,8 +54,8 @@ class OneDrive
             $data = array_merge_recursive($response->getBody()['value'], $result);
             $baseLength = strlen($response->getRequest()->getBaseUrl());
             $query = substr($nextLink, $baseLength);
-            $options = parse_query(parse_url($nextLink)['query']);
-            $resp = $this->_request('GET', $query, $options);
+            $params = parse_query(parse_url($nextLink)['query']);
+            $resp = $this->_request('GET', $query, ['params' => $params]);
             $result = $this->_requestNextLink($resp, $data);
         }
         return $result;
