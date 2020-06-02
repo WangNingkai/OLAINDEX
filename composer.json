@@ -27,6 +27,7 @@
         "doctrine/dbal": "^2.10",
         "erusev/parsedown": "^1.7",
         "fideloper/proxy": "^4.0",
+        "hashids/hashids": "^4.0",
         "laravel/framework": "^6.2",
         "laravel/helpers": "^1.1",
         "laravel/tinker": "^2.0",

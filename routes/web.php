@@ -22,6 +22,8 @@ Route::view('message', config('olaindex.theme') . 'message')->name('message');
 Route::get('/callback', 'OauthController@callback')->name('callback');
 // 首页
 Route::get('/', 'IndexController')->name('home');
+// 短网址中专
+Route::get('/{code}', 'IndexController')->name('short');
 // 后台
 Route::prefix('admin')->group(static function () {
     // 安装

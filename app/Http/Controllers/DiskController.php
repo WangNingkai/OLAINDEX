@@ -10,27 +10,14 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
 use App\Service\GraphClient;
+use App\Service\OneDrive;
 
 class DiskController extends BaseController
 {
-    public function list()
+    public function __invoke($id)
     {
-    }
-
-    public function view()
-    {
-    }
-
-    private function _request($id, $method = 'GET', $query = '/me/drive/root/children', $options = [])
-    {
-        foreach ($options as $key => $value) {
-            $query = Tool::buildQueryParams($query, $key, $value);
-        }
-
-        $req = new GraphClient($id);
-        $req->setMethod($method)
-            ->setQuery($query)
-            ->setReturnStream(false);
-        return $req->execute();
+        $q = request()->get('q', '/');
+        $data = (new OneDrive(3))->fetchInfo();
+        return response()->json($data);
     }
 }

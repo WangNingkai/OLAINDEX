@@ -13,4 +13,4 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/test/{id}', 'IndexController');
+Route::get('/test/{id}', 'DiskController');

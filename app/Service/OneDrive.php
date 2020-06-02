@@ -21,7 +21,7 @@ class OneDrive
     {
         $headers = array_get($options, 'headers', []);
         $body = array_get($options, 'body', '');
-        $params = array_get($options, 'params', '');
+        $params = array_get($options, 'params', []);
         $pre_params = [
             '$top' => 200,
             '$skiptoken' => '',
@@ -65,10 +65,11 @@ class OneDrive
     {
         $query = '/me/drive';
         $resp = $this->_request('get', $query);
-        if (!$resp->getError()) {
+        $err = $resp->getError();
+        if (!$err) {
             return $resp->getBody();
         }
-        return [];
+        return $err;
     }
 
     public function fetchList($query = '/')
@@ -91,43 +92,113 @@ class OneDrive
         $trans = trans_request_path($query, true, true);
         $query = "/me/drive/root{$trans}";
         $resp = $this->_request('get', $query);
-        if (!$resp->getError()) {
+        $err = $resp->getError();
+        if (!$err) {
             return $resp->getBody();
         }
-        return [];
+        return $err;
     }
 
     public function fetchItemById($id)
     {
         $query = "/me/drive/items/{$id}";
         $resp = $this->_request('get', $query);
-        if (!$resp->getError()) {
+        $err = $resp->getError();
+        if (!$err) {
             return $resp->getBody();
         }
-        return $resp->getError();
+        return $err;
     }
 
-    public function copy()
+    public function search($query = '/', $keyword = '')
     {
+        $trans = trans_request_path($query, true, false);
+        $query = "/me/drive/root{$trans}search(q='{$keyword}')";
+        $resp = $this->_request('get', $query);
+        return $this->_requestNextLink($resp);
     }
 
-    public function move()
+    public function copy($id, $target_id, $fileName)
     {
+        $driveResp = $this->fetchInfo();
+        $driveId = array_get($driveResp, 'id', '');
+        if (!$driveId) {
+            return $driveResp;
+        }
+        $query = "/me/drive/items/{$id}/copy";
+        $body = [
+            'parentReference' => [
+                'driveId' => $driveId,
+                'id' => $target_id
+            ],
+        ];
+        if ($fileName) {
+            $body = array_add($body, 'name', $fileName);
+        }
+        $resp = $this->_request('post', $query, ['body' => $body]);
+        $err = $resp->getError();
+        if (!$err) {
+            return $resp->getBody();
+        }
+        return $err;
+
     }
 
-    public function mkdir()
+    public function move($id, $target_id, $fileName)
     {
+        $query = "/me/drive/items/{$id}";
+        $body = [
+            'parentReference' => [
+                'id' => $target_id
+            ],
+        ];
+        if ($fileName) {
+            $body = array_add($body, 'name', $fileName);
+        }
+        $resp = $this->_request('patch', $query, ['body' => $body]);
+        $err = $resp->getError();
+        if (!$err) {
+            return $resp->getBody();
+        }
+        return $err;
     }
 
-    public function deleteItem()
+    public function mkdir($fileName, $target_id)
     {
+        $query = "/me/drive/items/{$target_id}/children";
+        $body = '{"name":"' . $fileName . '","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
+        $resp = $this->_request('post', $query, ['body' => $body]);
+        $err = $resp->getError();
+        if (!$err) {
+            return $resp->getBody();
+        }
+        return $err;
+
     }
 
-    public function deleteItemById()
+    public function deleteItem($id, $eTag = '')
     {
+        $query = "/me/drive/items/{$id}";
+        $headers = [];
+        if ($eTag) {
+            $headers = ['if-match' => $eTag];
+        }
+        $resp = $this->_request('delete', $query, ['headers' => $headers]);
+        $err = $resp->getError();
+        if (!$err) {
+            return $resp->getBody();
+        }
+        return $err;
     }
 
-    public function fetchThumbnails()
+    public function fetchThumbnails($id, $size)
     {
+        $query = "/me/drive/items/{$id}/thumbnails/0/{$size}";
+        $resp = $this->_request('get', $query);
+        $err = $resp->getError();
+        if (!$err) {
+            return $resp->getBody();
+        }
+        return $err;
     }
 }

@@ -15,11 +15,9 @@ use App\Service\OneDrive;
 
 class IndexController extends BaseController
 {
-    public function __invoke($id)
+    public function __invoke($code)
     {
-        // 文件列表
-        $q = request()->get('q', '/');
-        $data = (new OneDrive(3))->fetchInfo();
-        return response()->json($data);
+        $url = Tool::decodeShortUrl($code);
+        return redirect()->away($url);
     }
 }

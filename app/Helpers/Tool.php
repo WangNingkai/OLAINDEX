@@ -8,6 +8,7 @@
 
 namespace App\Helpers;
 
+use App\Models\ShortUrl;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Parsedown;
@@ -93,5 +94,37 @@ class Tool
             Paginator::resolveCurrentPage(),
             ['path' => Paginator::resolveCurrentPath()]
         );
+    }
+
+    /**
+     * 短网址生成
+     * @param $url
+     * @return mixed
+     */
+    public static function shortenUrl($url)
+    {
+        $code = shorten_url($url);
+        $data = ShortUrl::query()->select('id', 'original_url', 'short_code')->where(['short_code' => $code])->first();
+        if (!$data) {
+            $new = new ShortUrl();
+            $new->short_code = $code;
+            $new->original_url = $url;
+            $new->save();
+        }
+        return route('short', ['code' => $code]);
+    }
+
+    /**
+     * 短网址解析
+     * @param $code
+     * @return \Illuminate\Database\Eloquent\HigherOrderBuilderProxy|mixed|string
+     */
+    public static function decodeShortUrl($code)
+    {
+        $url = ShortUrl::query()->select('id', 'original_url', 'short_code')->where(['short_code' => $code])->first();
+        if (!$url) {
+            return '';
+        }
+        return $url->original_url;
     }
 }
