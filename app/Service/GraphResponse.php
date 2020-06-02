@@ -8,7 +8,6 @@
 
 namespace App\Service;
 
-
 use Microsoft\Graph\Exception\GraphException;
 use Microsoft\Graph\Core\GraphConstants;
 
@@ -205,5 +204,4 @@ class GraphResponse
     {
         return $this->_request;
     }
-
 }

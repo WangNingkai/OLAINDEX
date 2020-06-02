@@ -8,7 +8,6 @@
 
 namespace App\Models;
 
-
 use App\Models\Traits\HelperModel;
 use Illuminate\Database\Eloquent\Model;
 
@@ -60,5 +59,4 @@ class Account extends Model
         'tokenExpires' => 'int',
         'status' => 'int'
     ];
-
 }

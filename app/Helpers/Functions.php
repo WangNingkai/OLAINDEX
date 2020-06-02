@@ -275,6 +275,3 @@ if (!function_exists('build_query')) {
         return $qs ? (string)substr($qs, 0, -1) : '';
     }
 }
-
-
-

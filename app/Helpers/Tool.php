@@ -94,5 +94,4 @@ class Tool
             ['path' => Paginator::resolveCurrentPath()]
         );
     }
-
 }

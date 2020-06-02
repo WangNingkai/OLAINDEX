@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Helpers\Tool;
 use App\Service\GraphClient;
 
@@ -16,12 +15,10 @@ class DiskController extends BaseController
 {
     public function list()
     {
-
     }
 
     public function view()
     {
-
     }
 
     private function _request($id, $method = 'GET', $query = '/me/drive/root/children', $options = [])
@@ -36,5 +33,4 @@ class DiskController extends BaseController
             ->setReturnStream(false);
         return $req->execute();
     }
-
 }

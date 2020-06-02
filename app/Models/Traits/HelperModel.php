@@ -8,7 +8,6 @@
 
 namespace App\Models\Traits;
 
-
 use DB;
 
 trait HelperModel
@@ -116,5 +115,4 @@ trait HelperModel
         }
         return $query;
     }
-
 }

@@ -8,7 +8,6 @@
 
 namespace App\Models;
 
-
 /**
  * Class Client
  * @package App\Models
@@ -148,5 +147,4 @@ class Client
     {
         return $this->restEndpoint;
     }
-
 }

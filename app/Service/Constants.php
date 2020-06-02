@@ -8,7 +8,6 @@
 
 namespace App\Service;
 
-
 final class Constants
 {
     const LOGO
@@ -20,5 +19,4 @@ final class Constants
 \____/_____/_/  |_/___/_/ |_/_____/_____//_/|_|
 EOF;
     const VERSION = 'v5.0';
-
 }

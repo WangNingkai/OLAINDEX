@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Helpers\Tool;
 use App\Models\Account;
 use App\Models\Setting;
@@ -33,7 +32,6 @@ class AdminController extends BaseController
     {
         $accounts = Account::all(['id', 'accountType', 'remark', 'status']);
         return response()->json($accounts->toArray());
-
     }
 
     public function accountDetail($id)
@@ -60,5 +58,4 @@ class AdminController extends BaseController
             ->setReturnStream(false);
         return $req->execute();
     }
-
 }

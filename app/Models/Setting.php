@@ -99,5 +99,4 @@ class Setting extends Model
 
         return $data;
     }
-
 }

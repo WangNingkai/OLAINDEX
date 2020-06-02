@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers;
 
-
 use Cache;
 use Validator;
 use App\Helpers\Tool;
@@ -124,7 +123,6 @@ class InstallController extends BaseController
             'state' => $state
         ]);
         return redirect()->away($authUrl);
-
     }
 
     /**
@@ -135,5 +133,4 @@ class InstallController extends BaseController
     {
         return redirect()->route('install');
     }
-
 }

@@ -8,7 +8,6 @@
 
 namespace App\Service;
 
-
 use Microsoft\Graph\Core\GraphConstants;
 use Microsoft\Graph\Http\GraphCollectionRequest;
 
@@ -152,5 +151,4 @@ class Graph
             $this->_proxyPort
         );
     }
-
 }

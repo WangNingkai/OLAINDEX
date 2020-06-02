@@ -40,11 +40,9 @@ class OauthController extends BaseController
             $params = array_merge($config, compact('remark', 'accessToken', 'refreshToken', 'tokenExpires'));
             Account::create($params);
             return redirect()->route('admin.account.list');
-
         } catch (IdentityProviderException $e) {
             $this->showMessage('Error requesting access token. ' . $e->getMessage());
             return redirect()->route('message');
         }
     }
-
 }

@@ -8,7 +8,6 @@
 
 namespace App\Service;
 
-
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
@@ -308,7 +307,7 @@ class GraphRequest
                 'timeout' => $this->timeout
             ]
         )->then(
-        // On success, return the result/response
+            // On success, return the result/response
             function ($result) {
 
                 // Check to see if returnType is a stream, if so return it immediately
@@ -371,7 +370,6 @@ class GraphRequest
             if (is_resource($file)) {
                 fclose($file);
             }
-
         } catch (GraphException $e) {
             throw new GraphException(GraphConstants::INVALID_FILE);
         }
@@ -486,5 +484,4 @@ class GraphRequest
     {
         return $this->baseUrl . $this->apiVersion;
     }
-
 }

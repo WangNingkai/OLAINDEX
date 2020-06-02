@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Helpers\Tool;
 use App\Service\GraphClient;
 use App\Service\GraphResponse;
@@ -22,6 +21,5 @@ class IndexController extends BaseController
         $q = request()->get('q', '/');
         $data = (new OneDrive(3))->fetchInfo();
         return response()->json($data);
-
     }
 }

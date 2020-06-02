@@ -8,7 +8,6 @@
 
 namespace App\Service;
 
-
 class OneDrive
 {
     public $id;
@@ -55,7 +54,6 @@ class OneDrive
             $options = parse_query(parse_url($nextLink)['query']);
             $resp = $this->_request('GET', $query, $options);
             $result = $this->_requestNextLink($resp, $data);
-
         }
         return $result;
     }
@@ -108,32 +106,25 @@ class OneDrive
 
     public function copy()
     {
-
     }
 
     public function move()
     {
-
     }
 
     public function mkdir()
     {
-
     }
 
     public function deleteItem()
     {
-
     }
 
     public function deleteItemById()
     {
-
     }
 
     public function fetchThumbnails()
     {
-
     }
-
 }

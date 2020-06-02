@@ -8,7 +8,6 @@
 
 namespace App\Service;
 
-
 use App\Models\AccessToken;
 use App\Models\Client;
 use Curl\Curl;
@@ -97,13 +96,10 @@ class GraphClient
             return null;
         }
         if ($resp instanceof Stream) {
-
             $data = $resp->getContents();
 
             return is_json($data) ? json_decode($data, true) : $data;
         }
         return $resp;
-
     }
-
 }
