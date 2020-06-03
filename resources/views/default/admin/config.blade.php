@@ -63,8 +63,7 @@
                     </div>
                 </div>
             </div>
-            @stop
         </div>
     </div>
-
+@stop
 

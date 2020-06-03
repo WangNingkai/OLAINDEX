@@ -30,7 +30,7 @@ class AdminController extends BaseController
     public function account()
     {
         $accounts = Account::all(['id', 'accountType', 'remark', 'status']);
-        return response()->json($accounts->toArray());
+        return view(config('olaindex.theme') . '.admin.account', compact('accounts'));
     }
 
     public function accountDetail($id)

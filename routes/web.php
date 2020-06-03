@@ -23,7 +23,10 @@ Route::get('/callback', 'OauthController@callback')->name('callback');
 // 首页
 Route::get('/', 'HomeController')->name('home');
 // 后台
-Route::prefix('admin')->group(static function () {
+Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
+Route::post('login', 'Auth\LoginController@login');
+Route::post('logout', 'Auth\LoginController@logout')->name('logout');
+Route::prefix('admin')->middleware('auth')->group(static function () {
     // 安装绑定
     Route::prefix('install')->group(static function () {
         Route::any('/', 'InstallController@install')->name('install');

@@ -16,7 +16,6 @@
         * {
             outline-style: none
         }
-
         .item-list .list-group-item {
             border: 0;
         }
@@ -33,18 +32,22 @@
 <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-primary">
     <div class="container">
         <a class="navbar-brand" href="{{ route('home') }}">{{ setting('name','OLAINDEX') }}</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01"
-                aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarColor01">
+        <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav mr-auto">
-                @section('navbar')
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('home') }}"><i class="ri-home-fill"></i> 首页</a>
-                    </li>
-                @show
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('home') }}"><i class="ri-home-fill"></i> 首页</a>
+                </li>
+                @auth
+                    @include('default.components.admin-nav')
+                @endauth
+                @guest
+                    @include('default.components.home-nav')
+                @endguest
             </ul>
         </div>
     </div>
@@ -54,7 +57,7 @@
     @include('default.components.errors')
     @include('default.components.toast')
     @yield('content')
-    <footer id="footer">
+    <footer class="footer">
         <div class="row text-center">
             <div class="col-lg-12">
                 <p class="text-muted">
@@ -65,6 +68,7 @@
         </div>
     </footer>
 </div>
+
 @section('js')
     @include('default.components.js')
 @show

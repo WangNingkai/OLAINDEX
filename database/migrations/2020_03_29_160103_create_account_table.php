@@ -15,6 +15,7 @@ class CreateAccountTable extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('remark',16)->default('');
             $table->string('accountType',8)->default('');
             $table->string('clientId',128)->default('');
             $table->string('clientSecret',128)->default('');
