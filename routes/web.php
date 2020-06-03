@@ -22,11 +22,9 @@ Route::view('message', config('olaindex.theme') . 'message')->name('message');
 Route::get('/callback', 'OauthController@callback')->name('callback');
 // 首页
 Route::get('/', 'HomeController')->name('home');
-// 短网址
-Route::get('/{code}', 'IndexController')->name('short');
 // 后台
 Route::prefix('admin')->group(static function () {
-    // 安装
+    // 安装绑定
     Route::prefix('install')->group(static function () {
         Route::any('/', 'InstallController@install')->name('install');
         Route::any('apply', 'InstallController@apply')->name('apply');
@@ -35,6 +33,9 @@ Route::prefix('admin')->group(static function () {
     });
     // 基础设置
     Route::any('/', 'AdminController@config')->name('admin.config');
+    // 账号详情
     Route::any('/account/list', 'AdminController@account')->name('admin.account.list');
     Route::any('/account/{id}', 'AdminController@accountDetail')->name('admin.account.info');
 });
+// 短网址
+Route::get('/{code}', 'IndexController')->name('short');

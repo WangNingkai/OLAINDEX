@@ -14,7 +14,7 @@
 
 ## 简介
 
-一款 `OneDrive` 目录文件索引应用，基于优雅的 `PHP` 框架 `Laravel5.8` 搭建，并通过 `Microsoft Graph` 接口获取数据展示，支持多类型帐号登录，多种主题显示，简单而强大。
+一款 `OneDrive` 目录文件索引应用，基于优雅的 `PHP` 框架 `Laravel6` 搭建，并通过 `Microsoft Graph` 接口获取数据展示，支持多类型帐号登录，多种主题显示，简单而强大。
 
 ## 功能
 
@@ -58,12 +58,12 @@
 
 ### 版本更新
 
-```
+```bash
 git pull 
-composer install -vvv # 无版本更新只需执行到此（同时执行最后两条权限命令）
+composer install # 安装依赖更新包
 
-chmod -R 755 storage # 补充，保证缓存的写入权限，否则500
-chown -R www:www *
+chmod -R 755 storage # 注意！！！确保缓存目录具有读写权限，否则500
+chown -R www:www * # 确保目录权属
 ```
 
 ### 更新日志
@@ -71,6 +71,12 @@ chown -R www:www *
 本次更新进行部分重构，不再兼容老版本，请删除原先代码重新拉取部署更新
 
 **2020.04 v5.0**
+
+- 支持绑定多账号
+- 增加链接短链转换
+- 提高接口连接稳定性
+- 优化安装步骤
+- 缩减无用功能
 
 ### 分支说明
 
@@ -96,15 +102,15 @@ chown -R www:www *
 
 Blog [https://imwnk.cn](https://imwnk.cn)
 
-Email [imwnk@live.com](mailto:imwnk@live.com)
+Email [imwnk@live.com](mailto:i@ningkai.wang)
 
 ### 其他：
 
-1. 本项目同样存在命令行版本，包含基本的显示下载，功能与此版本一致。项目地址 [OLAINDEX-CMD](https://git.io/OLACMD)
+1. 本项目同样存在命令行版本，包含基本的显示下载，功能与此版本一致。项目地址（能力有限，暂不更新） [OLAINDEX-CMD](https://git.io/OLACMD)
 
 2. 本软件仅供日常学习使用，不得用于任何商业用途；学习使用请遵守您所在国家的法律，任何非法行为由使用者本身承担。
 
-3. 如使用本应用，请保留底部版权，并分享给更多人，谢谢。
+3. 如使用本应用，请尽量保留底部版权，并分享给更多人，感谢。
 
 ## 捐赠
 
@@ -115,7 +121,6 @@ Email [imwnk@live.com](mailto:imwnk@live.com)
 **赞助地址 ： [https://pay.ningkai.wang](https://pay.ningkai.wang)**
 
 ---
-
 
 ## License
 The OLAINDEX is open-source software licensed under the MIT license.

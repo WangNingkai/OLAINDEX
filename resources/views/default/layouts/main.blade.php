@@ -10,7 +10,7 @@
     <meta name="description" content="OLAINDEX,Another OneDrive Directory Index"/>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @section('css')
-        @include('default.layouts.css')
+        @include('default.components.css')
     @show
     <style>
         * {
@@ -51,20 +51,8 @@
 </nav>
 
 <div class="container mt-3">
-    @if ($errors->any())
-        <div class="alert alert-dismissible alert-danger">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
-            @foreach ($errors->all() as $error)
-                <p>{{ $error }}</p>
-            @endforeach
-        </div>
-    @endif
-    @if (session()->has('alertMessage'))
-        <div class="alert alert-dismissible alert-{{ session()->pull('alertType')}}">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
-            <p>{{ session()->pull('alertMessage') }}</p>
-        </div>
-    @endif
+    @include('default.components.errors')
+    @include('default.components.toast')
     @yield('content')
     <footer id="footer">
         <div class="row text-center">
@@ -78,7 +66,7 @@
     </footer>
 </div>
 @section('js')
-    @include('default.layouts.js')
+    @include('default.components.js')
 @show
 {!! setting('statistics') !!}
 <script>

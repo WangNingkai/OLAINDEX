@@ -8,10 +8,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\Tool;
 use App\Models\Account;
 use App\Models\Setting;
-use App\Service\GraphClient;
+use App\Service\OneDrive;
 use Illuminate\Http\Request;
 use Cache;
 
@@ -38,24 +37,16 @@ class AdminController extends BaseController
     {
         $key = 'ac:id:' . $id;
         if (!Cache::has($key)) {
-            $resp = $this->_request($id, 'GET', '/me/drive');
-            $data = $resp->getBody();
+            $data = (new OneDrive($id))->fetchInfo();
+            $quota = array_get($data, 'quota', '');
+            if (!$quota) {
+                return response()->json($data);
+            }
             Cache::add($key, $data, 300);
             $info = Cache::get($key);
         } else {
             $info = Cache::get($key);
         }
         return response()->json($info);
-    }
-
-    private function _request($id, $method = 'GET', $query = '', $options = [])
-    {
-        $query .= '?' . build_query($options, false);
-
-        $req = new GraphClient($id);
-        $req->setMethod($method)
-            ->setQuery($query)
-            ->setReturnStream(false);
-        return $req->execute();
     }
 }
