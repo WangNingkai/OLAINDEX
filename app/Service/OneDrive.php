@@ -76,6 +76,17 @@ class OneDrive
         return $err;
     }
 
+    public function fetchMe()
+    {
+        $query = '/me';
+        $resp = $this->_request('get', $query);
+        $err = $resp->getError();
+        if (!$err) {
+            return $resp->getBody();
+        }
+        return $err;
+    }
+
     public function fetchList($query = '/')
     {
         $trans = trans_request_path($query, true, false);

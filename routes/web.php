@@ -39,6 +39,7 @@ Route::prefix('admin')->middleware('auth')->group(static function () {
     // 账号详情
     Route::any('/account/list', 'AdminController@account')->name('admin.account.list');
     Route::any('/account/{id}', 'AdminController@accountDetail')->name('admin.account.info');
+    Route::any('/account/{id}/drive', 'AdminController@driveDetail')->name('admin.account.drive');
     Route::any('/account/{id}/config', 'AdminController@accountConfig')->name('admin.account.config');
 });
 // 短网址

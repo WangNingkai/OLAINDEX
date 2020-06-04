@@ -68,6 +68,24 @@ class AdminController extends BaseController
         } else {
             $info = Cache::get($key);
         }
+        $data = array_get($info, 'quota', []);
+        return response()->json($data);
+    }
+
+    public function driveDetail($id)
+    {
+        $key = 'dr:id:' . $id;
+        if (!Cache::has($key)) {
+            $data = (new OneDrive($id))->fetchMe();
+            $id = array_get($data, 'id', '');
+            if (!$id) {
+                return response()->json($data);
+            }
+            Cache::add($key, $data, 300);
+            $info = Cache::get($key);
+        } else {
+            $info = Cache::get($key);
+        }
         return response()->json($info);
     }
 }

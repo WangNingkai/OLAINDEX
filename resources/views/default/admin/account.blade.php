@@ -27,18 +27,21 @@
                         <td>{{ $account->remark }}</td>
                         <td>{{ $account->updated_at }}</td>
                         <td>
+                            <a class="btn btn-primary btn-sm"
+                               href="{{ route('admin.account.config',['id' => $account->id])  }}">设置</a>
                             <div class="btn-group" role="group">
                                 <button id="actionAccount" type="button" class="btn btn-primary btn-sm dropdown-toggle"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">操作
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">更多
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="actionAccount"
                                      data-id="{{ $account->id }}">
-                                    <a class="dropdown-item text-primary view_account"
-                                       href="javascript:void(0)">查看详情</a>
+                                    <a class="dropdown-item view_account"
+                                       href="javascript:void(0)" data-toggle="modal" data-target="#viewAccount">账号详情</a>
+                                    <a class="dropdown-item view_drive"
+                                       href="javascript:void(0)" data-toggle="modal" data-target="#viewDrive">网盘详情</a>
                                     <a class="dropdown-item text-danger delete_account"
                                        href="javascript:void(0)">删除</a>
-                                    <a class="dropdown-item"
-                                       href="{{ route('admin.account.config',['id' => $account->id])  }}">设置</a>
+
                                 </div>
                             </div>
                         </td>
@@ -49,16 +52,96 @@
             {{ $accounts->links()  }}
         </div>
     </div>
+    <div class="modal fade" id="viewAccount" tabindex="-1" role="dialog" aria-labelledby="viewAccount"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">账号信息</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-control-label" for="id">id </label>
+                        <input type="text" class="form-control" id="id" name="id"
+                               value="" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label" for="displayName">displayName </label>
+                        <input type="text" class="form-control" id="displayName" name="displayName"
+                               value="" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label" for="userPrincipalName">userPrincipalName </label>
+                        <input type="text" class="form-control" id="userPrincipalName" name="userPrincipalName"
+                               value="" disabled>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="viewDrive" tabindex="-1" role="dialog" aria-labelledby="viewDrive"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">网盘信息</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-control-label" for="state">state </label>
+                        <input type="text" class="form-control" id="state" name="state"
+                               value="" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label" for="total">total </label>
+                        <input type="text" class="form-control" id="total" name="total"
+                               value="" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label" for="used">used </label>
+                        <input type="text" class="form-control" id="used" name="used"
+                               value="" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label" for="remaining">remaining </label>
+                        <input type="text" class="form-control" id="remaining" name="remaining"
+                               value="" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label" for="deleted">deleted </label>
+                        <input type="text" class="form-control" id="deleted" name="deleted"
+                               value="" disabled>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 @section('js')
     @parent
     <script>
+        function readablizeBytes(bytes) {
+            if (!bytes) return 0
+            let s = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB']
+            let e = Math.floor(Math.log(bytes) / Math.log(1024))
+            return (bytes / Math.pow(1024, Math.floor(e))).toFixed(2) + ' ' + s[e]
+        }
+
         $(function() {
             $('.view_account').on('click', function(e) {
                 let account_id = $(this).parent().attr('data-id')
-                axios.get('/admin/account/' + account_id)
+                axios.get('/admin/account/' + account_id + '/drive')
                     .then(function(response) {
-                        console.log(response)
+                        let data = response.data
+                        $('#id').val(data.id)
+                        $('#displayName').val(data.displayName)
+                        $('#userPrincipalName').val(data.userPrincipalName)
                     })
                     .catch(function(error) {
                         console.log(error)
@@ -66,6 +149,31 @@
                     .then(function() {
                         // always executed
                     })
+            })
+            $('.view_drive').on('click', function(e) {
+                let account_id = $(this).parent().attr('data-id')
+                axios.get('/admin/account/' + account_id)
+                    .then(function(response) {
+                        let data = response.data
+                        $('#total').val(readablizeBytes(data.total))
+                        $('#deleted').val(readablizeBytes(data.deleted))
+                        $('#used').val(readablizeBytes(data.used))
+                        $('#remaining').val(readablizeBytes(data.remaining))
+                        $('#state').val(data.state)
+                    })
+                    .catch(function(error) {
+                        console.log(error)
+                    })
+                    .then(function() {
+                        // always executed
+                    })
+            })
+            $('.delete_account').on('click', function(e) {
+                Swal.fire(
+                    '删除？',
+                    '对不起，暂时无法删除！',
+                    'warning'
+                )
             })
         })
     </script>
