@@ -11,9 +11,10 @@
                 <thead>
                 <tr>
                     <th scope="col">ID</th>
+                    <th scope="col">备注</th>
                     <th scope="col">类型</th>
                     <th scope="col">状态</th>
-                    <th scope="col">上次更新</th>
+                    <th scope="col">刷新时间</th>
                     <th scope="col">操作</th>
                 </tr>
                 </thead>
@@ -21,12 +22,17 @@
                 @foreach($accounts as $account)
                     <tr>
                         <th scope="row">{{ $account->id }}</th>
+                        <td>
+                            <label>
+                                <input type="text" class="remark" value="{{ $account->remark }}" data-id="{{ $account->id }}">
+                            </label>
+                        </td>
                         <td>{{ $account->accountType }}</td>
                         <td>{!! $account->status ? '<span style="color:green">正常</span>':'<span style="color:red">禁用</span>' !!}</td>
                         <td>{{ $account->updated_at }}</td>
                         <td>
                             <a class="btn btn-primary btn-sm"
-                               href="{{ route('admin.account.config',['id' => \App\Helpers\HashidsHelper::encode($account->id)])  }}">设置</a>
+                               href="{{ route('admin.account.config',['id' =>$account->id])  }}">设置</a>
                             <div class="btn-group" role="group">
                                 <button id="actionAccount" type="button" class="btn btn-primary btn-sm dropdown-toggle"
                                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">更多
@@ -170,8 +176,22 @@
                 Swal.fire(
                     '删除？',
                     '对不起，暂时无法删除！',
-                    'warning'
+                    'warning',
                 )
+            })
+            $('.remark').on('change', function(e) {
+                let account_id = $(this).attr('data-id')
+                let remark = $(this).val()
+                axios.post('/admin/account/' + account_id + '/remark', {
+                    remark: remark,
+                })
+                    .then(function (response) {
+                        console.log(response);
+                        window.location.reload();
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
             })
         })
     </script>

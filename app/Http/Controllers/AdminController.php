@@ -47,25 +47,39 @@ class AdminController extends BaseController
      */
     public function accountConfig($id, Request $request)
     {
-        $decodeId = HashidsHelper::decode($id);
-        if (!$decodeId) {
-            $this->showMessage('账号不存在！', true);
-            return redirect()->route('message');
-        }
-        $account = Account::find($decodeId);
+        $account = Account::find($id);
         if (!$account) {
             $this->showMessage('账号不存在！', true);
             return redirect()->route('message');
         }
+        $uuid = HashidsHelper::encode($id);
         if ($request->isMethod('get')) {
-            $config = setting($id, []);
+            $config = setting($uuid, []);
             return view(config('olaindex.theme') . 'admin.account-config', compact('config'));
         }
         $data = $request->except('_token');
-        setting_set($id, $data);
+        setting_set($uuid, $data);
         $this->showMessage('保存成功！');
         return redirect()->back();
 
+    }
+
+    public function accountRemark($id, Request $request)
+    {
+        $account = Account::find($id);
+        if (!$account) {
+            return response()->json([
+                'error' => '账号不存在！'
+            ]);
+        }
+        $remark = $request->get('remark');
+        $account->remark = $remark;
+        if ($account->save()) {
+            return response()->json();
+        }
+        return response()->json([
+            'error' => ''
+        ]);
     }
 
     /**
