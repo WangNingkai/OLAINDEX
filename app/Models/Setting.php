@@ -87,7 +87,7 @@ class Setting extends Model
         $model = new self;
         $model->updateBatch($editData);
 
-        Cache::forget('setting');
+        Cache::forget('settings');
 
         return $data;
     }
