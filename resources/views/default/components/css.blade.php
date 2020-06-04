@@ -1,4 +1,4 @@
-<link href="https://cdn.staticfile.org/bootswatch/4.5.0/{{ setting('theme','lux') }}/bootstrap.min.css"
+<link href="https://cdn.staticfile.org/bootswatch/4.5.0/{{ setting('site_theme','lux') }}/bootstrap.min.css"
       rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css">

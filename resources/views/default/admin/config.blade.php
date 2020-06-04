@@ -61,7 +61,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label class="form-control-label" for="cache_expires">缓存时间(秒)</label>
+                                <label class="form-control-label" for="cache_expires">网盘资源缓存时间(秒)</label>
                                 <input type="text" class="form-control" id="cache_expires" name="cache_expires" value="{{ setting('cache_expires',1800) }}">
                                 <span class="form-text text-danger">建议缓存时间小于60分钟，否则会导致缓存失效</span>
                             </div>
