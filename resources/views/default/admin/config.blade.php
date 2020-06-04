@@ -72,7 +72,7 @@
                                 <span class="form-text text-danger">留空则不显示。使用markdown格式表示 如：Made by [xxx](https://xxx)</span>
                             </div>
                             <div class="form-group">
-                                <label class="form-control-label" for="statistics">统计代码</label>
+                                <label class="form-control-label" for="stats_code">统计代码</label>
                                 <input type="text" class="form-control" id="stats_code" name="stats_code"
                                        value="{{ setting('stats_code') }}">
                                 <span class="form-text text-danger">站点统计代码</span>

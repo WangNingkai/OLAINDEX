@@ -16,6 +16,9 @@ use Cache;
 
 class AdminController extends BaseController
 {
+    /**
+     * 全局设置
+     */
     public function config(Request $request)
     {
         if ($request->isMethod('get')) {
@@ -27,6 +30,9 @@ class AdminController extends BaseController
         return redirect()->back();
     }
 
+    /**
+     * 账号列表
+     */
     public function account()
     {
         $accounts = Account::query()
@@ -35,6 +41,9 @@ class AdminController extends BaseController
         return view(config('olaindex.theme') . '.admin.account', compact('accounts'));
     }
 
+    /**
+     * 账号设置
+     */
     public function accountConfig($id, Request $request)
     {
         $account = Account::find($id);
@@ -54,6 +63,11 @@ class AdminController extends BaseController
 
     }
 
+    /**
+     * 账号详情
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function accountDetail($id)
     {
         $key = 'ac:id:' . $id;
@@ -72,6 +86,11 @@ class AdminController extends BaseController
         return response()->json($data);
     }
 
+    /**
+     * 网盘详情
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function driveDetail($id)
     {
         $key = 'dr:id:' . $id;

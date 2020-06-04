@@ -10,7 +10,7 @@
 <div align=center><img alt="OLAINDEX" src="https://ojpoc641y.qnssl.com/FoO82Ql-AAn6TPIUa7RtbgWCPihl.png"/></div>
 
 
-> 👋 本项目受 Oneindex 启发，借鉴其部分功能，在这里感谢。 项目持续开发，会加入更多功能，欢迎大家提交 issue.
+> 👋 本项目受 oneindex 启发，借鉴其部分功能，在这里感谢。 项目持续开发，会加入更多功能，欢迎大家提交 issue.
 
 ## 简介
 
@@ -18,21 +18,9 @@
 
 ## 功能
 
-- OneDrive 目录查看索引分页查看；
-- 支持代码、图片、文本文件即时预览、图片列表栏展示；
-- 支持音视频播放（兼容大部分格式），视频播放采用 Dplayer.js，音乐播放采用 Aplayer；
-- 支持自定义创建文件夹、文件夹加密、文件/文件夹删除、文件/文件夹的复制与移动；
-- 支持文件搜索、文件上传、文件直链分享与删除、文件直链一键下载；
-- 支持管理 readme/head 说明文件；
-- 支持图床；
-- 支持命令行操作；
-- 支持文件离线下载（个人版）；
-- 后台基本显示管理，多主题管理，文件预览管理等等（清理缓存后及时生效）；
-- 支持世纪互联；
-- 支持多种缓存系统（Redis、Memcached等）；
-- 更多功能欢迎亲自尝试。
-
-**注：** 部分功能需登录。
+- OneDrive 文件目录索引
+- 支持多种资源即时预览
+- 支持多账号
 
 ## 项目地址
 
@@ -44,7 +32,7 @@
 
 ## 预览
 
-![预览](https://i.loli.net/2018/11/11/5be82800ce8b5.png)
+![预览](https://ojpoc641y.qnssl.com/FpR4_obUhswLJXCEBgKOV4Pz7qg3.png)
 
 ## 安装
 
@@ -102,7 +90,7 @@ chown -R www:www * # 确保目录权属
 
 Blog [https://imwnk.cn](https://imwnk.cn)
 
-Email [imwnk@live.com](mailto:i@ningkai.wang)
+Email [i@ningkai.wang](mailto:i@ningkai.wang)
 
 ### 其他：
 
