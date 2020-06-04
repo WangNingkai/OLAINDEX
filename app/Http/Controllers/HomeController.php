@@ -13,7 +13,7 @@ class HomeController extends BaseController
 {
     public function __invoke()
     {
-
+        return view(config('olaindex.theme') . 'one');
     }
 
 }
