@@ -1,7 +1,32 @@
+@php
+    $themes = [
+            'Cerulean' => 'cerulean',
+            'Cosmo' => 'cosmo',
+            'Cyborg' => 'cyborg',
+            'Darkly' => 'darkly',
+            'Flatly' => 'flatly',
+            'Journal' => 'journal',
+            'Litera' => 'litera',
+            'Lumen' => 'lumen',
+            'Materia' => 'materia',
+            'Lux' => 'lux',
+            'Minty' => 'minty',
+            'Pulse' => 'pulse',
+            'Sandstone' => 'sandstone',
+            'Simplex' => 'simplex',
+            'Sketchy' => 'sketchy',
+            'Slate' => 'slate',
+            'Solar' => 'solar',
+            'Spacelab' => 'spacelab',
+            'Superhero' => 'superhero',
+            'United' => 'united',
+            'Yeti' => 'yeti',
+        ];
+@endphp
 @extends('default.layouts.main')
 @section('title', '设置')
 @section('content')
-    <div class="card border-light mb-3">
+    <div class="card mb-3">
         <div class="card-header">基础设置</div>
         <div class="card-body">
             <nav>
@@ -11,8 +36,6 @@
                        aria-controls="config-basic" aria-selected="true">基础设置</a>
                     <a class="nav-item nav-link" id="nav-show-tab" data-toggle="tab" href="#config-show" role="tab"
                        aria-controls="config-show" aria-selected="false">显示设置</a>
-                    <a class="nav-item nav-link" id="nav-disk-tab" data-toggle="tab" href="#config-disk" role="tab"
-                       aria-controls="config-disk" aria-selected="false">网盘详情</a>
                 </div>
             </nav>
             <div class="tab-content" id="nav-tabContent">
@@ -22,43 +45,89 @@
                         <form action="" method="post">
                             @csrf
                             <div class="form-group">
-                                <label class="form-control-label" for="clientId"><b>client_id</b></label>
-                                <input type="text" class="form-control" id="clientId" name="clientId">
+                                <label class="form-control-label" for="site_name"><b>网站名称</b></label>
+                                <input type="text" class="form-control" id="site_name" name="site_name"
+                                       value="{{ setting('site_name','OLAINDEX') }}">
                             </div>
                             <div class="form-group">
-                                <label class="form-control-label" for="clientSecret"><b>client_secret</b></label>
-                                <input type="text" class="form-control" id="clientSecret" name="clientSecret">
+                                <label class="form-control-label" for="site_theme"><b>显示主题</b></label>
+                                <select class="custom-select" name="site_theme" id="site_theme">
+                                    @foreach( $themes as $name => $theme)
+                                        <option value="{{ $theme }}"
+                                                @if(setting('site_theme') === $theme) selected @endif>
+                                            {{ $name }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
+                            <div class="form-group">
+                                <label class="form-control-label" for="cache_expires">缓存时间(秒)</label>
+                                <input type="text" class="form-control" id="cache_expires" name="cache_expires" value="{{ setting('cache_expires',1800) }}">
+                                <span class="form-text text-danger">建议缓存时间小于60分钟，否则会导致缓存失效</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-control-label" for="copyright">自定义版权显示</label>
+                                <input type="text" class="form-control" id="copyright" name="copyright"
+                                       value="{{ setting('copyright') }}">
+                                <span class="form-text text-danger">留空则不显示。使用markdown格式表示 如：Made by [xxx](https://xxx)</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-control-label" for="statistics">统计代码</label>
+                                <input type="text" class="form-control" id="stats_code" name="stats_code"
+                                       value="{{ setting('stats_code') }}">
+                                <span class="form-text text-danger">站点统计代码</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-control-label" for="access_token">第三方接口token</label>
+                                <input type="text" class="form-control" id="access_token" name="access_token"
+                                       value="{{ setting('access_token') }}">
+                                <span class="form-text text-danger">第三方接口token(图床、文件列表)</span>
+                            </div>
+                            <button type="submit" class="btn btn-primary">提交</button>
                         </form>
                     </div>
                 </div>
                 <div class="tab-pane fade" id="config-show" role="tabpanel" aria-labelledby="nav-show-tab">
                     <div class="my-4">
+                        <p class="form-text text-danger">文件展示类型（扩展名）以空格分开</p>
                         <form action="" method="post">
                             @csrf
                             <div class="form-group">
-                                <label class="form-control-label" for="clientId"><b>client_id</b></label>
-                                <input type="text" class="form-control" id="clientId" name="clientId">
+                                <label class="form-control-label" for="show_image">图片</label>
+                                <input type="text" class="form-control" id="show_image" name="show_image"
+                                       value="{{ setting('show_image') }}">
                             </div>
                             <div class="form-group">
-                                <label class="form-control-label" for="clientSecret"><b>client_secret</b></label>
-                                <input type="text" class="form-control" id="clientSecret" name="clientSecret">
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="config-disk" role="tabpanel" aria-labelledby="nav-disk-tab">
-                    <div class="my-4">
-                        <form action="" method="post">
-                            @csrf
-                            <div class="form-group">
-                                <label class="form-control-label" for="clientId"><b>client_id</b></label>
-                                <input type="text" class="form-control" id="clientId" name="clientId">
+                                <label class="form-control-label" for="show_video">视频</label>
+                                <input type="text" class="form-control" id="show_video" name="show_video"
+                                       value="{{ setting('show_video') }}">
                             </div>
                             <div class="form-group">
-                                <label class="form-control-label" for="clientSecret"><b>client_secret</b></label>
-                                <input type="text" class="form-control" id="clientSecret" name="clientSecret">
+                                <label class="form-control-label" for="show_dash">Dash视频</label>
+                                <input type="text" class="form-control" id="show_dash" name="show_dash"
+                                       value="{{ setting('show_dash') }}">
+                                <span class="form-text text-danger">不支持个人版账户</span>
                             </div>
+                            <div class="form-group">
+                                <label class="form-control-label" for="show_audio">音频</label>
+                                <input type="text" class="form-control" id="show_audio" name="show_audio"
+                                       value="{{ setting('show_audio') }}">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-control-label" for="show_doc">文档</label>
+                                <input type="text" class="form-control" id="show_doc" name="show_doc" value="{{ setting('show_doc') }}">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-control-label" for="show_code">代码</label>
+                                <input type="text" class="form-control" id="show_code" name="show_code"
+                                       value="{{ setting('show_code') }}">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-control-label" for="show_stream">文件流</label>
+                                <input type="text" class="form-control" id="show_stream" name="show_stream"
+                                       value="{{ setting('show_stream') }}">
+                            </div>
+                            <button type="submit" class="btn btn-primary">提交</button>
                         </form>
                     </div>
                 </div>

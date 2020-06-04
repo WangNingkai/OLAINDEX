@@ -4,4 +4,5 @@
 <script src="https://cdn.staticfile.org/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
 <script src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js"></script>
 <script src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js"></script>
+<script src="https://cdn.staticfile.org/axios/0.19.2/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9.14.0/dist/sweetalert2.all.min.js" integrity="sha256-Ft3VB7ueSTuT72RJnGTtUh2ktLOEba/PehrYDhe1y+8=" crossorigin="anonymous"></script>

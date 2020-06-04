@@ -71,43 +71,45 @@
 
 @section('js')
     @include('default.components.js')
+    {!! setting('statistics') !!}
+    <script>
+        $(function() {
+            $('[data-fancybox="image-list"]').fancybox({
+                type: 'image',
+                thumbs: {
+                    autoStart: true,
+                    axis: 'x',
+                },
+                buttons: [
+                    'zoom',
+                    'slideShow',
+                    'fullScreen',
+                    'download',
+                    'thumbs',
+                    'close',
+                ],
+            })
+            let clipboard = new ClipboardJS('.clipboard')
+            clipboard.on('success', function(e) {
+                console.info('Action:', e.action)
+                console.info('Text:', e.text)
+                console.info('Trigger:', e.trigger)
+                e.clearSelection()
+            })
+            clipboard.on('error', function(e) {
+                console.error('Action:', e.action)
+                console.error('Trigger:', e.trigger)
+            })
+            $('[data-toggle="tooltip"]').tooltip({
+                title: '已复制',
+                trigger: 'click',
+            })
+            $('img.lazy').lazyload()
+        })
+    </script>
 @show
-{!! setting('statistics') !!}
-<script>
-    $(function() {
-        $('[data-fancybox="image-list"]').fancybox({
-            type: 'image',
-            thumbs: {
-                autoStart: true,
-                axis: 'x',
-            },
-            buttons: [
-                'zoom',
-                'slideShow',
-                'fullScreen',
-                'download',
-                'thumbs',
-                'close',
-            ],
-        })
-        let clipboard = new ClipboardJS('.clipboard')
-        clipboard.on('success', function(e) {
-            console.info('Action:', e.action)
-            console.info('Text:', e.text)
-            console.info('Trigger:', e.trigger)
-            e.clearSelection()
-        })
-        clipboard.on('error', function(e) {
-            console.error('Action:', e.action)
-            console.error('Trigger:', e.trigger)
-        })
-        $('[data-toggle="tooltip"]').tooltip({
-            title: '已复制',
-            trigger: 'click',
-        })
-        $('img.lazy').lazyload()
-    })
-</script>
+
+
 </body>
 
 </html>

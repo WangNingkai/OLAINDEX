@@ -29,6 +29,13 @@ class Setting extends Model
     ];
 
     /**
+     * 指示是否自动维护时间戳
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
      * 如果 value 是 json 则转成数组
      *
      * @param $value

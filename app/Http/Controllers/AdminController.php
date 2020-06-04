@@ -29,8 +29,29 @@ class AdminController extends BaseController
 
     public function account()
     {
-        $accounts = Account::all(['id', 'accountType', 'remark', 'status']);
+        $accounts = Account::query()
+            ->select(['id', 'accountType', 'remark', 'status', 'updated_at'])
+            ->simplePaginate();
         return view(config('olaindex.theme') . '.admin.account', compact('accounts'));
+    }
+
+    public function accountConfig($id, Request $request)
+    {
+        $account = Account::find($id);
+        if (!$account) {
+            $this->showMessage('账号不存在！', true);
+            return redirect()->route('message');
+        }
+        $remark = $account->remark;
+        if ($request->isMethod('get')) {
+            $config = setting($remark, []);
+            return view(config('olaindex.theme') . 'admin.account-config', compact('config'));
+        }
+        $data = $request->except('_token');
+        setting_set($remark, $data);
+        $this->showMessage('保存成功！');
+        return redirect()->back();
+
     }
 
     public function accountDetail($id)
