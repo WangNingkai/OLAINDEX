@@ -13,7 +13,6 @@
                     <th scope="col">ID</th>
                     <th scope="col">类型</th>
                     <th scope="col">状态</th>
-                    <th scope="col">备注</th>
                     <th scope="col">上次更新</th>
                     <th scope="col">操作</th>
                 </tr>
@@ -24,11 +23,10 @@
                         <th scope="row">{{ $account->id }}</th>
                         <td>{{ $account->accountType }}</td>
                         <td>{!! $account->status ? '<span style="color:green">正常</span>':'<span style="color:red">禁用</span>' !!}</td>
-                        <td>{{ $account->remark }}</td>
                         <td>{{ $account->updated_at }}</td>
                         <td>
                             <a class="btn btn-primary btn-sm"
-                               href="{{ route('admin.account.config',['id' => $account->id])  }}">设置</a>
+                               href="{{ route('admin.account.config',['id' => \App\Helpers\HashidsHelper::encode($account->id)])  }}">设置</a>
                             <div class="btn-group" role="group">
                                 <button id="actionAccount" type="button" class="btn btn-primary btn-sm dropdown-toggle"
                                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">更多

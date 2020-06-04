@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\HashidsHelper;
 use App\Models\Account;
 use App\Models\Setting;
 use App\Service\OneDrive;
@@ -46,18 +47,22 @@ class AdminController extends BaseController
      */
     public function accountConfig($id, Request $request)
     {
-        $account = Account::find($id);
+        $decodeId = HashidsHelper::decode($id);
+        if (!$decodeId) {
+            $this->showMessage('账号不存在！', true);
+            return redirect()->route('message');
+        }
+        $account = Account::find($decodeId);
         if (!$account) {
             $this->showMessage('账号不存在！', true);
             return redirect()->route('message');
         }
-        $remark = $account->remark;
         if ($request->isMethod('get')) {
-            $config = setting($remark, []);
+            $config = setting($id, []);
             return view(config('olaindex.theme') . 'admin.account-config', compact('config'));
         }
         $data = $request->except('_token');
-        setting_set($remark, $data);
+        setting_set($id, $data);
         $this->showMessage('保存成功！');
         return redirect()->back();
 
