@@ -9,19 +9,35 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\HashidsHelper;
-use App\Helpers\Tool;
 use App\Http\Traits\ApiResponseTrait;
 use App\Models\Account;
-use App\Service\GraphClient;
 use App\Service\OneDrive;
 
 class DiskController extends BaseController
 {
     use ApiResponseTrait;
 
-    public function __invoke($hash, $query = '/')
+    public function __invoke($hash = '', $query = '/')
     {
-        $account_id = HashidsHelper::decode($hash);
-
+        $accounts = \Cache::remember('ac:list', 600, static function () {
+            return Account::query()
+                ->select(['id', 'remark'])
+                ->where('status', 1)->get();
+        });
+        if ($hash) {
+            $account_id = HashidsHelper::decode($hash);
+        } else {
+            $account_id = 0;
+            if ($accounts) {
+                $account_id = array_get(array_first($accounts), 'id');
+            }
+        }
+        if (!$account_id) {
+            abort(404, '账号不存在');
+        }
+        $service = (new OneDrive($account_id));
+        $item = $service->fetchItem($query);
+        $list = $service->fetchList($query);
+        return view(config('olaindex.theme') . 'one', compact('accounts', 'item', 'list'));
     }
 }

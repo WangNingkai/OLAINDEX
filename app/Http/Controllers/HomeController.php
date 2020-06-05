@@ -9,16 +9,34 @@
 namespace App\Http\Controllers;
 
 
+use App\Helpers\HashidsHelper;
 use App\Models\Account;
+use App\Service\OneDrive;
 
 class HomeController extends BaseController
 {
-    public function __invoke()
+    public function __invoke($hash = '', $query = '/')
     {
-        $accounts = Account::query()
-            ->select(['id', 'accountType', 'remark', 'status', 'updated_at'])
-            ->where('status', 1)->get();
-        return view(config('olaindex.theme') . 'one', compact('accounts'));
+        $accounts = \Cache::remember('ac:list', 600, static function () {
+            return Account::query()
+                ->select(['id', 'remark'])
+                ->where('status', 1)->get();
+        });
+        if ($hash) {
+            $account_id = HashidsHelper::decode($hash);
+        } else {
+            $account_id = 0;
+            if ($accounts) {
+                $account_id = array_get(array_first($accounts), 'id');
+            }
+        }
+        if (!$account_id) {
+            abort(404, '账号不存在');
+        }
+        $service = (new OneDrive($account_id));
+        $item = $service->fetchItem($query);
+        $list = $service->fetchList($query);
+        return view(config('olaindex.theme') . 'one', compact('accounts', 'item', 'list'));
     }
 
 }

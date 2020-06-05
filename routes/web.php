@@ -45,4 +45,4 @@ Route::prefix('admin')->middleware('auth')->group(static function () {
     Route::any('/account/{id}/remark', 'AdminController@accountRemark')->name('admin.account.remark');
 });
 // 短网址
-Route::get('/{code}', 'IndexController')->name('short');
+Route::get('/t/{code}', 'IndexController')->name('short');

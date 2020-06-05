@@ -12,7 +12,7 @@
             <div class="dropdown-menu" aria-labelledby="btnChoiceAccount">
                 @foreach($accounts as $account)
                     <a class="dropdown-item"
-                       href="{{ route('drive',['hash' => $account->hash_id]) }}">{{ $account->remark }}</a>
+                       href="{{ route('drive',['hash' => $account['hash_id']]) }}">{{ $account['remark'] }}</a>
                 @endforeach
             </div>
         </div>
