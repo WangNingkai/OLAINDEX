@@ -24,7 +24,8 @@
                         <th scope="row">{{ $account->id }}</th>
                         <td>
                             <label>
-                                <input type="text" class="remark" value="{{ $account->remark }}" data-id="{{ $account->id }}">
+                                <input type="text" class="remark" value="{{ $account->remark }}"
+                                       data-id="{{ $account->id }}">
                             </label>
                         </td>
                         <td>{{ $account->accountType }}</td>
@@ -66,7 +67,12 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body text-center loading" style="display: none">
+                    <div class="spinner-grow" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+                <div class="modal-body account" style="display: none">
                     <div class="form-group">
                         <label class="form-control-label" for="id">id </label>
                         <input type="text" class="form-control" id="id" name="id"
@@ -96,7 +102,12 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body text-center loading" style="display: none">
+                    <div class="spinner-grow" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+                <div class="modal-body drive" style="display: none">
                     <div class="form-group">
                         <label class="form-control-label" for="state">state </label>
                         <input type="text" class="form-control" id="state" name="state"
@@ -139,6 +150,8 @@
 
         $(function() {
             $('.view_account').on('click', function(e) {
+                $('.loading').show()
+                $('.account').hide()
                 let account_id = $(this).parent().attr('data-id')
                 axios.get('/admin/account/' + account_id + '/drive')
                     .then(function(response) {
@@ -146,6 +159,11 @@
                         $('#id').val(data.id)
                         $('#displayName').val(data.displayName)
                         $('#userPrincipalName').val(data.userPrincipalName)
+
+                        setTimeout(function() {
+                            $('.loading').hide()
+                            $('.account').show()
+                        }, 1000)
                     })
                     .catch(function(error) {
                         console.log(error)
@@ -155,6 +173,8 @@
                     })
             })
             $('.view_drive').on('click', function(e) {
+                $('.loading').show()
+                $('.drive').hide()
                 let account_id = $(this).parent().attr('data-id')
                 axios.get('/admin/account/' + account_id)
                     .then(function(response) {
@@ -164,6 +184,12 @@
                         $('#used').val(readablizeBytes(data.used))
                         $('#remaining').val(readablizeBytes(data.remaining))
                         $('#state').val(data.state)
+
+                        setTimeout(function() {
+                            $('.loading').hide()
+                            $('.drive').show()
+                        }, 1000)
+
                     })
                     .catch(function(error) {
                         console.log(error)
@@ -185,13 +211,13 @@
                 axios.post('/admin/account/' + account_id + '/remark', {
                     remark: remark,
                 })
-                    .then(function (response) {
-                        console.log(response);
-                        window.location.reload();
+                    .then(function(response) {
+                        console.log(response)
+                        window.location.reload()
                     })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                    .catch(function(error) {
+                        console.log(error)
+                    })
             })
         })
     </script>
