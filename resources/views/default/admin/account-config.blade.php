@@ -7,7 +7,7 @@
             <form action="" method="post">
                 @csrf
                 <div class="form-group">
-                    <label class="form-control-label" for="root"><b>显示根目录</b></label>
+                    <label class="form-control-label" for="root"><b>设置根目录</b></label>
                     <input type="text" class="form-control" id="root" name="root"
                            value="{{ array_get($config,'root','') }}">
                 </div>

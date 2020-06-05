@@ -22,6 +22,7 @@ Route::view('message', config('olaindex.theme') . 'message')->name('message');
 Route::get('/callback', 'OauthController@callback')->name('callback');
 // 首页
 Route::get('/', 'HomeController')->name('home');
+Route::get('/drive/{hash?}/{query?}','DiskController')->name('drive');
 // 后台
 Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('login', 'Auth\LoginController@login');

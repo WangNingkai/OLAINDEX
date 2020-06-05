@@ -1,13 +1,19 @@
+@php
+    /* @var $accounts \App\Models\Account[] */
+@endphp
 @extends('default.layouts.main')
 @section('title','OLAINDEX')
 @section('content')
     <div class="btn-group mb-3" role="group" aria-label="choiceAccount">
         <button type="button" class="btn btn-primary btn-sm">网盘列表</button>
         <div class="btn-group" role="group">
-            <button id="btnChoiceAccount" type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+            <button id="btnChoiceAccount" type="button" class="btn btn-primary btn-sm dropdown-toggle"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
             <div class="dropdown-menu" aria-labelledby="btnChoiceAccount">
-                <a class="dropdown-item" href="#">账号1</a>
-                <a class="dropdown-item" href="#">账号2</a>
+                @foreach($accounts as $account)
+                    <a class="dropdown-item"
+                       href="{{ route('drive',['hash' => $account->hash_id]) }}">{{ $account->remark }}</a>
+                @endforeach
             </div>
         </div>
     </div>

@@ -8,8 +8,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\HashidsHelper;
 use App\Helpers\Tool;
 use App\Http\Traits\ApiResponseTrait;
+use App\Models\Account;
 use App\Service\GraphClient;
 use App\Service\OneDrive;
 
@@ -17,13 +19,9 @@ class DiskController extends BaseController
 {
     use ApiResponseTrait;
 
-    public function __invoke($id)
+    public function __invoke($hash, $query = '/')
     {
-        $q = request()->get('q', '/');
-//        $data = (new OneDrive($id))->path2Id($q);
-//        return response()->json($data);
-        $data = (new OneDrive($id))->fetchList($q);
-        $res = $this->paginate($data, 10, false);
-        return $this->success($res);
+        $account_id = HashidsHelper::decode($hash);
+
     }
 }
