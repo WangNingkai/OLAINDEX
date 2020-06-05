@@ -52,7 +52,7 @@ class AdminController extends BaseController
             $this->showMessage('账号不存在！', true);
             return redirect()->route('message');
         }
-        $uuid = HashidsHelper::encode($id);
+        $uuid = $account->hash_id;
         if ($request->isMethod('get')) {
             $config = setting($uuid, []);
             return view(config('olaindex.theme') . 'admin.account-config', compact('config'));

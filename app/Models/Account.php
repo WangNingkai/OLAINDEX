@@ -8,22 +8,40 @@
 
 namespace App\Models;
 
+use App\Helpers\HashidsHelper;
 use App\Models\Traits\HelperModel;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class Account
+ * @package App\Models
+ * @property $hash_id
+ */
 class Account extends Model
 {
     use  HelperModel;
 
     /**
-     * @var array $fillable
+     * @var string[] $fillable
      */
     protected $fillable = [
         'remark', 'accountType', 'clientId', 'clientSecret', 'redirectUri', 'accessToken', 'refreshToken', 'tokenExpires', 'status'
     ];
 
+    /**
+     * @var string[] $casts
+     */
     protected $casts = [
         'tokenExpires' => 'int',
         'status' => 'int'
     ];
+
+    /**
+     * id => HashId
+     * @return string
+     */
+    public function getHashIdAttribute()
+    {
+        return HashidsHelper::encode($this->id);
+    }
 }
