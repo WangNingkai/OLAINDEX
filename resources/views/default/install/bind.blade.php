@@ -9,23 +9,23 @@
             <div class="form-group">
                 <label class="form-control-label" for="clientId">client_id </label>
                 <input type="text" class="form-control" id="clientId" name="clientId"
-                       value="{{ $clientId }}" disabled>
+                       value="{{ $clientId }}" readonly>
             </div>
             <div class="form-group">
                 <label class="form-control-label" for="clientSecret">client_secret </label>
                 <input type="text" class="form-control" id="clientSecret" name="clientSecret"
                        value="{{ substr_replace($clientSecret, '*****', 3, 5)}}"
-                       disabled>
+                       readonly>
             </div>
             <div class="form-group">
                 <label class="form-control-label" for="redirectUri">redirect_uri </label>
                 <input type="text" class="form-control" id="redirectUri" name="redirectUri"
-                       value="{{ $redirectUri }}" disabled>
+                       value="{{ $redirectUri }}" readonly>
             </div>
             <div class="form-group">
                 <label class="form-control-label" for="accountType">账号类型 </label>
                 <input type="text" class="form-control" id="accountType" name="accountType"
-                       value="{{ $accountType }}" disabled>
+                       value="{{ $accountType }}" readonly>
             </div>
             <form id="bind-form" action="{{ route('bind') }}" method="POST"
                   class="invisible">

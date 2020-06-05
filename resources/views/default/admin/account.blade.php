@@ -70,17 +70,17 @@
                     <div class="form-group">
                         <label class="form-control-label" for="id">id </label>
                         <input type="text" class="form-control" id="id" name="id"
-                               value="" disabled>
+                               value="" readonly>
                     </div>
                     <div class="form-group">
                         <label class="form-control-label" for="displayName">displayName </label>
                         <input type="text" class="form-control" id="displayName" name="displayName"
-                               value="" disabled>
+                               value="" readonly>
                     </div>
                     <div class="form-group">
                         <label class="form-control-label" for="userPrincipalName">userPrincipalName </label>
                         <input type="text" class="form-control" id="userPrincipalName" name="userPrincipalName"
-                               value="" disabled>
+                               value="" readonly>
                     </div>
                 </div>
             </div>
@@ -100,27 +100,27 @@
                     <div class="form-group">
                         <label class="form-control-label" for="state">state </label>
                         <input type="text" class="form-control" id="state" name="state"
-                               value="" disabled>
+                               value="" readonly>
                     </div>
                     <div class="form-group">
                         <label class="form-control-label" for="total">total </label>
                         <input type="text" class="form-control" id="total" name="total"
-                               value="" disabled>
+                               value="" readonly>
                     </div>
                     <div class="form-group">
                         <label class="form-control-label" for="used">used </label>
                         <input type="text" class="form-control" id="used" name="used"
-                               value="" disabled>
+                               value="" readonly>
                     </div>
                     <div class="form-group">
                         <label class="form-control-label" for="remaining">remaining </label>
                         <input type="text" class="form-control" id="remaining" name="remaining"
-                               value="" disabled>
+                               value="" readonly>
                     </div>
                     <div class="form-group">
                         <label class="form-control-label" for="deleted">deleted </label>
                         <input type="text" class="form-control" id="deleted" name="deleted"
-                               value="" disabled>
+                               value="" readonly>
                     </div>
                 </div>
             </div>
