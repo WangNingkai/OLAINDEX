@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Helpers\HashidsHelper;
 use App\Models\Account;
 use App\Service\OneDrive;
@@ -42,5 +41,4 @@ class HomeController extends BaseController
         ];
         return view(config('olaindex.theme') . 'one', compact('accounts', 'item', 'list', 'doc'));
     }
-
 }

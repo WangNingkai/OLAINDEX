@@ -156,7 +156,6 @@ class OneDrive
             return $resp->getBody();
         }
         return $err;
-
     }
 
     public function move($id, $target_id, $fileName)
@@ -188,7 +187,6 @@ class OneDrive
             return $resp->getBody();
         }
         return $err;
-
     }
 
     public function deleteItem($id, $eTag = '')

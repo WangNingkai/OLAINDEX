@@ -60,7 +60,6 @@ class AdminController extends BaseController
         setting_set($uuid, $data);
         $this->showMessage('保存成功！');
         return redirect()->back();
-
     }
 
     public function accountRemark($id, Request $request)

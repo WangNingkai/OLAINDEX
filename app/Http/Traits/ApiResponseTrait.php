@@ -8,7 +8,6 @@
 
 namespace App\Http\Traits;
 
-
 use Illuminate\Pagination\LengthAwarePaginator;
 
 trait ApiResponseTrait
@@ -40,5 +39,4 @@ trait ApiResponseTrait
         ];
         return response()->json($data);
     }
-
 }
