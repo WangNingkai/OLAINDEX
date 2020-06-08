@@ -177,7 +177,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         // Third
-        Arcanedev\LogViewer\LogViewerServiceProvider::class,
+        Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
     ],
 
     /*
