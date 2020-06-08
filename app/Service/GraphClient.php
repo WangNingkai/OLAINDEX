@@ -90,6 +90,7 @@ class GraphClient
                 ->setTimeout(3000)
                 ->addHeaders($this->headers)
                 ->attachBody($this->body);
+            Log::info('请求MsGraph Api', [$this->method, $this->query]);
             $resp = $query->execute();
         } catch (\Microsoft\Graph\Exception\GraphException $e) {
             Log::error($e->getMessage(), $e->getTrace());

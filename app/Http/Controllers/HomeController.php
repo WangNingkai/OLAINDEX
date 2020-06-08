@@ -36,7 +36,11 @@ class HomeController extends BaseController
         $service = (new OneDrive($account_id));
         $item = $service->fetchItem($query);
         $list = $service->fetchList($query);
-        return view(config('olaindex.theme') . 'one', compact('accounts', 'item', 'list'));
+        $doc = [
+            'header' => '',
+            'readme' => ''
+        ];
+        return view(config('olaindex.theme') . 'one', compact('accounts', 'item', 'list', 'doc'));
     }
 
 }
