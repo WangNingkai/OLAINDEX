@@ -19,10 +19,7 @@
 // 消息通知
 Route::view('message', config('olaindex.theme') . 'message')->name('message');
 // 授权回调
-Route::get('/callback', 'OauthController@callback')->name('callback');
-// 首页
-Route::get('/', 'HomeController')->name('home');
-Route::get('/drive/{hash?}/{query?}','DiskController')->name('drive');
+Route::get('callback', 'OauthController@callback')->name('callback');
 // 后台
 Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('login', 'Auth\LoginController@login');
@@ -38,12 +35,20 @@ Route::prefix('admin')->middleware('auth')->group(static function () {
     // 基础设置
     Route::any('/', 'AdminController@config')->name('admin.config');
     // 账号详情
-    Route::any('/account/list', 'AdminController@account')->name('admin.account.list');
-    Route::any('/account/{id}', 'AdminController@accountDetail')->name('admin.account.info');
-    Route::any('/account/{id}/drive', 'AdminController@driveDetail')->name('admin.account.drive');
+    Route::get('/account/list', 'AdminController@account')->name('admin.account.list');
+    Route::get('/account/{id}', 'AdminController@accountDetail')->name('admin.account.info');
+    Route::get('/account/{id}/drive', 'AdminController@driveDetail')->name('admin.account.drive');
     Route::any('/account/{id}/config', 'AdminController@accountConfig')->name('admin.account.config');
-    Route::any('/account/{id}/remark', 'AdminController@accountRemark')->name('admin.account.remark');
+    Route::post('/account/{id}/remark', 'AdminController@accountRemark')->name('admin.account.remark');
     Route::any('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index')->name('admin.logs');
 });
 // 短网址
-Route::get('/t/{code}', 'IndexController')->name('short');
+Route::get('t/{code}', 'IndexController')->name('short');
+// 多网盘支持
+Route::get('d/{hash}', 'DiskController')->name('drive');
+Route::get('d/{hash}/q/{query?}', 'DiskController')->name('drive.query');
+
+// 首页
+Route::get('/', 'HomeController')->name('home');
+
+

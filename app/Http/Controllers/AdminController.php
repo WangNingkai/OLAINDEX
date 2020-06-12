@@ -18,6 +18,8 @@ class AdminController extends BaseController
 {
     /**
      * 全局设置
+     * @param Request $request
+     * @return mixed
      */
     public function config(Request $request)
     {
@@ -32,6 +34,7 @@ class AdminController extends BaseController
 
     /**
      * 账号列表
+     * @return mixed
      */
     public function account()
     {
@@ -43,8 +46,11 @@ class AdminController extends BaseController
 
     /**
      * 账号设置
+     * @param Request $request
+     * @param $id
+     * @return mixed
      */
-    public function accountConfig($id, Request $request)
+    public function accountConfig(Request $request, $id)
     {
         $account = Account::find($id);
         if (!$account) {

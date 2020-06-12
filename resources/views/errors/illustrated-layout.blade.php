@@ -8,7 +8,7 @@
 
         <!-- Fonts -->
         <link rel="dns-prefetch" href="//fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+        <link href="https://fonts.lug.ustc.edu.cn/css?family=Nunito" rel="stylesheet">
 
         <!-- Styles -->
         <style>
@@ -472,7 +472,7 @@
 
                     <a href="{{ app('router')->has('home') ? route('home') : url('/') }}">
                         <button class="bg-transparent text-grey-darkest font-bold uppercase tracking-wide py-3 px-6 border-2 border-grey-light hover:border-grey rounded-lg">
-                            {{ __('Go Home') }}
+                            返回首页
                         </button>
                     </a>
                 </div>

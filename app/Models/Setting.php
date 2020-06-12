@@ -35,6 +35,22 @@ class Setting extends Model
      */
     public $timestamps = false;
 
+    public static $setting = [
+        'site_name' => 'OLAINDEX',
+        'site_theme' => 'lux',
+        'cache_expires' => 1800,
+        'copyright' => '',
+        'stats_code' => '',
+        'access_token' => '',
+        'show_image' => 'png',
+        'show_video' => 'mp4',
+        'show_dash' => 'avi',
+        'show_audio' => 'mp3',
+        'show_doc' => 'doc',
+        'show_code' => 'php',
+        'show_stream' => 'text',
+    ];
+
     /**
      * 如果 value 是 json 则转成数组
      *

@@ -43,10 +43,10 @@ if (!function_exists('trans_request_path')) {
      *
      * @param $path
      * @param bool $query
-     * @param bool $isFile
+     * @param bool $isItem
      * @return string
      */
-    function trans_request_path($path, $query = true, $isFile = false): string
+    function trans_request_path($path, $query = true, $isItem = false): string
     {
         $originPath = trans_absolute_path($path);
         $queryPath = trim($originPath, '/');
@@ -55,7 +55,7 @@ if (!function_exists('trans_request_path')) {
             return $queryPath;
         }
         $requestPath = empty($queryPath) ? '/' : ":/{$queryPath}:/";
-        if ($isFile) {
+        if ($isItem) {
             return rtrim($requestPath, ':/');
         }
         return $requestPath;
@@ -108,6 +108,9 @@ if (!function_exists('setting')) {
             }
             return $settingData;
         });
+        if (!$default) {
+            $default = \App\Models\Setting::$setting[$key] ?? '';
+        }
         $setting = collect($setting)->all();
         return $key ? array_get($setting, $key, $default) : $setting;
     }
@@ -304,5 +307,17 @@ if (!function_exists('shorten_url')) {
             $shortenList[] = $shortenUrl;
         }
         return array_first($shortenList);
+    }
+}
+
+if (!function_exists('marked')) {
+    /**
+     * 转换markdown
+     * @param $text
+     * @return mixed
+     */
+    function marked($text)
+    {
+        return Parsedown::instance()->text($text);
     }
 }

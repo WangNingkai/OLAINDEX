@@ -1,5 +1,6 @@
 @php
     /* @var $accounts \App\Models\Account[] */
+    $icons = [];
 @endphp
 @extends('default.layouts.main')
 @section('title','OLAINDEX')
@@ -27,6 +28,7 @@
     <div class="card border-light mb-3">
         <div class="card-header"><i class="ri-send-plane-fill"></i> HEAD</div>
         <div class="card-body markdown-body" id="head">
+            {!! marked($doc['head']) !!}
         </div>
     </div>
     <div class="card border-light mb-3">
@@ -36,6 +38,7 @@
     <div class="card border-light mb-3">
         <div class="card-header"><i class="ri-bookmark-fill"></i> README</div>
         <div class="card-body markdown-body" id="readme">
+            {!! marked($doc['readme']) !!}
         </div>
     </div>
 @stop
