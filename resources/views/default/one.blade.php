@@ -1,6 +1,5 @@
 @php
     /* @var $accounts \App\Models\Account[] */
-    $icons = [];
 @endphp
 @extends('default.layouts.main')
 @section('title','OLAINDEX')
@@ -78,22 +77,31 @@
                 </thead>
                 <tbody>
                 @if(!blank($path))
-                    <tr>
+                    <tr onclick="window.location.href='{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(\App\Helpers\Tool::fetchGoBack($path))]) }}'">
                         <td colspan="4">
-                            <a href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(\App\Helpers\Tool::fetchGoBack($path))]) }}">返回上一层</a>
+                            <i class="ri-arrow-go-back-fill"></i> 返回上一层
                         </td>
                     </tr>
                 @endif
                 @foreach($list as $data)
                     <tr onclick="window.location.href='{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) ))]) }}'">
-                        <td>{{ $data['name'] }}</td>
+                        <td>
+                            <i class="ri-{{ \App\Helpers\Tool::fetchExtIco($data['ext'] ?? 'file') }}-fill ri-xl"></i> {{ $data['name'] }}
+                        </td>
                         <td>{{ date('M d H:i', strtotime($data['lastModifiedDateTime'])) }}</td>
                         <td>{{ \App\Helpers\Tool::convertSize($data['size']) }}</td>
                         <td></td>
                     </tr>
                 @endforeach
+                <tr>
+                    <td colspan="4">
+                        共 {{ array_get($item,'folder.childCount',0) }}
+                        个项目 {{ \App\Helpers\Tool::convertSize($item['size']) }}
+                    </td>
+                </tr>
                 </tbody>
             </table>
+            {{ $list->links() }}
         </div>
     </div>
     @if (!blank($doc['readme']))

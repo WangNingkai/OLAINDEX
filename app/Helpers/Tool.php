@@ -163,4 +163,30 @@ class Tool
 
         return trim($url, '/');
     }
+
+    public static function fetchExtIco($ext)
+    {
+        $patterns = [
+            'stream' => ['file-text', ['txt', 'log']],
+            'image' => ['image', ['bmp', 'jpg', 'jpeg', 'png', 'gif', 'ico', 'jpe']],
+            'video' => ['video', ['mkv', 'mp4', 'webm', 'avi', 'mpg', 'mpeg', 'rm', 'rmvb', 'mov', 'wmv', 'asf', 'ts', 'flv',]],
+            'audio' => ['file-music', ['ogg', 'mp3', 'wav']],
+            'code' => ['file-code', ['html', 'htm', 'css', 'go', 'java', 'js', 'json', 'txt', 'sh', 'md', 'php',]],
+            'doc' => ['file-word', ['csv', 'doc', 'docx', 'odp', 'ods', 'odt', 'pot', 'potm', 'potx', 'pps', 'ppsx', 'ppsxm', 'ppt', 'pptm', 'pptx', 'rtf', 'xls', 'xlsx',]],
+            'pdf' => ['pdf', ['pdf']],
+            'zip' => ['file-zip', ['zip', '7z', 'rar', 'bz', 'gz']],
+            'android' => ['android', ['apk']],
+            'exe' => ['apps', ['exe', 'msi']],
+            'folder' => ['folder', ['folder']],
+        ];
+        $icon = 'file';
+        foreach ($patterns as $key => $suffix) {
+            if (in_array($ext, $suffix[1], false)) {
+                $icon = $suffix[0];
+                break;
+            }
+        }
+
+        return $icon;
+    }
 }
