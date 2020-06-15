@@ -124,6 +124,8 @@ class DiskController extends BaseController
         // 格式化处理
         $list = $this->formatItem($list);
 
+        $list = $this->sort($list);
+
         $list = $this->paginate($list, 10, false);
 
         return view(config('olaindex.theme') . 'one', compact('accounts', 'hash', 'path', 'item', 'list', 'doc'));
@@ -155,11 +157,11 @@ class DiskController extends BaseController
         });
         // 执行文件夹/文件夹 排序
         if (!$descending) {
-            $folders = $folders->sortBy($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->toArray();
-            $files = $files->sortBy($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->toArray();
+            $folders = $folders->sortBy($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->all();
+            $files = $files->sortBy($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->all();
         } else {
-            $folders = $folders->sortByDesc($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->toArray();
-            $files = $files->sortByDesc($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->toArray();
+            $folders = $folders->sortByDesc($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->all();
+            $files = $files->sortByDesc($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->all();
         }
         return collect($folders)->merge($files)->all();
     }
