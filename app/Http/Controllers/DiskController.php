@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\HashidsHelper;
+use App\Helpers\Tool;
 use App\Models\Account;
 use App\Service\OneDrive;
 use Cache;
@@ -41,9 +42,81 @@ class DiskController extends BaseController
         $item = Cache::remember('d:item:' . $query, setting('cache_expires'), static function () use ($service, $query) {
             return $service->fetchItem($query);
         });
+        if (array_key_exists('code', $item)) {
+            $this->showMessage(array_get($item, 'message', '404NotFound'), true);
+            return redirect()->route('message');
+        }
         $list = Cache::remember('d:list:' . $query, setting('cache_expires'), static function () use ($service, $query) {
             return $service->fetchList($query);
         });
+        if (array_key_exists('code', $list)) {
+            $this->showMessage(array_get($list, 'message', '404NotFound'), true);
+            return redirect()->route('message');
+        }
+        // 处理文件
+        $isFile = false;
+        if (array_key_exists('file', $item)) {
+            $isFile = true;
+        }
+        if ($isFile) {
+            $file = $this->formatItem($item, true);
+            $download = $file['@microsoft.graph.downloadUrl'];
+            $showList = [
+                'stream' => explode(' ', setting('show_stream')),
+                'image' => explode(' ', setting('show_image')),
+                'video' => explode(' ', setting('show_video')),
+                'dash' => explode(' ', setting('show_dash')),
+                'audio' => explode(' ', setting('show_audio')),
+                'code' => explode(' ', setting('show_code')),
+                'doc' => explode(' ', setting('show_doc')),
+            ];
+            foreach ($showList as $key => $suffix) {
+                if (in_array($file['ext'] ?? '', $suffix, false)) {
+                    $show = $key;
+                    // 处理文本
+                    if (in_array($key, ['stream', 'code'])) {
+                        // 文件>5m 无法预览
+                        if ($file['size'] > 5 * 1024 * 1024) {
+                            $this->showMessage('文件过大，请下载查看', false);
+
+                            return redirect()->back();
+                        }
+                        $content = Cache::remember('d:content:' . $file['id'], setting('cache_expires'), static function () use ($download) {
+                            return file_get_contents($download);
+                        });
+                        if ($key === 'stream') {
+                            $fileType = Tool::fetchFileType($file['ext']);
+                            return response($content, 200, ['Content-type' => $fileType,]);
+                        }
+                    }
+                    // 处理缩略图
+                    if (in_array($key, ['image', 'dash', 'video'])) {
+                        $thumb = array_get($file, 'thumbnails.0.large.url');
+                        $file['thumb'] = $thumb;
+                    }
+                    // dash视频流
+                    if ($key === 'dash') {
+                        if (!strpos($download, 'sharepoint.com')) {
+                            return redirect()->away($download);
+                        }
+                        $replace = str_replace('thumbnail', 'videomanifest', $file['thumb']);
+                        $dash = $replace . '&part=index&format=dash&useScf=True&pretranscode=0&transcodeahead=0';
+                        $file['dash'] = $dash;
+                    }
+                    // 处理微软文档
+                    if ($key === 'doc') {
+                        $url = 'https://view.officeapps.live.com/op/view.aspx?src='
+                            . urlencode($download);
+
+                        return redirect()->away($url);
+                    }
+                    dd($file);
+                    return view(config('olaindex.theme') . 'preview', compact('accounts', 'hash', 'path', 'show', 'file'));
+                }
+            }
+            return redirect()->away($download);
+        }
+
         // 读取预设资源
         $doc = $this->filterDoc($list);
         // 资源过滤
@@ -56,7 +129,7 @@ class DiskController extends BaseController
         return view(config('olaindex.theme') . 'one', compact('accounts', 'hash', 'path', 'item', 'list', 'doc'));
     }
 
-    public function filter($list)
+    private function filter($list)
     {
         // 过滤微软内置无法读取的文件
         $list = array_where($list, static function ($value) {
@@ -70,7 +143,28 @@ class DiskController extends BaseController
         return $list;
     }
 
-    public function filterDoc($list)
+    private function sort($list, $field = 'name', $descending = false)
+    {
+        $collect = collect($list);
+        // 筛选文件夹/文件夹
+        $folders = $collect->filter(static function ($value) {
+            return array_has($value, 'folder');
+        });
+        $files = $collect->filter(static function ($value) {
+            return !array_has($value, 'folder');
+        });
+        // 执行文件夹/文件夹 排序
+        if (!$descending) {
+            $folders = $folders->sortBy($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->toArray();
+            $files = $files->sortBy($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->toArray();
+        } else {
+            $folders = $folders->sortByDesc($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->toArray();
+            $files = $files->sortByDesc($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->toArray();
+        }
+        return collect($folders)->merge($files)->all();
+    }
+
+    private function filterDoc($list)
     {
         $readme = array_where($list, static function ($value) {
             return $value['name'] === 'README.md';
@@ -100,10 +194,19 @@ class DiskController extends BaseController
         return compact('head', 'readme');
     }
 
-    public function formatItem($list)
+    private function formatItem($data, $isFile = false)
     {
+        if ($isFile) {
+            $data['ext'] = strtolower(
+                pathinfo(
+                    $data['name'],
+                    PATHINFO_EXTENSION
+                )
+            );
+            return $data;
+        }
         $items = [];
-        foreach ($list as $item) {
+        foreach ($data as $item) {
             if (array_has($item, 'file')) {
                 $item['ext'] = strtolower(
                     pathinfo(

@@ -55,6 +55,11 @@ class HomeController extends BaseController
         $doc = $this->filterDoc($list);
         // 资源过滤
         $list = $this->filter($list);
+        // 格式化处理
+        $list = $this->formatItem($list);
+
+        $list = $this->paginate($list, 10, false);
+
         return view(config('olaindex.theme') . 'one', compact('accounts', 'hash', 'path', 'item', 'list', 'doc'));
     }
 
@@ -100,5 +105,24 @@ class HomeController extends BaseController
 
 
         return compact('head', 'readme');
+    }
+
+    public function formatItem($list)
+    {
+        $items = [];
+        foreach ($list as $item) {
+            if (array_has($item, 'file')) {
+                $item['ext'] = strtolower(
+                    pathinfo(
+                        $item['name'],
+                        PATHINFO_EXTENSION
+                    )
+                );
+            } else {
+                $item['ext'] = 'folder';
+            }
+            $items[] = $item;
+        }
+        return $items;
     }
 }

@@ -41,7 +41,7 @@ class OauthController extends BaseController
             Account::create($params);
             return redirect()->route('admin.account.list');
         } catch (IdentityProviderException $e) {
-            $this->showMessage('Error requesting access token. ' . $e->getMessage());
+            $this->showMessage('Error requesting access token. ' . $e->getMessage(), true);
             return redirect()->route('message');
         }
     }

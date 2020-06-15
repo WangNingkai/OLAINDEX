@@ -21,7 +21,7 @@ class OneDrive
     {
         $headers = array_get($options, 'headers', []);
         $body = array_get($options, 'body', '');
-        $params = array_get($options, 'params', []);
+        $params = array_get($options, 'params', ['expand' => 'thumbnails']);
         $isList = array_get($options, 'isList', false);
         if ($isList) {
             $pre_params = [
