@@ -46,7 +46,7 @@ Route::prefix('admin')->middleware('auth')->group(static function () {
 Route::get('t/{code}', 'IndexController')->name('short');
 // 多网盘支持
 Route::get('d/{hash}', 'DiskController')->name('drive');
-Route::get('d/{hash}/q/{query?}', 'DiskController')->name('drive.query');
+Route::get('d/{hash}/q/{query?}', 'DiskController')->name('drive.query')->where('query', '.*');
 
 // 首页
 Route::get('/', 'HomeController')->name('home');

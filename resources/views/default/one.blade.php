@@ -20,9 +20,40 @@
     </div>
     <nav aria-label="breadcrumb" class="d-none d-md-block d-md-none">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#"><i class="ri-home-fill"></i> Home</a></li>
-            <li class="breadcrumb-item">Second</li>
-            <li class="breadcrumb-item">Third</li>
+            <li class="breadcrumb-item"><a href="{{ route('drive.query', ['hash' => $hash]) }}"><i
+                        class="ri-home-fill"></i> Home</a></li>
+            @if(!blank($path))
+                @if (count($path) < 5)
+                    @foreach ($path as $key => $value)
+                        @if(end($path) === $value && $key === (count($path) - 1))
+                            <li class="breadcrumb-item active">{{ str_limit($value,20)  }}</li>
+                        @else
+                            @if (!blank($value))
+                                <li class="breadcrumb-item ">
+                                    <a href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(\App\Helpers\Tool::combineBreadcrumb($key + 1, $path))]) }}">
+                                        {{  str_limit($value,20) }}
+                                    </a>
+                                </li>
+                            @endif
+                        @endif
+                    @endforeach
+                @else
+                    <li class="breadcrumb-item active"> ...</li>
+                    @foreach ($path as $key => $value)
+                        @if(end($path) === $value && $key === (count($path) - 1))
+                            <li class="breadcrumb-item active">{{  str_limit($value,20)  }}</li>
+                        @else
+                            @if (!blank($value) && $key === (count($path) - 2))
+                                <li class="breadcrumb-item ">
+                                    <a href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(\App\Helpers\Tool::combineBreadcrumb($key + 1, $path))]) }}">
+                                        {{  str_limit($value,20) }}
+                                    </a>
+                                </li>
+                            @endif
+                        @endif
+                    @endforeach
+                @endif
+            @endif
         </ol>
     </nav>
     @if (!blank($doc['head']))
@@ -35,7 +66,35 @@
     @endif
     <div class="card border-light mb-3">
         <div class="card-header"></div>
-        <div class="card-body"></div>
+        <div class="card-body">
+            <table class="table table-hover table-borderless">
+                <thead>
+                <tr>
+                    <th scope="col">文件</th>
+                    <th scope="col">修改日期</th>
+                    <th scope="col">大小</th>
+                    <th scope="col">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                @if(!blank($path))
+                    <tr>
+                        <td colspan="4">
+                            <a href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(\App\Helpers\Tool::fetchGoBack($path))]) }}">返回上一层</a>
+                        </td>
+                    </tr>
+                @endif
+                @foreach($list as $data)
+                    <tr onclick="window.location.href='{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) ))]) }}'">
+                        <td>{{ $data['name'] }}</td>
+                        <td>{{ date('M d H:i', strtotime($data['lastModifiedDateTime'])) }}</td>
+                        <td>{{ \App\Helpers\Tool::convertSize($data['size']) }}</td>
+                        <td></td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
     @if (!blank($doc['readme']))
         <div class="card border-light mb-3">

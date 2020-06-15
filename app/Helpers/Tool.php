@@ -127,4 +127,40 @@ class Tool
         }
         return $url->original_url;
     }
+
+    /**
+     * 面包屑导航
+     * @param $key
+     * @param $path
+     * @return string
+     */
+    public static function combineBreadcrumb($key, $path): string
+    {
+        $path = array_slice($path, 0, $key);
+        $url = '';
+        foreach ($path as $param) {
+            $url .= '/' . $param;
+        }
+
+        return trim($url, '/');
+    }
+
+    /**
+     * 面包屑返回上一级
+     * @param $path
+     * @return string
+     */
+    public static function fetchGoBack($path): string
+    {
+        array_pop($path);
+        if (count($path) === 0) {
+            return '';
+        }
+        $url = '';
+        foreach ($path as $param) {
+            $url .= '/' . $param;
+        }
+
+        return trim($url, '/');
+    }
 }

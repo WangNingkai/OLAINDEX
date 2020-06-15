@@ -31,6 +31,10 @@ class DiskController extends BaseController
         $root = array_get(setting($hash), 'root', '/');
         $root = trim($root, '/');
         $query = trim($query, '/');
+        $path = explode('/', $query);
+        $path = array_where($path, static function ($value) {
+            return !blank($value);
+        });
         $query = "{$root}/$query";
         $service = (new OneDrive($account_id));
         // 缓存处理
@@ -44,7 +48,7 @@ class DiskController extends BaseController
         $doc = $this->filterDoc($list);
         // 资源过滤
         $list = $this->filter($list);
-        return view(config('olaindex.theme') . 'one', compact('accounts', 'hash', 'item', 'list', 'doc'));
+        return view(config('olaindex.theme') . 'one', compact('accounts', 'hash', 'path', 'item', 'list', 'doc'));
     }
 
     public function filter($list)
