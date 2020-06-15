@@ -61,6 +61,7 @@ class DiskController extends BaseController
         if ($isFile) {
             $file = $this->formatItem($item, true);
             $download = $file['@microsoft.graph.downloadUrl'];
+            $file['download'] = $download;
             $showList = [
                 'stream' => explode(' ', setting('show_stream')),
                 'image' => explode(' ', setting('show_image')),
@@ -110,7 +111,7 @@ class DiskController extends BaseController
 
                         return redirect()->away($url);
                     }
-                    dd($file);
+//                    dd($path);
                     return view(config('olaindex.theme') . 'preview', compact('accounts', 'hash', 'path', 'show', 'file'));
                 }
             }
