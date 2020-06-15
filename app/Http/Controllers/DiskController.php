@@ -33,33 +33,61 @@ class DiskController extends BaseController
         $query = trim($query, '/');
         $query = "{$root}/$query";
         $service = (new OneDrive($account_id));
+        // 缓存处理
         $item = Cache::remember('d:item:' . $query, setting('cache_expires'), static function () use ($service, $query) {
             return $service->fetchItem($query);
         });
         $list = Cache::remember('d:list:' . $query, setting('cache_expires'), static function () use ($service, $query) {
             return $service->fetchList($query);
         });
+        // 读取预设资源
+        $doc = $this->filterDoc($list);
+        // 资源过滤
         $list = $this->filter($list);
-        $doc = [
-            'head' => '## HEAD',
-            'readme' => '## README'
-        ];
         return view(config('olaindex.theme') . 'one', compact('accounts', 'hash', 'item', 'list', 'doc'));
     }
 
     public function filter($list)
     {
-        $collect = collect($list);
         // 过滤微软内置无法读取的文件
-        $collect->filter(static function ($value) {
+        $list = array_where($list, static function ($value) {
             return !array_has($value, 'package.type');
         });
         // 过滤预留文件
-        $collect->reject(static function ($value) {
-            return in_array($value['name'], ['README.md', 'HEAD.md', '.password', '.deny'], false);
+        $list = array_where($list, static function ($value) {
+            return !in_array($value['name'], ['README.md', 'HEAD.md', '.password', '.deny'], false);
         });
-        // 过滤隐藏文件
-        return $collect->all();
+        // todo:过滤隐藏文件
+        return $list;
+    }
 
+    public function filterDoc($list)
+    {
+        $readme = array_where($list, static function ($value) {
+            return $value['name'] === 'README.md';
+        });
+        $head = array_where($list, static function ($value) {
+            return $value['name'] === 'HEAD.md';
+        });
+
+        if (!empty($readme)) {
+            $readme = array_first($readme);
+            $readme = Cache::remember('d:content:' . $readme['id'], setting('cache_expires'), static function () use ($readme) {
+                return file_get_contents($readme['@microsoft.graph.downloadUrl']);
+            });
+        } else {
+            $readme = '';
+        }
+        if (!empty($head)) {
+            $head = array_first($head);
+            $head = Cache::remember('d:content:' . $head['id'], setting('cache_expires'), static function () use ($head) {
+                return file_get_contents($head['@microsoft.graph.downloadUrl']);
+            });
+        } else {
+            $head = '';
+        }
+
+
+        return compact('head', 'readme');
     }
 }

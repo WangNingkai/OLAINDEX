@@ -25,21 +25,25 @@
             <li class="breadcrumb-item">Third</li>
         </ol>
     </nav>
-    <div class="card border-light mb-3">
-        <div class="card-header"><i class="ri-send-plane-fill"></i> HEAD</div>
-        <div class="card-body markdown-body" id="head">
-            {!! marked($doc['head']) !!}
+    @if (!blank($doc['head']))
+        <div class="card border-light mb-3">
+            <div class="card-header"><i class="ri-send-plane-fill"></i> HEAD</div>
+            <div class="card-body markdown-body" id="head">
+                {!! marked($doc['head']) !!}
+            </div>
         </div>
-    </div>
+    @endif
     <div class="card border-light mb-3">
         <div class="card-header"></div>
         <div class="card-body"></div>
     </div>
-    <div class="card border-light mb-3">
-        <div class="card-header"><i class="ri-bookmark-fill"></i> README</div>
-        <div class="card-body markdown-body" id="readme">
-            {!! marked($doc['readme']) !!}
+    @if (!blank($doc['readme']))
+        <div class="card border-light mb-3">
+            <div class="card-header"><i class="ri-bookmark-fill"></i> README</div>
+            <div class="card-body markdown-body" id="readme">
+                {!! marked($doc['readme']) !!}
+            </div>
         </div>
-    </div>
+    @endif
 @stop
 
