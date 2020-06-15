@@ -65,13 +65,13 @@
     @endif
     <div class="card border-light mb-3">
         <div class="card-header"></div>
-        <div class="card-body">
-            <table class="table table-hover table-borderless">
+        <div class="card-body table-responsive">
+            <table class="table table-sm table-hover table-borderless">
                 <thead>
                 <tr>
                     <th scope="col">文件</th>
                     <th scope="col">修改日期</th>
-                    <th scope="col">大小</th>
+                    <th scope="col" class="d-none d-md-block d-md-none">大小</th>
                     <th scope="col">操作</th>
                 </tr>
                 </thead>
@@ -86,10 +86,10 @@
                 @foreach($list as $data)
                     <tr onclick="window.location.href='{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) ))]) }}'">
                         <td>
-                            <i class="ri-{{ \App\Helpers\Tool::fetchExtIco($data['ext'] ?? 'file') }}-fill ri-xl"></i> {{ $data['name'] }}
+                            <i class="ri-{{ \App\Helpers\Tool::fetchExtIco($data['ext'] ?? 'file') }}-fill"></i> {{ $data['name'] }}
                         </td>
                         <td>{{ date('M d H:i', strtotime($data['lastModifiedDateTime'])) }}</td>
-                        <td>{{ \App\Helpers\Tool::convertSize($data['size']) }}</td>
+                        <td class="d-none d-md-block d-md-none">{{ \App\Helpers\Tool::convertSize($data['size']) }}</td>
                         <td></td>
                     </tr>
                 @endforeach
