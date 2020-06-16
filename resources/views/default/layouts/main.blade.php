@@ -12,6 +12,7 @@
     @section('css')
         @include('default.components.css')
     @show
+    @stack('stylesheet')
     <style>
         * {
             outline-style: none
@@ -105,6 +106,7 @@
         })
     </script>
 @show
+@stack('scripts')
 
 
 </body>

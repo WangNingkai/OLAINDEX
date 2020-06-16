@@ -85,6 +85,7 @@ class DiskController extends BaseController
                         $content = Cache::remember('d:content:' . $file['id'], setting('cache_expires'), static function () use ($download) {
                             return Tool::fetchContent($download);
                         });
+                        $file['content'] = $content;
                         if ($key === 'stream') {
                             $fileType = Tool::fetchFileType($file['ext']);
                             return response($content, 200, ['Content-type' => $fileType,]);

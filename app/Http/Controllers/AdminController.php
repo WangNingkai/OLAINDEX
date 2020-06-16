@@ -41,7 +41,7 @@ class AdminController extends BaseController
         $accounts = Account::query()
             ->select(['id', 'accountType', 'remark', 'status', 'updated_at'])
             ->simplePaginate();
-        return view(config('olaindex.theme') . '.admin.account', compact('accounts'));
+        return view(config('olaindex.theme') . 'admin.account', compact('accounts'));
     }
 
     /**

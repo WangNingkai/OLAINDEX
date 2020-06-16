@@ -55,7 +55,7 @@
     <div class="card border-light mb-3">
         <div class="card-header">{{ $file['name'] }}</div>
         <div class="card-body">
-            @include('default.components.preview.' . $show,['file' => $file])
+            @include('default.components.preview.' . $show,['file' => $file, 'show' => $show])
             <br>
             <label class="control-label">复制链接</label>
             <div class="form-group">
@@ -70,6 +70,7 @@
                     </div>
                 </div>
             </div>
+            <div class="text-center"><a href="#" class="btn btn-success"><i class="fa fa-download"></i> 下载</a></div>
         </div>
     </div>
 @stop
