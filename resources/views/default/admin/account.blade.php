@@ -11,10 +11,10 @@
                 <thead>
                 <tr>
                     <th scope="col">ID</th>
-                    <th scope="col">备注</th>
                     <th scope="col">类型</th>
                     <th scope="col">状态</th>
                     <th scope="col">刷新时间</th>
+                    <th scope="col">备注</th>
                     <th scope="col">操作</th>
                 </tr>
                 </thead>
@@ -22,15 +22,16 @@
                 @foreach($accounts as $account)
                     <tr>
                         <th scope="row">{{ $account->id }}</th>
+                        <td>{{ $account->accountType }} @if((int)setting('primary_account') === $account->id) <span
+                                class="badge badge-primary">主账号</span> @endif</td>
+                        <td>{!! $account->status ? '<span style="color:green">正常</span>':'<span style="color:red">禁用</span>' !!}</td>
+                        <td>{{ $account->updated_at }}</td>
                         <td>
                             <label>
                                 <input type="text" class="remark" value="{{ $account->remark }}"
                                        data-id="{{ $account->id }}">
                             </label>
                         </td>
-                        <td>{{ $account->accountType }}</td>
-                        <td>{!! $account->status ? '<span style="color:green">正常</span>':'<span style="color:red">禁用</span>' !!}</td>
-                        <td>{{ $account->updated_at }}</td>
                         <td>
                             <a class="btn btn-primary btn-sm"
                                href="{{ route('admin.account.config',['id' =>$account->id])  }}">设置</a>
@@ -40,13 +41,14 @@
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="actionAccount"
                                      data-id="{{ $account->id }}">
+                                    <a class="dropdown-item set_account"
+                                       href="javascript:void(0)">设为主账号</a>
                                     <a class="dropdown-item view_account"
                                        href="javascript:void(0)" data-toggle="modal" data-target="#viewAccount">账号详情</a>
                                     <a class="dropdown-item view_drive"
                                        href="javascript:void(0)" data-toggle="modal" data-target="#viewDrive">网盘详情</a>
                                     <a class="dropdown-item text-danger delete_account"
                                        href="javascript:void(0)">删除</a>
-
                                 </div>
                             </div>
                         </td>
@@ -217,6 +219,26 @@
                     })
                     .catch(function(error) {
                         console.log(error)
+                    })
+            })
+            $('.set_account').on('click', function(e) {
+                let account_id = $(this).parent().attr('data-id')
+                axios.post('/admin/account/set-account', {
+                    id: account_id,
+                })
+                    .then(function(response) {
+                        let data = response.data
+                        console.log(data)
+                        if (data.error === '') {
+                            Swal.fire('设置成功！')
+                            window.location.reload()
+                        }
+                    })
+                    .catch(function(error) {
+                        console.log(error)
+                    })
+                    .then(function() {
+                        // always executed
                     })
             })
         })

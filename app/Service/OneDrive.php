@@ -21,7 +21,7 @@ class OneDrive
     {
         $headers = array_get($options, 'headers', []);
         $body = array_get($options, 'body', '');
-        $params = array_get($options, 'params', ['expand' => 'thumbnails']);
+        $params = array_get($options, 'params', []);
         $isList = array_get($options, 'isList', false);
         if ($isList) {
             $pre_params = [
@@ -91,14 +91,14 @@ class OneDrive
     {
         $trans = trans_request_path($query, true, false);
         $query = "/me/drive/root{$trans}children";
-        $resp = $this->_request('get', $query, ['isList' => true]);
+        $resp = $this->_request('get', $query, ['isList' => true, 'params' => ['expand' => 'thumbnails']]);
         return $this->_requestNextLink($resp);
     }
 
     public function fetchListById($id)
     {
         $query = "/me/drive/items/{$id}/children";
-        $resp = $this->_request('get', $query, ['isList' => true]);
+        $resp = $this->_request('get', $query, ['isList' => true, 'params' => ['expand' => 'thumbnails']]);
         return $this->_requestNextLink($resp);
     }
 
@@ -106,7 +106,7 @@ class OneDrive
     {
         $trans = trans_request_path($query, true, true);
         $query = "/me/drive/root{$trans}";
-        $resp = $this->_request('get', $query);
+        $resp = $this->_request('get', $query, ['params' => ['expand' => 'thumbnails']]);
         $err = $resp->getError();
         if (!$err) {
             return $resp->getBody();
@@ -117,7 +117,7 @@ class OneDrive
     public function fetchItemById($id)
     {
         $query = "/me/drive/items/{$id}";
-        $resp = $this->_request('get', $query);
+        $resp = $this->_request('get', $query, ['params' => ['expand' => 'thumbnails']]);
         $err = $resp->getError();
         if (!$err) {
             return $resp->getBody();

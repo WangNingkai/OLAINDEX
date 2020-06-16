@@ -55,7 +55,7 @@ class AdminController extends BaseController
         $account = Account::find($id);
         if (!$account) {
             $this->showMessage('账号不存在！', true);
-            return redirect()->route('message');
+            return redirect()->back();
         }
         $uuid = $account->hash_id;
         if ($request->isMethod('get')) {
@@ -66,6 +66,21 @@ class AdminController extends BaseController
         setting_set($uuid, $data);
         $this->showMessage('保存成功！');
         return redirect()->back();
+    }
+
+    public function accountSet(Request $request)
+    {
+        $id = $request->post('id', 0);
+        $account = Account::find($id);
+        if (!$account) {
+            return response()->json([
+                'error' => '账号不存在！'
+            ]);
+        }
+        setting_set('primary_account', $id);
+        return response()->json([
+            'error' => ''
+        ]);
     }
 
     public function accountRemark($id, Request $request)

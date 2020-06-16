@@ -2,7 +2,7 @@
 @section('title','OLAINDEX')
 @section('content')
     <div class="btn-group mb-3" role="group" aria-label="choiceAccount">
-        <button type="button" class="btn btn-primary btn-sm">网盘列表</button>
+        <button type="button" class="btn btn-primary btn-sm">选择盘</button>
         <div class="btn-group" role="group">
             <button id="btnChoiceAccount" type="button" class="btn btn-primary btn-sm dropdown-toggle"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>

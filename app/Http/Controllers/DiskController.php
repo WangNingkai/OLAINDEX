@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Helpers\HashidsHelper;
 use App\Helpers\Tool;
 use App\Models\Account;
@@ -16,7 +17,7 @@ use Cache;
 
 class DiskController extends BaseController
 {
-    public function __invoke($hash, $query = '/')
+    public function __invoke(Request $request, $hash, $query = '/')
     {
         // 账号处理
         $accounts = Cache::remember('ac:list', 600, static function () {
@@ -38,19 +39,14 @@ class DiskController extends BaseController
         });
         $query = "{$root}/$query";
         $service = (new OneDrive($account_id));
+
         // 缓存处理
         $item = Cache::remember('d:item:' . $query, setting('cache_expires'), static function () use ($service, $query) {
             return $service->fetchItem($query);
         });
         if (array_key_exists('code', $item)) {
             $this->showMessage(array_get($item, 'message', '404NotFound'), true);
-            return redirect()->route('message');
-        }
-        $list = Cache::remember('d:list:' . $query, setting('cache_expires'), static function () use ($service, $query) {
-            return $service->fetchList($query);
-        });
-        if (array_key_exists('code', $list)) {
-            $this->showMessage(array_get($list, 'message', '404NotFound'), true);
+            Cache::forget('d:item:' . $query);
             return redirect()->route('message');
         }
         // 处理文件
@@ -59,8 +55,12 @@ class DiskController extends BaseController
             $isFile = true;
         }
         if ($isFile) {
+            $item = $this->filterItem($item);
             $file = $this->formatItem($item, true);
             $download = $file['@microsoft.graph.downloadUrl'];
+            if ($request->get('download')) {
+                return redirect()->away($download);
+            }
             $file['download'] = $download;
             $showList = [
                 'stream' => explode(' ', setting('show_stream')),
@@ -82,9 +82,16 @@ class DiskController extends BaseController
 
                             return redirect()->back();
                         }
-                        $content = Cache::remember('d:content:' . $file['id'], setting('cache_expires'), static function () use ($download) {
-                            return Tool::fetchContent($download);
-                        });
+                        try {
+                            $content = Cache::remember('d:content:' . $file['id'], setting('cache_expires'), static function () use ($download) {
+                                return Tool::fetchContent($download);
+                            });
+                        } catch (\Exception $e) {
+                            $this->showMessage($e->getMessage(), true);
+                            Cache::forget('d:content:' . $file['id']);
+                            $content = '';
+                        }
+
                         $file['content'] = $content;
                         if ($key === 'stream') {
                             $fileType = Tool::fetchFileType($file['ext']);
@@ -118,21 +125,35 @@ class DiskController extends BaseController
             return redirect()->away($download);
         }
 
+        $list = Cache::remember('d:list:' . $query, setting('cache_expires'), static function () use ($service, $query) {
+            return $service->fetchList($query);
+        });
+        if (array_key_exists('code', $list)) {
+            $this->showMessage(array_get($list, 'message', '404NotFound'), true);
+            Cache::forget('d:list:' . $query);
+            return redirect()->route('message');
+        }
+        // 处理列表
         // 读取预设资源
         $doc = $this->filterDoc($list);
         // 资源过滤
         $list = $this->filter($list);
         // 格式化处理
         $list = $this->formatItem($list);
-
+        // 排序
         $list = $this->sort($list);
-
+        // 分页
         $list = $this->paginate($list, 10, false);
 
         return view(config('olaindex.theme') . 'one', compact('accounts', 'hash', 'path', 'item', 'list', 'doc'));
     }
 
-    private function filter($list)
+    /**
+     * 过滤
+     * @param array $list
+     * @return array
+     */
+    private function filter($list = [])
     {
         // 过滤微软内置无法读取的文件
         $list = array_where($list, static function ($value) {
@@ -146,9 +167,16 @@ class DiskController extends BaseController
         return $list;
     }
 
-    private function sort($list, $field = 'name', $descending = false)
+    /**
+     * 排序
+     * @param array $list
+     * @param string $field
+     * @param bool $descending
+     * @return array
+     */
+    private function sort($list = [], $field = 'name', $descending = false)
     {
-        $collect = collect($list);
+        $collect = collect($list)->lazy();
         // 筛选文件夹/文件夹
         $folders = $collect->filter(static function ($value) {
             return array_has($value, 'folder');
@@ -167,7 +195,12 @@ class DiskController extends BaseController
         return collect($folders)->merge($files)->all();
     }
 
-    private function filterDoc($list)
+    /**
+     * 获取说明文件
+     * @param array $list
+     * @return array
+     */
+    private function filterDoc($list = [])
     {
         $readme = array_where($list, static function ($value) {
             return $value['name'] === 'README.md';
@@ -178,17 +211,30 @@ class DiskController extends BaseController
 
         if (!empty($readme)) {
             $readme = array_first($readme);
-            $readme = Cache::remember('d:content:' . $readme['id'], setting('cache_expires'), static function () use ($readme) {
-                return Tool::fetchContent($readme['@microsoft.graph.downloadUrl']);
-            });
+            try {
+                $readme = Cache::remember('d:content:' . $readme['id'], setting('cache_expires'), static function () use ($readme) {
+                    return Tool::fetchContent($readme['@microsoft.graph.downloadUrl']);
+                });
+            } catch (\Exception $e) {
+                $this->showMessage($e->getMessage(), true);
+                Cache::forget('d:content:' . $readme['id']);
+                $readme = '';
+            }
         } else {
             $readme = '';
         }
         if (!empty($head)) {
             $head = array_first($head);
-            $head = Cache::remember('d:content:' . $head['id'], setting('cache_expires'), static function () use ($head) {
-                return Tool::fetchContent($head['@microsoft.graph.downloadUrl']);
-            });
+            try {
+                $head = Cache::remember('d:content:' . $head['id'], setting('cache_expires'), static function () use ($head) {
+                    return Tool::fetchContent($head['@microsoft.graph.downloadUrl']);
+                });
+            } catch (\Exception $e) {
+                $this->showMessage($e->getMessage(), true);
+                Cache::forget('d:content:' . $head['id']);
+                $head = '';
+            }
+
         } else {
             $head = '';
         }
@@ -197,7 +243,30 @@ class DiskController extends BaseController
         return compact('head', 'readme');
     }
 
-    private function formatItem($data, $isFile = false)
+    /**
+     * 过滤非法预览
+     * @param array $item
+     * @return mixed
+     */
+    private function filterItem($item)
+    {
+        $illegalFile = ['README.md', 'HEAD.md', '.password', '.deny'];
+        $pattern = '/^README\.md|HEAD\.md|\.password|\.deny/';
+        if (in_array($item['name'], $illegalFile, false) || preg_match($pattern, $item['name'], $arr) > 0) {
+            abort(403, '非法请求');
+        }
+        // todo:处理隐藏文件
+        return $item;
+    }
+
+
+    /**
+     * 格式化
+     * @param array $data
+     * @param bool $isFile
+     * @return array
+     */
+    private function formatItem($data = [], $isFile = false)
     {
         if ($isFile) {
             $data['ext'] = strtolower(

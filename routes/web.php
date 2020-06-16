@@ -40,6 +40,7 @@ Route::prefix('admin')->middleware('auth')->group(static function () {
     Route::get('/account/{id}/drive', 'AdminController@driveDetail')->name('admin.account.drive');
     Route::any('/account/{id}/config', 'AdminController@accountConfig')->name('admin.account.config');
     Route::post('/account/{id}/remark', 'AdminController@accountRemark')->name('admin.account.remark');
+    Route::post('/account/set-account', 'AdminController@accountSet')->name('admin.account.set');
     Route::any('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index')->name('admin.logs');
 });
 // 短网址

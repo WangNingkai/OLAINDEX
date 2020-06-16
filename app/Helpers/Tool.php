@@ -12,6 +12,7 @@ use App\Models\ShortUrl;
 use Curl\Curl;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use mysql_xdevapi\Exception;
 use Parsedown;
 use Log;
 
@@ -277,13 +278,15 @@ class Tool
      * 获取远程文件内容
      * @param $url
      * @return string|null
+     * @throws \Exception
      */
     public static function fetchContent($url)
     {
         $curl = new Curl();
-        $curl->setConnectTimeout(3);
+        $curl->setConnectTimeout(5);
         $curl->setTimeout(3);
         $curl->setRetry(3);
+        $curl->setProxy('socks5://127.0.0.1:1080');
         $curl->setOpts([
             CURLOPT_AUTOREFERER => true,
             CURLOPT_FAILONERROR => true,
@@ -300,7 +303,7 @@ class Tool
                     'msg' => $curl->errorMessage,
                 ]
             );
-            return '获取远程文件内容失败，请刷新重试';
+            throw new \Exception($curl->errorMessage, $curl->errorCode);
         }
         return $curl->rawResponse;
     }
