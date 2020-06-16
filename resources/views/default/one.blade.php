@@ -58,9 +58,9 @@
                             <td class="d-none d-md-block d-md-none">{{ convert_size($data['size']) }}</td>
                             <td>
                                 @if(! array_has($item,'folder'))
-                                    <a href="#"><i class="ri-folder-open-fill"></i></a>
+                                    <a href="javascript:void(0)"><i class="ri-folder-open-fill"></i></a>
                                 @else
-                                    <a href="#"><i class="ri-download-fill"></i></a>
+                                    <a href="javascript:void(0)"><i class="ri-information-fill"></i></a>
                                 @endif
                             </td>
                         </tr>
