@@ -13,8 +13,6 @@ use App\Helpers\Tool;
 use App\Models\Account;
 use App\Service\OneDrive;
 use Cache;
-use Curl\Curl;
-use Log;
 
 class DiskController extends BaseController
 {
@@ -113,7 +111,6 @@ class DiskController extends BaseController
 
                         return redirect()->away($url);
                     }
-//                    dd($path);
                     return view(config('olaindex.theme') . 'preview', compact('accounts', 'hash', 'path', 'show', 'file'));
                 }
             }

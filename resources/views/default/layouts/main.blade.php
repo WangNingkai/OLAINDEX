@@ -16,9 +16,6 @@
         * {
             outline-style: none
         }
-        .item-list .list-group-item {
-            border: 0;
-        }
     </style>
     <script>
         App = {
