@@ -18,6 +18,22 @@ if (!function_exists('is_json')) {
         return (json_last_error() === JSON_ERROR_NONE);
     }
 }
+if (!function_exists('convert_size')) {
+    /**
+     * 转换字节为可读取数值
+     * @param $size
+     * @return string
+     */
+    function convert_size($size): string
+    {
+        $units = array(' B', ' KB', ' MB', ' GB', ' TB');
+        for ($i = 0; $size >= 1024 && $i < 4; $i++) {
+            $size /= 1024;
+        }
+
+        return @round($size, 2) . $units[$i];
+    }
+}
 if (!function_exists('url_encode')) {
     /**
      * 解析路径

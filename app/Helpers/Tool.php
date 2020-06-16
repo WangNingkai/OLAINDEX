@@ -9,6 +9,7 @@
 namespace App\Helpers;
 
 use App\Models\ShortUrl;
+use Curl\Curl;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Parsedown;
@@ -68,32 +69,6 @@ class Tool
         }
 
         return $html;
-    }
-
-    /**
-     * 数组分页
-     *
-     * @param $items
-     * @param $perPage
-     *
-     * @return LengthAwarePaginator
-     */
-    public static function paginate($items, $perPage): LengthAwarePaginator
-    {
-        $pageStart = request()->get('page', 1);
-        // Start displaying items from this number;
-        $offSet = ($pageStart * $perPage) - $perPage;
-
-        // Get only the items you need using array_slice
-        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, true);
-
-        return new LengthAwarePaginator(
-            $itemsForCurrentPage,
-            count($items),
-            $perPage,
-            Paginator::resolveCurrentPage(),
-            ['path' => Paginator::resolveCurrentPath()]
-        );
     }
 
     /**
@@ -164,6 +139,11 @@ class Tool
         return trim($url, '/');
     }
 
+    /**
+     * 获取图标
+     * @param $ext
+     * @return mixed|string
+     */
     public static function fetchExtIco($ext)
     {
         $patterns = [
@@ -190,6 +170,11 @@ class Tool
         return $icon;
     }
 
+    /**
+     * 获取文件流类型
+     * @param $ext
+     * @return mixed|string
+     */
     public static function fetchFileType($ext)
     {
         $map = [
@@ -286,5 +271,37 @@ class Tool
             'myz' => 'application/myz',
         ];
         return array_get($map, $ext, 'application/octet-stream');
+    }
+
+    /**
+     * 获取远程文件内容
+     * @param $url
+     * @return string|null
+     */
+    public static function fetchContent($url)
+    {
+        $curl = new Curl();
+        $curl->setConnectTimeout(3);
+        $curl->setTimeout(3);
+        $curl->setRetry(3);
+        $curl->setOpts([
+            CURLOPT_AUTOREFERER => true,
+            CURLOPT_FAILONERROR => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_ENCODING => 'gzip,deflate',
+        ]);
+        $curl->get($url);
+        $curl->close();
+        if ($curl->error) {
+            Log::error(
+                '获取远程文件内容失败',
+                [
+                    'code' => $curl->errorCode,
+                    'msg' => $curl->errorMessage,
+                ]
+            );
+            return '获取远程文件内容失败，请刷新重试';
+        }
+        return $curl->rawResponse;
     }
 }

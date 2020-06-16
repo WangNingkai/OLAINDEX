@@ -92,7 +92,7 @@
                                 <i class="ri-{{ \App\Helpers\Tool::fetchExtIco($data['ext'] ?? 'file') }}-fill"></i> {{ str_limit($data['name'],32) }}
                             </td>
                             <td>{{ date('M d H:i', strtotime($data['lastModifiedDateTime'])) }}</td>
-                            <td class="d-none d-md-block d-md-none">{{ \App\Helpers\Tool::convertSize($data['size']) }}</td>
+                            <td class="d-none d-md-block d-md-none">{{ convert_size($data['size']) }}</td>
                             <td></td>
                         </tr>
                     @endforeach
@@ -100,7 +100,7 @@
                 <tr>
                     <td colspan="4">
                         共 {{ array_get($item,'folder.childCount',0) }}
-                        个项目 {{ \App\Helpers\Tool::convertSize($item['size']) }}
+                        个项目 {{ convert_size($item['size']) }}
                     </td>
                 </tr>
                 </tbody>

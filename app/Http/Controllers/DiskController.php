@@ -13,6 +13,8 @@ use App\Helpers\Tool;
 use App\Models\Account;
 use App\Service\OneDrive;
 use Cache;
+use Curl\Curl;
+use Log;
 
 class DiskController extends BaseController
 {
@@ -83,7 +85,7 @@ class DiskController extends BaseController
                             return redirect()->back();
                         }
                         $content = Cache::remember('d:content:' . $file['id'], setting('cache_expires'), static function () use ($download) {
-                            return file_get_contents($download);
+                            return Tool::fetchContent($download);
                         });
                         if ($key === 'stream') {
                             $fileType = Tool::fetchFileType($file['ext']);
@@ -179,7 +181,7 @@ class DiskController extends BaseController
         if (!empty($readme)) {
             $readme = array_first($readme);
             $readme = Cache::remember('d:content:' . $readme['id'], setting('cache_expires'), static function () use ($readme) {
-                return file_get_contents($readme['@microsoft.graph.downloadUrl']);
+                return Tool::fetchContent($readme['@microsoft.graph.downloadUrl']);
             });
         } else {
             $readme = '';
@@ -187,7 +189,7 @@ class DiskController extends BaseController
         if (!empty($head)) {
             $head = array_first($head);
             $head = Cache::remember('d:content:' . $head['id'], setting('cache_expires'), static function () use ($head) {
-                return file_get_contents($head['@microsoft.graph.downloadUrl']);
+                return Tool::fetchContent($head['@microsoft.graph.downloadUrl']);
             });
         } else {
             $head = '';
