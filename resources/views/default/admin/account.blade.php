@@ -7,6 +7,7 @@
     <div class="card mb-3">
         <div class="card-header">账号列表</div>
         <div class="card-body table-responsive">
+            <a class="btn btn-sm btn-primary" href="{{ route('install') }}" target="_blank"><i class="ri-add-fill"></i> 新增账号</a>
             <table class="table table-hover table-borderless">
                 <thead>
                 <tr>

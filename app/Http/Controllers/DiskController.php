@@ -94,8 +94,9 @@ class DiskController extends BaseController
 
                         $file['content'] = $content;
                         if ($key === 'stream') {
-                            $fileType = Tool::fetchFileType($file['ext']);
-                            return response($content, 200, ['Content-type' => $fileType,]);
+                            $show = 'code';
+                            /*$fileType = Tool::fetchFileType($file['ext']);
+                            return response($content, 200, ['Content-type' => $fileType,]);*/
                         }
                     }
                     // 处理缩略图
