@@ -51,8 +51,8 @@
                 @else
                     @foreach($list as $data)
                         <tr onclick="window.location.href='{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) ))]) }}'">
-                            <td>
-                                <i class="ri-{{ \App\Helpers\Tool::fetchExtIco($data['ext'] ?? 'file') }}-fill"></i> {{ str_limit($data['name'],32) }}
+                            <td style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
+                                <i class="ri-{{ \App\Helpers\Tool::fetchExtIco($data['ext'] ?? 'file') }}-fill"></i> {{ str_limit($data['name'], 32) }}
                             </td>
 
                             <td class="d-none d-md-block d-md-none">{{ convert_size($data['size']) }}</td>
@@ -75,7 +75,7 @@
                 </tr>
                 </tbody>
             </table>
-            {{ $list->links() }}
+            {{ $list->links('default.components.page') }}
         </div>
     </div>
     @if (!blank($doc['readme']))

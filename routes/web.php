@@ -48,7 +48,9 @@ Route::get('t/{code}', 'IndexController')->name('short');
 // 多网盘支持
 Route::get('d/{hash}', 'DiskController')->name('drive');
 Route::get('d/{hash}/q/{query?}', 'DiskController')->name('drive.query')->where('query', '.*');
-
+// 图床
+Route::get('image', 'ImageController@index')->name('image');
+Route::post('image-upload', 'ImageController@upload')->name('image.upload');
 // 首页
 Route::get('/', 'HomeController')->name('home');
 

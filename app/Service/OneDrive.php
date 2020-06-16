@@ -219,7 +219,7 @@ class OneDrive
     {
         $trans = trans_request_path($query, true, false);
         $query = "/me/drive/root{$trans}content";
-        $resp = $this->_request('post', $query, ['body' => $content]);
+        $resp = $this->_request('put', $query, ['body' => $content]);
         $err = $resp->getError();
         if (!$err) {
             return $resp->getBody();
@@ -230,7 +230,7 @@ class OneDrive
     public function uploadById($id, $content)
     {
         $query = "/me/drive/items/{$id}/content";
-        $resp = $this->_request('post', $query, ['body' => $content]);
+        $resp = $this->_request('put', $query, ['body' => $content]);
         $err = $resp->getError();
         if (!$err) {
             return $resp->getBody();

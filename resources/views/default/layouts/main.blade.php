@@ -20,7 +20,9 @@
     </style>
     <script>
         App = {
-            'routes': {},
+            'routes': {
+                'upload_image': '{{ route('image.upload') }}'
+            },
             '_token': '{{ csrf_token() }}',
         }
     </script>
