@@ -1,7 +1,6 @@
 @extends('default.layouts.main')
 @section('title','图床')
-@section('css')
-    @parent
+@push('stylesheet')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/filepond@4.17.1/dist/filepond.min.css">
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/filepond-plugin-image-preview@4.6.4/dist/filepond-plugin-image-preview.min.css">
@@ -17,9 +16,8 @@
             margin: 5px 0;
         }
     </style>
-@stop
-@section('js')
-    @parent
+@endpush
+@push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/filepond@4.17.1/dist/filepond.min.js"></script>
     <script
         src="https://cdn.jsdelivr.net/npm/filepond-plugin-image-preview@4.6.4/dist/filepond-plugin-image-preview.min.js"></script>
@@ -86,7 +84,7 @@
             console.log('文件已删除', file);
         });
     </script>
-@stop
+@endpush
 @section('content')
     <div class="card border-light mb-3">
         <div class="card-body">

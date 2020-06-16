@@ -42,12 +42,10 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('home') }}"><i class="ri-home-fill"></i> 首页</a>
                 </li>
+                @include('default.components.home-nav')
                 @auth
                     @include('default.components.admin-nav')
                 @endauth
-                @guest
-                    @include('default.components.home-nav')
-                @endguest
             </ul>
         </div>
     </div>
