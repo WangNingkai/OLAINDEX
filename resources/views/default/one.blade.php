@@ -29,8 +29,8 @@
                 <thead>
                 <tr>
                     <th scope="col">File</th>
-                    <th scope="col">Date</th>
                     <th scope="col" class="d-none d-md-block d-md-none">Size</th>
+                    <th scope="col">Date</th>
                     <th scope="col">More</th>
                 </tr>
                 </thead>
@@ -54,13 +54,14 @@
                             <td>
                                 <i class="ri-{{ \App\Helpers\Tool::fetchExtIco($data['ext'] ?? 'file') }}-fill"></i> {{ str_limit($data['name'],32) }}
                             </td>
-                            <td>{{ date('M d H:i', strtotime($data['lastModifiedDateTime'])) }}</td>
-                            <td class="d-none d-md-block d-md-none">{{ array_has($data,'folder') ? '-' : convert_size($data['size']) }}</td>
+
+                            <td class="d-none d-md-block d-md-none">{{ convert_size($data['size']) }}</td>
+                            <td>{{ date('Y-m-d H:i:s', strtotime($data['lastModifiedDateTime'])) }}</td>
                             <td>
                                 @if(array_has($data,'folder'))
                                     -
                                 @else
-                                    <a href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )),'download' => 1]) }}">下载</a>
+                                    <a href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )),'download' => 1]) }}" style="text-decoration: none">下载</a>
                                 @endif
                             </td>
                         </tr>

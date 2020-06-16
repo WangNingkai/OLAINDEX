@@ -15,7 +15,7 @@
     @stack('stylesheet')
     <style>
         * {
-            outline-style: none
+            outline-style: none;
         }
     </style>
     <script>
@@ -100,7 +100,7 @@
             })
             $('[data-toggle="tooltip"]').tooltip({
                 title: '已复制',
-                trigger: 'click'
+                trigger: 'click',
             })
             $('img.lazy').lazyload()
         })
