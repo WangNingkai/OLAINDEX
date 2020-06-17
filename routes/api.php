@@ -12,5 +12,9 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::namespace('Api')->group(
+    static function () {
+        Route::get('test', 'IndexController@index');
+    }
+);
 
-Route::get('/test/{id}', 'DiskController');

@@ -19,7 +19,7 @@ class IndexController extends BaseController
     public function __construct()
     {
         $this->middleware('access_token');
-        $api_limit = setting('api_limit',30);
+        $api_limit = setting('api_limit', 10);
         $this->middleware("throttle:{$api_limit},1");
     }
 
