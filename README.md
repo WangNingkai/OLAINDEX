@@ -6,6 +6,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/network)
 [![GitHub license](https://img.shields.io/github/license/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/blob/master/LICENSE)
+![visitor badge](https://visitor-badge.glitch.me/badge?page_id=WangNingkai.OLAINDEX)
 
 <div align=center><img alt="OLAINDEX" src="https://i.loli.net/2019/06/15/5d049d72309c376133.png"/></div>
 
