@@ -41,7 +41,7 @@
                         <td>{{ $account->updated_at }}</td>
                         <td>
                             <label>
-                                <input type="text" class="remark" value="{{ $account->remark }}"
+                                <input type="text" class="remark form-control form-control-sm" value="{{ $account->remark }}"
                                        data-id="{{ $account->id }}">
                             </label>
                         </td>
