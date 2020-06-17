@@ -82,9 +82,11 @@
                                 <div class="custom-control custom-switch">
                                     <input type="checkbox" class="custom-control-input"
                                            id="open_image_host"
-                                           @if( setting('open_image_host',0)) checked @endif onchange="$('input[name=\'open_image_host\']').val(Number(this.checked))">
+                                           @if( setting('open_image_host',0)) checked
+                                           @endif onchange="$('input[name=\'open_image_host\']').val(Number(this.checked))">
                                     <label class="custom-control-label" for="open_image_host">开启图床</label>
-                                    <input type="hidden" name="open_image_host" value="{{ setting('open_image_host', 0) }}">
+                                    <input type="hidden" name="open_image_host"
+                                           value="{{ setting('open_image_host', 0) }}">
                                 </div>
                                 <span class="form-text text-danger">图床地址将使用主账号设置</span>
                             </div>
@@ -106,6 +108,11 @@
                                 <input type="text" class="form-control" id="access_token" name="access_token"
                                        value="{{ setting('access_token', '') }}">
                                 <span class="form-text text-danger">第三方接口token(图床、文件列表)</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-control-label" for="api_limit">接口访问频率限制（次/分钟）</label>
+                                <input type="text" class="form-control" id="api_limit" name="api_limit"
+                                       value="{{ setting('api_limit', 30) }}">
                             </div>
                             <button type="submit" class="btn btn-primary">提交</button>
                         </form>
