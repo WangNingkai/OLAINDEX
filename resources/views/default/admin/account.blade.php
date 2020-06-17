@@ -5,7 +5,19 @@
 @section('title', '账号列表')
 @section('content')
     <div class="card mb-3">
-        <div class="card-header">账号列表</div>
+        <div class="card-header">
+            <ul class="nav nav-pills card-header-pills">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.config') }}">设置</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ route('admin.account.list') }}">账号列表</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{  route('admin.logs') }}">日志</a>
+                </li>
+            </ul>
+        </div>
         <div class="card-body table-responsive">
             <a class="btn btn-sm btn-primary" href="{{ route('install') }}" target="_blank"><i class="ri-add-fill"></i> 新增账号</a>
             <table class="table table-hover table-borderless">

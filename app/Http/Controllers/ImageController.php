@@ -20,6 +20,15 @@ class ImageController extends BaseController
 {
     use ApiResponseTrait;
 
+    public function __construct()
+    {
+        $this->middleware('custom');
+    }
+
+    /**
+     * 图床
+     * @return mixed
+     */
     public function index()
     {
         return view(config('olaindex.theme') . 'image');
