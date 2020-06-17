@@ -8,6 +8,7 @@
 
 namespace App\Console\Commands;
 
+use App\Service\Constants;
 use Illuminate\Console\Command;
 
 class UninstallCommand extends Command
@@ -33,6 +34,7 @@ class UninstallCommand extends Command
      */
     public function handle(): void
     {
+        $this->info(Constants::LOGO);
         $lockFile = install_path('install.lock');
         $envFile = base_path('.env');
         $sqlFile = install_path('data/database.sqlite');

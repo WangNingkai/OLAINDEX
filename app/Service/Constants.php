@@ -17,6 +17,10 @@ final class Constants
  / / / / /   / /| |  / //  |/ / / / / __/  |   /
 / /_/ / /___/ ___ |_/ // /|  / /_/ / /___ /   |
 \____/_____/_/  |_/___/_/ |_/_____/_____//_/|_|
+
+v5.0.0
+- Designed by IMWNK | Powered by OLAINDEX
+
 EOF;
     const VERSION = 'v5.0';
 }

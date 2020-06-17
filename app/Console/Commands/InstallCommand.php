@@ -8,6 +8,7 @@
 
 namespace App\Console\Commands;
 
+use App\Service\Constants;
 use Illuminate\Console\Command;
 
 class   InstallCommand extends Command
@@ -33,6 +34,7 @@ class   InstallCommand extends Command
      */
     public function handle(): void
     {
+        $this->info(Constants::LOGO);
         // step 1
         $canWritable = is_writable(storage_path());
         if (!$canWritable) {

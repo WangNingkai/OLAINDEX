@@ -32,7 +32,7 @@ class HomeController extends BaseController
         if ($accounts) {
             $account_id = setting('primary_account', 0);
             if (!$account_id) {
-                $account_id = array_get(array_first($accounts), 'id');
+                $account_id = array_get(array_first((array)$accounts), 'id');
             }
             $account = $accounts->where('id', $account_id)->first();
             $hash = array_get($account, 'hash_id');
@@ -48,23 +48,23 @@ class HomeController extends BaseController
         $path = array_where($path, static function ($value) {
             return !blank($value);
         });
-        $query = "{$root}/$query";
+        $query = trans_absolute_path(trim("{$root}/$query", '/'));
         $service = (new OneDrive($account_id));
         // 缓存处理
-        $item = Cache::remember('d:item:' . $query, setting('cache_expires'), static function () use ($service, $query) {
+        $item = Cache::remember("d:item:{$account_id}:{$query}", setting('cache_expires'), static function () use ($service, $query) {
             return $service->fetchItem($query);
         });
         if (array_key_exists('code', $item)) {
             $this->showMessage(array_get($item, 'message', '404NotFound'), true);
-            Cache::forget('d:item:' . $query);
+            Cache::forget("d:item:{$account_id}:{$query}");
             return redirect()->route('message');
         }
-        $list = Cache::remember('d:list:' . $query, setting('cache_expires'), static function () use ($service, $query) {
+        $list = Cache::remember("d:list:{$account_id}:{$query}", setting('cache_expires'), static function () use ($service, $query) {
             return $service->fetchList($query);
         });
         if (array_key_exists('code', $list)) {
             $this->showMessage(array_get($list, 'message', '404NotFound'), true);
-            Cache::forget('d:list:' . $query);
+            Cache::forget("d:list:{$account_id}:{$query}");
             return redirect()->route('message');
         }
         // 读取预设资源
