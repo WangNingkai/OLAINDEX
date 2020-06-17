@@ -13,7 +13,6 @@ use App\Service\Constants;
 use App\Service\OneDrive;
 use Illuminate\Console\Command;
 use Cache;
-use Illuminate\Database\Eloquent\Collection;
 
 class RefreshCommand extends Command
 {
@@ -50,30 +49,13 @@ class RefreshCommand extends Command
     public function handle()
     {
         $this->info(Constants::LOGO);
-        $account_id = $this->option('id');
         // 默认刷新主账号
-        if (!$account_id) {
-            /* @var $accounts Collection */
-            $accounts = Cache::remember('ac:list', 600, static function () {
-                return Account::query()
-                    ->select(['id', 'remark'])
-                    ->where('status', 1)->get();
-            });
-            $account_id = 0;
-            $hash = '';
-            if ($accounts) {
-                $account_id = setting('primary_account', 0);
-                if (!$account_id) {
-                    $account_id = array_get(array_first((array)$accounts), 'id');
-                }
-                $account = $accounts->where('id', $account_id)->first();
-                $hash = array_get($account, 'hash_id');
-            }
-        }
-        $account = Account::find($account_id);
+        $account_id = (int)($this->option('id') ?? setting('primary_account', 0));
+        $account = Account::find((int)$account_id);
         if (!$account) {
-            exit('账号不存在');
+            exit('帐号不存在');
         }
+        $hash = $account->hash_id;
         $root = array_get(setting($hash), 'root', '/');
         $root = trim($root, '/');
         $query = '/';
