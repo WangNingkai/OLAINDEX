@@ -17,8 +17,9 @@ use Cache;
 
 class DiskController extends BaseController
 {
-    public function index(Request $request, $hash, $query = '/')
+    public function query(Request $request, $hash, $query = '')
     {
+        $queryById = $request->routeIs(['drive.query.id']);
         // 账号处理
         $accounts = Cache::remember('ac:list', 600, static function () {
             return Account::query()
@@ -32,21 +33,32 @@ class DiskController extends BaseController
         // 资源处理
         $root = array_get(setting($hash), 'root', '/');
         $root = trim($root, '/');
-        $query = trim($query, '/');
-        $path = explode('/', $query);
-        $path = array_where($path, static function ($value) {
-            return !blank($value);
-        });
-        $query = trans_absolute_path(trim("{$root}/$query", '/'));
+        if (!$queryById) {
+            $query = trim($query, '/');
+            $path = explode('/', $query);
+            $path = array_where($path, static function ($value) {
+                return !blank($value);
+            });
+            $query = trans_absolute_path(trim("{$root}/$query", '/'));
+        }
         $service = (new OneDrive($account_id));
         // 缓存处理
-        $item = Cache::remember("d:item:{$account_id}:{$query}", setting('cache_expires'), static function () use ($service, $query) {
-            return $service->fetchItem($query);
+        $item = Cache::remember("d:item:{$account_id}:{$query}", setting('cache_expires'), static function () use ($service, $query, $queryById) {
+            return $queryById ? $service->fetchItemById($query) : $service->fetchItem($query);
         });
         if (array_key_exists('code', $item)) {
             $this->showMessage(array_get($item, 'message', '404NotFound'), true);
             Cache::forget("d:item:{$account_id}:{$query}");
             return redirect()->route('message');
+        }
+        if ($queryById) {
+            $parentPath = array_get($item, 'parentReference.path');
+            $parentPath = rawurldecode(str_after($parentPath, '/drive/root:'));
+            $parentPath = str_after($parentPath, $root);
+            $path = explode('/', $parentPath);
+            $path = array_where($path, static function ($value) {
+                return !blank($value);
+            });
         }
         // 处理文件
         $isFile = false;
@@ -82,7 +94,7 @@ class DiskController extends BaseController
                             return redirect()->back();
                         }
                         try {
-                            $content = Cache::remember('d:content:' . $file['id'], setting('cache_expires'), static function () use ($download) {
+                            $content = Cache::remember("d:content:{$account_id}:{$file['id']}", setting('cache_expires'), static function () use ($download) {
                                 return Tool::fetchContent($download);
                             });
                         } catch (\Exception $e) {
@@ -94,8 +106,6 @@ class DiskController extends BaseController
                         $file['content'] = $content;
                         if ($key === 'stream') {
                             $show = 'code';
-                            /*$fileType = Tool::fetchFileType($file['ext']);
-                            return response($content, 200, ['Content-type' => $fileType,]);*/
                         }
                     }
                     // 处理缩略图
@@ -125,8 +135,8 @@ class DiskController extends BaseController
             return redirect()->away($download);
         }
 
-        $list = Cache::remember("d:list:{$account_id}:{$query}", setting('cache_expires'), static function () use ($service, $query) {
-            return $service->fetchList($query);
+        $list = Cache::remember("d:list:{$account_id}:{$query}", setting('cache_expires'), static function () use ($service, $query, $queryById) {
+            return $queryById ? $service->fetchListById($query) : $service->fetchList($query);
         });
         if (array_key_exists('code', $list)) {
             $this->showMessage(array_get($list, 'message', '404NotFound'), true);
@@ -150,6 +160,9 @@ class DiskController extends BaseController
 
     public function search(Request $request, $hash)
     {
+        if (!setting('open_search', 0)) {
+            abort(404);
+        }
         $keyword = $request->get('q', '');
         // 账号处理
         $accounts = Cache::remember('ac:list', 600, static function () {
@@ -166,7 +179,19 @@ class DiskController extends BaseController
         $query = trans_absolute_path($root);
         $service = (new OneDrive($account_id));
 
-        $list = $service->search($query, $keyword);
+        // 搜索加上缓存
+        $list = Cache::remember("d:search:{$account_id}:{$keyword}", 60, static function () use ($service, $query, $keyword) {
+            return $service->search($query, $keyword);
+        });
+        if (array_key_exists('code', $list)) {
+            $this->showMessage(array_get($list, 'message', '404NotFound'), true);
+            Cache::forget("d:search:{$account_id}:{$keyword}");
+            return redirect()->route('message');
+        }
+        //过滤文件夹
+        $list = array_where($list, static function ($value) {
+            return !array_has($value, 'folder');
+        });
         // 过滤
         $list = $this->filter($list);
         // 格式化处理
@@ -289,7 +314,6 @@ class DiskController extends BaseController
         // todo:处理隐藏文件
         return $item;
     }
-
 
     /**
      * 格式化

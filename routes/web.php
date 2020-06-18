@@ -46,8 +46,9 @@ Route::prefix('admin')->middleware('auth')->group(static function () {
 // 短网址
 Route::get('t/{code}', 'IndexController')->name('short');
 // 多网盘支持
-Route::get('d/{hash}', 'DiskController@index')->name('drive');
-Route::get('d/{hash}/q/{query?}', 'DiskController@index')->name('drive.query')->where('query', '.*');
+Route::get('d/{hash}', 'DiskController@query')->name('drive');
+Route::get('d/{hash}/q/{query?}', 'DiskController@query')->name('drive.query')->where('query', '.*');
+Route::get('d/{hash}/id/{query?}', 'DiskController@query')->name('drive.query.id');
 // 搜索
 Route::get('d/{hash}/search', 'DiskController@search')->name('drive.search');
 // 图床
