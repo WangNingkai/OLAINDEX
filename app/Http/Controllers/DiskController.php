@@ -166,7 +166,15 @@ class DiskController extends BaseController
         $query = trans_absolute_path($root);
         $service = (new OneDrive($account_id));
 
-        $list = $service->search($query, $keyword);
+        // 搜索加上缓存
+        $list = Cache::remember("d:search:{$account_id}:{$keyword}", 60, static function () use ($service, $query, $keyword) {
+            return $service->search($query, $keyword);
+        });
+        if (array_key_exists('code', $list)) {
+            $this->showMessage(array_get($list, 'message', '404NotFound'), true);
+            Cache::forget("d:search:{$account_id}:{$keyword}");
+            return redirect()->route('message');
+        }
         // 过滤
         $list = $this->filter($list);
         // 格式化处理
