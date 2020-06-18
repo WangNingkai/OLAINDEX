@@ -1,20 +1,36 @@
 @extends('default.layouts.main')
 @section('title','OLAINDEX')
 @section('content')
-    <div class="btn-group mb-3" role="group" aria-label="choiceAccount">
-        <button type="button" class="btn btn-primary btn-sm">选择盘</button>
-        <div class="btn-group" role="group">
-            <button id="btnChoiceAccount" type="button" class="btn btn-primary btn-sm dropdown-toggle"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-            <div class="dropdown-menu" aria-labelledby="btnChoiceAccount">
-                @foreach($accounts as $key => $account)
-                    <a class="dropdown-item"
-                       href="{{ route('drive',['hash' => $account['hash_id']]) }}">{{ $key + 1 .':'.$account['remark'] }}</a>
-                @endforeach
+    <div class="row mb-3">
+        <div class="col">
+            <div class="btn-group mb-3" role="group" aria-label="choiceAccount">
+                <button type="button" class="btn btn-primary btn-sm">选择盘</button>
+                <div class="btn-group" role="group">
+                    <button id="btnChoiceAccount" type="button" class="btn btn-primary btn-sm dropdown-toggle"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                    <div class="dropdown-menu" aria-labelledby="btnChoiceAccount">
+                        @foreach($accounts as $key => $account)
+                            <a class="dropdown-item"
+                               href="{{ route('drive',['hash' => $account['hash_id']]) }}">{{ $key + 1 .':'.$account['remark'] }}</a>
+                        @endforeach
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    @include('default.components.breadcrumb',['hash' => $hash, 'path' => $path])
+    @if(setting('open_search',0))
+        <div class="row mb-3">
+            <div class="col">
+                <form class="form-inline" action="{{ route('drive.search',['hash' => $hash]) }}" method="get">
+                    <label>
+                        <input class="form-control  form-control-sm" type="text" name="keyword" placeholder="Search">
+                    </label>
+                    <button class="btn btn-sm btn-primary" type="submit">搜索</button>
+                </form>
+            </div>
+        </div>
+    @endif
+    @includeWhen(!blank($path),'default.components.breadcrumb',['hash' => $hash, 'path' => $path])
     @if (!blank($doc['head']))
         <div class="card border-light mb-3">
             <div class="card-header"><i class="ri-send-plane-fill"></i> HEAD</div>
@@ -61,7 +77,8 @@
                                 @if(array_has($data,'folder'))
                                     -
                                 @else
-                                    <a href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )),'download' => 1]) }}" style="text-decoration: none">下载</a>
+                                    <a href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )),'download' => 1]) }}"
+                                       style="text-decoration: none">下载</a>
                                 @endif
                             </td>
                         </tr>
