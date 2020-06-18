@@ -6,33 +6,22 @@
 [![GitHub stars](https://img.shields.io/github/stars/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/network)
 [![GitHub license](https://img.shields.io/github/license/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/blob/master/LICENSE)
+![visitor badge](https://visitor-badge.glitch.me/badge?page_id=WangNingkai.OLAINDEX)
 
-<div align=center><img alt="OLAINDEX" src="https://i.loli.net/2019/06/15/5d049d72309c376133.png"/></div>
+<div align=center><img alt="OLAINDEX" src="https://ojpoc641y.qnssl.com/FoO82Ql-AAn6TPIUa7RtbgWCPihl.png"/></div>
 
 
-> 👋 本项目受 Oneindex 启发，借鉴其部分功能，在这里感谢。 项目持续开发，会加入更多功能，欢迎大家提交 issue.
+> 👋 本项目受 oneindex 启发，借鉴其部分功能，在这里感谢。 项目持续开发，会加入更多功能，欢迎大家提交 issue.
 
 ## 简介
 
-一款 `OneDrive` 目录文件索引应用，基于优雅的 `PHP` 框架 `Laravel5.7` 搭建，并通过 `Microsoft Graph` 接口获取数据展示，支持多类型帐号登录，多种主题显示，简单而强大。
+一款 `OneDrive` 目录文件索引应用，基于优雅的 `PHP` 框架 `Laravel6` 搭建，并通过 `Microsoft Graph` 接口获取数据展示，支持多类型帐号登录，多种主题显示，简单而强大。
 
 ## 功能
 
-- OneDrive 目录查看索引分页查看；
-- 支持代码、图片、文本文件即时预览、图片列表栏展示；
-- 支持音视频播放（兼容大部分格式），视频播放采用 Dplayer.js，音乐播放采用 Aplayer；
-- 支持自定义创建文件夹、文件夹加密、文件/文件夹删除、文件/文件夹的复制与移动；
-- 支持文件搜索、文件上传、文件直链分享与删除、文件直链一键下载；
-- 支持管理 readme/head 说明文件；
-- 支持图床；
-- 支持命令行操作；
-- 支持文件离线下载（个人版）；
-- 后台基本显示管理，多主题管理，文件预览管理等等（清理缓存后及时生效）；
-- 支持世纪互联；
-- 支持多种缓存系统（Redis、Memcached等）；
-- 更多功能欢迎亲自尝试。
-
-**注：** 部分功能需登录。
+- OneDrive 文件目录索引
+- 支持多种资源即时预览
+- 支持多账号
 
 ## 项目地址
 
@@ -44,7 +33,7 @@
 
 ## 预览
 
-![预览](https://i.loli.net/2018/11/11/5be82800ce8b5.png)
+![预览](https://ojpoc641y.qnssl.com/FpR4_obUhswLJXCEBgKOV4Pz7qg3.png)
 
 ## 安装
 
@@ -58,30 +47,25 @@
 
 ### 版本更新
 
-```
+```bash
 git pull 
-composer install -vvv # 无版本更新只需执行到此（同时执行最后两条权限命令）
+composer install # 安装依赖更新包
 
-chmod -R 755 storage # 补充，保证缓存的写入权限，否则500
-chown -R www:www *
+chmod -R 755 storage # 注意！！！确保缓存目录具有读写权限，否则500
+chown -R www:www * # 确保目录权属
 ```
 
 ### 更新日志
 
 本次更新进行部分重构，不再兼容老版本，请删除原先代码重新拉取部署更新
 
-**2019.06 v4.0**
+**2020.04 v5.0**
 
-1. 搜索功能增强(前台可搜索、后台设置搜索频次)
-2. 目录额外功能优化（文件隐藏、加密）
-3. 文件排序功能加强
-4. 静态资源CDN更换
-5. 路径优化（可自定义兼容模式）
-6. 后台刷新任务执行
-7. 整合部分命令
-8. 上传、搜索频次设置
-9. 更换信息存储为数据库存储
-10. 添加第三方接口
+- 支持绑定多账号
+- 增加链接短链转换
+- 提高接口连接稳定性
+- 优化安装步骤
+- 缩减无用功能
 
 ### 分支说明
 
@@ -107,28 +91,25 @@ chown -R www:www *
 
 Blog [https://imwnk.cn](https://imwnk.cn)
 
-Email [imwnk@live.com](mailto:imwnk@live.com)
+Email [i@ningkai.wang](mailto:i@ningkai.wang)
 
 ### 其他：
 
-1. 本项目同样存在命令行版本，包含基本的显示下载，功能与此版本一致。项目地址 [OLAINDEX-CMD](https://git.io/OLACMD)
+1. 本项目同样存在命令行版本，包含基本的显示下载，功能与此版本一致。项目地址（能力有限，暂不更新） [OLAINDEX-CMD](https://git.io/OLACMD)
 
 2. 本软件仅供日常学习使用，不得用于任何商业用途；学习使用请遵守您所在国家的法律，任何非法行为由使用者本身承担。
 
-3. 如使用本应用，请保留底部版权，并分享给更多人，谢谢。
+3. 如使用本应用，请尽量保留底部版权，并分享给更多人，感谢。
 
 ## 捐赠
 
 项目开发纯属个人爱好，如果你喜欢此项目，欢迎赞助。
-
-同时赞助可以获得一次安装技术服务。
 
 另可根据需求提供付费定制服务。
 
 **赞助地址 ： [https://pay.ningkai.wang](https://pay.ningkai.wang)**
 
 ---
-
 
 ## License
 The OLAINDEX is open-source software licensed under the MIT license.
