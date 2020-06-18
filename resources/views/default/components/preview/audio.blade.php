@@ -10,7 +10,7 @@
                 audio: [{
                     name: '{{ $file['name'] }}',
                     artist: '{{ $file['name'] }}',
-                    url: "{{ route('download',\App\Utils\Tool::encodeUrl($originPath)) }}",
+                    url: "{!! $file['download'] !!}",
                     cover: 'cover.jpg'
                 }]
             });
@@ -18,7 +18,7 @@
             ap.on('error', function () {
                 console.log('获取资源错误，开始重新加载！');
                 let last = dp.audio.currentTime;
-                ap.audio.src = "{{ route('download',\App\Utils\Tool::encodeUrl($originPath)) }}";
+                ap.audio.src = "{!! $file['download'] !!}";
                 ap.audio.load();
                 ap.audio.currentTime = last;
                 ap.play();
@@ -28,7 +28,7 @@
                 if (!ap.audio.paused && !ap.audio.ended) {
                     console.log('开始重新加载！');
                     let last = ap.audio.currentTime;
-                    ap.audio.src = "{{ route('download',\App\Utils\Tool::encodeUrl($originPath)) }}";
+                    ap.audio.src = "{!! $file['download'] !!}";
                     ap.audio.load();
                     ap.audio.currentTime = last;
                     ap.play();
