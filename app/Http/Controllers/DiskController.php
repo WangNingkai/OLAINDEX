@@ -30,6 +30,10 @@ class DiskController extends BaseController
                 ->select(['id', 'remark'])
                 ->where('status', 1)->get();
         });
+        if (blank($accounts)) {
+            Cache::forget('ac:list');
+            abort(404, '请先登录绑定账号！');
+        }
         $account_id = HashidsHelper::decode($hash);
         if (!$account_id) {
             abort(404, '账号不存在');

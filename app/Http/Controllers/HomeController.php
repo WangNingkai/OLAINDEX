@@ -28,6 +28,7 @@ class HomeController extends BaseController
                 ->where('status', 1)->get();
         });
         if (blank($accounts)) {
+            Cache::forget('ac:list');
             abort(404, '请先登录绑定账号！');
         }
         $account_id = 0;
