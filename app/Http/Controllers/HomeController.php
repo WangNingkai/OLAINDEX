@@ -177,23 +177,6 @@ class HomeController extends BaseController
     }
 
     /**
-     * 过滤非法预览
-     * @param array $item
-     * @return mixed
-     */
-    private function filterItem($item)
-    {
-        $illegalFile = ['README.md', 'HEAD.md', '.password', '.deny'];
-        $pattern = '/^README\.md|HEAD\.md|\.password|\.deny/';
-        if (in_array($item['name'], $illegalFile, false) || preg_match($pattern, $item['name'], $arr) > 0) {
-            abort(403, '非法请求');
-        }
-        // todo:处理隐藏文件
-        return $item;
-    }
-
-
-    /**
      * 格式化
      * @param array $data
      * @param bool $isFile

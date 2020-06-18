@@ -17,7 +17,7 @@ use Cache;
 
 class DiskController extends BaseController
 {
-    public function __invoke(Request $request, $hash, $query = '/')
+    public function index(Request $request, $hash, $query = '/')
     {
         // 账号处理
         $accounts = Cache::remember('ac:list', 600, static function () {
@@ -146,6 +146,33 @@ class DiskController extends BaseController
         $list = $this->paginate($list, 10, false);
 
         return view(config('olaindex.theme') . 'one', compact('accounts', 'hash', 'path', 'item', 'list', 'doc'));
+    }
+
+    public function search(Request $request, $hash)
+    {
+        $keyword = $request->get('q', '');
+        // 账号处理
+        $accounts = Cache::remember('ac:list', 600, static function () {
+            return Account::query()
+                ->select(['id', 'remark'])
+                ->where('status', 1)->get();
+        });
+        $account_id = HashidsHelper::decode($hash);
+        if (!$account_id) {
+            abort(404, '账号不存在');
+        }
+        $service = (new OneDrive($account_id));
+        $list = $service->search($keyword);
+        // 过滤
+        $list = $this->filter($list);
+        // 格式化处理
+        $list = $this->formatItem($list);
+        // 排序
+        $list = $this->sort($list);
+        // 分页
+        $list = $this->paginate($list, 10, false);
+
+        return view(config('olaindex.theme') . 'search', compact('accounts', 'hash', 'list'));
     }
 
     /**

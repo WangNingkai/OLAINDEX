@@ -91,6 +91,17 @@
                                 <span class="form-text text-danger">图床地址将使用主账号设置</span>
                             </div>
                             <div class="form-group">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input"
+                                           id="open_search"
+                                           @if( setting('open_search',0)) checked
+                                           @endif onchange="$('input[name=\'open_search\']').val(Number(this.checked))">
+                                    <label class="custom-control-label" for="open_search">开启搜索</label>
+                                    <input type="hidden" name="open_search"
+                                           value="{{ setting('open_search', 0) }}">
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label class="form-control-label" for="copyright">自定义版权显示</label>
                                 <input type="text" class="form-control" id="copyright" name="copyright"
                                        value="{{ setting('copyright') }}">
