@@ -20,6 +20,10 @@ class DiskController extends BaseController
     public function query(Request $request, $hash, $query = '')
     {
         $queryById = $request->routeIs(['drive.query.id']);
+        $view = '';
+        if ($queryById) {
+            $view = '-id';
+        }
         // 账号处理
         $accounts = Cache::remember('ac:list', 600, static function () {
             return Account::query()
@@ -52,10 +56,16 @@ class DiskController extends BaseController
             return redirect()->route('message');
         }
         if ($queryById) {
-            $parentPath = array_get($item, 'parentReference.path');
+            $parentPath = array_get($item, 'parentReference.path', '');
             $parentPath = rawurldecode(str_after($parentPath, '/drive/root:'));
             $parentPath = str_after($parentPath, $root);
             $path = explode('/', $parentPath);
+            if ($root !== $item['name']) {
+                $path[] = $item['name'];
+            }
+            if ($parentPath === '' && $item['name'] === 'root') {
+                $path = [];
+            }
             $path = array_where($path, static function ($value) {
                 return !blank($value);
             });
@@ -129,7 +139,7 @@ class DiskController extends BaseController
 
                         return redirect()->away($url);
                     }
-                    return view(config('olaindex.theme') . 'preview', compact('accounts', 'hash', 'path', 'show', 'file'));
+                    return view(config('olaindex.theme') . 'preview' . $view, compact('accounts', 'hash', 'path', 'show', 'file'));
                 }
             }
             return redirect()->away($download);
@@ -155,7 +165,7 @@ class DiskController extends BaseController
         // 分页
         $list = $this->paginate($list, 10, false);
 
-        return view(config('olaindex.theme') . 'one', compact('accounts', 'hash', 'path', 'item', 'list', 'doc'));
+        return view(config('olaindex.theme') . 'one' . $view, compact('accounts', 'hash', 'path', 'item', 'list', 'doc'));
     }
 
     public function search(Request $request, $hash)
