@@ -161,8 +161,12 @@ class DiskController extends BaseController
         if (!$account_id) {
             abort(404, '账号不存在');
         }
+        $root = array_get(setting($hash), 'root', '/');
+        $root = trim($root, '/');
+        $query = trans_absolute_path($root);
         $service = (new OneDrive($account_id));
-        $list = $service->search($keyword);
+
+        $list = $service->search($query, $keyword);
         // 过滤
         $list = $this->filter($list);
         // 格式化处理
