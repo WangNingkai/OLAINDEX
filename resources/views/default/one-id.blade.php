@@ -86,6 +86,7 @@
                     <td colspan="4">
                         {{ array_get($item,'folder.childCount',0) }}
                         个项目
+                        {{ convert_size(array_get($item,'size',0)) }}
                     </td>
                 </tr>
                 </tbody>

@@ -20,9 +20,6 @@ class CreateShortUrlsTable extends Migration
             $table->timestamp('created_at', 0)->nullable();
             $table->index('short_code', 'idx_code');
         });
-        Schema::table('short_urls', function (Blueprint $table) {
-            $table->index('short_code', 'idx_code');
-        });
     }
 
     /**

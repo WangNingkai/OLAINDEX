@@ -27,6 +27,9 @@ class HomeController extends BaseController
                 ->select(['id', 'remark'])
                 ->where('status', 1)->get();
         });
+        if (blank($accounts)) {
+            abort(404, '请先登录绑定账号！');
+        }
         $account_id = 0;
         $hash = '';
         if ($accounts) {
