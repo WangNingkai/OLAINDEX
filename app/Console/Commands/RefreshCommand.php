@@ -21,7 +21,7 @@ class RefreshCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'refresh:data {--id=* : Account Id}';
+    protected $signature = 'refresh:data {--id= : Account Id}';
 
     /**
      * The console command description.
