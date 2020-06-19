@@ -1,5 +1,5 @@
 @push('stylesheet')
-    <link rel="stylesheet" href="https://cdn.staticfile.org/dplayer/1.25.1/DPlayer.min.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/dplayer/1.25.0/DPlayer.min.css">
 @endpush
 @push('scripts')
     <script src="https://cdn.staticfile.org/dashjs/3.1.1/dash.all.min.js"></script>
@@ -37,6 +37,6 @@
     </script>
 @endpush
 <div class="text-center">
-    <div id="video-player"></div>
+    <div id="dash-player"></div>
     <p class="text-danger">如无法播放或格式不受支持，推荐使用 PotPlayer 播放器在线播放</p>
 </div>

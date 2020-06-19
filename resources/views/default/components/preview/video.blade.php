@@ -1,5 +1,5 @@
 @push('stylesheet')
-    <link rel="stylesheet" href="https://cdn.staticfile.org/dplayer/1.25.1/DPlayer.min.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/dplayer/1.25.0/DPlayer.min.css">
 @endpush
 @push('scripts')
     <script src="https://cdn.staticfile.org/dplayer/1.25.1/DPlayer.min.js"></script>
