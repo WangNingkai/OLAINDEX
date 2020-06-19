@@ -3,7 +3,7 @@
         <li class="breadcrumb-item"><a href="{{ route('drive.query', ['hash' => $hash]) }}"><i
                     class="ri-home-fill"></i> Home</a></li>
         @if(!blank($path))
-            @if (count($path) < 5)
+            @if (count($path) < 6)
                 @foreach ($path as $key => $value)
                     @if(end($path) === $value && $key === (count($path) - 1))
                         <li class="breadcrumb-item active">{{ str_limit($value,20)  }}</li>
