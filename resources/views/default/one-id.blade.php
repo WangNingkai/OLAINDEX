@@ -91,7 +91,7 @@
                 </tr>
                 </tbody>
             </table>
-            {{ $list->links('default.components.page') }}
+            {{ $list->appends(['sortBy'=> request()->get('sortBy')])->links('default.components.page') }}
         </div>
     </div>
     @if (!blank($doc['readme']))

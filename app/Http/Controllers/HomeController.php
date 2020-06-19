@@ -45,7 +45,8 @@ class HomeController extends BaseController
             abort(404, '账号不存在');
         }
         // 资源处理
-        $root = array_get(setting($hash), 'root', '/');
+        $config = setting($hash);
+        $root = array_get($config, 'root', '/');
         $root = trim($root, '/');
         $query = '/';
         $path = explode('/', $query);
@@ -78,9 +79,17 @@ class HomeController extends BaseController
         // 格式化处理
         $list = $this->formatItem($list);
         //排序
-        $list = $this->sort($list);
+        $sortBy = $request->get('sortBy', '-name');
+        $descending = false;
+        if (str_contains($sortBy, '-')) {
+            $descending = true;
+            $sortBy = str_after($sortBy, '-');
+        }
+        $list = $this->sort($list, $sortBy, $descending);
         // 分页
-        $list = $this->paginate($list, 10, false);
+        $perPage = array_get($config, 'list_limit', 10);
+
+        $list = $this->paginate($list, $perPage, false);
 
         return view(config('olaindex.theme') . 'one', compact('accounts', 'hash', 'path', 'item', 'list', 'doc'));
     }
@@ -105,7 +114,7 @@ class HomeController extends BaseController
     }
 
     /**
-     * 排序
+     * 排序(支持 name\size\lastModifiedDateTime)
      * @param array $list
      * @param string $field
      * @param bool $descending

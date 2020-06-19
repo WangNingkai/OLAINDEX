@@ -4,7 +4,8 @@
     <div class="row mb-3">
         <div class="col">
             <div class="dropdown">
-                <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="btnChoiceAccount" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="btnChoiceAccount"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     选择盘符：
                 </button>
                 <div class="dropdown-menu" aria-labelledby="btnChoiceAccount">
@@ -91,7 +92,7 @@
                 </tr>
                 </tbody>
             </table>
-            {{ $list->links('default.components.page') }}
+            {{ $list->appends(['sortBy'=> request()->get('sortBy')])->links('default.components.page') }}
         </div>
     </div>
     @if (!blank($doc['readme']))
