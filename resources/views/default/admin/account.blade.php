@@ -27,7 +27,7 @@
                     <th scope="col">类型</th>
                     <th scope="col">状态</th>
                     <th scope="col">刷新时间</th>
-                    <th scope="col">备注</th>
+                    <th scope="col">备注 <span class="small">(选择显示)</span> </th>
                     <th scope="col">操作</th>
                 </tr>
                 </thead>

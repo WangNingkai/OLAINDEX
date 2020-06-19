@@ -6,7 +6,7 @@
             @if (count($path) < 6)
                 @foreach ($path as $key => $value)
                     @if(end($path) === $value && $key === (count($path) - 1))
-                        <li class="breadcrumb-item active">{{ str_limit($value,20)  }}</li>
+                        <li class="breadcrumb-item active">{{ str_limit($value, 20)  }}</li>
                     @else
                         @if (!blank($value))
                             <li class="breadcrumb-item ">
