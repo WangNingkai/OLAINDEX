@@ -166,7 +166,7 @@ class DiskController extends BaseController
         // 格式化处理
         $list = $this->formatItem($list);
         // 排序
-        $sortBy = $request->get('sortBy', '-name');
+        $sortBy = $request->get('sortBy', 'name');
         $descending = false;
         if (str_contains($sortBy, '-')) {
             $descending = true;
