@@ -35,7 +35,8 @@
         "microsoft/microsoft-graph": "^1.13",
         "overtrue/laravel-lang": "^3.0",
         "php-curl-class/php-curl-class": "^8.0",
-        "rap2hpoutre/laravel-log-viewer": "^1.6"
+        "rap2hpoutre/laravel-log-viewer": "^1.6",
+        "spatie/laravel-short-schedule": "^1.1"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.3",
@@ -44,7 +45,8 @@
         "fzaninotto/faker": "^1.9.1",
         "mockery/mockery": "^1.0",
         "nunomaduro/collision": "^3.0",
-        "phpunit/phpunit": "^8.0"
+        "phpunit/phpunit": "^8.0",
+        "spatie/laravel-cronless-schedule": "^1.0"
     },
     "config": {
         "optimize-autoloader": true,
