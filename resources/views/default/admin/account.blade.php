@@ -153,8 +153,7 @@
         </div>
     </div>
 @stop
-@section('js')
-    @parent
+@push('scripts')
     <script>
         function readablizeBytes(bytes) {
             if (!bytes) return 0
@@ -256,4 +255,4 @@
             })
         })
     </script>
-@stop
+@endpush
