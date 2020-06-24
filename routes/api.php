@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Api\IndexController as ApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,7 +15,7 @@ use Illuminate\Http\Request;
 */
 Route::namespace('Api')->group(
     static function () {
-        Route::get('test', 'IndexController@index');
+        Route::get('test', [ApiController::class, 'index']);
     }
 );
 
