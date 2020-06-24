@@ -48,7 +48,7 @@ class RefreshCommand extends Command
      */
     public function handle()
     {
-        $this->info(Constants::LOGO);
+        $this->comment(Constants::LOGO);
         // 默认刷新主账号
         $account_id = (int)($this->option('id') ?? setting('primary_account', 0));
         $account = Account::find((int)$account_id);

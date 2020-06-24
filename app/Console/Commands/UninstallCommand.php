@@ -34,7 +34,7 @@ class UninstallCommand extends Command
      */
     public function handle(): void
     {
-        $this->info(Constants::LOGO);
+        $this->comment(Constants::LOGO);
         $lockFile = install_path('install.lock');
         $envFile = base_path('.env');
         $sqlFile = install_path('data/database.sqlite');

@@ -28,17 +28,19 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
-        $schedule->command('refresh:data')->everyFifteenMinutes();
+        // $schedule->command('refresh:data')->everyFifteenMinutes();
     }
 
     /**
      * Define the application's command schedule.
      *
-     * @param ShortSchedule $schedule
+     * @param ShortSchedule $shortSchedule
      * @return void
      */
     protected function shortSchedule(ShortSchedule $shortSchedule)
     {
+        $shortSchedule->command('t')->everySecond();
+        //          ->hourly();
         // 此命令每秒钟会运行一次
         // $shortSchedule->command('artisan-command')->everySecond();
 

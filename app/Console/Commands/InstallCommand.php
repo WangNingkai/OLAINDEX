@@ -34,7 +34,7 @@ class   InstallCommand extends Command
      */
     public function handle(): void
     {
-        $this->info(Constants::LOGO);
+        $this->comment(Constants::LOGO);
         // step 1
         $canWritable = is_writable(storage_path());
         if (!$canWritable) {
