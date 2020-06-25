@@ -29,6 +29,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')
         //          ->hourly();
         // $schedule->command('refresh:data')->everyFifteenMinutes();
+        $schedule->command('telescope:prune')->daily();
     }
 
     /**
@@ -39,8 +40,6 @@ class Kernel extends ConsoleKernel
      */
     protected function shortSchedule(ShortSchedule $shortSchedule)
     {
-        $shortSchedule->command('t')->everySecond();
-        //          ->hourly();
         // 此命令每秒钟会运行一次
         // $shortSchedule->command('artisan-command')->everySecond();
 
