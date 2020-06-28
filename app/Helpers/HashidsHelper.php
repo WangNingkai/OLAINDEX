@@ -26,11 +26,6 @@ class HashidsHelper
     public static $length = 8;
 
     /**
-     * @var string
-     */
-    public static $secretKey = 'X7M0madTS06Yat9O2SF02GgQek4AaTUj';
-
-    /**
      * @var \Hashids\Hashids
      */
     protected static $hashids;
@@ -69,7 +64,7 @@ class HashidsHelper
     private static function getHashids()
     {
         if (!self::$hashids instanceof Hashids) {
-            self::$hashids = new Hashids(self::$secretKey, self::$length); // all lowercase
+            self::$hashids = new Hashids(config('app.key'), self::$length); // all lowercase
         }
 
         return self::$hashids;

@@ -294,13 +294,13 @@ if (!function_exists('build_query')) {
         return $qs ? (string)substr($qs, 0, -1) : '';
     }
 }
-if (!function_exists('shorten_url')) {
+if (!function_exists('shorten_str')) {
     /**
      * 获取短链
      * @param $url
      * @return mixed
      */
-    function shorten_url($url)
+    function shorten_str($url)
     {
         $shortenList = [];
         $charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -323,6 +323,26 @@ if (!function_exists('shorten_url')) {
             $shortenList[] = $shortenUrl;
         }
         return array_first($shortenList);
+    }
+}
+
+if (!function_exists('shorten_url')) {
+    /**
+     * 获取短链
+     * @param $url
+     * @return mixed
+     */
+    function shorten_url($url)
+    {
+        $code = shorten_str($url);
+        $data = \App\Models\ShortUrl::query()->select('id', 'original_url', 'short_code')->where(['short_code' => $code])->first();
+        if (!$data) {
+            $new = new \App\Models\ShortUrl();
+            $new->short_code = $code;
+            $new->original_url = $url;
+            $new->save();
+        }
+        return route('short', ['code' => $code]);
     }
 }
 

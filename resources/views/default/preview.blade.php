@@ -17,7 +17,7 @@
                 <div class="input-group mb-3">
                     <label for="link1"></label>
                     <input type="text" id="link1" class="form-control"
-                           value="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', $path)),'download' => 1]) }}">
+                           value="{{ shorten_url(route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', $path)),'download' => 1])) }}">
                     <div class="input-group-append">
                         <a href="javascript:void(0)" style="text-decoration: none" data-toggle="tooltip"
                            data-placement="right" data-clipboard-target="#link1" class="clipboard"><span
@@ -26,7 +26,7 @@
                 </div>
             </div>
             <div class="text-center"><a
-                    href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', $path)),'download' => 1]) }}"
+                    href="{{ shorten_url(route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', $path)),'download' => 1])) }}"
                     class="btn btn-success"><i class="fa fa-download"></i> 下载</a></div>
         </div>
     </div>

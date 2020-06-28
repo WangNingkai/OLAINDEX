@@ -79,7 +79,7 @@ class Tool
      */
     public static function shortenUrl($url)
     {
-        $code = shorten_url($url);
+        $code = shorten_str($url);
         $data = ShortUrl::query()->select('id', 'original_url', 'short_code')->where(['short_code' => $code])->first();
         if (!$data) {
             $new = new ShortUrl();
