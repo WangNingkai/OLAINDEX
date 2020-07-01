@@ -9,7 +9,7 @@ if (!function_exists('is_json')) {
     /**
      * 判断字符串是否是json
      *
-     * @param $json
+     * @param string $json
      * @return bool
      */
     function is_json($json)
@@ -21,12 +21,13 @@ if (!function_exists('is_json')) {
 if (!function_exists('convert_size')) {
     /**
      * 转换字节为可读取数值
-     * @param $size
+     * @param int $size
      * @return string
      */
     function convert_size($size): string
     {
-        $units = array(' B', ' KB', ' MB', ' GB', ' TB');
+        $size = (int)$size;
+        $units = [' B', ' KB', ' MB', ' GB', ' TB'];
         for ($i = 0; $size >= 1024 && $i < 4; $i++) {
             $size /= 1024;
         }
@@ -38,7 +39,7 @@ if (!function_exists('url_encode')) {
     /**
      * 解析路径
      *
-     * @param $path
+     * @param string $path
      *
      * @return string
      */
@@ -57,7 +58,7 @@ if (!function_exists('trans_request_path')) {
     /**
      * 处理请求路径
      *
-     * @param $path
+     * @param string $path
      * @param bool $query
      * @param bool $isItem
      * @return string
@@ -81,7 +82,7 @@ if (!function_exists('trans_absolute_path')) {
     /**
      * 获取绝对路径
      *
-     * @param $path
+     * @param string $path
      *
      * @return mixed
      */
@@ -106,7 +107,7 @@ if (!function_exists('trans_absolute_path')) {
 if (!function_exists('setting')) {
     /**
      * 获取设置
-     * @param mixed $key
+     * @param string $key
      * @param mixed $default
      * @return mixed
      */
@@ -134,7 +135,7 @@ if (!function_exists('setting')) {
 if (!function_exists('setting_set')) {
     /**
      * 更新设置
-     * @param mixed $key
+     * @param string $key
      * @param mixed $value
      * @return mixed
      */
@@ -297,7 +298,7 @@ if (!function_exists('build_query')) {
 if (!function_exists('shorten_str')) {
     /**
      * 获取短链
-     * @param $url
+     * @param string $url
      * @return mixed
      */
     function shorten_str($url)
@@ -329,7 +330,7 @@ if (!function_exists('shorten_str')) {
 if (!function_exists('shorten_url')) {
     /**
      * 获取短链
-     * @param $url
+     * @param string $url
      * @return mixed
      */
     function shorten_url($url)
@@ -349,7 +350,7 @@ if (!function_exists('shorten_url')) {
 if (!function_exists('marked')) {
     /**
      * 转换markdown
-     * @param $text
+     * @param string $text
      * @return mixed
      */
     function marked($text)

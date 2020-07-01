@@ -10,9 +10,6 @@ namespace App\Helpers;
 
 use App\Models\ShortUrl;
 use Curl\Curl;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\Paginator;
-use mysql_xdevapi\Exception;
 use Parsedown;
 use Log;
 
@@ -20,9 +17,9 @@ class Tool
 {
     /**
      * 链接动态添加参数
-     * @param $url
-     * @param $key
-     * @param $value
+     * @param string $url
+     * @param string $key
+     * @param string $value
      * @return string
      */
     public static function buildQueryParams($url, $key, $value)
@@ -36,26 +33,9 @@ class Tool
     }
 
     /**
-     *文件大小转换
-     *
-     * @param string $size 原始大小
-     *
-     * @return string 转换大小
-     */
-    public static function convertSize($size): string
-    {
-        $units = array(' B', ' KB', ' MB', ' GB', ' TB');
-        for ($i = 0; $size >= 1024 && $i < 4; $i++) {
-            $size /= 1024;
-        }
-
-        return @round($size, 2) . $units[$i];
-    }
-
-    /**
      * markdown转html
      *
-     * @param      $markdown
+     * @param string $markdown
      * @param bool $line
      *
      * @return string
@@ -74,7 +54,7 @@ class Tool
 
     /**
      * 短网址生成
-     * @param $url
+     * @param string $url
      * @return mixed
      */
     public static function shortenUrl($url)
@@ -92,7 +72,7 @@ class Tool
 
     /**
      * 短网址解析
-     * @param $code
+     * @param string $code
      * @return \Illuminate\Database\Eloquent\HigherOrderBuilderProxy|mixed|string
      */
     public static function decodeShortUrl($code)
@@ -106,8 +86,8 @@ class Tool
 
     /**
      * 面包屑导航
-     * @param $key
-     * @param $path
+     * @param string $key
+     * @param string $path
      * @return string
      */
     public static function combineBreadcrumb($key, $path): string
@@ -123,7 +103,7 @@ class Tool
 
     /**
      * 面包屑返回上一级
-     * @param $path
+     * @param string $path
      * @return string
      */
     public static function fetchGoBack($path): string
@@ -142,7 +122,7 @@ class Tool
 
     /**
      * 获取图标
-     * @param $ext
+     * @param string $ext
      * @return mixed|string
      */
     public static function fetchExtIco($ext)
@@ -173,7 +153,7 @@ class Tool
 
     /**
      * 获取文件流类型
-     * @param $ext
+     * @param string $ext
      * @return mixed|string
      */
     public static function fetchFileType($ext)
@@ -276,7 +256,7 @@ class Tool
 
     /**
      * 获取远程文件内容
-     * @param $url
+     * @param string $url
      * @return string|null
      * @throws \Exception
      */
