@@ -14,6 +14,11 @@ use League\OAuth2\Client\Provider\GenericProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Cache;
 
+/**
+ * 绑定回调
+ * Class OauthController
+ * @package App\Http\Controllers
+ */
 class OauthController extends BaseController
 {
     public function callback(Request $request)
