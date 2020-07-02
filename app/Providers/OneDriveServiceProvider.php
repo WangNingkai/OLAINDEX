@@ -14,7 +14,7 @@ class OneDriveServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('onedrive', function () {
+        $this->app->bind('OneDrive', function () {
             return new OneDrive();
         });
     }
