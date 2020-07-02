@@ -12,7 +12,7 @@ class OneDrive
 {
     public $id;
 
-    public function account($account_id)
+    public function account($account_id): OneDrive
     {
         $this->id = $account_id;
         return $this;
