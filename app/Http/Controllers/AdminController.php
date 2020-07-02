@@ -10,7 +10,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Account;
 use App\Models\Setting;
-use App\Service\OneDrive;
+use OneDrive;
 use Illuminate\Http\Request;
 use Cache;
 
@@ -110,7 +110,7 @@ class AdminController extends BaseController
     {
         $key = 'ac:id:' . $id;
         if (!Cache::has($key)) {
-            $data = (new OneDrive($id))->fetchInfo();
+            $data = OneDrive::account($id)->fetchInfo();
             $quota = array_get($data, 'quota', '');
             if (!$quota) {
                 return response()->json($data);
@@ -133,7 +133,7 @@ class AdminController extends BaseController
     {
         $key = 'dr:id:' . $id;
         if (!Cache::has($key)) {
-            $data = (new OneDrive($id))->fetchMe();
+            $data = OneDrive::account($id)->fetchMe();
             $id = array_get($data, 'id', '');
             if (!$id) {
                 return response()->json($data);

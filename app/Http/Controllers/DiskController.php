@@ -12,8 +12,8 @@ use Illuminate\Http\Request;
 use App\Helpers\HashidsHelper;
 use App\Helpers\Tool;
 use App\Models\Account;
-use App\Service\OneDrive;
 use Cache;
+use OneDrive;
 
 class DiskController extends BaseController
 {
@@ -50,7 +50,7 @@ class DiskController extends BaseController
             });
             $query = trans_absolute_path(trim("{$root}/$query", '/'));
         }
-        $service = (new OneDrive($account_id));
+        $service = OneDrive::account($account_id);
         // 缓存处理
         $item = Cache::remember("d:item:{$account_id}:{$query}", setting('cache_expires'), static function () use ($service, $query, $queryById) {
             return $queryById ? $service->fetchItemById($query) : $service->fetchItem($query);
@@ -199,7 +199,7 @@ class DiskController extends BaseController
         $root = array_get(setting($hash), 'root', '/');
         $root = trim($root, '/');
         $query = trans_absolute_path($root);
-        $service = (new OneDrive($account_id));
+        $service = OneDrive::account($account_id);
 
         // 搜索加上缓存
         $list = Cache::remember("d:search:{$account_id}:{$keyword}", 60, static function () use ($service, $query, $keyword) {

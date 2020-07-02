@@ -10,11 +10,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Traits\ApiResponseTrait;
 use App\Models\Account;
-use App\Service\OneDrive;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Validator;
 use Cache;
+use OneDrive;
 
 class ImageController extends BaseController
 {
@@ -86,7 +86,7 @@ class ImageController extends BaseController
             $root = array_get(setting($hash), 'root', '/');
             $root = trim($root, '/');
             $query = "{$root}/$filePath";
-            $service = (new OneDrive($account_id));
+            $service = OneDrive::account($account_id);
             $resp = $service->upload($query, $content);
             if (array_key_exists('code', $resp)) {
                 return $this->fail(array_get($resp, 'message', '文件上传出错'), 400);

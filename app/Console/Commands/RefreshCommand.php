@@ -10,9 +10,9 @@ namespace App\Console\Commands;
 
 use App\Models\Account;
 use App\Service\Constants;
-use App\Service\OneDrive;
 use Illuminate\Console\Command;
 use Cache;
+use OneDrive;
 
 class RefreshCommand extends Command
 {
@@ -71,7 +71,7 @@ class RefreshCommand extends Command
      */
     public function getChildren($account_id, $query)
     {
-        $response = (new OneDrive($account_id))->fetchList($query);
+        $response = OneDrive::account($account_id)->fetchList($query);
         if (array_key_exists('code', $response)) {
             exit(array_get($response, 'message', '404NotFound'));
         }
@@ -91,7 +91,7 @@ class RefreshCommand extends Command
      */
     public function getItem($account_id, $query)
     {
-        $response = (new OneDrive($account_id))->fetchItem($query);
+        $response = OneDrive::account($account_id)->fetchItem($query);
         if (array_key_exists('code', $response)) {
             exit(array_get($response, 'message', '404NotFound'));
         }

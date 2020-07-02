@@ -8,13 +8,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\HashidsHelper;
 use App\Helpers\Tool;
 use App\Models\Account;
-use App\Service\OneDrive;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Cache;
+use OneDrive;
 
 class HomeController extends BaseController
 {
@@ -54,7 +53,7 @@ class HomeController extends BaseController
             return !blank($value);
         });
         $query = trans_absolute_path(trim("{$root}/$query", '/'));
-        $service = (new OneDrive($account_id));
+        $service = OneDrive::account($account_id);
         // 缓存处理
         $item = Cache::remember("d:item:{$account_id}:{$query}", setting('cache_expires'), static function () use ($service, $query) {
             return $service->fetchItem($query);

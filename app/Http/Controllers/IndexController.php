@@ -9,9 +9,6 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
-use App\Service\GraphClient;
-use App\Service\GraphResponse;
-use App\Service\OneDrive;
 
 class IndexController extends BaseController
 {

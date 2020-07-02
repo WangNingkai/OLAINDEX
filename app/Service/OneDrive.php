@@ -12,57 +12,10 @@ class OneDrive
 {
     public $id;
 
-    public function __construct($account_id)
+    public function account($account_id)
     {
         $this->id = $account_id;
-    }
-
-    private function _request($method = 'GET', $query = '/me/drive/root/children', $options = [])
-    {
-        $headers = array_get($options, 'headers', []);
-        $body = array_get($options, 'body', '');
-        $params = array_get($options, 'params', []);
-        $isList = array_get($options, 'isList', false);
-        if ($isList) {
-            $pre_params = [
-                '$top' => 500,
-                '$skiptoken' => '',
-            ];
-            $params = array_merge($pre_params, $params);
-        }
-
-        $query = parse_url($query)['path'] ?? '';
-        if (!empty($params)) {
-            $query .= '?' . build_query($params, false);
-        }
-        $req = new GraphClient($this->id);
-        $req->setMethod($method)
-            ->setQuery($query)
-            ->addHeaders($headers)
-            ->attachBody($body)
-            ->setProxy('socks5://127.0.0.1:1080')
-            ->setReturnStream(false);
-        return $req->execute();
-    }
-
-    private function _requestNextLink($response, &$result = [])
-    {
-        if ($response->getError()) {
-            return $result;
-        }
-        $nextLink = $response->getNextLink();
-        if (!$nextLink) {
-            $data = $response->getBody()['value'];
-            $result = array_merge_recursive($data, $result);
-        } else {
-            $data = array_merge_recursive($response->getBody()['value'], $result);
-            $baseLength = strlen($response->getRequest()->getBaseUrl());
-            $query = substr($nextLink, $baseLength);
-            $params = parse_query(parse_url($nextLink)['query']);
-            $resp = $this->_request('GET', $query, ['params' => $params, 'isList' => true]);
-            $result = $this->_requestNextLink($resp, $data);
-        }
-        return $result;
+        return $this;
     }
 
     public function fetchInfo()
@@ -274,5 +227,53 @@ class OneDrive
             return $resp;
         }
         return array_get($resp, 'id', '');
+    }
+
+    private function _request($method = 'GET', $query = '/me/drive/root/children', $options = [])
+    {
+        $headers = array_get($options, 'headers', []);
+        $body = array_get($options, 'body', '');
+        $params = array_get($options, 'params', []);
+        $isList = array_get($options, 'isList', false);
+        if ($isList) {
+            $pre_params = [
+                '$top' => 500,
+                '$skiptoken' => '',
+            ];
+            $params = array_merge($pre_params, $params);
+        }
+
+        $query = parse_url($query)['path'] ?? '';
+        if (!empty($params)) {
+            $query .= '?' . build_query($params, false);
+        }
+        $req = new GraphClient($this->id);
+        $req->setMethod($method)
+            ->setQuery($query)
+            ->addHeaders($headers)
+            ->attachBody($body)
+            ->setProxy('socks5://127.0.0.1:1080')
+            ->setReturnStream(false);
+        return $req->execute();
+    }
+
+    private function _requestNextLink($response, &$result = [])
+    {
+        if ($response->getError()) {
+            return $result;
+        }
+        $nextLink = $response->getNextLink();
+        if (!$nextLink) {
+            $data = $response->getBody()['value'];
+            $result = array_merge_recursive($data, $result);
+        } else {
+            $data = array_merge_recursive($response->getBody()['value'], $result);
+            $baseLength = strlen($response->getRequest()->getBaseUrl());
+            $query = substr($nextLink, $baseLength);
+            $params = parse_query(parse_url($nextLink)['query']);
+            $resp = $this->_request('GET', $query, ['params' => $params, 'isList' => true]);
+            $result = $this->_requestNextLink($resp, $data);
+        }
+        return $result;
     }
 }
