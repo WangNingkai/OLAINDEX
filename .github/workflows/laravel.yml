@@ -3,9 +3,9 @@ name: Laravel
 
 on:
   push:
-    branches: [ 5.0 ]
+    branches: [ "5.0" ]
   pull_request:
-    branches: [ 5.0 ]
+    branches: [ "5.0" ]
 
 jobs:
   laravel-preview:
