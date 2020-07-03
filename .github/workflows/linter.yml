@@ -47,6 +47,6 @@ jobs:
         env:
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_PHP: true
-          DEFAULT_BRANCH: 5.0
+          DEFAULT_BRANCH: "5.0"
 
 ...
