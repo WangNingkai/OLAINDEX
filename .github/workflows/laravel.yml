@@ -1,3 +1,4 @@
+---
 name: Laravel
 
 on:
@@ -7,7 +8,7 @@ on:
     branches: [ "5.0" ]
 
 jobs:
-  laravel-tests:
+  laravel-preview:
 
     runs-on: ubuntu-latest
 
@@ -23,7 +24,4 @@ jobs:
         run: chmod -R 777 storage bootstrap/cache
       - name: Install App
         run: composer run install-app
-      - name: Execute tests (Unit and Feature tests) via PHPUnit
-        env:
-          DB_CONNECTION: sqlite
-        run: vendor/bin/phpunit
+...
