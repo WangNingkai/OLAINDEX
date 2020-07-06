@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Laravel\Telescope\Telescope;
 use Laravel\Telescope\TelescopeServiceProvider;
 use Schema;
 
@@ -17,7 +18,10 @@ class AppServiceProvider extends ServiceProvider
     {
         if ($this->app->isLocal()) {
             $this->app->register(TelescopeServiceProvider::class);
+        } else {
+            Telescope::ignoreMigrations();
         }
+
     }
 
     /**
