@@ -14,6 +14,9 @@
                     <a class="nav-link active" href="{{ route('admin.account.list') }}">账号列表</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.profile') }}">其它</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{{  route('admin.logs') }}">日志</a>
                 </li>
             </ul>

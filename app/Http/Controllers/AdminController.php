@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Account;
 use App\Models\Setting;
+use App\Models\User;
 use OneDrive;
 use Illuminate\Http\Request;
 use Cache;
@@ -29,6 +30,42 @@ class AdminController extends BaseController
         $data = $request->except('_token');
         Setting::batchUpdate($data);
         $this->showMessage('保存成功！');
+        return redirect()->back();
+    }
+
+    /**
+     * 账号设置
+     * @param Request $request
+     * @return mixed
+     */
+    public function profile(Request $request)
+    {
+        if ($request->isMethod('get')) {
+            return view(config('olaindex.theme') . 'admin.profile');
+        }
+
+        $request->validate([
+            'old_password' => 'required',
+            'password' => 'required|min:8|confirmed',
+            'password_confirmation' => 'required|min:8',
+        ]);
+
+        /* @var $user User */
+        $user = $request->user();
+        if (!\Hash::check($request->get('old_password'), $user->password)) {
+            $this->showMessage('原密码错误！', false);
+            return redirect()->back();
+        }
+
+        if ($user->fill([
+            'password' => \Hash::make($request->get('password'))
+        ])->save()) {
+            $this->showMessage('修改成功！');
+        } else {
+            $this->showMessage('密码修改失败！', false);
+        }
+
+
         return redirect()->back();
     }
 

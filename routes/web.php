@@ -34,13 +34,14 @@ Route::prefix('admin')->middleware('auth')->group(static function () {
     });
     // 基础设置
     Route::any('/', 'AdminController@config')->name('admin.config');
+    Route::any('profile', 'AdminController@profile')->name('admin.profile');
     // 账号详情
-    Route::get('/account/list', 'AdminController@account')->name('admin.account.list');
-    Route::get('/account/{id}', 'AdminController@accountDetail')->name('admin.account.info');
-    Route::get('/account/{id}/drive', 'AdminController@driveDetail')->name('admin.account.drive');
-    Route::any('/account/{id}/config', 'AdminController@accountConfig')->name('admin.account.config');
-    Route::post('/account/{id}/remark', 'AdminController@accountRemark')->name('admin.account.remark');
-    Route::post('/account/set-account', 'AdminController@accountSet')->name('admin.account.set');
+    Route::get('account/list', 'AdminController@account')->name('admin.account.list');
+    Route::get('account/{id}', 'AdminController@accountDetail')->name('admin.account.info');
+    Route::get('account/{id}/drive', 'AdminController@driveDetail')->name('admin.account.drive');
+    Route::any('account/{id}/config', 'AdminController@accountConfig')->name('admin.account.config');
+    Route::post('account/{id}/remark', 'AdminController@accountRemark')->name('admin.account.remark');
+    Route::post('account/set-account', 'AdminController@accountSet')->name('admin.account.set');
     Route::any('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index')->name('admin.logs');
 });
 // 短网址
