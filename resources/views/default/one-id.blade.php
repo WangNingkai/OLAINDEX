@@ -1,21 +1,24 @@
 @extends('default.layouts.main')
 @section('title','OLAINDEX')
 @section('content')
-    <div class="row mb-3">
-        <div class="col">
-            <div class="dropdown">
-                <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="btnChoiceAccount" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    选择盘符：
-                </button>
-                <div class="dropdown-menu" aria-labelledby="btnChoiceAccount">
-                    @foreach($accounts as $key => $account)
-                        <a class="dropdown-item"
-                           href="{{ route('drive',['hash' => $account['hash_id']]) }}">{{ $key + 1 .':'.$account['remark'] }}</a>
-                    @endforeach
+    @if(count($accounts) > 1)
+        <div class="row mb-3">
+            <div class="col">
+                <div class="dropdown">
+                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="btnChoiceAccount"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        选择盘符：
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="btnChoiceAccount">
+                        @foreach($accounts as $key => $account)
+                            <a class="dropdown-item"
+                               href="{{ route('drive',['hash' => $account['hash_id']]) }}">{{ $key + 1 .':'.$account['remark'] }}</a>
+                        @endforeach
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
     @if(setting('open_search',0))
         <div class="row mb-3">
             <div class="col">
