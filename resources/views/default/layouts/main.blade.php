@@ -58,17 +58,17 @@
                 @endauth
             </ul>
             @auth
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a href="{{ route('logout') }}" class="nav-link"
-                       onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i
-                            class="fa fa-sign-out"></i> 退出</a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                          class="invisible">
-                        @csrf
-                    </form>
-                </li>
-            </ul>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a href="{{ route('logout') }}" class="nav-link"
+                           onclick="event.preventDefault();document.getElementById('logout-form').submit();"> <i
+                                class="ri-logout-box-fill"></i> 退出</a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                              class="invisible">
+                            @csrf
+                        </form>
+                    </li>
+                </ul>
             @endauth
         </div>
     </div>
