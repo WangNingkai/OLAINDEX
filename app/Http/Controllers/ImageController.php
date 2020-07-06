@@ -1,31 +1,33 @@
 <?php
-
+/**
+ * This file is part of the wangningkai/olaindex.
+ * (c) wangningkai <i@ningkai.wang>
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
 
 namespace App\Http\Controllers;
 
-use App\Service\OneDrive;
-use App\Utils\Tool;
+use App\Http\Traits\ApiResponseTrait;
+use App\Models\Account;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Contracts\View\Factory;
-use Illuminate\View\View;
-use Illuminate\Contracts\Routing\ResponseFactory;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
 use Validator;
-use ErrorException;
+use Cache;
+use OneDrive;
 
-class ImageController extends Controller
+class ImageController extends BaseController
 {
+    use ApiResponseTrait;
+
     public function __construct()
     {
-        $this->middleware(['verify.installation', 'verify.token', 'verify.image']);
-        $this->middleware('throttle:' . setting('image_upload_throttle', 5))->only('upload');
+        $this->middleware('custom');
     }
 
     /**
      * 图床
-     * @return Factory|View
+     * @return mixed
      */
     public function index()
     {
@@ -35,16 +37,33 @@ class ImageController extends Controller
     /**
      * 图床上传图片
      * @param Request $request
-     * @return ResponseFactory|JsonResponse|Response|mixed
-     * @throws ErrorException
+     * @return \Illuminate\Http\JsonResponse
      */
     public function upload(Request $request)
     {
+        /* @var $accounts Collection */
+        $accounts = Cache::remember('ac:list', 600, static function () {
+            return Account::query()
+                ->select(['id', 'remark'])
+                ->where('status', 1)->get();
+        });
+        $account_id = 0;
+        $hash = '';
+        if ($accounts) {
+            $account_id = setting('primary_account', 0);
+            if (!$account_id) {
+                $account_id = array_get($accounts->first(), 'id');
+            }
+            $account = $accounts->where('id', $account_id)->first();
+            $hash = array_get($account, 'hash_id');
+        }
+        if (!$account_id) {
+            return $this->fail('账号不存在', 404);
+        }
+
         $field = 'olaindex_img';
         if (!$request->hasFile($field)) {
-            $data = ['errno' => 400, 'message' => '上传文件为空'];
-
-            return response()->json($data, $data['errno']);
+            return $this->fail('上传文件为空', 400);
         }
         $file = $request->file($field);
         $rule = [$field => 'required|max:4096|image'];
@@ -53,39 +72,35 @@ class ImageController extends Controller
             $rule
         );
         if ($validator->fails()) {
-            return response($validator->errors()->first(), 400);
+            return $this->fail($validator->errors()->first(), 400);
         }
         if (!$file->isValid()) {
-            return response('文件上传出错', 400);
+            return $this->fail('文件上传出错', 400);
         }
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
             $content = file_get_contents($path);
-            $hostingPath = Tool::encodeUrl(setting('image_hosting_path'));
-            $middleName = '/' . date('Y') . '/' . date('m') . '/' . date('d') . '/' . Str::random(8) . '/';
+            $hostingPath = url_encode(array_get(setting($hash), 'image_path', '/'));
+            $middleName = '/' . date('Y') . '/' . date('m') . '/' . date('d') . '/' . str_random(8) . '/';
             $filePath = trim($hostingPath . $middleName . $file->getClientOriginalName(), '/');
-            $remoteFilePath = Tool::getOriginPath($filePath); // 远程图片保存地址
-            $response = OneDrive::getInstance(one_account())->uploadByPath($remoteFilePath, $content);
-            if ($response['errno'] === 0) {
-                $sign = $response['data']['id'] . '.' . encrypt($response['data']['eTag']);
-                $fileIdentifier = encrypt($sign);
-                $data = [
-                    'errno' => 200,
-                    'data' => [
-                        'id' => $response['data']['id'],
-                        'filename' => $response['data']['name'],
-                        'size' => $response['data']['size'],
-                        'time' => $response['data']['lastModifiedDateTime'],
-                        'url' => route('view', $filePath),
-                        'delete' => route('delete', $fileIdentifier),
-                    ],
-                ];
-                @unlink($path);
-
-                return response()->json($data, $data['errno']);
+            $root = array_get(setting($hash), 'root', '/');
+            $root = trim($root, '/');
+            $query = "{$root}/$filePath";
+            $service = OneDrive::account($account_id);
+            $resp = $service->upload($query, $content);
+            if (array_key_exists('code', $resp)) {
+                return $this->fail(array_get($resp, 'message', '文件上传出错'), 400);
             }
-            return $response;
+            $data = [
+                'item' => $resp,
+                'filename' => $resp['name'],
+                'size' => $resp['size'],
+                'time' => $resp['lastModifiedDateTime'],
+                'url' => route('drive.query', ['hash' => $hash, 'query' => url_encode($filePath), 'download' => 1]),
+            ];
+            @unlink($path);
+            return $this->success($data);
         }
-        return response('无法获取文件内容', 400);
+        return $this->fail('无法获取文件内容', 400);
     }
 }

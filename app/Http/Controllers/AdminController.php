@@ -1,174 +1,185 @@
 <?php
+/**
+ * This file is part of the wangningkai/olaindex.
+ * (c) wangningkai <i@ningkai.wang>
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
 
 namespace App\Http\Controllers;
 
-use App\Utils\Tool;
-use App\Jobs\RefreshCache;
-use Illuminate\Http\Request;
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
+use App\Models\Account;
 use App\Models\Setting;
 use App\Models\User;
-use Carbon\Carbon;
-use Artisan;
-use Auth;
-use Hash;
+use OneDrive;
+use Illuminate\Http\Request;
+use Cache;
 
-/**
- * 后台管理操作
- * Class AdminController
- *
- * @package App\Http\Controllers
- */
-class AdminController extends Controller
+class AdminController extends BaseController
 {
     /**
-     * ManageController constructor.
-     */
-    public function __construct()
-    {
-        $this->middleware(['auth','verify.installation']);
-    }
-
-    /**
-     * 基础设置
-     *
+     * 全局设置
      * @param Request $request
-     * @return Factory|RedirectResponse|View
+     * @return mixed
      */
-    public function basic(Request $request)
+    public function config(Request $request)
     {
-        if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme') . 'admin.basic');
+        if ($request->isMethod('get')) {
+            return view(config('olaindex.theme') . 'admin.config');
         }
         $data = $request->except('_token');
         Setting::batchUpdate($data);
-        Tool::showMessage('保存成功！');
-
+        $this->showMessage('保存成功！');
         return redirect()->back();
     }
 
     /**
-     * 显示设置
-     *
+     * 账号设置
      * @param Request $request
-     * @return Factory|RedirectResponse|View
-     */
-    public function show(Request $request)
-    {
-        if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme') . 'admin.show');
-        }
-        $data = $request->except('_token');
-
-        Setting::batchUpdate($data);
-        Tool::showMessage('保存成功！');
-
-        return redirect()->back();
-    }
-
-    /**
-     * 密码设置
-     *
-     * @param Request $request
-     *
-     * @return Factory|RedirectResponse|View
+     * @return mixed
      */
     public function profile(Request $request)
     {
-        if (!$request->isMethod('post')) {
+        if ($request->isMethod('get')) {
             return view(config('olaindex.theme') . 'admin.profile');
         }
-        /* @var $user User */
-        $user = Auth::user();
-        $oldPassword = $request->get('old_password');
-        $password = $request->get('password');
-        $passwordConfirm = $request->get('password_confirm');
 
-        if (!Hash::check($oldPassword, $user->password)) {
-            Tool::showMessage('请确保原密码的准确性！', false);
-
-            return redirect()->back();
-        }
-        if ($password !== $passwordConfirm) {
-            Tool::showMessage('两次密码不一致', false);
-
-            return redirect()->back();
-        }
-
-        $saved = User::query()->update([
-            'id' => $user->id,
-            'password' => bcrypt($password),
+        $request->validate([
+            'old_password' => 'required',
+            'password' => 'required|min:8|confirmed',
+            'password_confirmation' => 'required|min:8',
         ]);
 
-        $msg = $saved ? '密码修改成功' : '请稍后重试';
-        Tool::showMessage($msg, $saved);
+        /* @var $user User */
+        $user = $request->user();
+        if (!\Hash::check($request->get('old_password'), $user->password)) {
+            $this->showMessage('原密码错误！', false);
+            return redirect()->back();
+        }
+
+        if ($user->fill([
+            'password' => \Hash::make($request->get('password'))
+        ])->save()) {
+            $this->showMessage('修改成功！');
+        } else {
+            $this->showMessage('密码修改失败！', false);
+        }
+
+
         return redirect()->back();
     }
 
     /**
-     * 缓存清理
-     *
-     * @return RedirectResponse
+     * 账号列表
+     * @return mixed
      */
-    public function clear(): RedirectResponse
+    public function account()
     {
-        Artisan::call('cache:clear');
-        Tool::showMessage('清理成功');
-
-        return redirect()->route('admin.basic');
+        $accounts = Account::query()
+            ->select(['id', 'accountType', 'remark', 'status', 'updated_at'])
+            ->simplePaginate();
+        return view(config('olaindex.theme') . 'admin.account', compact('accounts'));
     }
 
     /**
-     * 刷新缓存
-     *
-     * @return RedirectResponse
-     */
-    public function refresh(): RedirectResponse
-    {
-        if (setting('queue_refresh', 0)) {
-            RefreshCache::dispatch()
-                ->delay(Carbon::now()->addSeconds(5))
-                ->onQueue('olaindex')
-                ->onConnection('database');
-            Tool::showMessage('后台正在刷新，请继续其它任务...');
-        } else {
-            Artisan::call('od:cache');
-            Tool::showMessage('刷新成功');
-        }
-        return redirect()->route('admin.basic');
-    }
-
-    /**
-     * 账号绑定
-     *
+     * 账号设置
      * @param Request $request
-     *
-     * @return Factory|RedirectResponse|View
+     * @param $id
+     * @return mixed
      */
-    public function bind(Request $request)
+    public function accountConfig(Request $request, $id)
     {
-        if (!$request->isMethod('post')) {
-            return view(config('olaindex.theme') . 'admin.bind');
+        $account = Account::find($id);
+        if (!$account) {
+            $this->showMessage('账号不存在！', true);
+            return redirect()->back();
         }
-        if (!Tool::hasBind()) {
-            return redirect()->route('bind');
+        $uuid = $account->hash_id;
+        if ($request->isMethod('get')) {
+            $config = setting($uuid, []);
+            return view(config('olaindex.theme') . 'admin.account-config', compact('config'));
         }
-        $data = [
-            'access_token' => '',
-            'refresh_token' => '',
-            'access_token_expires' => 0,
-            'root' => '/',
-            'image_hosting' => 0,
-            'image_hosting_path' => '',
-            'account_email' => '',
-            'account_state' => '暂时无法使用',
-            'account_extend' => ''
-        ];
-        Setting::batchUpdate($data);
-        Tool::showMessage('保存成功！');
+        $data = $request->except('_token');
+        setting_set($uuid, $data);
+        $this->showMessage('保存成功！');
+        return redirect()->back();
+    }
 
-        return redirect()->route('bind');
+    public function accountSet(Request $request)
+    {
+        $id = $request->post('id', 0);
+        $account = Account::find($id);
+        if (!$account) {
+            return response()->json([
+                'error' => '账号不存在！'
+            ]);
+        }
+        setting_set('primary_account', $id);
+        return response()->json([
+            'error' => ''
+        ]);
+    }
+
+    public function accountRemark($id, Request $request)
+    {
+        $account = Account::find($id);
+        if (!$account) {
+            return response()->json([
+                'error' => '账号不存在！'
+            ]);
+        }
+        $remark = $request->get('remark');
+        $account->remark = $remark;
+        if ($account->save()) {
+            return response()->json();
+        }
+        return response()->json([
+            'error' => ''
+        ]);
+    }
+
+    /**
+     * 账号详情
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function accountDetail($id)
+    {
+        $key = 'ac:id:' . $id;
+        if (!Cache::has($key)) {
+            $data = OneDrive::account($id)->fetchInfo();
+            $quota = array_get($data, 'quota', '');
+            if (!$quota) {
+                return response()->json($data);
+            }
+            Cache::add($key, $data, 300);
+            $info = Cache::get($key);
+        } else {
+            $info = Cache::get($key);
+        }
+        $data = array_get($info, 'quota', []);
+        return response()->json($data);
+    }
+
+    /**
+     * 网盘详情
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function driveDetail($id)
+    {
+        $key = 'dr:id:' . $id;
+        if (!Cache::has($key)) {
+            $data = OneDrive::account($id)->fetchMe();
+            $id = array_get($data, 'id', '');
+            if (!$id) {
+                return response()->json($data);
+            }
+            Cache::add($key, $data, 300);
+            $info = Cache::get($key);
+        } else {
+            $info = Cache::get($key);
+        }
+        return response()->json($info);
     }
 }

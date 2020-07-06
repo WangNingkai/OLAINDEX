@@ -1,6 +1,6 @@
 <?php
 
-//use Illuminate\Http\Request;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,9 +12,9 @@
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::namespace('Api')->group(
+    static function () {
+        Route::get('test', 'IndexController@index');
+    }
+);
 
-/*Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});*/
-
-Route::post('/image', 'ApiController@imageUpload')->name('image.upload.third');

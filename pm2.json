@@ -1,6 +1,6 @@
 {
     "apps": {
-        "name": "olaindex",
+        "name": "olaindex-queue",
         "args": "queue:work database --queue=olaindex --tries=3",
         "script": "artisan",
         "exec_interpreter": "php.exe",

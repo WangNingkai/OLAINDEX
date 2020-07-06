@@ -1,14 +1,14 @@
 !> 此文档待完善
 
-> 版本 v4.0 后，添加第三方访问接口，目前支持图床接口，之后支持文件列表、文件详情的接口。
+> 版本 v4.0 后，添加第三方访问接口，目前支持图床接口，以后会支持更多接口。
 
 ## 用法
 
-1. 后台设置第三方访问密钥 {third_access_token}
+1. 后台设置第三方访问密钥 {access_token}
 
 2. Header 头信息 添加认证信息 
 
-    `"Authorization":"Bearer {third_access_token}"`
+    `"Authorization":"Bearer {access_token}"`
 
 3. 接口调用
 

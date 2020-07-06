@@ -1,2 +1,2 @@
 *.sqlite
-!database.sample.sqlite
+*.sqlite-journal

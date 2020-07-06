@@ -1,11 +1,12 @@
-@extends('default.layouts.common')
+
+@extends('default.layouts.main')
 @section('title','登录')
 @section('content')
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card border-light mb-3">
                 <div class="card-header">
-                    <i class="fa fa-sign-in"></i> 登录
+                    <i class="ri-login-box"></i> 登录
                 </div>
                 <div class="card-body">
                     <form action="" method="post">

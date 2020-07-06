@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Spatie\ShortSchedule\ShortSchedule;
 
 class Kernel extends ConsoleKernel
 {
@@ -13,23 +14,41 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\OneDrive\RefreshToken::class,
-        Commands\OneDrive\RefreshCache::class,
+        //
+        Commands\RefreshCommand::class,
     ];
 
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule $schedule
-     *
+     * @param \Illuminate\Console\Scheduling\Schedule $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')
         //          ->hourly();
-        $schedule->command('od:refresh')->everyThirtyMinutes();
-        $schedule->command('od:cache')->everyFifteenMinutes();
+        // $schedule->command('refresh:data')->everyFifteenMinutes();
+        $schedule->command('telescope:prune')->daily();
+    }
+
+    /**
+     * Define the application's command schedule.
+     *
+     * @param ShortSchedule $shortSchedule
+     * @return void
+     */
+    protected function shortSchedule(ShortSchedule $shortSchedule)
+    {
+        // 此命令每秒钟会运行一次
+        // $shortSchedule->command('artisan-command')->everySecond();
+
+        // 此命令每30秒会运行一次
+        // $shortSchedule->command('another-artisan-command')->everySeconds(30);
+
+        // 此命令每0.5秒会运行一次
+        // $shortSchedule->command('another-artisan-command')->everySeconds(0.5);
+
     }
 
     /**
@@ -39,7 +58,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

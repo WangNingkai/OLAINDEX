@@ -1,29 +1,14 @@
 ## 公共账号
 
-- 公告测试账号1
-
-     **redirect_uri:** `https://olaindex.ningkai.wang`
-
-     **client_id:** `e704ef00-c552-421d-a521-e47ee321220e`
-     
-     **client_secret:** `M2kRFM2^KNVMl8__*J(N;e;b5Iz>_B&SK(Lj7c`
-
-- 公告测试账号2
-
-    **redirect_uri:** `https://olaindex.ningkai.wang`
-
-    **client_id:** `2539c0f7-e089-4ae6-9032-b29bb385f69c`
-
-    **client_secret:** `IhxA?4Q6qld=-:6HMGGASku0T3HC5W?/`
-
+- 暂不提供
 
 ## 回调地址
 
-- 非中转域名回调，必须是 `https` 协议，格式一般为 `https://your.domain/oauth` 所以配置服务器需要为域名添加 `SSL`，否则无法生效。
+- 非中转域名回调，必须是 `https` 协议，格式一般为 `https://your.domain/callback` 所以配置服务器需要为域名添加 `SSL`，否则无法生效。
 
 - 中转域名进行回调，可不使用 `https` 协议。需通过 `https://olaindex.ningkai.wang` 申请 `client_id` 和 `client_secret`，前提是在执行安装时填写了正确的绑定域名。
 
-- 本地回调，默认 `http://localhost:8000/oauth`。
+- 本地回调，默认 `http://localhost:8000/callback`。
 
 ## 世纪互联账号申请
 
@@ -58,6 +43,6 @@
 
 ## 错误处理
 
-如果填写过程出现错误，可以执行命令，重置数据文件，重新安装。 `php artisan od:reset` 此操作会重置配置文件未初始化状态；
+如果填写过程出现错误，可以执行命令，重置数据文件，重新安装。 `composer run uninstall-app` 此操作会重置配置文件未初始化状态；
 也可以通过页面的返回修改重置数据，并进行再一次绑定。
 

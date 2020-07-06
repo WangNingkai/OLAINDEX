@@ -1,30 +1,31 @@
 <?php
+/**
+ * This file is part of the wangningkai/olaindex.
+ * (c) wangningkai <i@ningkai.wang>
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
 
 namespace App\Http\Controllers;
 
-use App\Utils\Tool;
-use App\Models\Setting;
+use Cache;
+use Validator;
+use App\Helpers\Tool;
+use App\Models\Client;
 use Illuminate\Http\Request;
-use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use League\OAuth2\Client\Provider\GenericProvider;
 
 /**
  * 初始化安装操作
  * Class InstallController
- *
  * @package App\Http\Controllers
  */
-class InstallController extends Controller
+class InstallController extends BaseController
 {
-
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     /**
-     * 申请相关密钥
+     * 申请密钥(仅支持通用版)
      *
      * @param Request $request
      *
@@ -32,18 +33,10 @@ class InstallController extends Controller
      */
     public function apply(Request $request): RedirectResponse
     {
-        // 感谢 donwa 提供的方法
-        if (Tool::hasConfig()) {
-            Tool::showMessage('已配置相关信息', false);
-
-            return view(config('olaindex.theme') . 'message');
-        }
-        $redirect_uri = $request->get('redirect_uri');
-        if (!$redirect_uri) {
-            Tool::showMessage('重定向地址缺失', false);
-
-            return view(config('olaindex.theme') . 'message');
-        }
+        $request->validate([
+            'redirectUri' => 'required',
+        ]);
+        $redirect_uri = $request->get('redirectUri');
         $ru = 'https://developer.microsoft.com/en-us/graph/quick-start?appID=_appId_&appName=_appName_&redirectUrl='
             . $redirect_uri . '&platform=option-php';
         $deepLink = '/quickstart/graphIO?publicClientSupport=false&appName=OLAINDEX&redirectUrl='
@@ -55,88 +48,89 @@ class InstallController extends Controller
     }
 
     /**
-     * 首次安装
-     *
+     * 安装
      * @param Request $request
-     *
-     * @return Factory|RedirectResponse|View
+     * @return RedirectResponse|View
      */
     public function install(Request $request)
     {
-        // 检测是否已经配置client_id等信息
-        if (Tool::hasConfig()) {
-            return redirect()->route('bind');
-        }
         //  显示基础信息的填写、申请或提交应用信息、返回
         if ($request->isMethod('get')) {
-            return view(config('olaindex.theme') . 'install.init');
+            return view(config('olaindex.theme') . 'install.install');
         }
-        $client_id = $request->get('client_id');
-        $client_secret = $request->get('client_secret');
-        $redirect_uri = $request->get('redirect_uri');
-        $account_type = $request->get('account_type');
-        if (empty($client_id) || empty($client_secret) || empty($redirect_uri)) {
-            Tool::showMessage('参数请填写完整', false);
+        $request->validate([
+            'accountType' => 'required',
+            'clientId' => 'required',
+            'clientSecret' => 'required',
+            'redirectUri' => 'required',
+        ]);
+        $accountType = strtoupper($request->get('accountType', 'COM'));
+        $redirectUri = $request->get('redirectUri', Client::DEFAULT_REDIRECT_URI);
+        $clientId = $request->get('clientId');
+        $clientSecret = $request->get('clientSecret');
 
-            return redirect()->back();
-        }
-        // 写入配置
-        $data = [
-            'client_id' => $client_id,
-            'client_secret' => $client_secret,
-            'redirect_uri' => $redirect_uri,
-            'account_type' => $account_type,
-        ];
-        Setting::batchUpdate($data);
-
-        return redirect()->route('bind');
+        return view(
+            config('olaindex.theme') . 'install.bind',
+            compact('accountType', 'clientId', 'clientSecret', 'redirectUri')
+        );
     }
 
     /**
-     * 重置安装
-     *
-     * @return RedirectResponse
-     */
-    public function reset(): RedirectResponse
-    {
-        if (Tool::hasBind()) {
-            Tool::showMessage('您已绑定帐号，无法重置', false);
-
-            return view(config('olaindex.theme') . 'message');
-        }
-        $data = [
-            'client_id' => '',
-            'client_secret' => '',
-            'redirect_uri' => '',
-            'account_type' => '',
-        ];
-        Setting::batchUpdate($data);
-
-        return redirect()->route('_1stInstall');
-    }
-
-    /**
-     * 绑定帐号
-     *
+     * 绑定
      * @param Request $request
-     *
-     * @return Factory|RedirectResponse|View
+     * @return RedirectResponse|View
      */
     public function bind(Request $request)
     {
-        if (Tool::hasBind()) {
-            Tool::showMessage('您已绑定帐号', false);
+        $request->validate([
+            'accountType' => 'required',
+            'clientId' => 'required',
+            'clientSecret' => 'required',
+            'redirectUri' => 'required',
+        ]);
 
-            return view(config('olaindex.theme') . 'message');
-        }
-        if ($request->isMethod('post')) {
-            if (Tool::hasBind()) {
-                Tool::showMessage('您已绑定帐号，无法重置', false);
+        $accountType = strtoupper($request->get('accountType', 'COM'));
+        $redirectUri = $request->get('redirectUri', Client::DEFAULT_REDIRECT_URI);
+        $clientId = $request->get('clientId');
+        $clientSecret = $request->get('clientSecret');
+        $clientConfig = (new Client())
+            ->setAccountType($accountType)
+            ->setRedirectUri($redirectUri);
 
-                return view(config('olaindex.theme') . 'message');
-            }
-            return redirect()->route('oauth');
+        $oauthConfig = [
+            'clientId' => $clientId,
+            'clientSecret' => $clientSecret,
+            'redirectUri' => $clientConfig->redirectUri,
+            'urlAuthorize' => $clientConfig->getUrlAuthorize(),
+            'urlAccessToken' => $clientConfig->getUrlAccessToken(),
+            'urlResourceOwnerDetails' => '',
+            'scopes' => Client::SCOPES,
+        ];
+        $oauthClient = new GenericProvider($oauthConfig);
+
+        // 临时缓存
+        $tmpKey = str_random();
+        $oauthConfig = array_add($oauthConfig, 'accountType', $accountType);
+        Cache::add($tmpKey, $oauthConfig, 15 * 60);// 限定15分钟内绑定成功
+
+        // state :若代理跳转为<链接>否则为<缓存键>
+        $state = $tmpKey;
+        if (str_contains($redirectUri, 'github.io')) {
+            $state = route('callback') .'?'. http_build_query(['state' => $state]);
         }
-        return view(config('olaindex.theme') . 'install.bind');
+
+        $authUrl = $oauthClient->getAuthorizationUrl([
+            'state' => $state
+        ]);
+        return redirect()->away($authUrl);
+    }
+
+    /**
+     * 返回重置
+     * @return \Illuminate\Contracts\View\Factory|View
+     */
+    public function reset()
+    {
+        return redirect()->route('install');
     }
 }

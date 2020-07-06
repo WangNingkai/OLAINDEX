@@ -1,26 +1,17 @@
 <?php
+/**
+ * This file is part of the wangningkai/olaindex.
+ * (c) wangningkai <i@ningkai.wang>
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
 
 namespace App\Models;
 
-use App\Traits\HelperModel;
+use App\Models\Traits\HelperModel;
 use Illuminate\Database\Eloquent\Model;
 use Cache;
 
-/**
- * App\Models\Setting
- *
- * @property int $id
- * @property string $name
- * @property mixed $value
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Setting newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Setting newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Setting query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Setting whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Setting whereMap($map)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Setting whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Setting whereValue($value)
- * @mixin \Eloquent
- */
 class Setting extends Model
 {
     use  HelperModel;
@@ -29,11 +20,35 @@ class Setting extends Model
      * @var array $fillable
      */
     protected $fillable = ['name', 'value'];
+
     /**
      * @var array $casts
      */
     protected $casts = [
         'id' => 'int',
+    ];
+
+    /**
+     * 指示是否自动维护时间戳
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
+    public static $setting = [
+        'site_name' => 'OLAINDEX',
+        'site_theme' => 'lux',
+        'cache_expires' => 1800,
+        'copyright' => '',
+        'stats_code' => '',
+        'access_token' => '',
+        'show_image' => 'png',
+        'show_video' => 'mp4',
+        'show_dash' => 'avi',
+        'show_audio' => 'mp3',
+        'show_doc' => 'doc',
+        'show_code' => 'php',
+        'show_stream' => 'text',
     ];
 
     /**
@@ -57,6 +72,11 @@ class Setting extends Model
         $this->attributes['value'] = is_array($value) ? json_encode($value) : $value;
     }
 
+    /**
+     * 批量更新
+     * @param $data
+     * @return mixed
+     */
     public static function batchUpdate($data)
     {
         $editData = [];
@@ -83,9 +103,8 @@ class Setting extends Model
         $model = new self;
         $model->updateBatch($editData);
 
-        Cache::forget('setting');
+        Cache::forget('settings');
 
         return $data;
     }
-
 }

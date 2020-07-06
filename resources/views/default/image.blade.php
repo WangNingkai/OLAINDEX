@@ -1,9 +1,9 @@
 @extends('default.layouts.main')
 @section('title','图床')
-@section('css')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/filepond@4.4.9/dist/filepond.min.css">
+@push('stylesheet')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/filepond@4.17.1/dist/filepond.min.css">
     <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/filepond-plugin-image-preview@4.2.1/dist/filepond-plugin-image-preview.min.css">
+          href="https://cdn.jsdelivr.net/npm/filepond-plugin-image-preview@4.6.4/dist/filepond-plugin-image-preview.min.css">
     <style>
         .link-container {
             margin-top: 15px;
@@ -12,20 +12,19 @@
             word-wrap: break-word;
             background-color: #f7f7f7;
         }
-
         .link-container p {
             margin: 5px 0;
         }
     </style>
-@stop
-@section('js')
-    <script src="https://cdn.jsdelivr.net/npm/filepond@4.4.9/dist/filepond.min.js"></script>
+@endpush
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/filepond@4.17.1/dist/filepond.min.js"></script>
     <script
-        src="https://cdn.jsdelivr.net/npm/filepond-plugin-image-preview@4.2.1/dist/filepond-plugin-image-preview.min.js"></script>
+        src="https://cdn.jsdelivr.net/npm/filepond-plugin-image-preview@4.6.4/dist/filepond-plugin-image-preview.min.js"></script>
     <script
-        src="https://cdn.jsdelivr.net/npm/filepond-plugin-file-validate-size@2.1.3/dist/filepond-plugin-file-validate-size.min.js"></script>
+        src="https://cdn.jsdelivr.net/npm/filepond-plugin-file-validate-size@2.2.1/dist/filepond-plugin-file-validate-size.min.js"></script>
     <script
-        src="https://cdn.jsdelivr.net/npm/filepond-plugin-file-validate-type@1.2.4/dist/filepond-plugin-file-validate-type.min.js"></script>
+        src="https://cdn.jsdelivr.net/npm/filepond-plugin-file-validate-type@1.2.5/dist/filepond-plugin-file-validate-type.min.js"></script>
 
     <script>
         FilePond.registerPlugin(
@@ -38,7 +37,7 @@
             dropOnElement: true,
             dropValidation: true,
             server: {
-                url: Config.routes.upload_image,
+                url: App.routes.upload_image,
                 process: {
                     url: '/',
                     method: 'POST',
@@ -48,20 +47,20 @@
                     onload: (response) => {
                         let res = JSON.parse(response);
                         console.log(res);
-                        if (res.errno === 200) {
+                        if (res.code === 0) {
                             $('#showUrl').removeClass('invisible');
                             $('#urlCode').append('<p>' + res.data.url + '</p>');
                             $('#htmlCode').append('<p>&lt;img src=\'' + res.data.url + '\' alt=\'' + res.data.filename + '\' title=\'' + res.data.filename + '\' /&gt;' + '</p>');
                             $('#bbCode').append('<p>[img]' + res.data.url + '[/img]' + '</p>');
                             $('#markdown').append('<p>![' + res.data.filename + '](' + res.data.url + ')' + '</p>');
                             $('#markdownLinks').append('<p>[![' + res.data.filename + '](' + res.data.url + ')]' + '(' + res.data.url + ')' + '</p>');
-                            $('#deleteCode').append('<p>' + res.data.delete + '</p>');
+                            // $('#deleteCode').append('<p>' + res.data.delete + '</p>');
                         }
                         return response.key
                     },
                     onerror: (response) => response.data,
                     ondata: (formData) => {
-                        formData.append('_token', Config._token);
+                        formData.append('_token', App._token);
                         return formData;
                     }
                 },
@@ -85,7 +84,7 @@
             console.log('文件已删除', file);
         });
     </script>
-@stop
+@endpush
 @section('content')
     <div class="card border-light mb-3">
         <div class="card-body">
@@ -116,9 +115,9 @@
             <li class="nav-item">
                 <a class="nav-link" data-toggle="tab" href="#markdownLinkPanel">Markdown with Link</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#deletePanel">Delete Link</a>
-            </li>
+{{--            <li class="nav-item">--}}
+{{--                <a class="nav-link" data-toggle="tab" href="#deletePanel">Delete Link</a>--}}
+{{--            </li>--}}
         </ul>
         <div id="navTabContent" class="tab-content">
             <div class="tab-pane fade in active show" id="urlPanel">
@@ -136,10 +135,9 @@
             <div class="tab-pane fade" id="markdownLinkPanel">
                 <div class="link-container" id="markdownLinks"></div>
             </div>
-            <div class="tab-pane fade" id="deletePanel">
-                <div class="link-container" id="deleteCode"></div>
-            </div>
+{{--            <div class="tab-pane fade" id="deletePanel">--}}
+{{--                <div class="link-container" id="deleteCode"></div>--}}
+{{--            </div>--}}
         </div>
     </div>
 @stop
-
