@@ -45,8 +45,19 @@ class   InstallCommand extends Command
             $this->warn('Already Installed!');
             exit;
         }
-
         // step 2
+        $sqlFile = install_path('data/database.sqlite');
+        $sqlSampleFile = install_path('data/database.sample.sqlite');
+        if (!file_exists($sqlSampleFile)) {
+            $this->warn('[database.sample.sqlite] file missing,Please make sure the project complete!');
+            exit;
+        }
+        if (!file_exists($sqlFile)) {
+            $this->warn('Database not found,Creating...');
+            copy($sqlSampleFile, $sqlFile);
+        }
+
+        // step 3
         $envSampleFile = base_path('.env.example');
         $envFile = base_path('.env');
         if (!file_exists($envSampleFile)) {
@@ -69,19 +80,8 @@ class   InstallCommand extends Command
         } else {
             file_put_contents($envFile, $env);
         }
-        // step 3
-        $this->call('config:cache');
         // step 4
-        $sqlFile = install_path('data/database.sqlite');
-        $sqlSampleFile = install_path('data/database.sample.sqlite');
-        if (!file_exists($sqlSampleFile)) {
-            $this->warn('[database.sample.sqlite] file missing,Please make sure the project complete!');
-            exit;
-        }
-        if (!file_exists($sqlFile)) {
-            $this->warn('Database not found,Creating...');
-            copy($sqlSampleFile, $sqlFile);
-        }
+        $this->call('config:cache');
         $this->call('migrate', ['--force' => true, '--seed' => true]);
         file_put_contents($lockFile, '');
         $this->call('config:cache');
