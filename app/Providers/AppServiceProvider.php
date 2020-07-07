@@ -28,8 +28,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (Schema::hasTable('users')) {
-            Schema::defaultStringLength(191);
-        }
+        Schema::defaultStringLength(191);
     }
 }
