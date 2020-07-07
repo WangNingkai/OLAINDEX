@@ -59,6 +59,8 @@
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="actionAccount"
                                      data-id="{{ $account->id }}">
+                                    <a class="dropdown-item view_account"
+                                       href="{{ route('drive',['hash' => $account->hash_id]) }}" target="_blank">查看资源</a>
                                     <a class="dropdown-item set_account"
                                        href="javascript:void(0)">设为主账号</a>
                                     <a class="dropdown-item view_account"
