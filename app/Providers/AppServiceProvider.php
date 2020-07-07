@@ -18,10 +18,7 @@ class AppServiceProvider extends ServiceProvider
     {
         if ($this->app->isLocal()) {
             $this->app->register(TelescopeServiceProvider::class);
-        } else {
-            Telescope::ignoreMigrations();
         }
-
     }
 
     /**
@@ -31,5 +28,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Schema::defaultStringLength(191);
     }
 }
