@@ -58,6 +58,7 @@ class   InstallCommand extends Command
         }
 
         // step 3
+        $this->warn('Env file not found,Creating...');
         $envSampleFile = base_path('.env.example');
         $envFile = base_path('.env');
         if (!file_exists($envSampleFile)) {
