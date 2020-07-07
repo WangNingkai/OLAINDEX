@@ -105,6 +105,11 @@ class AdminController extends BaseController
         return redirect()->back();
     }
 
+    /**
+     * 主账号设置
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function accountSet(Request $request)
     {
         $id = $request->post('id', 0);
@@ -120,6 +125,12 @@ class AdminController extends BaseController
         ]);
     }
 
+    /**
+     * 账号备注
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function accountRemark($id, Request $request)
     {
         $account = Account::find($id);
@@ -139,6 +150,32 @@ class AdminController extends BaseController
     }
 
     /**
+     * 账号删除
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
+    public function accountDelete(Request $request)
+    {
+
+        $id = $request->post('id', 0);
+        $account = Account::find($id);
+        if (!$account) {
+            return response()->json([
+                'error' => '账号不存在！'
+            ]);
+        }
+        if ($account->delete()) {
+            return response()->json([
+                'error' => ''
+            ]);
+        }
+        return response()->json([
+            'error' => '删除失败'
+        ]);
+    }
+
+    /**
      * 账号详情
      * @param $id
      * @return \Illuminate\Http\JsonResponse
@@ -146,19 +183,15 @@ class AdminController extends BaseController
     public function accountDetail($id)
     {
         $key = 'ac:id:' . $id;
-        if (!Cache::has($key)) {
+        $info = Cache::remember($key, 60, static function () use ($id) {
             $data = OneDrive::account($id)->fetchInfo();
             $quota = array_get($data, 'quota', '');
             if (!$quota) {
-                return response()->json($data);
+                return $data;
             }
-            Cache::add($key, $data, 300);
-            $info = Cache::get($key);
-        } else {
-            $info = Cache::get($key);
-        }
-        $data = array_get($info, 'quota', []);
-        return response()->json($data);
+            return $data;
+        });
+        return response()->json($info);
     }
 
     /**
@@ -169,17 +202,14 @@ class AdminController extends BaseController
     public function driveDetail($id)
     {
         $key = 'dr:id:' . $id;
-        if (!Cache::has($key)) {
+        $info = Cache::remember($key, 60, static function () use ($id) {
             $data = OneDrive::account($id)->fetchMe();
             $id = array_get($data, 'id', '');
             if (!$id) {
-                return response()->json($data);
+                return $data;
             }
-            Cache::add($key, $data, 300);
-            $info = Cache::get($key);
-        } else {
-            $info = Cache::get($key);
-        }
+            return $data;
+        });
         return response()->json($info);
     }
 }
