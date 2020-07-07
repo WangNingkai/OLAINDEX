@@ -18,7 +18,9 @@ class AppServiceProvider extends ServiceProvider
     {
         if ($this->app->isLocal()) {
             $this->app->register(TelescopeServiceProvider::class);
-        } else {
+        }
+
+        if ($this->app->isProduction()) {
             Telescope::ignoreMigrations();
         }
 
