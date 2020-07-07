@@ -69,10 +69,8 @@ class   InstallCommand extends Command
         } else {
             file_put_contents($envFile, $env);
         }
-
         // step 3
         $this->call('config:cache');
-
         // step 4
         $sqlFile = install_path('data/database.sqlite');
         $sqlSampleFile = install_path('data/database.sample.sqlite');
@@ -84,8 +82,7 @@ class   InstallCommand extends Command
             $this->warn('Database not found,Creating...');
             copy($sqlSampleFile, $sqlFile);
         }
-        $this->call('migrate');
-        $this->call('db:seed');
+        $this->call('migrate', ['--force' => true, '--seed' => true]);
         file_put_contents($lockFile, '');
         $this->call('config:cache');
         $this->info('default name: [ admin ]');
