@@ -9,6 +9,7 @@
 namespace App\Console\Commands;
 
 use App\Service\Constants;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class   InstallCommand extends Command
@@ -84,7 +85,7 @@ class   InstallCommand extends Command
         // step 4
         $this->call('config:cache');
         $this->call('migrate', ['--force' => true, '--seed' => true]);
-        file_put_contents($lockFile, '');
+        file_put_contents($lockFile, Carbon::now());
         $this->call('config:cache');
         $this->info('default name: [ admin ]');
         $this->info('default password: [ 123456 ]');
