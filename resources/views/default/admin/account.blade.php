@@ -22,7 +22,8 @@
             </ul>
         </div>
         <div class="card-body table-responsive">
-            <a class="btn btn-sm btn-primary" href="{{ route('install') }}" target="_blank"><i class="ri-add-fill"></i> 新增账号</a>
+            <a class="btn btn-sm btn-primary" href="{{ route('install') }}" target="_blank"><i class="ri-add-fill"></i>
+                新增账号</a>
             <table class="table table-hover table-borderless">
                 <thead>
                 <tr>
@@ -30,7 +31,7 @@
                     <th scope="col">类型</th>
                     <th scope="col">状态</th>
                     <th scope="col">刷新时间</th>
-                    <th scope="col">备注 <span class="small">(选择显示)</span> </th>
+                    <th scope="col">备注 <span class="small">(选择显示)</span></th>
                     <th scope="col">操作</th>
                 </tr>
                 </thead>
@@ -44,7 +45,8 @@
                         <td>{{ $account->updated_at }}</td>
                         <td>
                             <label>
-                                <input type="text" class="remark form-control form-control-sm" value="{{ $account->remark }}"
+                                <input type="text" class="remark form-control form-control-sm"
+                                       value="{{ $account->remark }}"
                                        data-id="{{ $account->id }}">
                             </label>
                         </td>
@@ -196,11 +198,11 @@
                 axios.get('/admin/account/' + account_id)
                     .then(function(response) {
                         let data = response.data
-                        $('#total').val(readablizeBytes(data.total))
-                        $('#deleted').val(readablizeBytes(data.deleted))
-                        $('#used').val(readablizeBytes(data.used))
-                        $('#remaining').val(readablizeBytes(data.remaining))
-                        $('#state').val(data.state)
+                        $('#total').val(readablizeBytes(data.quota.total))
+                        $('#deleted').val(readablizeBytes(data.quota.deleted))
+                        $('#used').val(readablizeBytes(data.quota.used))
+                        $('#remaining').val(readablizeBytes(data.quota.remaining))
+                        $('#state').val(data.quota.state)
 
                         setTimeout(function() {
                             $('.loading').hide()
@@ -216,11 +218,38 @@
                     })
             })
             $('.delete_account').on('click', function(e) {
-                Swal.fire(
-                    '删除？',
-                    '对不起，暂时无法删除！',
-                    'warning',
-                )
+                Swal.fire({
+                    title: '确定删除吗?',
+                    text: '删除后无法恢复!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                }).then((result) => {
+                    if (result.value) {
+                        let account_id = $('.delete_account').parent().attr('data-id')
+                        axios.post('/admin/account/delete', {
+                            id: account_id,
+                        })
+                            .then(function(response) {
+                                let data = response.data
+                                console.log(data)
+                                if (data.error === '') {
+                                    Swal.fire('删除成功！')
+                                    window.location.reload()
+                                }
+                            })
+                            .catch(function(error) {
+                                console.log(error)
+                            })
+                            .then(function() {
+                                // always executed
+                            })
+                    }
+                })
+
             })
             $('.remark').on('change', function(e) {
                 let account_id = $(this).attr('data-id')

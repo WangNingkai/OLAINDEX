@@ -44,6 +44,7 @@ class OauthController extends BaseController
             $tokenExpires = $_accessToken->getExpires();
             $params = array_merge($config, compact('remark', 'accessToken', 'refreshToken', 'tokenExpires'));
             Account::create($params);
+            Cache::forget('ac:list');
             return redirect()->route('admin.account.list');
         } catch (IdentityProviderException $e) {
             $this->showMessage('Error requesting access token. ' . $e->getMessage(), true);
