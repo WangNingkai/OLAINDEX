@@ -82,7 +82,7 @@
             <div class="col-lg-12">
                 <p class="text-muted">
                     {!! marked(setting('copyright','Designed
-                    by [IMWNK](https://imwnk.cn/) | Powered by [OLAINDEX](https://git.io/OLAINDEX)'),true) !!}.
+                    by [IMWNK](https://imwnk.cn/) | Powered by [OLAINDEX](https://git.io/OLAINDEX)'),true) !!}
                 </p>
             </div>
         </div>
