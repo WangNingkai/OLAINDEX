@@ -28,8 +28,11 @@ class GraphClient
 
     protected $body = '';
 
+    protected $id;
+
     public function __construct($id)
     {
+        $this->id = $id;
         $token = new AccessToken($id);
         if (!$token) {
             throw new \RuntimeException('Not Found AccessToken.');
@@ -90,7 +93,11 @@ class GraphClient
                 ->setTimeout(3000)
                 ->addHeaders($this->headers)
                 ->attachBody($this->body);
-            Log::info('请求MsGraph Api', [$this->method, $this->query]);
+            Log::info('请求MsGraph Api', [
+                'account' => $this->id,
+                'method' => $this->method,
+                'query' => $this->query
+            ]);
             $resp = $query->execute();
         } catch (\Microsoft\Graph\Exception\GraphException $e) {
             Log::error($e->getMessage(), $e->getTrace());
