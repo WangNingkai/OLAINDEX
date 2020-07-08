@@ -64,7 +64,7 @@ class AccessToken
 
             // Store the new values
             $this->storeTokens($newToken);
-            Log::info('刷新AccessToken', ['account_id', $this->account->id]);
+            Log::info('刷新accessToken', ['account_id', $this->account->id]);
             return $newToken->getToken();
         } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
             Log::error($e->getMessage(), $e->getTrace());

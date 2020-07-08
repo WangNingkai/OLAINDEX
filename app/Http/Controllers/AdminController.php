@@ -183,16 +183,8 @@ class AdminController extends BaseController
      */
     public function accountDetail($id)
     {
-        $key = 'ac:id:' . $id;
-        $info = Cache::remember($key, 60, static function () use ($id) {
-            $data = OneDrive::account($id)->fetchInfo();
-            $quota = array_get($data, 'quota', '');
-            if (!$quota) {
-                return $data;
-            }
-            return $data;
-        });
-        return response()->json($info);
+        $data = OneDrive::account($id)->fetchInfo();
+        return response()->json($data);
     }
 
     /**
@@ -202,15 +194,7 @@ class AdminController extends BaseController
      */
     public function driveDetail($id)
     {
-        $key = 'dr:id:' . $id;
-        $info = Cache::remember($key, 60, static function () use ($id) {
-            $data = OneDrive::account($id)->fetchMe();
-            $id = array_get($data, 'id', '');
-            if (!$id) {
-                return $data;
-            }
-            return $data;
-        });
-        return response()->json($info);
+        $data = OneDrive::account($id)->fetchMe();
+        return response()->json($data);
     }
 }
