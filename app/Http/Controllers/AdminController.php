@@ -166,6 +166,7 @@ class AdminController extends BaseController
             ]);
         }
         if ($account->delete()) {
+            Cache::forget('ac:list');
             return response()->json([
                 'error' => ''
             ]);
