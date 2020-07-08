@@ -59,11 +59,10 @@ CREATE TABLE IF NOT EXISTS `migrations` (
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 	(1, '2014_10_12_000000_create_users_table', 1),
-	(2, '2018_08_08_100000_create_telescope_entries_table', 1),
-	(3, '2019_08_19_000000_create_failed_jobs_table', 1),
-	(4, '2019_10_09_143144_create_settings_table', 1),
-	(5, '2020_03_29_160103_create_account_table', 1),
-	(6, '2020_06_02_100822_create_short_urls_table', 1);
+	(2, '2019_08_19_000000_create_failed_jobs_table', 1),
+	(3, '2019_10_09_143144_create_settings_table', 1),
+	(4, '2020_03_29_160103_create_account_table', 1),
+	(5, '2020_06_02_100822_create_short_urls_table', 1);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 
 -- 导出  表 ola.settings 结构

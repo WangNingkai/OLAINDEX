@@ -41,7 +41,6 @@
         "spatie/laravel-short-schedule": "^1.1"
     },
     "require-dev": {
-        "laravel/telescope": "^3.5",
         "barryvdh/laravel-debugbar": "^3.3",
         "barryvdh/laravel-ide-helper": "^2.6",
         "facade/ignition": "^2.0",
