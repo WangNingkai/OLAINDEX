@@ -52,8 +52,10 @@ class AccessToken
             'urlAccessToken' => $clientConfig->getUrlAccessToken(),
             'urlResourceOwnerDetails' => '',
             'scopes' => $clientConfig->getScopes(),
-            'resource' => $clientConfig->getRestEndpoint(),
         ];
+        if ($accountType === 'CN') {
+            $oauthConfig['resource'] = $clientConfig->getRestEndpoint();
+        }
         $oauthClient = new GenericProvider($oauthConfig);
         try {
             $newToken = $oauthClient->getAccessToken('refresh_token', [
