@@ -96,7 +96,7 @@ class ImageController extends BaseController
                 'filename' => $resp['name'],
                 'size' => $resp['size'],
                 'time' => $resp['lastModifiedDateTime'],
-                'url' => route('drive.query', ['hash' => $hash, 'query' => url_encode($filePath), 'download' => 1]),
+                'url' => shorten_url(route('drive.query', ['hash' => $hash, 'query' => url_encode($filePath), 'download' => 1])),
             ];
             @unlink($path);
             return $this->success($data);
