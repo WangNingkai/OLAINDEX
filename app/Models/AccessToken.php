@@ -45,9 +45,9 @@ class AccessToken
         $clientConfig = (new Client())
             ->setAccountType($accountType);
         $form_params = [
-            'client_id' => $clientConfig->getClientId(),
-            'client_secret' => $clientConfig->getclientSecret(),
-            'redirect_uri' => $clientConfig->getRedirectUri(),
+            'client_id' => $this->account->clientId,
+            'client_secret' => $this->account->clientSecret,
+            'redirect_uri' => $this->account->redirectUri,
             'refresh_token' => $this->account->refreshToken,
             'grant_type' => 'refresh_token',
         ];
