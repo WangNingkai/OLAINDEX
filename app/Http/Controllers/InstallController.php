@@ -103,10 +103,8 @@ class InstallController extends BaseController
             'urlAccessToken' => $clientConfig->getUrlAccessToken(),
             'urlResourceOwnerDetails' => '',
             'scopes' => Client::SCOPES,
+            'resource' => $clientConfig->getRestEndpoint(),
         ];
-        if ($accountType === 'CN') {
-            $oauthConfig['resource'] = $clientConfig->getRestEndpoint();
-        }
         $oauthClient = new GenericProvider($oauthConfig);
 
         // 临时缓存

@@ -9,7 +9,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
-use App\Models\Client;
 use Illuminate\Http\Request;
 use League\OAuth2\Client\Provider\GenericProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
@@ -30,11 +29,6 @@ class OauthController extends BaseController
         if (!$oauthConfig) {
             $this->showMessage('Invalid state');
             return redirect()->route('message');
-        }
-        $accountType = $oauthConfig['accountType'];
-        $clientConfig = (new Client())->setAccountType($accountType);
-        if ($accountType === 'CN') {
-            $oauthConfig['resource'] = $clientConfig->getRestEndpoint();
         }
         unset($oauthConfig['accountType']);
         $oauthClient = new GenericProvider($oauthConfig);
