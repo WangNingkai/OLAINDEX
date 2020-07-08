@@ -61,7 +61,8 @@ class AccessToken
             $error = [
                 'errorCode' => $curl->errorCode,
                 'errorMessage' => $curl->errorMessage,
-                'request' => $form_params
+                'request' => $form_params,
+                'response' => collect($curl->response)->toArray()
             ];
             Log::error('Error refresh access token. ', $error);
             return '';

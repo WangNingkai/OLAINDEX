@@ -52,7 +52,8 @@ class OauthController extends BaseController
             $error = [
                 'errorCode' => $curl->errorCode,
                 'errorMessage' => $curl->errorMessage,
-                'request' => $form_params
+                'request' => $form_params,
+                'response' => collect($curl->response)->toArray()
             ];
             Log::error('Error requesting access token. ', $error);
             $message = $curl->errorCode . ': ' . $curl->errorMessage . "\n";
