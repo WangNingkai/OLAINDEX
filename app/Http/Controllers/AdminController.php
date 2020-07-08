@@ -142,6 +142,7 @@ class AdminController extends BaseController
         $remark = $request->get('remark');
         $account->remark = $remark;
         if ($account->save()) {
+            Cache::forget('ac:list');
             return response()->json();
         }
         return response()->json([
