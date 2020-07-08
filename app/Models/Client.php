@@ -29,6 +29,7 @@ class Client
     const AUTHORIZE_ENDPOINT_CN = '/oauth2/authorize';
     const TOKEN_ENDPOINT_CN = '/oauth2/token';
 
+
     /**
      * @var string
      */

@@ -101,13 +101,14 @@ class InstallController extends BaseController
             'redirectUri' => $clientConfig->redirectUri,
             'urlAuthorize' => $clientConfig->getUrlAuthorize(),
             'urlAccessToken' => $clientConfig->getUrlAccessToken(),
-            'urlResourceOwnerDetails' => '',
             'scopes' => Client::SCOPES,
         ];
-        if ($accountType === 'CN') {
-            $oauthConfig['resource'] = $clientConfig->getRestEndpoint();
-        }
-        $oauthClient = new GenericProvider($oauthConfig);
+        $values = [
+            'client_id' => $oauthConfig['clientId'],
+            'redirect_uri' => $oauthConfig['redirectUri'],
+            'scope' => $oauthConfig['scopes'],
+            'response_type' => 'code',
+        ];
 
         // 临时缓存
         $tmpKey = str_random();
@@ -120,9 +121,9 @@ class InstallController extends BaseController
             $state = route('callback') . '?' . http_build_query(['state' => $state]);
         }
 
-        $authUrl = $oauthClient->getAuthorizationUrl([
-            'state' => $state
-        ]);
+        $values['state'] = $state;
+        $query = http_build_query($values, '', '&', PHP_QUERY_RFC3986);
+        $authUrl = $clientConfig->getUrlAuthorize() . "?{$query}";
         return redirect()->away($authUrl);
     }
 

@@ -8,8 +8,8 @@
 
 namespace App\Models;
 
-use League\OAuth2\Client\Provider\GenericProvider;
-use League\OAuth2\Client\Token\AccessTokenInterface;
+use Curl\Curl;
+use Illuminate\Support\Collection;
 use Log;
 
 class AccessToken
@@ -27,14 +27,14 @@ class AccessToken
 
     /**
      * Store the access_token
-     * @param AccessTokenInterface $accessToken
+     * @param Collection $accessToken
      */
     private function storeTokens($accessToken): void
     {
         $data = [
-            'accessToken' => $accessToken->getToken(),
-            'refreshToken' => $accessToken->getRefreshToken(),
-            'tokenExpires' => $accessToken->getExpires(),
+            'accessToken' => $accessToken->get('access_token'),
+            'refreshToken' => $accessToken->get('refresh_token'),
+            'tokenExpires' => $accessToken->get('expires_in') + time(),
         ];
         $this->account->update($data);
     }
@@ -44,32 +44,32 @@ class AccessToken
         $accountType = $this->getAccountType();
         $clientConfig = (new Client())
             ->setAccountType($accountType);
-        $oauthConfig = [
-            'clientId' => $this->account->clientId,
-            'clientSecret' => $this->account->clientSecret,
-            'redirectUri' => $this->account->redirectUri,
-            'urlAuthorize' => $clientConfig->getUrlAuthorize(),
-            'urlAccessToken' => $clientConfig->getUrlAccessToken(),
-            'urlResourceOwnerDetails' => '',
-            'scopes' => $clientConfig->getScopes(),
+        $form_params = [
+            'client_id' => $clientConfig->getClientId(),
+            'client_secret' => $clientConfig->getclientSecret(),
+            'redirect_uri' => $clientConfig->getRedirectUri(),
+            'refresh_token' => $this->account->refreshToken,
+            'grant_type' => 'refresh_token',
         ];
         if ($accountType === 'CN') {
-            $oauthConfig['resource'] = $clientConfig->getRestEndpoint();
+            $form_params['resource'] = $clientConfig->getRestEndpoint();
         }
-        $oauthClient = new GenericProvider($oauthConfig);
-        try {
-            $newToken = $oauthClient->getAccessToken('refresh_token', [
-                'refresh_token' => $this->account->refreshToken
-            ]);
-
-            // Store the new values
-            $this->storeTokens($newToken);
-            Log::info('刷新accessToken', ['account_id', $this->account->id]);
-            return $newToken->getToken();
-        } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
-            Log::error($e->getMessage(), $e->getTrace());
+        $curl = new Curl();
+        $curl->setHeader('Content-Type', 'application/x-www-form-urlencoded');
+        $curl->post($clientConfig->getUrlAccessToken(), $form_params);
+        if ($curl->error) {
+            $error = [
+                'errno' => $curl->errorCode,
+                'message' => $curl->errorMessage,
+            ];
+            Log::error('Error refresh access token. ', $error);
             return '';
+
         }
+        $_accessToken = collect($curl->response);
+        $this->storeTokens($_accessToken);
+        Log::info('刷新accessToken', ['account_id', $this->account->id]);
+        return $_accessToken->get('access_token');
     }
 
     public function getAccountType()
