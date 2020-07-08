@@ -1,3 +1,4 @@
 *.sqlite
 !*.sample.sqlite
+!*.sqlite.bak
 
