@@ -28,7 +28,7 @@ class OauthController extends BaseController
         $authCode = $request->get('code');
         $oauthConfig = Cache::pull($state);
         if (!$oauthConfig) {
-            $this->showMessage('Invalid state', false);
+            $this->showMessage('Invalid state', true);
             return redirect()->route('message');
         }
         $config = $oauthConfig;

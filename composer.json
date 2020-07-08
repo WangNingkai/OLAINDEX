@@ -32,7 +32,6 @@
         "laravel/helpers": "^1.1",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^2.0",
-        "league/oauth2-client": "^2.4",
         "microsoft/microsoft-graph": "^1.13",
         "nette/finder": "^2.5",
         "overtrue/laravel-lang": "^3.0",

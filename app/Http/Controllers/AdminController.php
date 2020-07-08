@@ -53,7 +53,7 @@ class AdminController extends BaseController
         /* @var $user User */
         $user = $request->user();
         if (!\Hash::check($request->get('old_password'), $user->password)) {
-            $this->showMessage('原密码错误！', false);
+            $this->showMessage('原密码错误！', true);
             return redirect()->back();
         }
 
@@ -62,7 +62,7 @@ class AdminController extends BaseController
         ])->save()) {
             $this->showMessage('修改成功！');
         } else {
-            $this->showMessage('密码修改失败！', false);
+            $this->showMessage('密码修改失败！', true);
         }
 
 

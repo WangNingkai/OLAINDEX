@@ -13,7 +13,6 @@ use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use League\OAuth2\Client\Provider\GenericProvider;
 
 /**
  * 初始化安装操作
