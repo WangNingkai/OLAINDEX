@@ -59,8 +59,9 @@ class AccessToken
         $curl->post($clientConfig->getUrlAccessToken(), $form_params);
         if ($curl->error) {
             $error = [
-                'errno' => $curl->errorCode,
-                'message' => $curl->errorMessage,
+                'errorCode' => $curl->errorCode,
+                'errorMessage' => $curl->errorMessage,
+                'request' => $form_params
             ];
             Log::error('Error refresh access token. ', $error);
             return '';
