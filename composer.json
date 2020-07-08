@@ -37,8 +37,7 @@
         "nette/finder": "^2.5",
         "overtrue/laravel-lang": "^3.0",
         "php-curl-class/php-curl-class": "^8.0",
-        "rap2hpoutre/laravel-log-viewer": "^1.6",
-        "spatie/laravel-short-schedule": "^1.1"
+        "rap2hpoutre/laravel-log-viewer": "^1.6"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.3",
