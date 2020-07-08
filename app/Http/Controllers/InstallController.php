@@ -9,8 +9,6 @@
 namespace App\Http\Controllers;
 
 use Cache;
-use Validator;
-use App\Helpers\Tool;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -106,6 +104,9 @@ class InstallController extends BaseController
             'urlResourceOwnerDetails' => '',
             'scopes' => Client::SCOPES,
         ];
+        if ($accountType === 'CN') {
+            $oauthConfig['resource'] = $clientConfig->getRestEndpoint();
+        }
         $oauthClient = new GenericProvider($oauthConfig);
 
         // 临时缓存
@@ -116,7 +117,7 @@ class InstallController extends BaseController
         // state :若代理跳转为<链接>否则为<缓存键>
         $state = $tmpKey;
         if (str_contains($redirectUri, 'github.io')) {
-            $state = route('callback') .'?'. http_build_query(['state' => $state]);
+            $state = route('callback') . '?' . http_build_query(['state' => $state]);
         }
 
         $authUrl = $oauthClient->getAuthorizationUrl([

@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
+use App\Models\Client;
 use Illuminate\Http\Request;
 use League\OAuth2\Client\Provider\GenericProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
@@ -30,7 +31,11 @@ class OauthController extends BaseController
             $this->showMessage('Invalid state');
             return redirect()->route('message');
         }
-        $config = $oauthConfig;
+        $accountType = $oauthConfig['accountType'];
+        $clientConfig = (new Client())->setAccountType($accountType);
+        if ($accountType === 'CN') {
+            $oauthConfig['resource'] = $clientConfig->getRestEndpoint();
+        }
         unset($oauthConfig['accountType']);
         $oauthClient = new GenericProvider($oauthConfig);
         try {
@@ -42,7 +47,7 @@ class OauthController extends BaseController
             $accessToken = $_accessToken->getToken();
             $refreshToken = $_accessToken->getRefreshToken();
             $tokenExpires = $_accessToken->getExpires();
-            $params = array_merge($config, compact('remark', 'accessToken', 'refreshToken', 'tokenExpires'));
+            $params = array_merge($oauthConfig, compact('remark', 'accessToken', 'refreshToken', 'tokenExpires'));
             Account::create($params);
             Cache::forget('ac:list');
             return redirect()->route('admin.account.list');
