@@ -50,6 +50,7 @@ Route::get('t/{code}', 'IndexController')->name('short');
 // 多网盘支持
 Route::get('d/{hash}', 'DiskController@query')->name('drive');
 Route::get('d/{hash}/q/{query?}', 'DiskController@query')->name('drive.query')->where('query', '.*');
+Route::any('d/{hash}/e/{query?}', 'DiskController@edit')->name('drive.edit');
 Route::get('d/{hash}/id/{query?}', 'DiskController@query')->name('drive.query.id');
 // 搜索
 Route::get('d/{hash}/search', 'DiskController@search')->name('drive.search');

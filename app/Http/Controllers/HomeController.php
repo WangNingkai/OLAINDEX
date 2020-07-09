@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
 use App\Models\Account;
+use Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Cache;
@@ -106,8 +107,15 @@ class HomeController extends BaseController
         });
         // 过滤预留文件
         $list = array_where($list, static function ($value) {
-            return !in_array($value['name'], ['README.md', 'HEAD.md', '.password', '.deny'], false);
+            return !in_array($value['name'], ['.password', '.deny'], false);
         });
+
+        // 未登录不显示readme head
+        if (Auth::guest()) {
+            $list = array_where($list, static function ($value) {
+                return !in_array($value['name'], ['README.md', 'HEAD.md',], false);
+            });
+        }
         // todo:过滤隐藏文件
         return $list;
     }

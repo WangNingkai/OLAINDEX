@@ -14,6 +14,7 @@ use App\Helpers\Tool;
 use App\Models\Account;
 use Cache;
 use OneDrive;
+use Auth;
 
 class DiskController extends BaseController
 {
@@ -226,6 +227,101 @@ class DiskController extends BaseController
         return view(config('olaindex.theme') . 'search', compact('accounts', 'hash', 'list'));
     }
 
+    public function edit(Request $request, $hash, $query = '')
+    {
+        // 账号处理
+        $accounts = Cache::remember('ac:list', 600, static function () {
+            return Account::query()
+                ->select(['id', 'remark'])
+                ->where('status', 1)->get();
+        });
+        if (blank($accounts)) {
+            Cache::forget('ac:list');
+            abort(404, '请先登录绑定账号！');
+        }
+        $account_id = HashidsHelper::decode($hash);
+        if (!$account_id) {
+            abort(404, '账号不存在');
+        }
+        // 资源处理
+        $cacheKey1 = "d:item:{$account_id}:{$query}";
+        $cacheKey2 = "d:content:{$query}";
+        $config = setting($hash);
+        $root = array_get($config, 'root', '/');
+        $root = trim($root, '/');
+        $service = OneDrive::account($account_id);
+        if ($request->isMethod('POST')) {
+            $resp = $service->uploadById($query, $request->get('content'));
+            if (array_key_exists('code', $resp)) {
+                $this->showMessage(array_get($resp, 'message', '404NotFound'), true);
+                return redirect()->route('message');
+            }
+            Cache::forget($cacheKey1);
+            Cache::forget($cacheKey2);
+            $this->showMessage('提交成功');
+            return redirect()->back();
+        }
+        // 缓存处理
+        $item = Cache::remember($cacheKey1, setting('cache_expires'), static function () use ($service, $query) {
+            return $service->fetchItemById($query);
+        });
+        if (array_key_exists('code', $item)) {
+            $this->showMessage(array_get($item, 'message', '404NotFound'), true);
+            Cache::forget("d:item:{$account_id}:{$query}");
+            return redirect()->route('message');
+        }
+        $parentPath = array_get($item, 'parentReference.path', '');
+        $parentPath = rawurldecode(str_after($parentPath, '/drive/root:'));
+        $parentPath = str_after($parentPath, $root);
+        $path = explode('/', $parentPath);
+        if ($root !== $item['name']) {
+            $path[] = $item['name'];
+        }
+        if ($parentPath === '' && $item['name'] === 'root') {
+            $path = [];
+        }
+        $path = array_where($path, static function ($value) {
+            return !blank($value);
+        });
+        $file = $this->formatItem($item, true);
+        $download = $file['@microsoft.graph.downloadUrl'];
+        try {
+            $content = Cache::remember("d:content:{$account_id}:{$file['id']}", setting('cache_expires'), static function () use ($download) {
+                return Tool::fetchContent($download);
+            });
+        } catch (\Exception $e) {
+            $this->showMessage($e->getMessage(), true);
+            Cache::forget('d:content:' . $file['id']);
+            $content = '';
+        }
+
+        $file['content'] = $content;
+        return view(config('olaindex.theme') . 'editor', compact('accounts', 'hash', 'path', 'file'));
+    }
+
+    public function create(Request $request, $hash)
+    {
+        // 账号处理
+        $accounts = Cache::remember('ac:list', 600, static function () {
+            return Account::query()
+                ->select(['id', 'remark'])
+                ->where('status', 1)->get();
+        });
+        if (blank($accounts)) {
+            Cache::forget('ac:list');
+            abort(404, '请先登录绑定账号！');
+        }
+        $account_id = HashidsHelper::decode($hash);
+        if (!$account_id) {
+            abort(404, '账号不存在');
+        }
+        $config = setting($hash);
+        $root = array_get($config, 'root', '/');
+        $root = trim($root, '/');
+        $service = OneDrive::account($account_id);
+
+    }
+
     /**
      * 过滤
      * @param array $list
@@ -239,8 +335,15 @@ class DiskController extends BaseController
         });
         // 过滤预留文件
         $list = array_where($list, static function ($value) {
-            return !in_array($value['name'], ['README.md', 'HEAD.md', '.password', '.deny'], false);
+            return !in_array($value['name'], ['.password', '.deny'], false);
         });
+
+        // 未登录不显示readme head
+        if (Auth::guest()) {
+            $list = array_where($list, static function ($value) {
+                return !in_array($value['name'], ['README.md', 'HEAD.md',], false);
+            });
+        }
         // todo:过滤隐藏文件
         return $list;
     }
@@ -328,10 +431,12 @@ class DiskController extends BaseController
      */
     private function filterItem($item)
     {
-        $illegalFile = ['README.md', 'HEAD.md', '.password', '.deny'];
-        $pattern = '/^README\.md|HEAD\.md|\.password|\.deny/';
-        if (in_array($item['name'], $illegalFile, false) || preg_match($pattern, $item['name'], $arr) > 0) {
-            abort(403, '非法请求');
+        if (Auth::guest()) {
+            $illegalFile = ['README.md', 'HEAD.md', '.password', '.deny'];
+            $pattern = '/^README\.md|HEAD\.md|\.password|\.deny/';
+            if (in_array($item['name'], $illegalFile, false) || preg_match($pattern, $item['name'], $arr) > 0) {
+                abort(403, '非法请求');
+            }
         }
         // todo:处理隐藏文件
         return $item;
