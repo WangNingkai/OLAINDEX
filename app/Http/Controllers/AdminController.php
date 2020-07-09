@@ -18,6 +18,17 @@ use Cache;
 class AdminController extends BaseController
 {
     /**
+     * 缓存清理
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function clear()
+    {
+        Cache::flush();
+        $this->showMessage('清理缓存成功！');
+        return redirect()->back();
+    }
+
+    /**
      * 全局设置
      * @param Request $request
      * @return mixed

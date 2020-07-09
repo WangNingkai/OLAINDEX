@@ -266,7 +266,7 @@ class Tool
         $curl->setConnectTimeout(5);
         $curl->setTimeout(3);
         $curl->setRetry(3);
-//        $curl->setProxy('socks5://127.0.0.1:1080');
+        $curl->setProxy('socks5://127.0.0.1:1080');
         $curl->setOpts([
             CURLOPT_AUTOREFERER => true,
             CURLOPT_FAILONERROR => true,

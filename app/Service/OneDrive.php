@@ -10,14 +10,26 @@ namespace App\Service;
 
 class OneDrive
 {
+    /**
+     * @var int $id account_id
+     */
     public $id;
 
+    /**
+     * Bind account
+     * @param $account_id
+     * @return $this
+     */
     public function account($account_id): OneDrive
     {
         $this->id = $account_id;
         return $this;
     }
 
+    /**
+     * Get drive
+     * @return array|mixed|null
+     */
     public function fetchInfo()
     {
         $query = '/me/drive';
@@ -29,6 +41,10 @@ class OneDrive
         return $err;
     }
 
+    /**
+     * Get profile
+     * @return array|mixed|null
+     */
     public function fetchMe()
     {
         $query = '/me';
@@ -40,6 +56,11 @@ class OneDrive
         return $err;
     }
 
+    /**
+     * List children
+     * @param string $query
+     * @return array
+     */
     public function fetchList($query = '/')
     {
         $trans = trans_request_path($query, true, false);
@@ -48,6 +69,11 @@ class OneDrive
         return $this->_requestNextLink($resp);
     }
 
+    /**
+     * List children by item id
+     * @param $id
+     * @return array
+     */
     public function fetchListById($id)
     {
         $query = "/me/drive/items/{$id}/children";
@@ -55,6 +81,11 @@ class OneDrive
         return $this->_requestNextLink($resp);
     }
 
+    /**
+     * Get item
+     * @param string $query
+     * @return array|mixed|null
+     */
     public function fetchItem($query = '/')
     {
         $trans = trans_request_path($query, true, true);
@@ -67,6 +98,11 @@ class OneDrive
         return $err;
     }
 
+    /**
+     * Get item by id
+     * @param string $id
+     * @return array|mixed|null
+     */
     public function fetchItemById($id)
     {
         $query = "/me/drive/items/{$id}";
@@ -78,6 +114,12 @@ class OneDrive
         return $err;
     }
 
+    /**
+     * Search items
+     * @param string $query
+     * @param string $keyword
+     * @return array
+     */
     public function search($query = '/', $keyword = '')
     {
         $trans = trans_request_path($query, true, false);
@@ -86,6 +128,13 @@ class OneDrive
         return $this->_requestNextLink($resp);
     }
 
+    /**
+     * Copy item
+     * @param $id
+     * @param $target_id
+     * @param $fileName
+     * @return array|mixed|null
+     */
     public function copy($id, $target_id, $fileName)
     {
         $driveResp = $this->fetchInfo();
@@ -111,6 +160,13 @@ class OneDrive
         return $err;
     }
 
+    /**
+     * Move item
+     * @param $id
+     * @param $target_id
+     * @param $fileName
+     * @return array|mixed|null
+     */
     public function move($id, $target_id, $fileName)
     {
         $query = "/me/drive/items/{$id}";
@@ -130,6 +186,12 @@ class OneDrive
         return $err;
     }
 
+    /**
+     * Create folder
+     * @param $fileName
+     * @param $target_id
+     * @return array|mixed|null
+     */
     public function mkdir($fileName, $target_id)
     {
         $query = "/me/drive/items/{$target_id}/children";
@@ -142,7 +204,13 @@ class OneDrive
         return $err;
     }
 
-    public function deleteItem($id, $eTag = '')
+    /**
+     * Delete item
+     * @param $id
+     * @param string $eTag
+     * @return array|mixed|null
+     */
+    public function delete($id, $eTag = '')
     {
         $query = "/me/drive/items/{$id}";
         $headers = [];
@@ -157,6 +225,12 @@ class OneDrive
         return $err;
     }
 
+    /**
+     * Get thumbnails
+     * @param $id
+     * @param string $size
+     * @return array|mixed|null
+     */
     public function fetchThumbnails($id, $size = 'large')
     {
         $query = "/me/drive/items/{$id}/thumbnails/0/{$size}";
@@ -168,6 +242,12 @@ class OneDrive
         return $err;
     }
 
+    /**
+     * Upload
+     * @param $query
+     * @param $content
+     * @return array|mixed|null
+     */
     public function upload($query, $content)
     {
         $trans = trans_request_path($query, true, false);
@@ -180,6 +260,12 @@ class OneDrive
         return $err;
     }
 
+    /**
+     * Upload by id
+     * @param $id
+     * @param $content
+     * @return array|mixed|null
+     */
     public function uploadById($id, $content)
     {
         $query = "/me/drive/items/{$id}/content";
@@ -191,6 +277,29 @@ class OneDrive
         return $err;
     }
 
+    /**
+     * Upload from parent item
+     * @param $parentId
+     * @param $filename
+     * @param $content
+     * @return array|mixed|null
+     */
+    public function uploadByParentId($parentId, $filename, $content)
+    {
+        $query = "/me/drive/items/{$parentId}:/{$filename}:/content";
+        $resp = $this->_request('put', $query, ['body' => $content]);
+        $err = $resp->getError();
+        if (!$err) {
+            return $resp->getBody();
+        }
+        return $err;
+    }
+
+    /**
+     * Item id to item path
+     * @param $id
+     * @return array|mixed|string|null
+     */
     public function id2Path($id)
     {
         $resp = $this->fetchItemById($id);
@@ -219,6 +328,11 @@ class OneDrive
         return $path;
     }
 
+    /**
+     * Item path to item id
+     * @param $path
+     * @return array|mixed|null
+     */
     public function path2Id($path)
     {
         $resp = $this->fetchItem($path);
@@ -229,6 +343,13 @@ class OneDrive
         return array_get($resp, 'id', '');
     }
 
+    /**
+     * Request graph serve
+     * @param string $method
+     * @param string $query
+     * @param array $options
+     * @return GraphResponse|false|\Microsoft\Graph\Http\GraphResponse|mixed|string|null
+     */
     private function _request($method = 'GET', $query = '/me/drive/root/children', $options = [])
     {
         $headers = array_get($options, 'headers', []);
@@ -252,11 +373,17 @@ class OneDrive
             ->setQuery($query)
             ->addHeaders($headers)
             ->attachBody($body)
-//            ->setProxy('socks5://127.0.0.1:1080')
+            ->setProxy('socks5://127.0.0.1:1080')
             ->setReturnStream(false);
         return $req->execute();
     }
 
+    /**
+     * Request next page
+     * @param $response
+     * @param array $result
+     * @return array
+     */
     private function _requestNextLink($response, &$result = [])
     {
         if ($response->getError()) {

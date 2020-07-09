@@ -299,7 +299,7 @@ class DiskController extends BaseController
         return view(config('olaindex.theme') . 'editor', compact('accounts', 'hash', 'path', 'file'));
     }
 
-    public function create(Request $request, $hash)
+    public function create(Request $request, $hash, $query = '')
     {
         // 账号处理
         $accounts = Cache::remember('ac:list', 600, static function () {
@@ -315,11 +315,17 @@ class DiskController extends BaseController
         if (!$account_id) {
             abort(404, '账号不存在');
         }
-        $config = setting($hash);
-        $root = array_get($config, 'root', '/');
-        $root = trim($root, '/');
         $service = OneDrive::account($account_id);
-
+        // todo:创建readme head文件
+        $parentId = $query;
+        $fileName = $request->get('fileName');
+        $content = $request->get('content');
+        $resp = $service->uploadByParentId($parentId, $fileName, $content);
+        if (array_key_exists('code', $resp)) {
+            $this->showMessage(array_get($resp, 'message', '404NotFound'), true);
+            return redirect()->route('message');
+        }
+        return redirect()->back();
     }
 
     /**

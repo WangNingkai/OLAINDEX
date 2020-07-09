@@ -35,6 +35,7 @@ Route::prefix('admin')->middleware('auth')->group(static function () {
     // 基础设置
     Route::any('/', 'AdminController@config')->name('admin.config');
     Route::any('profile', 'AdminController@profile')->name('admin.profile');
+    Route::get('clear', 'AdminController@clear')->name('cache.clear');
     // 账号详情
     Route::get('account/list', 'AdminController@account')->name('admin.account.list');
     Route::get('account/{id}', 'AdminController@accountDetail')->name('admin.account.info');
@@ -50,7 +51,8 @@ Route::get('t/{code}', 'IndexController')->name('short');
 // 多网盘支持
 Route::get('d/{hash}', 'DiskController@query')->name('drive');
 Route::get('d/{hash}/q/{query?}', 'DiskController@query')->name('drive.query')->where('query', '.*');
-Route::any('d/{hash}/e/{query?}', 'DiskController@edit')->name('drive.edit');
+Route::any('d/{hash}/e/{query?}', 'DiskController@edit')->name('drive.edit')->middleware('auth');
+Route::any('d/{hash}/c/{query?}', 'DiskController@create')->name('drive.create')->middleware('auth');
 Route::get('d/{hash}/id/{query?}', 'DiskController@query')->name('drive.query.id');
 // 搜索
 Route::get('d/{hash}/search', 'DiskController@search')->name('drive.search');
