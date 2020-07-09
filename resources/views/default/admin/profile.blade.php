@@ -1,5 +1,5 @@
 @extends('default.layouts.main')
-@section('title', '其它')
+@section('title', '账户')
 @section('content')
     <div class="card mb-3">
         <div class="card-header">
