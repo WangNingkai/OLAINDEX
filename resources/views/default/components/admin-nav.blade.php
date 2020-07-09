@@ -8,12 +8,12 @@
     </li>
     <li class="nav-item">
         <a class="nav-link @if( request()->routeIs(['admin.profile'])) active @endif"
-           href="{{ route('admin.profile') }}">其它</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{{  route('cache.clear') }}">清理缓存</a>
+           href="{{ route('admin.profile') }}">账户</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="{{  route('admin.logs') }}">日志</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{  route('cache.clear') }}"><i class="ri-delete-bin-fill"></i> 清理缓存</a>
     </li>
 </ul>

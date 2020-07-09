@@ -9,6 +9,10 @@
             <form action="" method="post">
                 @csrf
                 <div class="form-group">
+                    <label class="form-control-label" for="name"><b>用户名</b></label>
+                    <input type="text" class="form-control" id="name" name="name" value="{{ auth()->user()->name }}">
+                </div>
+                <div class="form-group">
                     <label class="form-control-label" for="old_password"><b>原密码</b></label>
                     <input type="password" class="form-control" id="old_password" name="old_password">
                 </div>

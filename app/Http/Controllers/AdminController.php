@@ -56,6 +56,7 @@ class AdminController extends BaseController
         }
 
         $request->validate([
+            'name' => 'required|min:5|max:20',
             'old_password' => 'required',
             'password' => 'required|min:8|confirmed',
             'password_confirmation' => 'required|min:8',
@@ -69,6 +70,7 @@ class AdminController extends BaseController
         }
 
         if ($user->fill([
+            'name' => $request->get('name'),
             'password' => \Hash::make($request->get('password'))
         ])->save()) {
             $this->showMessage('修改成功！');
