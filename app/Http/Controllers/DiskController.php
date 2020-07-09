@@ -115,7 +115,7 @@ class DiskController extends BaseController
                             });
                         } catch (\Exception $e) {
                             $this->showMessage($e->getMessage(), true);
-                            Cache::forget('d:content:' . $file['id']);
+                            Cache::forget("d:content:{$account_id}:{$file['id']}");
                             $content = '';
                         }
 
@@ -161,7 +161,7 @@ class DiskController extends BaseController
         }
         // 处理列表
         // 读取预设资源
-        $doc = $this->filterDoc($list);
+        $doc = $this->filterDoc($account_id, $list);
         // 资源过滤
         $list = $this->filter($list);
         // 格式化处理
@@ -245,7 +245,7 @@ class DiskController extends BaseController
         }
         // 资源处理
         $cacheKey1 = "d:item:{$account_id}:{$query}";
-        $cacheKey2 = "d:content:{$query}";
+        $cacheKey2 = "d:content:{$account_id}:{$query}";
         $config = setting($hash);
         $root = array_get($config, 'root', '/');
         $root = trim($root, '/');
@@ -259,7 +259,7 @@ class DiskController extends BaseController
             Cache::forget($cacheKey1);
             Cache::forget($cacheKey2);
             $this->showMessage('提交成功');
-            return redirect()->back();
+            return redirect()->route('home');
         }
         // 缓存处理
         $item = Cache::remember($cacheKey1, setting('cache_expires'), static function () use ($service, $query) {
@@ -291,7 +291,7 @@ class DiskController extends BaseController
             });
         } catch (\Exception $e) {
             $this->showMessage($e->getMessage(), true);
-            Cache::forget('d:content:' . $file['id']);
+            Cache::forget("d:content:{$account_id}:{$file['id']}");
             $content = '';
         }
 
@@ -315,17 +315,21 @@ class DiskController extends BaseController
         if (!$account_id) {
             abort(404, '账号不存在');
         }
-        $service = OneDrive::account($account_id);
-        // todo:创建readme head文件
-        $parentId = $query;
+        if ($request->isMethod('GET')) {
+            $parentId = $query;
+            $fileName = $request->get('fileName');
+            return view(config('olaindex.theme') . 'create', compact('parentId', 'fileName'));
+        }
+        $parentId = $request->get('parentId');
         $fileName = $request->get('fileName');
         $content = $request->get('content');
+        $service = OneDrive::account($account_id);
         $resp = $service->uploadByParentId($parentId, $fileName, $content);
         if (array_key_exists('code', $resp)) {
             $this->showMessage(array_get($resp, 'message', '404NotFound'), true);
             return redirect()->route('message');
         }
-        return redirect()->back();
+        return redirect()->route('home');
     }
 
     /**
@@ -384,10 +388,11 @@ class DiskController extends BaseController
 
     /**
      * 获取说明文件
+     * @param $account_id
      * @param array $list
      * @return array
      */
-    private function filterDoc($list = [])
+    private function filterDoc($account_id, $list = [])
     {
         $readme = array_where($list, static function ($value) {
             return $value['name'] === 'README.md';
@@ -399,12 +404,12 @@ class DiskController extends BaseController
         if (!empty($readme)) {
             $readme = array_first($readme);
             try {
-                $readme = Cache::remember('d:content:' . $readme['id'], setting('cache_expires'), static function () use ($readme) {
+                $readme = Cache::remember("d:content:{$account_id}:{$readme['id']}", setting('cache_expires'), static function () use ($readme) {
                     return Tool::fetchContent($readme['@microsoft.graph.downloadUrl']);
                 });
             } catch (\Exception $e) {
                 $this->showMessage($e->getMessage(), true);
-                Cache::forget('d:content:' . $readme['id']);
+                Cache::forget("d:content:{$account_id}:{$readme['id']}");
                 $readme = '';
             }
         } else {
@@ -413,12 +418,12 @@ class DiskController extends BaseController
         if (!empty($head)) {
             $head = array_first($head);
             try {
-                $head = Cache::remember('d:content:' . $head['id'], setting('cache_expires'), static function () use ($head) {
+                $head = Cache::remember("d:content:{$account_id}:{$head['id']}", setting('cache_expires'), static function () use ($head) {
                     return Tool::fetchContent($head['@microsoft.graph.downloadUrl']);
                 });
             } catch (\Exception $e) {
                 $this->showMessage($e->getMessage(), true);
-                Cache::forget('d:content:' . $head['id']);
+                Cache::forget("d:content:{$account_id}:{$head['id']}");
                 $head = '';
             }
 

@@ -73,7 +73,7 @@ class HomeController extends BaseController
             return redirect()->route('message');
         }
         // 读取预设资源
-        $doc = $this->filterDoc($list);
+        $doc = $this->filterDoc($account_id, $list);
         // 资源过滤
         $list = $this->filter($list);
         // 格式化处理
@@ -150,10 +150,11 @@ class HomeController extends BaseController
 
     /**
      * 获取说明文件
+     * @param $account_id
      * @param array $list
      * @return array
      */
-    private function filterDoc($list = [])
+    private function filterDoc($account_id, $list = [])
     {
         $readme = array_where($list, static function ($value) {
             return $value['name'] === 'README.md';
@@ -165,12 +166,12 @@ class HomeController extends BaseController
         if (!empty($readme)) {
             $readme = array_first($readme);
             try {
-                $readme = Cache::remember('d:content:' . $readme['id'], setting('cache_expires'), static function () use ($readme) {
+                $readme = Cache::remember("d:content:{$account_id}:{$readme['id']}", setting('cache_expires'), static function () use ($readme) {
                     return Tool::fetchContent($readme['@microsoft.graph.downloadUrl']);
                 });
             } catch (\Exception $e) {
                 $this->showMessage($e->getMessage(), true);
-                Cache::forget('d:content:' . $readme['id']);
+                Cache::forget("d:content:{$account_id}:{$readme['id']}");
                 $readme = '';
             }
         } else {
@@ -179,12 +180,12 @@ class HomeController extends BaseController
         if (!empty($head)) {
             $head = array_first($head);
             try {
-                $head = Cache::remember('d:content:' . $head['id'], setting('cache_expires'), static function () use ($head) {
+                $head = Cache::remember("d:content:{$account_id}:{$head['id']}", setting('cache_expires'), static function () use ($head) {
                     return Tool::fetchContent($head['@microsoft.graph.downloadUrl']);
                 });
             } catch (\Exception $e) {
                 $this->showMessage($e->getMessage(), true);
-                Cache::forget('d:content:' . $head['id']);
+                Cache::forget("d:content:{$account_id}:{$head['id']}");
                 $head = '';
             }
 

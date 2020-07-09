@@ -11,6 +11,7 @@ return [
     'php_path' => env('PHP_PATH', '/usr/bin/php'),
     'api' => [
         'allow_list' => explode(',', env('API_ALLOW'))
-    ]
+    ],
+    'proxy' => env('PROXY', '')
 ];
 

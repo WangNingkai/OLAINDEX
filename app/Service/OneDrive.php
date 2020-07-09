@@ -373,7 +373,7 @@ class OneDrive
             ->setQuery($query)
             ->addHeaders($headers)
             ->attachBody($body)
-//            ->setProxy('socks5://127.0.0.1:1080')
+            ->setProxy(config('olaindex.proxy'))
             ->setReturnStream(false);
         return $req->execute();
     }
