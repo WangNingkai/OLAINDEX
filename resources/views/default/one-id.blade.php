@@ -1,5 +1,5 @@
 @extends('default.layouts.main')
-@section('title','OLAINDEX')
+@section('title', setting('site_name','OLAINDEX'))
 @section('content')
     <div class="row mb-3">
         @if(count($accounts) > 1)

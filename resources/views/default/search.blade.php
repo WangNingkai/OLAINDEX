@@ -1,5 +1,5 @@
 @extends('default.layouts.main')
-@section('title','OLAINDEX')
+@section('title', setting('site_name','OLAINDEX'))
 @section('content')
     <div class="card border-light mb-3">
         <div class="card-header">搜索</div>
