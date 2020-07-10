@@ -33,7 +33,7 @@ A simple, full-featured OneDrive directory index web app, Built on top of the La
 
 ## Preview
 
-![预览](https://ojpoc641y.qnssl.com/FpR4_obUhswLJXCEBgKOV4Pz7qg3.png)
+![Preview](https://ojpoc641y.qnssl.com/FpR4_obUhswLJXCEBgKOV4Pz7qg3.png)
 
 ## Installation
 
@@ -41,15 +41,18 @@ A simple, full-featured OneDrive directory index web app, Built on top of the La
 
 [Documentation](https://wangningkai.github.io/OLAINDEX)
 
-## Update
-
 
 ```bash
-git pull 
-composer install # Install dependency
+cd web-project
+git clone https://github.com/WangNingkai/OLAINDEX.git tmp 
+mv tmp/.git . 
+rm -rf tmp 
+git reset --hard 
+composer install -vvv  # Install Dependencies
+chmod -R 777 storage # Important！！！Ensure that the cache directory has read and write permissions
+chown -R www:www * # this 'www' refer to the serve user group
+composer run install-app # installation app
 
-chmod -R 755 storage # Important！！！Ensure that the cache directory has read and write permissions
-chown -R www:www *
 ```
 
 
