@@ -1,6 +1,9 @@
 ---
-name: Bug Report
-about: 提供问题，帮助改进
+name: 问题反馈
+about: 关于OLAINDEX出现的问题与建议
+title: ''
+labels: bug
+assignees: WangNingkai
 
 ---
 
