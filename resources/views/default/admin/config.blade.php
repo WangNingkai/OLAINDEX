@@ -36,6 +36,10 @@
                     <a class="nav-item nav-link active" id="nav-basic-tab" data-toggle="tab" href="#config-basic"
                        role="tab"
                        aria-controls="config-basic" aria-selected="true">基础设置</a>
+                    <a class="nav-item nav-link" id="nav-image-tab" data-toggle="tab" href="#config-image" role="tab"
+                       aria-controls="config-image" aria-selected="false">图床设置</a>
+                    <a class="nav-item nav-link" id="nav-search-tab" data-toggle="tab" href="#config-search" role="tab"
+                       aria-controls="config-search" aria-selected="false">搜索设置</a>
                     <a class="nav-item nav-link" id="nav-show-tab" data-toggle="tab" href="#config-show" role="tab"
                        aria-controls="config-show" aria-selected="false">显示设置</a>
                 </div>
@@ -68,6 +72,38 @@
                                        value="{{ setting('cache_expires',1800) }}">
                                 <span class="form-text text-danger">建议缓存时间小于60分钟，否则会导致缓存失效</span>
                             </div>
+                            <div class="form-group">
+                                <label class="form-control-label" for="copyright">自定义版权显示</label>
+                                <input type="text" class="form-control" id="copyright" name="copyright"
+                                       value="{{ setting('copyright') }}">
+                                <span
+                                    class="form-text text-danger">留空则不显示。使用markdown格式表示 如：Made by [xxx](https://xxx)</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-control-label" for="stats_code">统计代码</label>
+                                <input type="text" class="form-control" id="stats_code" name="stats_code"
+                                       value="{{ setting('stats_code', '') }}">
+                                <span class="form-text text-danger">站点统计代码</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-control-label" for="access_token">第三方接口token</label>
+                                <input type="text" class="form-control" id="access_token" name="access_token"
+                                       value="{{ setting('access_token', '') }}">
+                                <span class="form-text text-danger">第三方接口token(图床、文件列表)</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-control-label" for="api_limit">接口访问频率限制（次/分钟）</label>
+                                <input type="text" class="form-control" id="api_limit" name="api_limit"
+                                       value="{{ setting('api_limit', 30) }}">
+                            </div>
+                            <button type="submit" class="btn btn-primary">提交</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="config-image" role="tabpanel" aria-labelledby="nav-image-tab">
+                    <div class="my-4">
+                        <form action="" method="post">
+                            @csrf
                             <div class="form-group">
                                 <div class="custom-control custom-switch">
                                     <input type="checkbox" class="custom-control-input"
@@ -104,6 +140,14 @@
                                 </select>
                                 <span class="form-text text-danger">图床默认将使用主账号</span>
                             </div>
+                            <button type="submit" class="btn btn-primary">提交</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="config-search" role="tabpanel" aria-labelledby="nav-search-tab">
+                    <div class="my-4">
+                        <form action="" method="post">
+                            @csrf
                             <div class="form-group">
                                 <div class="custom-control custom-switch">
                                     <input type="checkbox" class="custom-control-input"
@@ -114,30 +158,7 @@
                                     <input type="hidden" name="open_search"
                                            value="{{ setting('open_search', 0) }}">
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-control-label" for="copyright">自定义版权显示</label>
-                                <input type="text" class="form-control" id="copyright" name="copyright"
-                                       value="{{ setting('copyright') }}">
-                                <span
-                                    class="form-text text-danger">留空则不显示。使用markdown格式表示 如：Made by [xxx](https://xxx)</span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-control-label" for="stats_code">统计代码</label>
-                                <input type="text" class="form-control" id="stats_code" name="stats_code"
-                                       value="{{ setting('stats_code', '') }}">
-                                <span class="form-text text-danger">站点统计代码</span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-control-label" for="access_token">第三方接口token</label>
-                                <input type="text" class="form-control" id="access_token" name="access_token"
-                                       value="{{ setting('access_token', '') }}">
-                                <span class="form-text text-danger">第三方接口token(图床、文件列表)</span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-control-label" for="api_limit">接口访问频率限制（次/分钟）</label>
-                                <input type="text" class="form-control" id="api_limit" name="api_limit"
-                                       value="{{ setting('api_limit', 30) }}">
+                                <span class="form-text text-danger">使用Microsoft Graph搜索功能</span>
                             </div>
                             <button type="submit" class="btn btn-primary">提交</button>
                         </form>
