@@ -40,7 +40,7 @@ class UninstallCommand extends Command
         $sqlFile = install_path('data' . DIRECTORY_SEPARATOR . 'database.sqlite');
         $step_1 = file_exists($lockFile) && @unlink($lockFile);
         $step_2 = file_exists($envFile) && @unlink($envFile);
-        $step_3 = file_exists($sqlFile) && rename($sqlFile, $sqlFile . '.' . str_random(10) . '.bak');
+        $step_3 = file_exists($sqlFile) && rename($sqlFile, $sqlFile . '.' . date('YmdHis') . '.bak');
         ($step_1 && $step_2 && $step_3) ? $this->info('Uninstall Complete') : $this->info('Uninstall Failed');
     }
 }
