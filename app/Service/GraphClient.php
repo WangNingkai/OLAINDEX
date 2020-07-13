@@ -8,9 +8,6 @@
 
 namespace App\Service;
 
-use App\Models\AccessToken;
-use App\Models\Client;
-use Curl\Curl;
 use GuzzleHttp\Psr7\Stream;
 use Log;
 
