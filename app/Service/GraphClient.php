@@ -30,21 +30,12 @@ class GraphClient
 
     protected $id;
 
-    public function __construct($id)
+    public function __construct($accessToken, $restEndpoint)
     {
-        $this->id = $id;
-        $token = new AccessToken($id);
-        if (!$token) {
-            throw new \RuntimeException('Not Found AccessToken.');
-        }
-        $accountType = $token->getAccountType();
-        $clientConfig = (new Client())
-            ->setAccountType($accountType);
-        $accessToken = $token->getAccessToken();
         $graph = new Graph();
         $graph->setAccessToken($accessToken)
             ->setApiVersion('v1.0')
-            ->setBaseUrl($clientConfig->getRestEndpoint());
+            ->setBaseUrl($restEndpoint);
         $this->graph = $graph;
     }
 
@@ -93,11 +84,6 @@ class GraphClient
                 ->setTimeout(3000)
                 ->addHeaders($this->headers)
                 ->attachBody($this->body);
-            Log::info('请求MsGraph Api', [
-                'account' => $this->id,
-                'method' => $this->method,
-                'query' => $this->query
-            ]);
             $resp = $query->execute();
         } catch (\Microsoft\Graph\Exception\GraphException $e) {
             Log::error($e->getMessage(), $e->getTrace());

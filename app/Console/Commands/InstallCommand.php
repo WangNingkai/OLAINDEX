@@ -57,6 +57,7 @@ class   InstallCommand extends Command
             $this->warn('Database not found,Creating...');
             copy($sqlSampleFile, $sqlFile);
         }
+        chmod($sqlFile, 0755);
 
         // step 3
         $this->warn('Env file not found,Creating...');

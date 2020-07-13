@@ -8,12 +8,27 @@
 
 namespace App\Service;
 
+use App\Models\AccessToken;
+use App\Models\Client;
+use Log;
+use RuntimeException;
+
 class OneDrive
 {
     /**
      * @var int $id account_id
      */
     public $id;
+
+    /**
+     * @var string $accessToken accessToken
+     */
+    public $accessToken;
+
+    /**
+     * @var string $restEndpoint restEndpoint
+     */
+    public $restEndpoint;
 
     /**
      * Bind account
@@ -23,6 +38,17 @@ class OneDrive
     public function account($account_id): OneDrive
     {
         $this->id = $account_id;
+        $token = new AccessToken($account_id);
+        if (!$token) {
+            throw new RuntimeException('Not Found AccessToken.');
+        }
+        $accessToken = $token->getAccessToken();
+        $this->accessToken = $accessToken;
+        $accountType = $token->getAccountType();
+        $clientConfig = (new Client())
+            ->setAccountType($accountType);
+        $restEndpoint = $clientConfig->getRestEndpoint();
+        $this->restEndpoint = $restEndpoint;
         return $this;
     }
 
@@ -61,7 +87,7 @@ class OneDrive
      * @param string $query
      * @return array
      */
-    public function fetchList($query = '/')
+    public function fetchList($query = '/'): array
     {
         $trans = trans_request_path($query, true, false);
         $query = "/me/drive/root{$trans}children";
@@ -74,7 +100,7 @@ class OneDrive
      * @param $id
      * @return array
      */
-    public function fetchListById($id)
+    public function fetchListById($id): array
     {
         $query = "/me/drive/items/{$id}/children";
         $resp = $this->_request('get', $query, ['isList' => true, 'params' => ['expand' => 'thumbnails']]);
@@ -120,7 +146,7 @@ class OneDrive
      * @param string $keyword
      * @return array
      */
-    public function search($query = '/', $keyword = '')
+    public function search($query = '/', $keyword = ''): array
     {
         $trans = trans_request_path($query, true, false);
         $query = "/me/drive/root{$trans}search(q='{$keyword}')";
@@ -368,13 +394,22 @@ class OneDrive
         if (!empty($params)) {
             $query .= '?' . build_query($params, false);
         }
-        $req = new GraphClient($this->id);
+
+        $req = new GraphClient($this->accessToken, $this->restEndpoint);
         $req->setMethod($method)
             ->setQuery($query)
             ->addHeaders($headers)
             ->attachBody($body)
             ->setProxy(config('olaindex.proxy'))
             ->setReturnStream(false);
+
+        Log::info('请求MsGraph Api', [
+            'account' => $this->id,
+            'method' => $method,
+            'query' => $query,
+            'endpoint' => $this->restEndpoint
+        ]);
+
         return $req->execute();
     }
 
@@ -384,7 +419,7 @@ class OneDrive
      * @param array $result
      * @return array
      */
-    private function _requestNextLink($response, &$result = [])
+    private function _requestNextLink($response, &$result = []): array
     {
         if ($response->getError()) {
             return $result;
