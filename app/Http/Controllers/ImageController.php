@@ -20,11 +20,6 @@ class ImageController extends BaseController
 {
     use ApiResponseTrait;
 
-    public function __construct()
-    {
-        $this->middleware('custom');
-    }
-
     /**
      * 图床
      * @return mixed
@@ -50,7 +45,10 @@ class ImageController extends BaseController
         $account_id = 0;
         $hash = '';
         if ($accounts) {
-            $account_id = setting('primary_account', 0);
+            $account_id = setting('image_host_account');
+            if (!$account_id) {
+                $account_id = setting('primary_account', 0);
+            }
             if (!$account_id) {
                 $account_id = array_get($accounts->first(), 'id');
             }

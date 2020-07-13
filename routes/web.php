@@ -57,8 +57,8 @@ Route::get('d/{hash}/id/{query?}', 'DiskController@query')->name('drive.query.id
 // 搜索
 Route::get('d/{hash}/search', 'DiskController@search')->name('drive.search');
 // 图床
-Route::get('image', 'ImageController@index')->name('image');
-Route::post('image-upload', 'ImageController@upload')->name('image.upload');
+Route::get('image', 'ImageController@index')->name('image')->middleware('custom');
+Route::post('image-upload', 'ImageController@upload')->name('image.upload')->middleware('custom');
 // 首页
 Route::get('/', 'HomeController')->name('home');
 

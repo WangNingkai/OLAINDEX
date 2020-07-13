@@ -15,9 +15,10 @@ class CustomMiddleware
      */
     public function handle($request, Closure $next)
     {
-        // 图床过滤
+        // 图床开关
         $openImageHost = setting('open_image_host', 0);
-        if (!$openImageHost && $request->routeIs(['image', 'image.upload'])) {
+        $publicImageHost = setting('public_image_host', 0);
+        if (!$openImageHost || (!$publicImageHost && auth()->guest())) {
             abort(404);
         }
         return $next($request);

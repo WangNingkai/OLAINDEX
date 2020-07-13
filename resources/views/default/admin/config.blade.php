@@ -74,11 +74,35 @@
                                            id="open_image_host"
                                            @if( setting('open_image_host',0)) checked
                                            @endif onchange="$('input[name=\'open_image_host\']').val(Number(this.checked))">
-                                    <label class="custom-control-label" for="open_image_host">开启图床</label>
+                                    <label class="custom-control-label" for="open_image_host">开启图床功能</label>
                                     <input type="hidden" name="open_image_host"
                                            value="{{ setting('open_image_host', 0) }}">
                                 </div>
-                                <span class="form-text text-danger">图床地址将使用主账号设置</span>
+                                <span class="form-text text-danger">开启后OneDrive可以作为图床使用</span>
+                            </div>
+                            <div class="form-group">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input"
+                                           id="public_image_host"
+                                           @if( setting('public_image_host',0)) checked
+                                           @endif onchange="$('input[name=\'public_image_host\']').val(Number(this.checked))">
+                                    <label class="custom-control-label" for="public_image_host">公共图床功能</label>
+                                    <input type="hidden" name="public_image_host"
+                                           value="{{ setting('public_image_host', 0) }}">
+                                </div>
+                                <span class="form-text text-danger">开启后任何人都可以访问使用</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-control-label" for="image_host_account"><b>选择图床账号</b></label>
+                                <select class="custom-select" name="image_host_account" id="image_host_account">
+                                    @foreach( $accounts as $key => $account)
+                                        <option value="{{ $account['id'] }}"
+                                                @if(setting('image_host_account') === $account['id'] ) selected @endif>
+                                            {{ $account['remark'] }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <span class="form-text text-danger">图床默认将使用主账号</span>
                             </div>
                             <div class="form-group">
                                 <div class="custom-control custom-switch">

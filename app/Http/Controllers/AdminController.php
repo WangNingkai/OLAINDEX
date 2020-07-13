@@ -35,8 +35,17 @@ class AdminController extends BaseController
      */
     public function config(Request $request)
     {
+        $accounts = Cache::remember('ac:list', 600, static function () {
+            return Account::query()
+                ->select(['id', 'remark'])
+                ->where('status', 1)->get();
+        });
+        if (blank($accounts)) {
+            Cache::forget('ac:list');
+            abort(404, '请先绑定账号！');
+        }
         if ($request->isMethod('get')) {
-            return view(config('olaindex.theme') . 'admin.config');
+            return view(config('olaindex.theme') . 'admin.config', compact('accounts'));
         }
         $data = $request->except('_token');
         Setting::batchUpdate($data);

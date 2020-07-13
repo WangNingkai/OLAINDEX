@@ -46,7 +46,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('home') }}"><i class="ri-home-fill"></i> 首页</a>
                 </li>
-                @if( setting('open_image_host',0) )
+                @if( setting('open_image_host',0) && (setting('public_image_host',0) || (!setting('public_image_host',0) && auth()->check())))
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('image') }}"><i class="ri-image-fill"></i> 图床</a>
                     </li>
