@@ -96,7 +96,7 @@
                                 <input type="text" class="form-control" id="api_limit" name="api_limit"
                                        value="{{ setting('api_limit', 30) }}">
                             </div>
-                            <button type="submit" class="btn btn-primary">提交</button>
+                            <button type="submit" class="btn btn-primary">提交 <i class="ri-check-fill"></i></button>
                         </form>
                     </div>
                 </div>
@@ -140,7 +140,7 @@
                                 </select>
                                 <span class="form-text text-danger">图床默认将使用主账号</span>
                             </div>
-                            <button type="submit" class="btn btn-primary">提交</button>
+                            <button type="submit" class="btn btn-primary">提交 <i class="ri-check-fill"></i></button>
                         </form>
                     </div>
                 </div>
@@ -160,7 +160,7 @@
                                 </div>
                                 <span class="form-text text-danger">使用Microsoft Graph搜索功能</span>
                             </div>
-                            <button type="submit" class="btn btn-primary">提交</button>
+                            <button type="submit" class="btn btn-primary">提交 <i class="ri-check-fill"></i></button>
                         </form>
                     </div>
                 </div>
@@ -205,7 +205,7 @@
                                 <input type="text" class="form-control" id="show_stream" name="show_stream"
                                        value="{{ setting('show_stream', '') }}">
                             </div>
-                            <button type="submit" class="btn btn-primary">提交</button>
+                            <button type="submit" class="btn btn-primary">提交 <i class="ri-check-fill"></i></button>
                         </form>
                     </div>
                 </div>
