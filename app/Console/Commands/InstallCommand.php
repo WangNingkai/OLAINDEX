@@ -76,7 +76,7 @@ class   InstallCommand extends Command
         $envExample = file_get_contents($envSampleFile);
         $env = str_replace($_search, $_replace, $envExample);
         if (file_exists($envFile)) {
-            if ($this->confirm('Already have [.env] ,overwrite?')) {
+            if ($this->confirm('Already have [.env] ,overwrite?', true)) {
                 @unlink($envFile);
                 file_put_contents($envFile, $env);
             }
