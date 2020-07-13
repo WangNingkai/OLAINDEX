@@ -8,6 +8,7 @@
 
 namespace App\Service;
 
+use Microsoft\Graph\Exception\GraphException;
 use GuzzleHttp\Psr7\Stream;
 use Log;
 
@@ -82,8 +83,8 @@ class GraphClient
                 ->addHeaders($this->headers)
                 ->attachBody($this->body);
             $resp = $query->execute();
-        } catch (\Microsoft\Graph\Exception\GraphException $e) {
-            Log::error($e->getMessage(), $e->getTrace());
+        } catch (GraphException $e) {
+            Log::error('请求MsGraph Api错误 ' . $e->getMessage(), $e->getTrace());
             return null;
         }
         if ($resp instanceof Stream) {

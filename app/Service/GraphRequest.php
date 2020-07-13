@@ -9,8 +9,8 @@
 namespace App\Service;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Stream;
 use Microsoft\Graph\Core\GraphConstants;
 use Microsoft\Graph\Exception\GraphException;
 
@@ -124,7 +124,7 @@ class GraphRequest
      *
      * @param string $http_errors A bool option to the Graph call
      *
-     * @return \Microsoft\Graph\Http\GraphRequest object
+     * @return GraphRequest
      */
     public function setHttpErrors($http_errors)
     {
@@ -156,7 +156,7 @@ class GraphRequest
     public function setReturnType($returnClass)
     {
         $this->returnType = $returnClass;
-        if ($this->returnType == "GuzzleHttp\Psr7\Stream") {
+        if ($this->returnType === "GuzzleHttp\Psr7\Stream") {
             $this->returnsStream = true;
         } else {
             $this->returnsStream = false;
@@ -198,7 +198,7 @@ class GraphRequest
     public function attachBody($obj)
     {
         // Attach streams & JSON automatically
-        if (is_string($obj) || is_a($obj, 'GuzzleHttp\\Psr7\\Stream')) {
+        if (is_string($obj) || $obj instanceof Stream) {
             $this->requestBody = $obj;
         } // By default, JSON-encode
         else {
@@ -299,7 +299,7 @@ class GraphRequest
             $client = $this->createGuzzleClient();
         }
 
-        $promise = $client->requestAsync(
+        return $client->requestAsync(
             $this->requestType,
             $this->_getRequestUrl(),
             [
@@ -330,12 +330,11 @@ class GraphRequest
                 return $returnObject;
             },
             // On fail, log the error and return null
-            function ($reason) {
+            static function ($reason) {
                 trigger_error("Async call failed: " . $reason->getMessage());
                 return null;
             }
         );
-        return $promise;
     }
 
     /**
@@ -354,7 +353,7 @@ class GraphRequest
             $client = $this->createGuzzleClient();
         }
         try {
-            $file = fopen($path, 'w');
+            $file = fopen($path, 'wb');
             if (!$file) {
                 throw new GraphException(GraphConstants::INVALID_FILE);
             }
@@ -398,9 +397,9 @@ class GraphRequest
                 $stream = \GuzzleHttp\Psr7\stream_for($file);
                 $this->requestBody = $stream;
                 return $this->execute($client);
-            } else {
-                throw new GraphException(GraphConstants::INVALID_FILE);
             }
+
+            throw new GraphException(GraphConstants::INVALID_FILE);
         } catch (GraphException $e) {
             throw new GraphException(GraphConstants::INVALID_FILE);
         }
@@ -413,13 +412,12 @@ class GraphRequest
      */
     private function _getDefaultHeaders()
     {
-        $headers = [
+        return [
             'Host' => $this->baseUrl,
             'Content-Type' => 'application/json',
             'SdkVersion' => 'Graph-php-' . GraphConstants::SDK_VERSION,
             'Authorization' => 'Bearer ' . $this->accessToken
         ];
-        return $headers;
     }
 
     /**
@@ -446,7 +444,7 @@ class GraphRequest
      */
     protected function getConcatenator()
     {
-        if (stripos($this->endpoint, "?") === false) {
+        if (strpos($this->endpoint, "?") === false) {
             return "?";
         }
         return "&";
@@ -475,9 +473,7 @@ class GraphRequest
             $clientSettings['verify'] = false;
             $clientSettings['proxy'] = $this->proxyPort;
         }
-        $client = new Client($clientSettings);
-
-        return $client;
+        return new Client($clientSettings);
     }
 
     public function getBaseUrl()

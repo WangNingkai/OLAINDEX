@@ -88,7 +88,7 @@ class GraphResponse
     /**
      * Get the undecoded body of the HTTP response
      *
-     * @return array The undecoded body
+     * @return string|null The undecoded body
      */
     public function getRawBody()
     {
@@ -153,8 +153,7 @@ class GraphResponse
     public function getNextLink()
     {
         if (array_key_exists("@odata.nextLink", $this->getBody())) {
-            $nextLink = $this->getBody()['@odata.nextLink'];
-            return $nextLink;
+            return $this->getBody()['@odata.nextLink'];
         }
         return null;
     }
@@ -169,8 +168,7 @@ class GraphResponse
     public function getDeltaLink()
     {
         if (array_key_exists("@odata.deltaLink", $this->getBody())) {
-            $deltaLink = $this->getBody()['@odata.deltaLink'];
-            return $deltaLink;
+            return $this->getBody()['@odata.deltaLink'];
         }
         return null;
     }

@@ -6,7 +6,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace App\Models;
+namespace App\Service;
 
 /**
  * Class Client
@@ -14,22 +14,6 @@ namespace App\Models;
  */
 class Client
 {
-    const DEFAULT_REDIRECT_URI = 'https://olaindex.github.io/oauth.html';
-    const API_VERSION = 'v1.0';
-    const SCOPES = 'offline_access user.read files.readwrite.all';
-
-    const REST_ENDPOINT = 'https://graph.microsoft.com/';
-    const AUTHORITY_URL = 'https://login.microsoftonline.com/common';
-    const AUTHORIZE_ENDPOINT = '/oauth2/v2.0/authorize';
-    const TOKEN_ENDPOINT = '/oauth2/v2.0/token';
-
-    // support 21vianet
-    const REST_ENDPOINT_CN = 'https://microsoftgraph.chinacloudapi.cn/';
-    const AUTHORITY_URL_CN = 'https://login.partner.microsoftonline.cn/common';
-    const AUTHORIZE_ENDPOINT_CN = '/oauth2/authorize';
-    const TOKEN_ENDPOINT_CN = '/oauth2/token';
-
-
     /**
      * @var string
      */
@@ -84,15 +68,15 @@ class Client
     {
         $this->accountType = $accountType;
         if ($this->accountType === 'COM') {
-            $this->authorizeUrl = self::AUTHORITY_URL;
-            $this->authorizeEndpoint = self::AUTHORIZE_ENDPOINT;
-            $this->tokenEndpoint = self::TOKEN_ENDPOINT;
-            $this->restEndpoint = self::REST_ENDPOINT;
+            $this->authorizeUrl = Constants::AUTHORITY_URL;
+            $this->authorizeEndpoint = Constants::AUTHORIZE_ENDPOINT;
+            $this->tokenEndpoint = Constants::TOKEN_ENDPOINT;
+            $this->restEndpoint = Constants::REST_ENDPOINT;
         } else {
-            $this->authorizeUrl = self::AUTHORITY_URL_CN;
-            $this->authorizeEndpoint = self::AUTHORIZE_ENDPOINT_CN;
-            $this->tokenEndpoint = self::TOKEN_ENDPOINT_CN;
-            $this->restEndpoint = self::REST_ENDPOINT_CN;
+            $this->authorizeUrl = Constants::AUTHORITY_URL_CN;
+            $this->authorizeEndpoint = Constants::AUTHORIZE_ENDPOINT_CN;
+            $this->tokenEndpoint = Constants::TOKEN_ENDPOINT_CN;
+            $this->restEndpoint = Constants::REST_ENDPOINT_CN;
         }
         return $this;
     }
@@ -121,12 +105,12 @@ class Client
 
     public function getRedirectUri()
     {
-        return $this->redirectUri ?? self::DEFAULT_REDIRECT_URI;
+        return $this->redirectUri ?? Constants::DEFAULT_REDIRECT_URI;
     }
 
     public function getScopes()
     {
-        return $this->scopes ?? self::SCOPES;
+        return $this->scopes ?? Constants::SCOPES;
     }
 
     public function getClientId()
@@ -141,7 +125,7 @@ class Client
 
     public function getApiVersion()
     {
-        return $this->apiVersion ?? self::API_VERSION;
+        return $this->apiVersion ?? Constants::API_VERSION;
     }
 
     public function getRestEndpoint()

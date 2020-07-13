@@ -8,8 +8,6 @@
 
 namespace App\Service;
 
-use App\Models\AccessToken;
-use App\Models\Client;
 use Log;
 use RuntimeException;
 
@@ -404,7 +402,7 @@ class OneDrive
             ->setReturnStream(false);
 
         Log::info('请求MsGraph Api', [
-            'account' => $this->id,
+            'account_id' => $this->id,
             'method' => $method,
             'query' => $query,
             'endpoint' => $this->restEndpoint

@@ -6,8 +6,9 @@
  * with this source code in the file LICENSE.
  */
 
-namespace App\Models;
+namespace App\Service;
 
+use App\Models\Account;
 use Curl\Curl;
 use Illuminate\Support\Collection;
 use Log;

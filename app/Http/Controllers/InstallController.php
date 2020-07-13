@@ -8,8 +8,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Service\Constants;
 use Cache;
-use App\Models\Client;
+use App\Service\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -62,7 +63,7 @@ class InstallController extends BaseController
             'redirectUri' => 'required',
         ]);
         $accountType = strtoupper($request->get('accountType', 'COM'));
-        $redirectUri = $request->get('redirectUri', Client::DEFAULT_REDIRECT_URI);
+        $redirectUri = $request->get('redirectUri', Constants::DEFAULT_REDIRECT_URI);
         $clientId = $request->get('clientId');
         $clientSecret = $request->get('clientSecret');
 
@@ -87,7 +88,7 @@ class InstallController extends BaseController
         ]);
 
         $accountType = strtoupper($request->get('accountType', 'COM'));
-        $redirectUri = $request->get('redirectUri', Client::DEFAULT_REDIRECT_URI);
+        $redirectUri = $request->get('redirectUri', Constants::DEFAULT_REDIRECT_URI);
         $clientId = $request->get('clientId');
         $clientSecret = $request->get('clientSecret');
         $clientConfig = (new Client())
@@ -100,7 +101,7 @@ class InstallController extends BaseController
             'redirectUri' => $clientConfig->redirectUri,
             'urlAuthorize' => $clientConfig->getUrlAuthorize(),
             'urlAccessToken' => $clientConfig->getUrlAccessToken(),
-            'scopes' => Client::SCOPES,
+            'scopes' => Constants::SCOPES,
         ];
         $values = [
             'client_id' => $oauthConfig['clientId'],

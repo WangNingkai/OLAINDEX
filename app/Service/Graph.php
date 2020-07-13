@@ -9,7 +9,7 @@
 namespace App\Service;
 
 use Microsoft\Graph\Core\GraphConstants;
-use Microsoft\Graph\Http\GraphCollectionRequest;
+use Microsoft\Graph\Exception\GraphException;
 
 class Graph
 {
@@ -56,9 +56,9 @@ class Graph
      *
      * @param string $baseUrl The URL to call
      *
-     * @return \Microsoft\Graph\Graph object
+     * @return Graph object
      */
-    public function setBaseUrl($baseUrl)
+    public function setBaseUrl($baseUrl): Graph
     {
         $this->_baseUrl = $baseUrl;
         return $this;
@@ -71,7 +71,7 @@ class Graph
      *
      * @return Graph object
      */
-    public function setApiVersion($apiVersion)
+    public function setApiVersion($apiVersion): Graph
     {
         $this->_apiVersion = $apiVersion;
         return $this;
@@ -86,7 +86,7 @@ class Graph
      *
      * @return Graph object
      */
-    public function setAccessToken($accessToken)
+    public function setAccessToken($accessToken): Graph
     {
         $this->_accessToken = $accessToken;
         return $this;
@@ -101,7 +101,7 @@ class Graph
      *
      * @return Graph object
      */
-    public function setProxyPort($port)
+    public function setProxyPort($port): Graph
     {
         $this->_proxyPort = $port;
         return $this;
@@ -111,13 +111,13 @@ class Graph
      * Creates a new request object with the given Graph information
      *
      * @param string $requestType The HTTP method to use, e.g. "GET" or "POST"
-     * @param string $endpoint    The Graph endpoint to call
+     * @param string $endpoint The Graph endpoint to call
      *
      * @return GraphRequest The request object, which can be used to
      *                      make queries against Graph
-     * @throws Exception\GraphException
+     * @throws GraphException
      */
-    public function createRequest($requestType, $endpoint)
+    public function createRequest($requestType, $endpoint): GraphRequest
     {
         return new GraphRequest(
             $requestType,
@@ -129,26 +129,4 @@ class Graph
         );
     }
 
-    /**
-     * Creates a new collection request object with the given
-     * Graph information
-     *
-     * @param string $requestType The HTTP method to use, e.g. "GET" or "POST"
-     * @param string $endpoint    The Graph endpoint to call
-     *
-     * @return GraphCollectionRequest The request object, which can be
-     *                                used to make queries against Graph
-     * @throws Exception\GraphException
-     */
-    public function createCollectionRequest($requestType, $endpoint)
-    {
-        return new GraphCollectionRequest(
-            $requestType,
-            $endpoint,
-            $this->_accessToken,
-            $this->_baseUrl,
-            $this->_apiVersion,
-            $this->_proxyPort
-        );
-    }
 }

@@ -12,7 +12,7 @@ namespace App\Service;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static \App\Service\OneDrive account(int $account_id)
+ * @method static OneDrive account(int $account_id)
  * @method static array|mixed|null fetchInfo()
  * @method static array|mixed|null fetchMe()
  * @method static array|mixed|null fetchList(string $query)

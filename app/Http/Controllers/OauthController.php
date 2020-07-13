@@ -9,7 +9,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
-use App\Models\Client;
+use App\Service\Client;
 use Curl\Curl;
 use Illuminate\Http\Request;
 use Cache;

@@ -33,7 +33,6 @@
         "laravel/tinker": "^2.0",
         "laravel/ui": "^2.0",
         "microsoft/microsoft-graph": "^1.13",
-        "nette/finder": "^2.5",
         "overtrue/laravel-lang": "^3.0",
         "php-curl-class/php-curl-class": "^8.0",
         "rap2hpoutre/laravel-log-viewer": "^1.6"
