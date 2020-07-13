@@ -58,7 +58,7 @@ class   InstallCommand extends Command
             copy($sqlSampleFile, $sqlFile);
         } else {
             $this->warn('Already have database file,Re-creating...');
-            rename($sqlFile, $sqlFile . '.bak');
+            rename($sqlFile, $sqlFile . '.' . str_random(10) . '.bak');
             copy($sqlSampleFile, $sqlFile);
         }
         chmod($sqlFile, 0755);
@@ -81,7 +81,7 @@ class   InstallCommand extends Command
         $env = str_replace($_search, $_replace, $envExample);
         if (file_exists($envFile)) {
             if ($this->confirm('Already have [.env] ,overwrite?', true)) {
-                @unlink($envFile);
+                rename($envFile, $envFile . '.' . str_random(10) . '.bak');
                 file_put_contents($envFile, $env);
             }
         } else {
