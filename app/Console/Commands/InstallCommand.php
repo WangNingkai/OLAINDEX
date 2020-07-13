@@ -56,6 +56,10 @@ class   InstallCommand extends Command
         if (!file_exists($sqlFile)) {
             $this->warn('Database not found,Creating...');
             copy($sqlSampleFile, $sqlFile);
+        } else {
+            $this->warn('Already have database file,Re-creating...');
+            rename($sqlFile, $sqlFile . '.bak');
+            copy($sqlSampleFile, $sqlFile);
         }
         chmod($sqlFile, 0755);
 
