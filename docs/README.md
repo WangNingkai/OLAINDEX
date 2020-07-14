@@ -3,19 +3,20 @@
 ✨ Another OneDrive Directory Index.
 
 [![Latest Stable Version](https://poser.pugx.org/wangningkai/olaindex/v/stable)](https://packagist.org/packages/wangningkai/olaindex)
+[![Latest Unstable Version](https://poser.pugx.org/wangningkai/olaindex/v/unstable)](//packagist.org/packages/wangningkai/olaindex)
 [![GitHub stars](https://img.shields.io/github/stars/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/network)
 [![GitHub license](https://img.shields.io/github/license/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/blob/master/LICENSE)
 ![visitor badge](https://visitor-badge.glitch.me/badge?page_id=WangNingkai.OLAINDEX)
-
-<div align=center><img alt="OLAINDEX" src="https://ojpoc641y.qnssl.com/FoO82Ql-AAn6TPIUa7RtbgWCPihl.png"/></div>
+![Lint Code Base](https://github.com/WangNingkai/OLAINDEX/workflows/Lint%20Code%20Base/badge.svg?branch=5.0)
+![Laravel](https://github.com/WangNingkai/OLAINDEX/workflows/Laravel/badge.svg?branch=5.0)
 
 
 > 👋 本项目受 oneindex 启发，借鉴其部分功能，在这里感谢。 项目持续开发，会加入更多功能，欢迎大家提交 issue.
 
 ## 简介
 
-一款 `OneDrive` 目录文件索引应用，基于优雅的 `PHP` 框架 `Laravel6` 搭建，并通过 `Microsoft Graph` 接口获取数据展示，支持多类型帐号登录，多种主题显示，简单而强大。
+一款 `OneDrive` 目录文件索引应用，基于优雅的 `PHP` 框架 `Laravel` 搭建，并通过 `Microsoft Graph` 接口获取数据展示，支持多类型帐号登录，多种主题显示，简单而强大。
 
 ## 功能
 
@@ -93,7 +94,7 @@ Blog [https://imwnk.cn](https://imwnk.cn)
 
 Email [i@ningkai.wang](mailto:i@ningkai.wang)
 
-### 其他：
+### 其他
 
 1. 本项目同样存在命令行版本，包含基本的显示下载，功能与此版本一致。项目地址（能力有限，暂不更新） [OLAINDEX-CMD](https://git.io/OLACMD)
 

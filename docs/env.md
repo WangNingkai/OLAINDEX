@@ -1,6 +1,6 @@
 **PHP 扩展要求**
 
-- PHP >= 7.1.3
+- PHP >= 7.2
 - PHP OpenSSL 扩展
 - PHP PDO 扩展
 - PHP Mbstring 扩展

@@ -26,7 +26,7 @@
 
 默认 `OLAINDEX` 使用文件缓存，可以先修改为 `Laravel `支持的缓存类型，如 "apc", "array", "database", "file", "memcached", "redis"等，只需修改配置文件 `.env`。具体配置请参考 `laravel` 文档 [缓存系统](https://laravel-china.org/docs/laravel/5.7/cache/2278)
 
-如使用 `redis`作为缓存的话，还需要安装 `predis` 包,手动执行 `composer require predis/predis` 
+如使用 `redis`作为缓存的话，还需要安装 php `redis` 扩展包
 
 修改.env文件后需要执行 `php artisan config:cache` 确保配置生效
 
@@ -48,7 +48,7 @@ REDIS_PORT=6379
 git pull 
 composer update -vvv # 无版本更新只需执行到此
 
-chmod -R 755 storage # 补充，执行此处两条命令，确保缓存的写入权限，否则500
+chmod -R 777 storage # 补充，执行此处两条命令，确保缓存的写入权限，否则500
 chown -R www:www *
 ```
 
