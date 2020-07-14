@@ -46,10 +46,9 @@
                                     <td class="d-none d-md-block d-md-none">{{ convert_size($data['size']) }}</td>
                                     <td>{{ date('Y-m-d H:i:s', strtotime($data['lastModifiedDateTime'])) }}</td>
                                     <td>
-                                        <a href="#" style="text-decoration: none">删除</a>
-                                        @if(!array_has($data,'folder'))
-                                            {{--todo:加密隐藏--}}
-                                        @endif
+                                        -
+                                        {{--<a href="#" style="text-decoration: none">删除</a>--}}
+                                        {{--todo:加密隐藏--}}
                                     </td>
                                 </tr>
                             @endforeach
@@ -88,8 +87,8 @@
                                 <a class="dropdown-item"
                                    href="{{ route('admin.file.edit', ['hash' => $hash, 'query' => $doc['head']['id']]) }}">编辑HEAD</a>
                             @endif
-                                {{--todo:加密隐藏--}}
-                            <a class="dropdown-item" href="#">删除</a>
+                            {{--todo:加密隐藏--}}
+                            {{--<a class="dropdown-item" href="#">删除</a>--}}
                         </div>
                     </div>
                 </div>
