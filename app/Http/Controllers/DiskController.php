@@ -14,7 +14,6 @@ use App\Helpers\Tool;
 use App\Models\Account;
 use Cache;
 use OneDrive;
-use Auth;
 
 class DiskController extends BaseController
 {
@@ -243,12 +242,9 @@ class DiskController extends BaseController
             return !in_array($value['name'], ['.password', '.deny'], false);
         });
 
-        // 未登录不显示readme head
-        if (Auth::guest()) {
-            $list = array_where($list, static function ($value) {
-                return !in_array($value['name'], ['README.md', 'HEAD.md',], false);
-            });
-        }
+        $list = array_where($list, static function ($value) {
+            return !in_array($value['name'], ['README.md', 'HEAD.md',], false);
+        });
         // todo:过滤隐藏文件
         return $list;
     }
@@ -337,12 +333,10 @@ class DiskController extends BaseController
      */
     private function filterItem($item)
     {
-        if (Auth::guest()) {
-            $illegalFile = ['README.md', 'HEAD.md', '.password', '.deny'];
-            $pattern = '/^README\.md|HEAD\.md|\.password|\.deny/';
-            if (in_array($item['name'], $illegalFile, false) || preg_match($pattern, $item['name'], $arr) > 0) {
-                abort(403, '非法请求');
-            }
+        $illegalFile = ['README.md', 'HEAD.md', '.password', '.deny'];
+        $pattern = '/^README\.md|HEAD\.md|\.password|\.deny/';
+        if (in_array($item['name'], $illegalFile, false) || preg_match($pattern, $item['name'], $arr) > 0) {
+            abort(403, '非法请求');
         }
         // todo:处理隐藏文件
         return $item;
