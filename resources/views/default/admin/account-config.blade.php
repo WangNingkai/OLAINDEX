@@ -21,7 +21,6 @@
                     <input type="text" class="form-control" id="list_limit" name="list_limit"
                            value="{{ array_get($config,'list_limit', 10) }}">
                 </div>
-
                 <button type="submit" class="btn btn-primary">提交</button>
                 <a href="{{ route('admin.account.list') }}" class="btn btn-danger"> <i
                         class="ri-arrow-go-back-fill"></i> 返回</a>

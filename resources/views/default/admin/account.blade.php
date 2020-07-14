@@ -40,6 +40,8 @@
                         <td>
                             <a class="btn btn-primary btn-sm"
                                href="{{ route('admin.account.config',['id' =>$account->id])  }}">设置</a>
+                            <a class="btn btn-primary btn-sm"
+                               href="{{ route('admin.file.manage',['hash' =>$account->hash_id])  }}">管理</a>
                             <div class="btn-group" role="group">
                                 <button id="actionAccount" type="button" class="btn btn-primary btn-sm dropdown-toggle"
                                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">更多
@@ -47,7 +49,8 @@
                                 <div class="dropdown-menu" aria-labelledby="actionAccount"
                                      data-id="{{ $account->id }}">
                                     <a class="dropdown-item view_account"
-                                       href="{{ route('drive',['hash' => $account->hash_id]) }}" target="_blank">查看资源</a>
+                                       href="{{ route('drive',['hash' => $account->hash_id]) }}"
+                                       target="_blank">查看资源</a>
                                     <a class="dropdown-item set_account"
                                        href="javascript:void(0)">设为主账号</a>
                                     <a class="dropdown-item view_account"

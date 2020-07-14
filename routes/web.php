@@ -45,15 +45,18 @@ Route::prefix('admin')->middleware('auth')->group(static function () {
     Route::post('account/set-account', 'AdminController@accountSet')->name('admin.account.set');
     Route::post('account/delete', 'AdminController@accountDelete')->name('admin.account.set');
     Route::any('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index')->name('admin.logs');
+
+    Route::any('manage/{hash}/q/{query?}', 'ManageController@query')->name('admin.file.manage');
+    Route::any('manage/{hash}/edit/{query?}', 'ManageController@edit')->name('admin.file.edit');
+    Route::any('manage/{hash}/create/{query?}', 'ManageController@create')->name('admin.file.create');
 });
 // 短网址
 Route::get('t/{code}', 'IndexController')->name('short');
 // 多网盘支持
 Route::get('d/{hash}', 'DiskController@query')->name('drive');
 Route::get('d/{hash}/q/{query?}', 'DiskController@query')->name('drive.query')->where('query', '.*');
-Route::any('d/{hash}/e/{query?}', 'DiskController@edit')->name('drive.edit')->middleware('auth');
-Route::any('d/{hash}/c/{query?}', 'DiskController@create')->name('drive.create')->middleware('auth');
 Route::get('d/{hash}/id/{query?}', 'DiskController@query')->name('drive.query.id');
+
 // 搜索
 Route::get('d/{hash}/search', 'DiskController@search')->name('drive.search');
 // 图床

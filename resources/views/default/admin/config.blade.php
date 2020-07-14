@@ -36,12 +36,10 @@
                     <a class="nav-item nav-link active" id="nav-basic-tab" data-toggle="tab" href="#config-basic"
                        role="tab"
                        aria-controls="config-basic" aria-selected="true">基础设置</a>
-                    <a class="nav-item nav-link" id="nav-image-tab" data-toggle="tab" href="#config-image" role="tab"
-                       aria-controls="config-image" aria-selected="false">图床设置</a>
-                    <a class="nav-item nav-link" id="nav-search-tab" data-toggle="tab" href="#config-search" role="tab"
-                       aria-controls="config-search" aria-selected="false">搜索设置</a>
                     <a class="nav-item nav-link" id="nav-show-tab" data-toggle="tab" href="#config-show" role="tab"
                        aria-controls="config-show" aria-selected="false">显示设置</a>
+                    <a class="nav-item nav-link" id="nav-image-tab" data-toggle="tab" href="#config-image" role="tab"
+                       aria-controls="config-image" aria-selected="false">图床设置</a>
                 </div>
             </nav>
             <div class="tab-content" id="nav-tabContent">
@@ -73,16 +71,35 @@
                                 <span class="form-text text-danger">建议缓存时间小于60分钟，否则会导致缓存失效</span>
                             </div>
                             <div class="form-group">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input"
+                                           id="open_search"
+                                           @if( setting('open_search',0)) checked
+                                           @endif onchange="$('input[name=\'open_search\']').val(Number(this.checked))">
+                                    <label class="custom-control-label" for="open_search">开启搜索</label>
+                                    <input type="hidden" name="open_search"
+                                           value="{{ setting('open_search', 0) }}">
+                                </div>
+                                <span class="form-text text-danger">使用Microsoft Graph搜索功能</span>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <label class="form-control-label" for="encrypt_tip">加密文件夹提示</label>
+                                    <textarea class="form-control" id="encrypt_tip" name="encrypt_tip"
+                                              rows="1">{{ setting('encrypt_tip') }}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label class="form-control-label" for="copyright">自定义版权显示</label>
-                                <input type="text" class="form-control" id="copyright" name="copyright"
-                                       value="{{ setting('copyright') }}">
+                                <textarea class="form-control" id="copyright" name="copyright"
+                                          rows="3">{{ setting('copyright') }}</textarea>
                                 <span
                                     class="form-text text-danger">留空则不显示。使用markdown格式表示 如：Made by [xxx](https://xxx)</span>
                             </div>
                             <div class="form-group">
                                 <label class="form-control-label" for="stats_code">统计代码</label>
-                                <input type="text" class="form-control" id="stats_code" name="stats_code"
-                                       value="{{ setting('stats_code', '') }}">
+                                <textarea class="form-control" id="stats_code" name="stats_code"
+                                          rows="3">{{ setting('stats_code') }}</textarea>
                                 <span class="form-text text-danger">站点统计代码</span>
                             </div>
                             <div class="form-group">
@@ -95,70 +112,6 @@
                                 <label class="form-control-label" for="api_limit">接口访问频率限制（次/分钟）</label>
                                 <input type="text" class="form-control" id="api_limit" name="api_limit"
                                        value="{{ setting('api_limit', 30) }}">
-                            </div>
-                            <button type="submit" class="btn btn-primary">提交 <i class="ri-check-fill"></i></button>
-                        </form>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="config-image" role="tabpanel" aria-labelledby="nav-image-tab">
-                    <div class="my-4">
-                        <form action="" method="post">
-                            @csrf
-                            <div class="form-group">
-                                <div class="custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input"
-                                           id="open_image_host"
-                                           @if( setting('open_image_host',0)) checked
-                                           @endif onchange="$('input[name=\'open_image_host\']').val(Number(this.checked))">
-                                    <label class="custom-control-label" for="open_image_host">开启图床功能</label>
-                                    <input type="hidden" name="open_image_host"
-                                           value="{{ setting('open_image_host', 0) }}">
-                                </div>
-                                <span class="form-text text-danger">开启后OneDrive可以作为图床使用</span>
-                            </div>
-                            <div class="form-group">
-                                <div class="custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input"
-                                           id="public_image_host"
-                                           @if( setting('public_image_host',0)) checked
-                                           @endif onchange="$('input[name=\'public_image_host\']').val(Number(this.checked))">
-                                    <label class="custom-control-label" for="public_image_host">公共图床功能</label>
-                                    <input type="hidden" name="public_image_host"
-                                           value="{{ setting('public_image_host', 0) }}">
-                                </div>
-                                <span class="form-text text-danger">开启后任何人都可以访问使用</span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-control-label" for="image_host_account"><b>选择图床账号</b></label>
-                                <select class="custom-select" name="image_host_account" id="image_host_account">
-                                    @foreach( $accounts as $key => $account)
-                                        <option value="{{ $account['id'] }}"
-                                                @if(setting('image_host_account') === $account['id'] ) selected @endif>
-                                            {{ $account['remark'] }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <span class="form-text text-danger">图床默认将使用主账号</span>
-                            </div>
-                            <button type="submit" class="btn btn-primary">提交 <i class="ri-check-fill"></i></button>
-                        </form>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="config-search" role="tabpanel" aria-labelledby="nav-search-tab">
-                    <div class="my-4">
-                        <form action="" method="post">
-                            @csrf
-                            <div class="form-group">
-                                <div class="custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input"
-                                           id="open_search"
-                                           @if( setting('open_search',0)) checked
-                                           @endif onchange="$('input[name=\'open_search\']').val(Number(this.checked))">
-                                    <label class="custom-control-label" for="open_search">开启搜索</label>
-                                    <input type="hidden" name="open_search"
-                                           value="{{ setting('open_search', 0) }}">
-                                </div>
-                                <span class="form-text text-danger">使用Microsoft Graph搜索功能</span>
                             </div>
                             <button type="submit" class="btn btn-primary">提交 <i class="ri-check-fill"></i></button>
                         </form>
@@ -204,6 +157,50 @@
                                 <label class="form-control-label" for="show_stream">文件流</label>
                                 <input type="text" class="form-control" id="show_stream" name="show_stream"
                                        value="{{ setting('show_stream', '') }}">
+                            </div>
+                            <button type="submit" class="btn btn-primary">提交 <i class="ri-check-fill"></i></button>
+                        </form>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="config-image" role="tabpanel" aria-labelledby="nav-image-tab">
+                    <div class="my-4">
+                        <form action="" method="post">
+                            @csrf
+                            <div class="form-group">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input"
+                                           id="open_image_host"
+                                           @if( setting('open_image_host',0)) checked
+                                           @endif onchange="$('input[name=\'open_image_host\']').val(Number(this.checked))">
+                                    <label class="custom-control-label" for="open_image_host">开启图床功能</label>
+                                    <input type="hidden" name="open_image_host"
+                                           value="{{ setting('open_image_host', 0) }}">
+                                </div>
+                                <span class="form-text text-danger">开启后OneDrive可以作为图床使用</span>
+                            </div>
+                            <div class="form-group">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input"
+                                           id="public_image_host"
+                                           @if( setting('public_image_host',0)) checked
+                                           @endif onchange="$('input[name=\'public_image_host\']').val(Number(this.checked))">
+                                    <label class="custom-control-label" for="public_image_host">公共图床功能</label>
+                                    <input type="hidden" name="public_image_host"
+                                           value="{{ setting('public_image_host', 0) }}">
+                                </div>
+                                <span class="form-text text-danger">开启后任何人都可以访问使用</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-control-label" for="image_host_account"><b>选择图床账号</b></label>
+                                <select class="custom-select" name="image_host_account" id="image_host_account">
+                                    @foreach( $accounts as $key => $account)
+                                        <option value="{{ $account['id'] }}"
+                                                @if(setting('image_host_account') === $account['id'] ) selected @endif>
+                                            {{ $account['remark'] }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <span class="form-text text-danger">图床默认将使用主账号</span>
                             </div>
                             <button type="submit" class="btn btn-primary">提交 <i class="ri-check-fill"></i></button>
                         </form>

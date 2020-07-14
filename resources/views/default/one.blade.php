@@ -18,28 +18,6 @@
                 </div>
             </div>
         @endif
-        @auth
-            @if (blank($doc['readme']) || blank($doc['head']))
-                <div class="col">
-                    <div class="dropdown">
-                        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="btnChoiceAccount"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            添加说明：
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="btnChoiceAccount">
-                            @if (blank($doc['readme']))
-                                <a class="dropdown-item"
-                                   href="{{ route('drive.create',['hash' => $hash, 'query' => $item['id'], 'fileName' => 'README.md']) }}">添加README</a>
-                            @endif
-                            @if (blank($doc['head']))
-                                <a class="dropdown-item"
-                                   href="{{ route('drive.create',['hash' => $hash, 'query' => $item['id'], 'fileName' => 'HEAD.md']) }}">添加HEAD</a>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            @endif
-        @endauth
     </div>
     @if(setting('open_search',0))
         <div class="row mb-3">

@@ -16,4 +16,7 @@
     <li class="nav-item">
         <a class="nav-link" href="{{  route('cache.clear') }}"><i class="ri-delete-bin-fill"></i> 清理缓存</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" target="_blank" href="https://github.com/WangNingkai/OLAINDEX/issues/new/choose"><i class="ri-github-fill"></i> 反馈</a>
+    </li>
 </ul>

@@ -35,12 +35,6 @@
             <div class="text-center"><a
                     href="{{ shorten_url(route('drive.query.id', ['hash' => $hash, 'query' =>  $file['id'], 'download' => 1])) }}"
                     class="btn btn-success"><i class="fa fa-download"></i> 下载</a>
-                @auth
-                    @if( in_array($file['name'], ['README.md', 'HEAD.md'], false))
-                        <a href="{{ route('drive.edit', ['hash' => $hash, 'query' => $file['id']]) }}"
-                           class="btn btn-primary"><i class="ri-file-edit-fill"></i> 编辑</a>
-                    @endif
-                @endauth
             </div>
 
         </div>
