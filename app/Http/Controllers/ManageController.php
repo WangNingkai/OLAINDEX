@@ -91,7 +91,6 @@ class ManageController extends BaseController
         $perPage = array_get($config, 'list_limit', 10);
 
         $list = $this->paginate($list, $perPage, false);
-
         return view(config('olaindex.theme') . 'admin.file-manage', compact('accounts', 'hash', 'path', 'item', 'list', 'doc'));
     }
 
@@ -163,7 +162,7 @@ class ManageController extends BaseController
             $content = '';
         }
 
-        $file['content'] = $content;
+        $file['content'] = $content;;
         return view(config('olaindex.theme') . 'editor', compact('accounts', 'hash', 'path', 'file'));
     }
 
@@ -198,6 +197,30 @@ class ManageController extends BaseController
             return redirect()->route('message');
         }
         return redirect()->route('home');
+    }
+
+    public function delete(Request $request, $hash, $query = '')
+    {
+        $accounts = Cache::remember('ac:list', 600, static function () {
+            return Account::query()
+                ->select(['id', 'remark'])
+                ->where('status', 1)->get();
+        });
+        if (blank($accounts)) {
+            Cache::forget('ac:list');
+            abort(404, '请先绑定账号！');
+        }
+        $account_id = HashidsHelper::decode($hash);
+        if (!$account_id) {
+            abort(404, '账号不存在');
+        }
+        $service = OneDrive::account($account_id);
+        $eTag = $request->get('eTag');
+        $resp = $service->delete($query, $eTag);
+        if (array_key_exists('code', $resp)) {
+            $this->showMessage(array_get($resp, 'message', '404NotFound'), true);
+        }
+        return redirect()->back();
     }
 
     /**
