@@ -110,8 +110,7 @@
     <script>
         $(function() {
             $('.list-item').on('click', function(e) {
-                let route = $(this).attr('data-route')
-                window.location.href = route
+                window.location.href = $(this).attr('data-route')
                 e.stopPropagation()
             })
         })
