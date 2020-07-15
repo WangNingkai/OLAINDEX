@@ -32,10 +32,11 @@ class HomeController extends BaseController
         }
         $account_id = 0;
         $hash = '';
+
         if (!blank($accounts)) {
             $account_id = setting('primary_account', 0);
             if (!$account_id) {
-                $account_id = array_get(array_first((array)$accounts), 'id');
+                $account_id = array_get($accounts->first(), 'id');
             }
             $account = $accounts->where('id', $account_id)->first();
             $hash = array_get($account, 'hash_id');
