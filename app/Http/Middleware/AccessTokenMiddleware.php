@@ -24,6 +24,9 @@ class AccessTokenMiddleware
      */
     public function handle($request, Closure $next)
     {
+        if (!setting('access_token')) {
+            return $this->handleFailure();
+        }
         $authHeader = $request->header($this->header);
 
         if ($authHeader !== null) {
@@ -31,11 +34,7 @@ class AccessTokenMiddleware
                 if (preg_match($this->pattern, $authHeader, $matches)) {
                     $authHeader = $matches[1];
                 } else {
-                    return response()->json([
-                        'code' => 401,
-                        'msg' => 'Your request was made with invalid credentials.',
-                        'data' => []
-                    ], 401);
+                    return $this->handleFailure();
                 }
             }
             if (strcmp(setting('access_token'), $authHeader) === 0) {
@@ -43,6 +42,15 @@ class AccessTokenMiddleware
             }
 
         }
+        return $this->handleFailure();
+    }
+
+    /**
+     * Handle Fail
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function handleFailure()
+    {
         return response()->json([
             'code' => 401,
             'msg' => 'Your request was made with invalid credentials.',
