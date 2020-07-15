@@ -43,10 +43,10 @@ Route::prefix('admin')->middleware('auth')->group(static function () {
     Route::any('account/{id}/config', 'AdminController@accountConfig')->name('admin.account.config');
     Route::post('account/{id}/remark', 'AdminController@accountRemark')->name('admin.account.remark');
     Route::post('account/set-account', 'AdminController@accountSet')->name('admin.account.set');
-    Route::post('account/delete', 'AdminController@accountDelete')->name('admin.account.set');
+    Route::post('account/delete', 'AdminController@accountDelete')->name('admin.account.delete');
     Route::any('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index')->name('admin.logs');
 
-    Route::any('manage/{hash}/q/{query?}', 'ManageController@query')->name('admin.file.manage');
+    Route::any('manage/{hash}/q/{query?}', 'ManageController@query')->name('admin.file.manage')->where('query', '.*');
     Route::any('manage/{hash}/edit/{query?}', 'ManageController@edit')->name('admin.file.edit');
     Route::any('manage/{hash}/create/{query?}', 'ManageController@create')->name('admin.file.create');
     Route::any('manage/{hash}/delete/{query?}', 'ManageController@delete')->name('admin.file.delete');
