@@ -128,5 +128,4 @@ class Graph
             $this->_proxyPort
         );
     }
-
 }

@@ -8,15 +8,13 @@
 
 namespace App\Http\Controllers\Api;
 
-
+use App\Helpers\Tool;
 use App\Http\Controllers\BaseController;
 use App\Http\Traits\ApiResponseTrait;
 use OneDrive;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Validator;
-use Cache;
-use App\Models\Account;
 
 class IndexController extends BaseController
 {
@@ -41,11 +39,7 @@ class IndexController extends BaseController
     public function imageUpload(Request $request)
     {
         /* @var $accounts Collection */
-        $accounts = Cache::remember('ac:list', 600, static function () {
-            return Account::query()
-                ->select(['id', 'remark'])
-                ->where('status', 1)->get();
-        });
+        $accounts = Tool::fetchAccounts();
         $account_id = 0;
         $hash = '';
         if ($accounts) {
@@ -105,5 +99,4 @@ class IndexController extends BaseController
         }
         return $this->fail('无法获取文件内容', 400);
     }
-
 }

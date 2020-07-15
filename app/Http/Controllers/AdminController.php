@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Tool;
 use App\Models\Account;
 use App\Models\Setting;
 use App\Models\User;
@@ -35,11 +36,7 @@ class AdminController extends BaseController
      */
     public function config(Request $request)
     {
-        $accounts = Cache::remember('ac:list', 600, static function () {
-            return Account::query()
-                ->select(['id', 'remark'])
-                ->where('status', 1)->get();
-        });
+        $accounts = Tool::fetchAccounts();
         if (blank($accounts)) {
             Cache::forget('ac:list');
             $this->showMessage('请先绑定账号', true);

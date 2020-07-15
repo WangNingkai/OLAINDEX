@@ -59,7 +59,6 @@ class OauthController extends BaseController
             $message = $curl->errorCode . ': ' . $curl->errorMessage . "\n";
             $this->showMessage('Error requesting access token. ' . $message, true);
             return redirect()->route('message');
-
         }
         $_accessToken = collect($curl->response);
         $remark = $state;

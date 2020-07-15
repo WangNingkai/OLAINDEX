@@ -9,7 +9,6 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
-use App\Models\Account;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Cache;
@@ -21,11 +20,7 @@ class HomeController extends BaseController
     {
         // 账号处理
         /* @var $accounts Collection */
-        $accounts = \Cache::remember('ac:list', 600, static function () {
-            return Account::query()
-                ->select(['id', 'remark'])
-                ->where('status', 1)->get();
-        });
+        $accounts = Tool::fetchAccounts();
         if (blank($accounts)) {
             Cache::forget('ac:list');
             abort(404, '请先登录绑定账号！');
@@ -185,7 +180,6 @@ class HomeController extends BaseController
                 Cache::forget("d:content:{$account_id}:{$head['id']}");
                 $head = '';
             }
-
         } else {
             $head = '';
         }

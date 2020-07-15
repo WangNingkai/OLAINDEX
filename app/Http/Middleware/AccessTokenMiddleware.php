@@ -40,7 +40,6 @@ class AccessTokenMiddleware
             if (strcmp(setting('access_token'), $authHeader) === 0) {
                 return $next($request);
             }
-
         }
         return $this->handleFailure();
     }

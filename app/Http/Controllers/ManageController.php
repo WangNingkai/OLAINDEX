@@ -8,25 +8,18 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Helpers\HashidsHelper;
 use App\Helpers\Tool;
 use Illuminate\Http\Request;
-use App\Models\Account;
 use Cache;
 use OneDrive;
-use Auth;
 
 class ManageController extends BaseController
 {
     public function query(Request $request, $hash, $query = '')
     {
         // 账号处理
-        $accounts = Cache::remember('ac:list', 600, static function () {
-            return Account::query()
-                ->select(['id', 'remark'])
-                ->where('status', 1)->get();
-        });
+        $accounts = Tool::fetchAccounts();
         if (blank($accounts)) {
             Cache::forget('ac:list');
             abort(404, '请先绑定账号！');
@@ -97,11 +90,7 @@ class ManageController extends BaseController
     public function edit(Request $request, $hash, $query = '')
     {
         // 账号处理
-        $accounts = Cache::remember('ac:list', 600, static function () {
-            return Account::query()
-                ->select(['id', 'remark'])
-                ->where('status', 1)->get();
-        });
+        $accounts = Tool::fetchAccounts();
         if (blank($accounts)) {
             Cache::forget('ac:list');
             abort(404, '请先绑定账号！');
@@ -162,18 +151,15 @@ class ManageController extends BaseController
             $content = '';
         }
 
-        $file['content'] = $content;;
+        $file['content'] = $content;
+        ;
         return view(config('olaindex.theme') . 'editor', compact('accounts', 'hash', 'path', 'file'));
     }
 
     public function create(Request $request, $hash, $query = '')
     {
         // 账号处理
-        $accounts = Cache::remember('ac:list', 600, static function () {
-            return Account::query()
-                ->select(['id', 'remark'])
-                ->where('status', 1)->get();
-        });
+        $accounts = Tool::fetchAccounts();
         if (blank($accounts)) {
             Cache::forget('ac:list');
             abort(404, '请先绑定账号！');
@@ -201,11 +187,7 @@ class ManageController extends BaseController
 
     public function delete(Request $request, $hash, $query = '')
     {
-        $accounts = Cache::remember('ac:list', 600, static function () {
-            return Account::query()
-                ->select(['id', 'remark'])
-                ->where('status', 1)->get();
-        });
+        $accounts = Tool::fetchAccounts();
         if (blank($accounts)) {
             Cache::forget('ac:list');
             abort(404, '请先绑定账号！');
@@ -298,6 +280,4 @@ class ManageController extends BaseController
         }
         return $items;
     }
-
-
 }

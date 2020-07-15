@@ -11,7 +11,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Helpers\HashidsHelper;
 use App\Helpers\Tool;
-use App\Models\Account;
 use Cache;
 use OneDrive;
 
@@ -25,11 +24,7 @@ class DiskController extends BaseController
             $view = '-id';
         }
         // 账号处理
-        $accounts = Cache::remember('ac:list', 600, static function () {
-            return Account::query()
-                ->select(['id', 'remark'])
-                ->where('status', 1)->get();
-        });
+        $accounts = Tool::fetchAccounts();
         if (blank($accounts)) {
             Cache::forget('ac:list');
             abort(404, '请先登录绑定账号！');
@@ -187,11 +182,7 @@ class DiskController extends BaseController
         }
         $keyword = $request->get('q', '');
         // 账号处理
-        $accounts = Cache::remember('ac:list', 600, static function () {
-            return Account::query()
-                ->select(['id', 'remark'])
-                ->where('status', 1)->get();
-        });
+        $accounts = Tool::fetchAccounts();
         $account_id = HashidsHelper::decode($hash);
         if (!$account_id) {
             abort(404, '账号不存在');
@@ -317,7 +308,6 @@ class DiskController extends BaseController
                 Cache::forget("d:content:{$account_id}:{$head['id']}");
                 $head = '';
             }
-
         } else {
             $head = '';
         }

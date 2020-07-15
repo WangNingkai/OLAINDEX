@@ -8,12 +8,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Tool;
 use App\Http\Traits\ApiResponseTrait;
-use App\Models\Account;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Validator;
-use Cache;
 use OneDrive;
 
 class ImageController extends BaseController
@@ -32,16 +32,12 @@ class ImageController extends BaseController
     /**
      * 图床上传图片
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function upload(Request $request)
     {
         /* @var $accounts Collection */
-        $accounts = Cache::remember('ac:list', 600, static function () {
-            return Account::query()
-                ->select(['id', 'remark'])
-                ->where('status', 1)->get();
-        });
+        $accounts = Tool::fetchAccounts();
         $account_id = 0;
         $hash = '';
         if ($accounts) {

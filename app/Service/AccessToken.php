@@ -67,7 +67,6 @@ class AccessToken
             ];
             Log::error('Error refresh access token. ', $error);
             return '';
-
         }
         $_accessToken = collect($curl->response);
         $this->storeTokens($_accessToken);

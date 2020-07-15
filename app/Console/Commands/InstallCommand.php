@@ -12,7 +12,7 @@ use App\Service\Constants;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-class   InstallCommand extends Command
+class InstallCommand extends Command
 {
     /**
      * The name and signature of the console command.
