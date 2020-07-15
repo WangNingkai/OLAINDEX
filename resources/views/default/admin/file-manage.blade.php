@@ -110,8 +110,10 @@
                 window.location.href = route
                 e.stopPropagation()
             })
-            $('.list-item-dropdown').on('click', function(e) {
-                $(this).dropdown()
+            $('.list-item-dropdown').on('mouseover', function(e) {
+                $(this).dropdown({
+                    boundary: 'window',
+                })
                 e.stopPropagation()
             })
         })
