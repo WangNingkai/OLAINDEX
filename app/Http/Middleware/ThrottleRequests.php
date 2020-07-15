@@ -29,7 +29,7 @@ class ThrottleRequests extends Middleware
         $maxAttempts = $this->resolveMaxAttempts($request, $maxAttempts);
 
         if ($this->limiter->tooManyAttempts($key, $maxAttempts)) {
-            if ($request->expectsJson()) {
+            if ($request->expectsJson() || str_starts_with($request->decodedPath(),'api')) {
                 return response()->json([
                     'code' => 429,
                     'msg' => 'Too many attempts, please slow down the request.',

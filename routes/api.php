@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 Route::namespace('Api')->group(
     static function () {
         Route::get('test', 'IndexController@index');
+        Route::post('image-upload', 'IndexController@imageUpload');
     }
 );
 
