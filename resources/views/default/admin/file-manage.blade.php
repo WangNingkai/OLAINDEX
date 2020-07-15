@@ -38,7 +38,8 @@
                             </tr>
                         @else
                             @foreach($list as $data)
-                                <tr onclick="window.location.href='{{ route('admin.file.manage', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) ))]) }}'">
+                                <tr class="list-item"
+                                    data-route="{{ !array_has($data,'folder') ?'':route('admin.file.manage', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) ))]) }}">
                                     <td style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
                                         <i class="ri-{{ \App\Helpers\Tool::fetchExtIco($data['ext'] ?? 'file') }}-fill"></i> {{ str_limit($data['name'], 32) }}
                                     </td>
@@ -46,9 +47,16 @@
                                     <td class="d-none d-md-block d-md-none">{{ convert_size($data['size']) }}</td>
                                     <td>{{ date('Y-m-d H:i:s', strtotime($data['lastModifiedDateTime'])) }}</td>
                                     <td>
-                                        -
-                                        {{--<a href="#" style="text-decoration: none">删除</a>--}}
-                                        {{--todo:加密隐藏--}}
+                                        <div class="btn-group dropdown" role="group">
+                                            <button id="actionItem" type="button"
+                                                    class="btn btn-primary btn-sm dropdown-toggle list-item-dropdown"
+                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">更多
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="actionItem"
+                                                 data-id="{{ $item['id'] }}">
+                                                <a class="dropdown-item" href="javascript:void(0)">todo</a>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -87,8 +95,6 @@
                                 <a class="dropdown-item"
                                    href="{{ route('admin.file.edit', ['hash' => $hash, 'query' => $doc['head']['id']]) }}">编辑HEAD</a>
                             @endif
-                            {{--todo:加密隐藏--}}
-                            {{--<a class="dropdown-item" href="#">删除</a>--}}
                         </div>
                     </div>
                 </div>
@@ -96,3 +102,18 @@
         </div>
     </div>
 @stop
+@push('scripts')
+    <script>
+        $(function() {
+            $('.list-item').on('click', function(e) {
+                let route = $(this).attr('data-route')
+                window.location.href = route
+                e.stopPropagation()
+            })
+            $('.list-item-dropdown').on('click', function(e) {
+                $(this).dropdown()
+                e.stopPropagation()
+            })
+        })
+    </script>
+@endpush

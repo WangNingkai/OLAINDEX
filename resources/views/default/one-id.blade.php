@@ -90,7 +90,8 @@
                     </tr>
                 @else
                     @foreach($list as $data)
-                        <tr onclick="window.location.href='{{ route('drive.query.id', ['hash' => $hash, 'query' => $data['id']]) }}'">
+                        <tr class="list-item"
+                            data-route="{{ route('drive.query.id', ['hash' => $hash, 'query' => $data['id']]) }}">
                             <td style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
                                 <i class="ri-{{ \App\Helpers\Tool::fetchExtIco($data['ext'] ?? 'file') }}-fill"></i> {{ str_limit($data['name'], 32) }}
                             </td>
@@ -129,4 +130,15 @@
         </div>
     @endif
 @stop
+@push('scripts')
+    <script>
+        $(function() {
+            $('.list-item').on('click', function(e) {
+                let route = $(this).attr('data-route')
+                window.location.href = route
+                e.stopPropagation()
+            })
+        })
+    </script>
+@endpush
 
