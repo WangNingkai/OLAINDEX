@@ -42,7 +42,7 @@ class AdminController extends BaseController
         });
         if (blank($accounts)) {
             Cache::forget('ac:list');
-            abort(404, '请先绑定账号！');
+            $this->showMessage('请先绑定账号', true);
         }
         if ($request->isMethod('get')) {
             return view(config('olaindex.theme') . 'admin.config', compact('accounts'));
