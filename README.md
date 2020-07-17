@@ -7,9 +7,9 @@
 [![GitHub stars](https://img.shields.io/github/stars/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/network)
 [![GitHub license](https://img.shields.io/github/license/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/blob/master/LICENSE)
-![visitor badge](https://visitor-badge.glitch.me/badge?page_id=WangNingkai.OLAINDEX)
 ![Lint Code Base](https://github.com/WangNingkai/OLAINDEX/workflows/Lint%20Code%20Base/badge.svg?branch=5.0)
 ![Laravel](https://github.com/WangNingkai/OLAINDEX/workflows/Laravel/badge.svg?branch=5.0)
+[![HitCount](http://hits.dwyl.com/WangNingkai/OLAINDEX.svg)](http://hits.dwyl.com/WangNingkai/OLAINDEX)
     
 > **[中文README](./README_CN.md)**
 
