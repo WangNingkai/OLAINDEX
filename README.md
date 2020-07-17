@@ -82,11 +82,20 @@ composer run install-app # installation app
 
 3. If you use this application, please try to keep the copyright at the bottom and share it with more people.Thanks.
 
-## Support
+### :sparkling_heart: Support the project
 
-**Support Address ： [https://pay.ningkai.wang](https://pay.ningkai.wang)**
+I open-source almost everything I can, and I try to reply to everyone needing help using these projects. Obviously,
+this takes time. You can use this service for free.
 
----
+However, if you are using this project and happy with it or just want to encourage me to continue creating stuff, there are few ways you can do it :-
+
+- Starring and sharing the project :rocket:
+- [![paypal.me/wangningkai](https://ionicabizau.github.io/badges/paypal.svg)](https://www.paypal.me/wangningkai) - You can make one-time donations via PayPal. I'll probably buy a ~~coffee~~ tea. :tea:
+- [Wechat & AliPay](https://pay.ningkai.wang)
+
+Thanks! :heart:
+
+--------
 
 ## License
 The OLAINDEX is open-source software licensed under the MIT license.
