@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Cache;
+use App\Models\Account;
 
 class LoginController extends Controller
 {
@@ -54,5 +56,23 @@ class LoginController extends Controller
     public function showLoginForm()
     {
         return view(config('olaindex.theme') . 'admin.login');
+    }
+
+    /**
+     * Get the post register / login redirect path.
+     * @return string
+     */
+    public function redirectPath()
+    {
+
+        $accounts = Cache::remember('ac:list', 600, static function () {
+            return Account::query()
+                ->select(['id', 'remark'])
+                ->where('status', 1)->get();
+        });
+        if (blank($accounts)) {
+            Cache::forget('ac:list');
+            return '/admin/install';
+        }
     }
 }
