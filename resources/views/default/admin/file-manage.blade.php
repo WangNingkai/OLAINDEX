@@ -53,8 +53,9 @@
                                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">更多
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="actionItem"
-                                                 data-id="{{ $item['id'] }}">
-                                                <a class="dropdown-item" href="javascript:void(0)">todo</a>
+                                                 data-id="{{ $data['id'] }}" data-hash="{{ $hash }}"
+                                                 data-etag="{{ $data['eTag'] ?? '' }}">
+                                                <a class="dropdown-item delete-item" href="javascript:void(0)">删除</a>
                                             </div>
                                         </div>
                                     </td>
@@ -104,14 +105,56 @@
 @stop
 @push('scripts')
     <script>
-        $(function() {
-            $('.list-item').on('click', function(e) {
-                window.location.href = $(this).attr('data-route')
+        $(function () {
+            $('.list-item').on('click', function (e) {
+                if ($(this).attr('data-route')) {
+                    window.location.href = $(this).attr('data-route')
+                }
                 e.stopPropagation()
             })
-            $('.list-item-dropdown').on('mouseover', function(e) {
+            $('.list-item-dropdown').on('mouseover', function (e) {
                 $(this).dropdown({
                     boundary: 'window',
+                })
+                e.stopPropagation()
+            })
+            $('.delete-item').on('click', function (e) {
+                Swal.fire({
+                    title: '确定删除吗?',
+                    text: '删除后无法恢复!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                }).then((result) => {
+                    if (result.value) {
+                        let source_id = $('.delete-item').parent().attr('data-id')
+                        let hash = $('.delete-item').parent().attr('data-hash')
+                        let eTag = $('.delete-item').parent().attr('data-etag')
+                        axios.post("{{ route('admin.file.delete') }}", {
+                            id: source_id,
+                            hash: hash,
+                            eTag: eTag
+                        })
+                            .then(function (response) {
+                                let data = response.data
+                                console.log(data)
+                                if (data.error === '') {
+                                    Swal.fire('删除成功！')
+                                    window.location.reload()
+                                }else {
+                                    Swal.fire('删除失败！')
+                                }
+                            })
+                            .catch(function (error) {
+                                console.log(error)
+                            })
+                            .then(function () {
+                                // always executed
+                            })
+                    }
                 })
                 e.stopPropagation()
             })

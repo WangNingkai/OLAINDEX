@@ -134,7 +134,9 @@
     <script>
         $(function() {
             $('.list-item').on('click', function(e) {
-                window.location.href = $(this).attr('data-route')
+                if ($(this).attr('data-route')) {
+                    window.location.href = $(this).attr('data-route')
+                }
                 e.stopPropagation()
             })
         })

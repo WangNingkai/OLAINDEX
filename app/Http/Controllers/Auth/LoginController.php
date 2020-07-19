@@ -74,5 +74,6 @@ class LoginController extends Controller
             Cache::forget('ac:list');
             return '/admin/install';
         }
+        return request()->get('redirect');
     }
 }

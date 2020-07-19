@@ -10,12 +10,15 @@ namespace App\Http\Controllers;
 
 use App\Helpers\HashidsHelper;
 use App\Helpers\Tool;
+use App\Http\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Cache;
 use OneDrive;
 
 class ManageController extends BaseController
 {
+    use ApiResponseTrait;
+
     public function query(Request $request, $hash, $query = '')
     {
         // 账号处理
@@ -84,6 +87,7 @@ class ManageController extends BaseController
         $perPage = array_get($config, 'list_limit', 10);
 
         $list = $this->paginate($list, $perPage, false);
+
         return view(config('olaindex.theme') . 'admin.file-manage', compact('accounts', 'hash', 'path', 'item', 'list', 'doc'));
     }
 
@@ -151,8 +155,7 @@ class ManageController extends BaseController
             $content = '';
         }
 
-        $file['content'] = $content;
-        ;
+        $file['content'] = $content;;
         return view(config('olaindex.theme') . 'editor', compact('accounts', 'hash', 'path', 'file'));
     }
 
@@ -185,24 +188,31 @@ class ManageController extends BaseController
         return redirect()->route('home');
     }
 
-    public function delete(Request $request, $hash, $query = '')
+    public function delete(Request $request)
     {
+        $eTag = $request->get('eTag');
+        $hash = $request->get('hash');
+        $query = $request->get('id');
+        if (!$eTag || !$hash || !$query) {
+            return $this->fail('参数错误!');
+        }
         $accounts = Tool::fetchAccounts();
         if (blank($accounts)) {
             Cache::forget('ac:list');
-            abort(404, '请先绑定账号！');
+            return $this->fail('请先绑定账号!');
         }
         $account_id = HashidsHelper::decode($hash);
         if (!$account_id) {
-            abort(404, '账号不存在');
+            return $this->fail('账号不存在');
+
         }
         $service = OneDrive::account($account_id);
-        $eTag = $request->get('eTag');
+
         $resp = $service->delete($query, $eTag);
         if (array_key_exists('code', $resp)) {
-            $this->showMessage(array_get($resp, 'message', '404NotFound'), true);
+            return $this->fail(array_get($resp, 'message', '404NotFound'));
         }
-        return redirect()->back();
+        return $this->success();
     }
 
     /**

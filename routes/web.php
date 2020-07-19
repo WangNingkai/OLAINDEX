@@ -49,7 +49,7 @@ Route::prefix('admin')->middleware('auth')->group(static function () {
     Route::any('manage/{hash}/q/{query?}', 'ManageController@query')->name('admin.file.manage')->where('query', '.*');
     Route::any('manage/{hash}/edit/{query?}', 'ManageController@edit')->name('admin.file.edit');
     Route::any('manage/{hash}/create/{query?}', 'ManageController@create')->name('admin.file.create');
-    Route::any('manage/{hash}/delete/{query?}', 'ManageController@delete')->name('admin.file.delete');
+    Route::any('manage/delete', 'ManageController@delete')->name('admin.file.delete');
 });
 // 短网址
 Route::get('t/{code}', 'IndexController')->name('short');

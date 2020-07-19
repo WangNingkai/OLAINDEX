@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
+use App\Http\Traits\ApiResponseTrait;
 use App\Models\Account;
 use App\Models\Setting;
 use App\Models\User;
@@ -18,6 +19,7 @@ use Cache;
 
 class AdminController extends BaseController
 {
+    use ApiResponseTrait;
     /**
      * 缓存清理
      * @return \Illuminate\Http\RedirectResponse
@@ -134,14 +136,10 @@ class AdminController extends BaseController
         $id = $request->post('id', 0);
         $account = Account::find($id);
         if (!$account) {
-            return response()->json([
-                'error' => '账号不存在！'
-            ]);
+            return $this->fail('账号不存在');
         }
         setting_set('primary_account', $id);
-        return response()->json([
-            'error' => ''
-        ]);
+        return $this->success();
     }
 
     /**
@@ -154,19 +152,15 @@ class AdminController extends BaseController
     {
         $account = Account::find($id);
         if (!$account) {
-            return response()->json([
-                'error' => '账号不存在！'
-            ]);
+            return $this->fail('账号不存在');
         }
         $remark = $request->get('remark');
         $account->remark = $remark;
         if ($account->save()) {
             Cache::forget('ac:list');
-            return response()->json();
+            return $this->success();
         }
-        return response()->json([
-            'error' => ''
-        ]);
+        return $this->success();
     }
 
     /**
@@ -181,19 +175,13 @@ class AdminController extends BaseController
         $id = $request->post('id', 0);
         $account = Account::find($id);
         if (!$account) {
-            return response()->json([
-                'error' => '账号不存在！'
-            ]);
+            return $this->fail('账号不存在');
         }
         if ($account->delete()) {
             Cache::forget('ac:list');
-            return response()->json([
-                'error' => ''
-            ]);
+            return $this->success();
         }
-        return response()->json([
-            'error' => '删除失败'
-        ]);
+        return $this->fail('删除失败');
     }
 
     /**

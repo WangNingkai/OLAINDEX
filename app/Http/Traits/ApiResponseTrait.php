@@ -35,7 +35,8 @@ trait ApiResponseTrait
         $data = [
             'data' => $data,
             'msg' => $msg,
-            'code' => $code
+            'code' => $code,
+            'error' => $code ? $msg : '',
         ];
         return response()->json($data);
     }
