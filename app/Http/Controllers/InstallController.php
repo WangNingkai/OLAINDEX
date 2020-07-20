@@ -129,7 +129,7 @@ class InstallController extends BaseController
 
     /**
      * 返回重置
-     * @return \Illuminate\Contracts\View\Factory|View
+     * @return mixed
      */
     public function reset()
     {

@@ -22,17 +22,15 @@ if (!function_exists('convert_size')) {
     /**
      * 转换字节为可读取数值
      * @param int $size
+     * @param int $digits
      * @return string
      */
-    function convert_size($size): string
+    function convert_size($size, $digits = 2): string
     {
         $size = (int)$size;
-        $units = [' B', ' KB', ' MB', ' GB', ' TB'];
-        for ($i = 0; $size >= 1024 && $i < 4; $i++) {
-            $size /= 1024;
-        }
-
-        return @round($size, 2) . $units[$i];
+        $units = [' B', ' KB', ' MB', ' GB', ' TB', 'PB'];
+        $i = floor(log($size, 1024));
+        return round($size / (1024 ** $i), $digits) . $units[$i];
     }
 }
 if (!function_exists('url_encode')) {

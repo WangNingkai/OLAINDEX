@@ -72,7 +72,7 @@ class LoginController extends Controller
         });
         if (blank($accounts)) {
             Cache::forget('ac:list');
-            return '/admin/install';
+            return route('install');
         }
         return request()->get('redirect');
     }
