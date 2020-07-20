@@ -34,12 +34,13 @@ class Tool
     /**
      *文件大小转换
      *
-     * @param string $size 原始大小
+     * @param int $size 原始大小
      *
      * @return string 转换大小
      */
     public static function convertSize($size): string
     {
+        $size = (int)$size;
         $units = array(' B', ' KB', ' MB', ' GB', ' TB');
         for ($i = 0; $size >= 1024 && $i < 4; $i++) {
             $size /= 1024;
