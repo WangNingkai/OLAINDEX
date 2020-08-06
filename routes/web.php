@@ -49,7 +49,9 @@ Route::prefix('admin')->middleware('auth')->group(static function () {
     Route::any('manage/{hash}/q/{query?}', 'ManageController@query')->name('admin.file.manage')->where('query', '.*');
     Route::any('manage/{hash}/edit/{query?}', 'ManageController@edit')->name('admin.file.edit');
     Route::any('manage/{hash}/create/{query?}', 'ManageController@create')->name('admin.file.create');
-    Route::any('manage/delete', 'ManageController@delete')->name('admin.file.delete');
+    Route::post('manage/delete', 'ManageController@delete')->name('admin.file.delete');
+    Route::post('manage/hide', 'ManageController@hideItem')->name('admin.file.hide');
+    Route::post('manage/encrypt', 'ManageController@encryptItem')->name('admin.file.encrypt');
 });
 // 短网址
 Route::get('t/{code}', 'IndexController')->name('short');
@@ -60,6 +62,8 @@ Route::get('d/{hash}/id/{query?}', 'DiskController@query')->name('drive.query.id
 
 // 搜索
 Route::get('d/{hash}/search', 'DiskController@search')->name('drive.search');
+// 加密
+Route::post('decrypt', 'DiskController@decrypt')->name('drive.decrypt');
 // 图床
 Route::get('image', 'ImageController@index')->name('image')->middleware('custom');
 Route::post('image-upload', 'ImageController@upload')->name('image.upload')->middleware('custom');

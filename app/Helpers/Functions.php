@@ -109,7 +109,7 @@ if (!function_exists('setting')) {
      * @param mixed $default
      * @return mixed
      */
-    function setting($key = '', $default = '')
+    function setting($key = '', $default = null)
     {
         $setting = \Cache::remember('settings', 60 * 60 * 2, static function () {
             try {
@@ -123,7 +123,7 @@ if (!function_exists('setting')) {
             }
             return $settingData;
         });
-        if (!$default) {
+        if ($default === null) {
             $default = \App\Models\Setting::$setting[$key] ?? '';
         }
         $setting = collect($setting)->all();

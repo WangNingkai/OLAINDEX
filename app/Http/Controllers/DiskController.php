@@ -13,6 +13,7 @@ use App\Helpers\HashidsHelper;
 use App\Helpers\Tool;
 use Cache;
 use OneDrive;
+use Cookie;
 
 class DiskController extends BaseController
 {
@@ -23,6 +24,7 @@ class DiskController extends BaseController
         if ($queryById) {
             $view = '-id';
         }
+        $redirectQuery = $query;
         // 账号处理
         $accounts = Tool::fetchAccounts();
         if (blank($accounts)) {
@@ -55,6 +57,27 @@ class DiskController extends BaseController
             Cache::forget("d:item:{$account_id}:{$query}");
             return redirect()->route('message');
         }
+        // 处理加密
+        $store_encrypt_key = "e:{$hash}";
+        $encrypt_path = setting($store_encrypt_key);
+        $need_pass = false;
+        if (array_key_exists($item['id'], $encrypt_path)) {
+            $password = array_get($encrypt_path, $item['id']);
+            if (Cookie::has("e:{$hash}:{$item['id']}")) {
+                $data = json_decode(Cookie::get("e:{$hash}:{$item['id']}"), true);
+                if (strcmp($password, decrypt($data['password'])) !== 0) {
+                    Cookie::forget("e:{$hash}:{$item['id']}");
+                    $this->showMessage('密码已过期', true);
+                    $need_pass = true;
+                }
+            } else {
+                $need_pass = true;
+            }
+            if ($need_pass) {
+                $redirect = $redirectQuery;
+                return view(config('olaindex.theme') . 'password', compact('hash', 'item', 'redirect'));
+            }
+        }
         if ($queryById) {
             $parentPath = array_get($item, 'parentReference.path', '');
             $parentPath = rawurldecode(str_after($parentPath, '/drive/root:'));
@@ -76,7 +99,7 @@ class DiskController extends BaseController
             $isFile = true;
         }
         if ($isFile) {
-            $item = $this->filterItem($item);
+            $item = $this->filterItem($item, $hash);
             $file = $this->formatItem($item, true);
             $download = $file['@microsoft.graph.downloadUrl'];
             if ($request->get('download')) {
@@ -157,7 +180,7 @@ class DiskController extends BaseController
         // 读取预设资源
         $doc = $this->filterDoc($account_id, $list);
         // 资源过滤
-        $list = $this->filter($list);
+        $list = $this->filter($list, $hash);
         // 格式化处理
         $list = $this->formatItem($list);
         // 排序
@@ -206,7 +229,7 @@ class DiskController extends BaseController
             return !array_has($value, 'folder');
         });
         // 过滤
-        $list = $this->filter($list);
+        $list = $this->filter($list, $hash);
         // 格式化处理
         $list = $this->formatItem($list);
         // 排序
@@ -217,12 +240,37 @@ class DiskController extends BaseController
         return view(config('olaindex.theme') . 'search', compact('accounts', 'hash', 'list'));
     }
 
+    public function decrypt(Request $request)
+    {
+        $input_password = $request->get('password');
+        $redirect = $request->get('redirect');
+        $hash = $request->get('hash');
+        $query = $request->get('query');
+        $data = [
+            'password' => encrypt($input_password),
+            'hash' => $hash,
+            'query' => $query,
+        ];
+        $data = json_encode($data);
+        // 处理加密
+        $store_encrypt_key = "e:{$hash}";
+        $encrypt_path = setting($store_encrypt_key);
+        if (array_key_exists($query, $encrypt_path)) {
+            $password = array_get($encrypt_path, $query);
+            if (strcmp($password, $input_password) === 0) {
+                return redirect()->route('drive.query', ['hash' => $hash, 'query' => $redirect])->withCookie("e:{$hash}:{$query}", $data, 600);
+            }
+        }
+        return redirect()->back();
+    }
+
     /**
      * 过滤
      * @param array $list
+     * @param string $hash
      * @return array
      */
-    private function filter($list = [])
+    private function filter($list = [], $hash = '')
     {
         // 过滤微软内置无法读取的文件
         $list = array_where($list, static function ($value) {
@@ -236,7 +284,12 @@ class DiskController extends BaseController
         $list = array_where($list, static function ($value) {
             return !in_array($value['name'], ['README.md', 'HEAD.md',], false);
         });
-        // todo:过滤隐藏文件
+        // 过滤隐藏文件
+        $store_hide_key = "h:{$hash}";
+        $hidden_path = setting($store_hide_key);
+        $list = array_where($list, static function ($value) use ($hidden_path) {
+            return !in_array($value['id'], $hidden_path, false);
+        });
         return $list;
     }
 
@@ -319,16 +372,23 @@ class DiskController extends BaseController
     /**
      * 过滤非法预览
      * @param array $item
+     * @param string $hash
      * @return mixed
      */
-    private function filterItem($item)
+    private function filterItem($item, $hash)
     {
         $illegalFile = ['README.md', 'HEAD.md', '.password', '.deny'];
         $pattern = '/^README\.md|HEAD\.md|\.password|\.deny/';
         if (in_array($item['name'], $illegalFile, false) || preg_match($pattern, $item['name'], $arr) > 0) {
             abort(403, '非法请求');
         }
-        // todo:处理隐藏文件
+        // 处理隐藏文件
+        $store_hide_key = "h:{$hash}";
+        $hidden_path = setting($store_hide_key);
+        if (in_array($item['id'], $hidden_path, false)) {
+            abort(404, '文件不存在');
+        }
+
         return $item;
     }
 

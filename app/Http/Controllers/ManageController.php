@@ -51,7 +51,7 @@ class ManageController extends BaseController
             Cache::forget("d:item:{$account_id}:{$query}");
             return redirect()->route('message');
         }
-
+        $item = $this->formatItem($item, true, $hash);
         $list = Cache::remember("d:list:{$account_id}:{$query}", setting('cache_expires'), static function () use ($service, $query) {
             return $service->fetchList($query);
         });
@@ -63,7 +63,7 @@ class ManageController extends BaseController
         // 资源过滤
         $list = $this->filter($list);
         // 格式化处理
-        $list = $this->formatItem($list);
+        $list = $this->formatItem($list, false, $hash);
 
         $doc = [
             'readme' => [],
@@ -143,7 +143,7 @@ class ManageController extends BaseController
         $path = array_where($path, static function ($value) {
             return !blank($value);
         });
-        $file = $this->formatItem($item, true);
+        $file = $this->formatItem($item, true, $hash);
         $download = $file['@microsoft.graph.downloadUrl'];
         try {
             $content = Cache::remember("d:content:{$account_id}:{$file['id']}", setting('cache_expires'), static function () use ($download) {
@@ -215,6 +215,58 @@ class ManageController extends BaseController
         return $this->success();
     }
 
+    public function encryptItem(Request $request)
+    {
+        $hash = $request->get('hash');
+        $accounts = Tool::fetchAccounts();
+        if (blank($accounts)) {
+            Cache::forget('ac:list');
+            return $this->fail('请先绑定账号!');
+        }
+        $account_id = HashidsHelper::decode($hash);
+        if (!$account_id) {
+            return $this->fail('账号不存在');
+        }
+        $store_key = "e:{$hash}";
+        $query = $request->get('query');// 路径
+        $password = $request->get('password', 123456);
+        $data = setting($store_key, []);
+        if (array_has($data, $query)) {
+            unset($data[$query]);
+        } else {
+            $data[$query] = $password;
+        }
+        setting_set($store_key, $data);
+        return $this->success();
+    }
+
+    public function hideItem(Request $request)
+    {
+        $hash = $request->get('hash');
+        $accounts = Tool::fetchAccounts();
+        if (blank($accounts)) {
+            Cache::forget('ac:list');
+            return $this->fail('请先绑定账号!');
+        }
+        $account_id = HashidsHelper::decode($hash);
+        if (!$account_id) {
+            return $this->fail('账号不存在');
+        }
+        $store_key = "h:{$hash}";
+        $query = $request->get('query');//路径
+        $data = setting($store_key, []);
+        $tmp = array_flip($data);
+        if (array_has($tmp, $query)) {
+            unset($tmp[$query]);
+            $data = array_flip($tmp);
+        } else {
+            $data[] = $query;
+        }
+        setting_set($store_key, $data);
+        return $this->success();
+
+    }
+
     /**
      * 过滤
      * @param array $list
@@ -261,21 +313,38 @@ class ManageController extends BaseController
      * 格式化
      * @param array $data
      * @param bool $isFile
+     * @param string $hash
      * @return array
      */
-    private function formatItem($data = [], $isFile = false)
+    private function formatItem($data = [], $isFile = false, $hash = '')
     {
+        $store_hide_key = "h:{$hash}";
+        $store_encrypt_key = "e:{$hash}";
+        $encrypt_path = setting($store_encrypt_key);
+        $hidden_path = setting($store_hide_key);
         if ($isFile) {
+            $data['isLock'] = false;
+            if (array_has($encrypt_path, $data['id'])) {
+                $data['isLock'] = true;
+            }
             $data['ext'] = strtolower(
                 pathinfo(
                     $data['name'],
                     PATHINFO_EXTENSION
                 )
             );
+            $data['isHidden'] = false;
+            if (in_array($data['id'], $hidden_path, false)) {
+                $data['isHidden'] = true;
+            }
             return $data;
         }
         $items = [];
         foreach ($data as $item) {
+            $item['isLock'] = false;
+            if (array_has($encrypt_path, $item['id'])) {
+                $item['isLock'] = true;
+            }
             if (array_has($item, 'file')) {
                 $item['ext'] = strtolower(
                     pathinfo(
@@ -285,6 +354,10 @@ class ManageController extends BaseController
                 );
             } else {
                 $item['ext'] = 'folder';
+            }
+            $item['isHidden'] = false;
+            if (in_array($item['id'], $hidden_path, false)) {
+                $item['isHidden'] = true;
             }
             $items[] = $item;
         }

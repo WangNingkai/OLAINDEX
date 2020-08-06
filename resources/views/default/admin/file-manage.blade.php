@@ -41,7 +41,10 @@
                                 <tr class="list-item"
                                     data-route="{{ !array_has($data,'folder') ?'':route('admin.file.manage', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) ))]) }}">
                                     <td style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
-                                        <i class="ri-{{ \App\Helpers\Tool::fetchExtIco($data['ext'] ?? 'file') }}-fill"></i> {{ str_limit($data['name'], 32) }}
+                                        <i class="ri-{{ \App\Helpers\Tool::fetchExtIco($data['ext'] ?? 'file') }}-fill"></i>
+                                        {{ str_limit($data['name'], 32) }}
+                                        @if($data['isHidden'])<i class="ri-eye-off-fill"></i>@endif
+                                        @if($data['isLock'])<i class="ri-lock-fill"></i>@endif
                                     </td>
 
                                     <td class="d-none d-md-block d-md-none">{{ convert_size($data['size']) }}</td>
@@ -56,6 +59,12 @@
                                                  data-id="{{ $data['id'] }}" data-hash="{{ $hash }}"
                                                  data-etag="{{ $data['eTag'] ?? '' }}">
                                                 <a class="dropdown-item delete-item" href="javascript:void(0)">删除</a>
+                                                @if(array_has($data,'folder'))
+                                                    <a class="dropdown-item encrypt-item"
+                                                       href="javascript:void(0)">@if($data['isLock'])解除@endif加密</a>
+                                                @endif
+                                                <a class="dropdown-item hide-item"
+                                                   href="javascript:void(0)"> @if($data['isHidden'])解除@endif隐藏</a>
                                             </div>
                                         </div>
                                     </td>
@@ -81,7 +90,8 @@
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             操作此文件夹：
                         </button>
-                        <div class="dropdown-menu" aria-labelledby="btnOperate">
+                        <div class="dropdown-menu" aria-labelledby="btnOperate" data-id="{{ $item['id'] }}"
+                             data-hash="{{ $hash }}">
                             @if (blank($doc['readme']))
                                 <a class="dropdown-item"
                                    href="{{ route('admin.file.create',['hash' => $hash, 'query' => $item['id'], 'fileName' => 'README.md']) }}">添加README</a>
@@ -96,6 +106,10 @@
                                 <a class="dropdown-item"
                                    href="{{ route('admin.file.edit', ['hash' => $hash, 'query' => $doc['head']['id']]) }}">编辑HEAD</a>
                             @endif
+                            <a class="dropdown-item encrypt-item"
+                               href="#">@if($item['isLock'])解除@endif加密文件夹</a>
+                            <a class="dropdown-item hide-item"
+                               href="#">@if($item['isHidden'])解除@endif隐藏文件夹</a>
                         </div>
                     </div>
                 </div>
@@ -105,20 +119,20 @@
 @stop
 @push('scripts')
     <script>
-        $(function () {
-            $('.list-item').on('click', function (e) {
+        $(function() {
+            $('.list-item').on('click', function(e) {
                 if ($(this).attr('data-route')) {
                     window.location.href = $(this).attr('data-route')
                 }
                 e.stopPropagation()
             })
-            $('.list-item-dropdown').on('mouseover', function (e) {
+            $('.list-item-dropdown').on('mouseover', function(e) {
                 $(this).dropdown({
                     boundary: 'window',
                 })
                 e.stopPropagation()
             })
-            $('.delete-item').on('click', function (e) {
+            $('.delete-item').on('click', function(e) {
                 Swal.fire({
                     title: '确定删除吗?',
                     text: '删除后无法恢复!',
@@ -136,26 +150,85 @@
                         axios.post("{{ route('admin.file.delete') }}", {
                             id: source_id,
                             hash: hash,
-                            eTag: eTag
+                            eTag: eTag,
                         })
-                            .then(function (response) {
+                            .then(function(response) {
                                 let data = response.data
-                                console.log(data)
                                 if (data.error === '') {
-                                    Swal.fire('删除成功！')
-                                    window.location.reload()
-                                }else {
+                                    Swal.fire('删除成功！').then(() => {
+                                        window.location.reload()
+                                    })
+                                } else {
                                     Swal.fire('删除失败！')
                                 }
                             })
-                            .catch(function (error) {
+                            .catch(function(error) {
                                 console.log(error)
-                            })
-                            .then(function () {
-                                // always executed
                             })
                     }
                 })
+                e.stopPropagation()
+            })
+            $('.encrypt-item').on('click', function(e) {
+                let id = $(this).parent().attr('data-id')
+                let hash = $(this).parent().attr('data-hash')
+                Swal.fire({
+                    title: '请输入密码',
+                    input: 'text',
+                    inputValue: '123456',
+                    showCancelButton: true,
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return '密码不能为空!'
+                        }
+                    },
+                }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.cancel) {
+                        console.log(result)
+                        window.location.reload()
+                    }
+                    let password = result.value
+                    axios.post("{{ route('admin.file.encrypt') }}", {
+                        query: id,
+                        hash: hash,
+                        password: password,
+                    })
+                        .then(function(response) {
+                            let data = response.data
+                            if (data.error === '') {
+                                Swal.fire('设置加密成功！').then(() => {
+                                    window.location.reload()
+                                })
+                            } else {
+                                Swal.fire('设置加密失败！')
+                            }
+                        })
+                        .catch(function(error) {
+                            console.log(error)
+                        })
+                })
+                e.stopPropagation()
+            })
+            $('.hide-item').on('click', function(e) {
+                let id = $(this).parent().attr('data-id')
+                let hash = $(this).parent().attr('data-hash')
+                axios.post("{{ route('admin.file.hide') }}", {
+                    query: id,
+                    hash: hash,
+                })
+                    .then(function(response) {
+                        let data = response.data
+                        if (data.error === '') {
+                            Swal.fire('设置隐藏成功！').then(() => {
+                                window.location.reload()
+                            })
+                        } else {
+                            Swal.fire('设置隐藏失败！')
+                        }
+                    })
+                    .catch(function(error) {
+                        console.log(error)
+                    })
                 e.stopPropagation()
             })
         })

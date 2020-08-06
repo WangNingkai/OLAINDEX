@@ -227,17 +227,14 @@
                         })
                             .then(function(response) {
                                 let data = response.data
-                                console.log(data)
                                 if (data.error === '') {
-                                    Swal.fire('删除成功！')
-                                    window.location.reload()
+                                    Swal.fire('删除成功！').then(() => {
+                                        window.location.reload()
+                                    })
                                 }
                             })
                             .catch(function(error) {
                                 console.log(error)
-                            })
-                            .then(function() {
-                                // always executed
                             })
                     }
                 })
@@ -264,17 +261,14 @@
                 })
                     .then(function(response) {
                         let data = response.data
-                        console.log(data)
                         if (data.error === '') {
-                            Swal.fire('设置成功！')
-                            window.location.reload()
+                            Swal.fire('设置成功！').then(() => {
+                                window.location.reload()
+                            })
                         }
                     })
                     .catch(function(error) {
                         console.log(error)
-                    })
-                    .then(function() {
-                        // always executed
                     })
             })
         })

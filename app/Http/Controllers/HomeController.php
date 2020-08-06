@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Cache;
 use OneDrive;
+use Cookie;
 
 class HomeController extends BaseController
 {
@@ -44,6 +45,7 @@ class HomeController extends BaseController
         $root = array_get($config, 'root', '/');
         $root = trim($root, '/');
         $query = '/';
+        $redirectQuery = $query;
         $path = explode('/', $query);
         $path = array_where($path, static function ($value) {
             return !blank($value);
@@ -59,6 +61,27 @@ class HomeController extends BaseController
             Cache::forget("d:item:{$account_id}:{$query}");
             return redirect()->route('message');
         }
+        // 处理加密
+        $store_encrypt_key = "e:{$hash}";
+        $encrypt_path = setting($store_encrypt_key);
+        $need_pass = false;
+        if (array_key_exists($item['id'], $encrypt_path)) {
+            $password = array_get($encrypt_path, $item['id']);
+            if (Cookie::has("e:{$hash}:{$item['id']}")) {
+                $data = json_decode(Cookie::get("e:{$hash}:{$item['id']}"), true);
+                if (strcmp($password, decrypt($data['password'])) !== 0) {
+                    Cookie::forget("e:{$hash}:{$item['id']}");
+                    $this->showMessage('密码已过期', true);
+                    $need_pass = true;
+                }
+            } else {
+                $need_pass = true;
+            }
+            if ($need_pass) {
+                $redirect = $redirectQuery;
+                return view(config('olaindex.theme') . 'password', compact('hash', 'item', 'redirect'));
+            }
+        }
         $list = Cache::remember("d:list:{$account_id}:{$query}", setting('cache_expires'), static function () use ($service, $query) {
             return $service->fetchList($query);
         });
@@ -70,7 +93,7 @@ class HomeController extends BaseController
         // 读取预设资源
         $doc = $this->filterDoc($account_id, $list);
         // 资源过滤
-        $list = $this->filter($list);
+        $list = $this->filter($list, $hash);
         // 格式化处理
         $list = $this->formatItem($list);
         //排序
@@ -92,9 +115,10 @@ class HomeController extends BaseController
     /**
      * 过滤
      * @param array $list
+     * @param string $hash
      * @return array
      */
-    private function filter($list = [])
+    private function filter($list = [], $hash = '')
     {
         // 过滤微软内置无法读取的文件
         $list = array_where($list, static function ($value) {
@@ -108,7 +132,13 @@ class HomeController extends BaseController
         $list = array_where($list, static function ($value) {
             return !in_array($value['name'], ['README.md', 'HEAD.md',], false);
         });
-        // todo:过滤隐藏文件
+        // 过滤隐藏文件
+        $store_hide_key = "h:{$hash}";
+        $hidden_path = setting($store_hide_key);
+        $list = array_where($list, static function ($value) use ($hidden_path) {
+            return !in_array($value['id'], $hidden_path, false);
+        });
+
         return $list;
     }
 
