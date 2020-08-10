@@ -59,7 +59,7 @@ class DiskController extends BaseController
         }
         // 处理加密
         $store_encrypt_key = "e:{$hash}";
-        $encrypt_path = setting($store_encrypt_key);
+        $encrypt_path = setting($store_encrypt_key, []);
         $need_pass = false;
         if (array_key_exists($item['id'], $encrypt_path)) {
             $password = array_get($encrypt_path, $item['id']);
@@ -254,7 +254,7 @@ class DiskController extends BaseController
         $data = json_encode($data);
         // 处理加密
         $store_encrypt_key = "e:{$hash}";
-        $encrypt_path = setting($store_encrypt_key);
+        $encrypt_path = setting($store_encrypt_key, []);
         if (array_key_exists($query, $encrypt_path)) {
             $password = array_get($encrypt_path, $query);
             if (strcmp($password, $input_password) === 0) {
@@ -286,7 +286,7 @@ class DiskController extends BaseController
         });
         // 过滤隐藏文件
         $store_hide_key = "h:{$hash}";
-        $hidden_path = setting($store_hide_key);
+        $hidden_path = setting($store_hide_key, []);
         $list = array_where($list, static function ($value) use ($hidden_path) {
             return !in_array($value['id'], $hidden_path, false);
         });
@@ -384,7 +384,7 @@ class DiskController extends BaseController
         }
         // 处理隐藏文件
         $store_hide_key = "h:{$hash}";
-        $hidden_path = setting($store_hide_key);
+        $hidden_path = setting($store_hide_key, []);
         if (in_array($item['id'], $hidden_path, false)) {
             abort(404, '文件不存在');
         }

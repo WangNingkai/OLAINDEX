@@ -320,8 +320,8 @@ class ManageController extends BaseController
     {
         $store_hide_key = "h:{$hash}";
         $store_encrypt_key = "e:{$hash}";
-        $encrypt_path = setting($store_encrypt_key);
-        $hidden_path = setting($store_hide_key);
+        $encrypt_path = setting($store_encrypt_key, []);
+        $hidden_path = setting($store_hide_key, []);
         if ($isFile) {
             $data['isLock'] = false;
             if (array_has($encrypt_path, $data['id'])) {

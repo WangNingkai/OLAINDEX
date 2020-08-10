@@ -63,7 +63,7 @@ class HomeController extends BaseController
         }
         // 处理加密
         $store_encrypt_key = "e:{$hash}";
-        $encrypt_path = setting($store_encrypt_key);
+        $encrypt_path = setting($store_encrypt_key, []);
         $need_pass = false;
         if (array_key_exists($item['id'], $encrypt_path)) {
             $password = array_get($encrypt_path, $item['id']);
@@ -134,7 +134,7 @@ class HomeController extends BaseController
         });
         // 过滤隐藏文件
         $store_hide_key = "h:{$hash}";
-        $hidden_path = setting($store_hide_key);
+        $hidden_path = setting($store_hide_key, []);
         $list = array_where($list, static function ($value) use ($hidden_path) {
             return !in_array($value['id'], $hidden_path, false);
         });
