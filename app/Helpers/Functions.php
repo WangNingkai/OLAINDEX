@@ -27,6 +27,9 @@ if (!function_exists('convert_size')) {
      */
     function convert_size($size, $digits = 2): string
     {
+        if ($size <= 0) {
+            return '0 B';
+        }
         $size = (int)$size;
         $units = [' B', ' KB', ' MB', ' GB', ' TB', 'PB'];
         $i = floor(log($size, 1024));
