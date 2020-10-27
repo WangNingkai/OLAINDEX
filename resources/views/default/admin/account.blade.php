@@ -210,6 +210,7 @@
                     })
             })
             $('.delete_account').on('click', function(e) {
+                let account_id = $(this).parent().attr('data-id')
                 Swal.fire({
                     title: '确定删除吗?',
                     text: '删除后无法恢复!',
@@ -221,7 +222,7 @@
                     cancelButtonText: '取消',
                 }).then((result) => {
                     if (result.value) {
-                        let account_id = $('.delete_account').parent().attr('data-id')
+
                         axios.post('/admin/account/delete', {
                             id: account_id,
                         })
