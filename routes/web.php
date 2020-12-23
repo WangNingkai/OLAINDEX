@@ -56,4 +56,4 @@ Route::get('drive/{hash?}/{query?}', 'DriveController@query')->name('drive.query
 Route::post('decrypt', 'DriveController@decrypt')->name('drive.decrypt');
 Route::get('image', 'ImageController@index')->name('image')->middleware('custom');
 Route::post('image-upload', 'ImageController@upload')->name('image.upload')->middleware('custom');
-Route::get('t/{code}', 'IndexController')->name('short');
+Route::get('t/{code}', 'ShareController')->name('short');

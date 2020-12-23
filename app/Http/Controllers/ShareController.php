@@ -10,7 +10,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
 
-class IndexController extends BaseController
+class ShareController extends BaseController
 {
     public function __invoke($code)
     {

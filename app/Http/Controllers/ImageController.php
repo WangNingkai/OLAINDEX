@@ -10,6 +10,8 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Tool;
 use App\Http\Traits\ApiResponseTrait;
+use App\Models\Account;
+use App\Service\GraphErrorEnum;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -35,8 +37,7 @@ class ImageController extends BaseController
      */
     public function upload(Request $request)
     {
-        /* @var $accounts Collection */
-        $accounts = Tool::fetchAccounts();
+        $accounts = Account::fetchlist();
         $account_id = 0;
         $hash = '';
         if ($accounts) {
@@ -53,6 +54,12 @@ class ImageController extends BaseController
         if (!$account_id) {
             return $this->fail('账号不存在', 404);
         }
+
+        $account = Account::find($account_id);
+        if (!$account) {
+            return $this->fail('账号不存在', 404);
+        }
+        $config = $account->config;
 
         $field = 'olaindex_img';
         if (!$request->hasFile($field)) {
@@ -73,16 +80,18 @@ class ImageController extends BaseController
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
             $content = file_get_contents($path);
-            $hostingPath = url_encode(array_get(setting($hash), 'image_path', '/'));
+            $hostingPath = url_encode(array_get($config, 'image_path', '/'));
             $middleName = '/' . date('Y') . '/' . date('m') . '/' . date('d') . '/' . str_random(8) . '/';
             $filePath = trim($hostingPath . $middleName . $file->getClientOriginalName(), '/');
-            $root = array_get(setting($hash), 'root', '/');
+            $root = array_get($config, 'root', '/');
             $root = trim($root, '/');
             $query = "{$root}/$filePath";
-            $service = OneDrive::account($account_id);
+            $service = $account->getOneDriveService();
             $resp = $service->upload($query, $content);
             if (array_key_exists('code', $resp)) {
-                return $this->fail(array_get($resp, 'message', '文件上传出错'), 400);
+                $msg = array_get($resp, 'message', '文件上传出错');
+                $msg = GraphErrorEnum::get($resp['code']) ?? $msg;
+                return $this->fail($msg, 400);
             }
             $data = [
                 'item' => $resp,
