@@ -14,5 +14,6 @@ npm-debug.log
 yarn-error.log
 .php_cs.cache
 _ide_helper.php
+_ide_helper_models.php
 .phpstorm.meta.php
 /resources/vue/node_modules
