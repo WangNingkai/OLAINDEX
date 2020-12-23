@@ -104,7 +104,7 @@
                                     -
                                 @else
                                     <a href="{{ route('drive.query', ['hash' => $hash, 'query' => implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) ),'download' => 1]) }}"
-                                       style="text-decoration: none">下载</a>
+                                       class="btn btn-sm btn-primary download mr-2 my-1">下载</a>
                                 @endif
                             </td>
                         </tr>

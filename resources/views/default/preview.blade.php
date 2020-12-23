@@ -1,6 +1,7 @@
 @extends('default.layouts.main')
 @section('title', $file['name'])
 @section('content')
+    @include('default.components.breadcrumb',['hash' => $hash, 'path' => $path])
     <div class="card mb-3">
         <div class="card-body">
             <div class="row">
