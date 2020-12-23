@@ -266,10 +266,8 @@ class Account extends Model
      */
     public static function fetchlist()
     {
-        return Cache::remember('ac:list', 600, static function () {
-            return Account::query()
-                ->select(['id', 'remark'])
-                ->where('status', 1)->get();
-        });
+        return Account::query()
+            ->select(['id', 'remark'])
+            ->where('status', 1)->get();
     }
 }

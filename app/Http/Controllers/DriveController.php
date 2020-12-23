@@ -15,6 +15,8 @@ use App\Helpers\HashidsHelper;
 use App\Helpers\Tool;
 use Cache;
 use Cookie;
+use Illuminate\Support\Collection;
+use Illuminate\Support\LazyCollection;
 
 class DriveController extends BaseController
 {
@@ -53,7 +55,7 @@ class DriveController extends BaseController
 
         $service = $account->getOneDriveService();
         // 缓存处理
-        $item = Cache::remember("d:item:{$account_id}:{$query}", setting('cache_expires'), static function () use ($service, $query) {
+        $item = Cache::remember("d:item:{$account_id}:{$query}", setting('cache_expires'), function () use ($service, $query) {
             return $service->fetchItem($query);
         });
         if (array_key_exists('code', $item)) {
@@ -89,6 +91,7 @@ class DriveController extends BaseController
         if (array_key_exists('file', $item)) {
             $isFile = true;
         }
+
         if ($isFile) {
             $item = $this->filterItem($item, $hash);
             $file = $this->formatItem($item, true);
@@ -118,7 +121,7 @@ class DriveController extends BaseController
                             return redirect()->back();
                         }
                         try {
-                            $content = Cache::remember("d:content:{$account_id}:{$file['id']}", setting('cache_expires'), static function () use ($download) {
+                            $content = Cache::remember("d:content:{$account_id}:{$file['id']}", setting('cache_expires'), function () use ($download) {
                                 return Tool::fetchContent($download);
                             });
                         } catch (\Exception $e) {
@@ -159,7 +162,7 @@ class DriveController extends BaseController
             return redirect()->away($download);
         }
 
-        $list = Cache::remember("d:list:{$account_id}:{$query}", setting('cache_expires'), static function () use ($service, $query) {
+        $list = Cache::remember("d:list:{$account_id}:{$query}", setting('cache_expires'), function () use ($service, $query) {
             return $service->fetchList($query);
         });
         if (array_key_exists('code', $list)) {
@@ -168,6 +171,7 @@ class DriveController extends BaseController
             Cache::forget("d:list:{$account_id}:{$query}");
             abort(500, $msg);
         }
+        $list = collect($list)->lazy();
         // 处理列表
         $doc = $this->filterDoc($account_id, $list);
         // 资源过滤
@@ -185,6 +189,7 @@ class DriveController extends BaseController
         $list = $this->sort($list, $column, $descending);
         // 分页
         $perPage = array_get($config, 'list_limit', 10);
+
         $list = $this->paginate($list, $perPage, false);
 
         return view(config('olaindex.theme') . 'one' . $view, compact('accounts', 'hash', 'path', 'item', 'list', 'doc'));
@@ -220,49 +225,24 @@ class DriveController extends BaseController
     }
 
     /**
-     * 过滤
-     * @param array $list
-     * @param string $hash
-     * @return \Illuminate\Support\LazyCollection
-     */
-    private function filter($list = [], $hash = '')
-    {
-        $collect = collect($list)->lazy();
-        // 过滤微软内置无法读取的文件 & 过滤预留文件
-        $data = $collect->filter(static function ($value) {
-            return !array_has($value, 'package.type')
-                || !in_array($value['name'], ['.password', '.deny', 'README.md', 'HEAD.md',], false);
-        });
-        // todo:过滤隐藏文件
-        /*$store_hide_key = "h:{$hash}";
-        $hidden_path = setting($store_hide_key, []);
-        $list = array_where($list, static function ($value) use ($hidden_path) {
-            return !in_array($value['id'], $hidden_path, false);
-        });*/
-        return $data;
-    }
-
-    /**
      * 获取说明文件
      * @param $account_id
-     * @param array $list
+     * @param mixed|LazyCollection|Collection $list
      * @return array
      */
     private function filterDoc($account_id, $list = [])
     {
-        $collect = collect($list)->lazy();
-
-        $readme = $collect->filter(static function ($value) {
-            return $value['name'] === 'README.md';
+        $readme = $list->filter(function ($item) {
+            return $item['name'] === 'README.md';
         });
-        $head = $collect->filter(static function ($value) {
-            return $value['name'] === 'HEAD.md';
+        $head = $list->filter(function ($item) {
+            return $item['name'] === 'HEAD.md';
         });
 
         if ($readme->isNotEmpty()) {
             $readme = $readme->first();
             try {
-                $readme = Cache::remember("d:content:{$account_id}:{$readme['id']}", setting('cache_expires'), static function () use ($readme) {
+                $readme = Cache::remember("d:content:{$account_id}:{$readme['id']}", setting('cache_expires'), function () use ($readme) {
                     return Tool::fetchContent($readme['@microsoft.graph.downloadUrl']);
                 });
             } catch (\Exception $e) {
@@ -276,7 +256,7 @@ class DriveController extends BaseController
         if ($head->isNotEmpty()) {
             $head = $head->first();
             try {
-                $head = Cache::remember("d:content:{$account_id}:{$head['id']}", setting('cache_expires'), static function () use ($head) {
+                $head = Cache::remember("d:content:{$account_id}:{$head['id']}", setting('cache_expires'), function () use ($head) {
                     return Tool::fetchContent($head['@microsoft.graph.downloadUrl']);
                 });
             } catch (\Exception $e) {
@@ -316,38 +296,35 @@ class DriveController extends BaseController
     }
 
     /**
-     * 排序(支持 name\size\lastModifiedDateTime)
-     * @param array $list
-     * @param string $field
-     * @param bool $descending
-     * @return array
+     * 过滤
+     * @param mixed|LazyCollection|Collection $list
+     * @param string $hash
+     * @return mixed
      */
-    private function sort($list = [], $field = 'name', $descending = false)
+    private function filter($list = [], $hash = '')
     {
-        $collect = collect($list)->lazy();
-        // 筛选文件夹/文件夹
-        $folders = $collect->filter(static function ($value) {
-            return array_has($value, 'folder');
+        // 过滤微软内置无法读取的文件 & 过滤预留文件
+        $list = $list->filter(function ($item) {
+            return !array_has($item, 'package.type');
         });
-        $files = $collect->filter(static function ($value) {
-            return !array_has($value, 'folder');
+        $list = $list->filter(function ($item) {
+            $name = strtoupper(trim(array_get($item, 'name', '')));
+            return !in_array($name, ['README.MD', 'HEAD.MD', '.PASSWORD', '.DENY'], false);
         });
-        // 执行文件夹/文件夹 排序
-        if (!$descending) {
-            $folders = $folders->sortBy($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->all();
-            $files = $files->sortBy($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->all();
-        } else {
-            $folders = $folders->sortByDesc($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->all();
-            $files = $files->sortByDesc($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->all();
-        }
-        return collect($folders)->merge($files)->all();
+        // todo:过滤隐藏文件
+        /*$store_hide_key = "h:{$hash}";
+        $hidden_path = setting($store_hide_key, []);
+        $list = array_where($list, function ($value) use ($hidden_path) {
+            return !in_array($value['id'], $hidden_path, false);
+        });*/
+        return $list;
     }
 
     /**
      * 格式化
-     * @param $data
+     * @param mixed|LazyCollection|Collection data
      * @param bool $isFile
-     * @return array
+     * @return mixed|LazyCollection|Collection
      */
     private function formatItem($data = [], $isFile = false)
     {
@@ -360,8 +337,7 @@ class DriveController extends BaseController
             );
             return $data;
         }
-        $collection = collect($data)->lazy();
-        return $collection->map(static function ($item) {
+        return $data->map(function ($item) {
             if (array_has($item, 'file')) {
                 $item['ext'] = strtolower(
                     pathinfo(
@@ -373,6 +349,35 @@ class DriveController extends BaseController
                 $item['ext'] = 'folder';
             }
             return $item;
-        })->all();
+        });
     }
+
+    /**
+     * 排序(支持 name\size\lastModifiedDateTime)
+     * @param mixed|LazyCollection|Collection $list
+     * @param string $field
+     * @param bool $descending
+     * @return array
+     */
+    private function sort($list = [], $field = 'name', $descending = false)
+    {
+        // 筛选文件夹/文件夹
+        $folders = $list->filter(function ($item) {
+            return array_has($item, 'folder');
+        });
+        $files = $list->filter(function ($item) {
+            return !array_has($item, 'folder');
+        });
+        // 执行文件夹/文件夹 排序
+        if (!$descending) {
+            $folders = $folders->sortBy($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR);
+            $files = $files->sortBy($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR);
+        } else {
+            $folders = $folders->sortByDesc($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR);
+            $files = $files->sortByDesc($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR);
+        }
+        return $folders->merge($files)->all();
+    }
+
+
 }

@@ -104,10 +104,10 @@ class Setting extends Model
         // 查询数据库中是否有配置
         $saved = self::query()->pluck('name')->all();
 
-        $newData = collect($editData)->filter(static function ($value) use ($saved) {
+        $newData = collect($editData)->filter(function($value) use ($saved) {
             return !in_array($value['name'], $saved, false);
         })->toArray();
-        $editData = collect($editData)->reject(static function ($value) use ($saved) {
+        $editData = collect($editData)->reject(function($value) use ($saved) {
             return !in_array($value['name'], $saved, false);
         })->toArray();
         // 存在新数据先插入

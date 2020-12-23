@@ -25,9 +25,9 @@ Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('login', 'Auth\LoginController@login');
 Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 // 后台管理
-Route::prefix('admin')->middleware('auth')->group(static function () {
+Route::prefix('admin')->middleware('auth')->group(function () {
     // 安装绑定
-    Route::prefix('install')->group(static function () {
+    Route::prefix('install')->group(function () {
         Route::any('/', 'InstallController@install')->name('install');
         Route::any('apply', 'InstallController@apply')->name('apply');
         Route::any('reset', 'InstallController@reset')->name('reset');

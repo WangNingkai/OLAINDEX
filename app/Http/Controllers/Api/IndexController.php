@@ -11,7 +11,7 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\Tool;
 use App\Http\Controllers\BaseController;
 use App\Http\Traits\ApiResponseTrait;
-use OneDrive;
+use App\Models\Account;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Validator;
@@ -38,8 +38,7 @@ class IndexController extends BaseController
      */
     public function imageUpload(Request $request)
     {
-        /* @var $accounts Collection */
-        $accounts = Tool::fetchAccounts();
+        $accounts = Account::fetchList();
         $account_id = 0;
         $hash = '';
         if ($accounts) {

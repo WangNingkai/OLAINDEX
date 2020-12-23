@@ -298,19 +298,6 @@ class Tool
     }
 
     /**
-     * 获取账号
-     * @return Account[]
-     */
-    public static function fetchAccounts()
-    {
-        return Cache::remember('ac:list', 600, static function () {
-            return Account::query()
-                ->select(['id', 'remark'])
-                ->where('status', 1)->get();
-        });
-    }
-
-    /**
      * 获取排序
      * @param $field
      * @return bool
