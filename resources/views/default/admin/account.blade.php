@@ -1,7 +1,7 @@
 @extends('default.layouts.main')
 @section('title', '账号设置')
 @section('content')
-    <div class="card mb-3">
+    <div class="card border-light mb-3 shadow">
         <div class="card-header">账号设置</div>
         <div class="card-body">
             <form action="" method="post">
