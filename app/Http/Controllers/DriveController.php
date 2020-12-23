@@ -8,57 +8,61 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Account;
+use App\Service\GraphErrorEnum;
 use Illuminate\Http\Request;
 use App\Helpers\HashidsHelper;
 use App\Helpers\Tool;
 use Cache;
-use OneDrive;
 use Cookie;
 
-class DiskController extends BaseController
+class DriveController extends BaseController
 {
-    public function query(Request $request, $hash, $query = '')
+    /**
+     * 资源处理
+     * @param Request $request
+     * @param $hash
+     * @param string $query
+     * @return mixed
+     * @throws \Exception
+     */
+    public function query(Request $request, $hash = '', $query = '')
     {
-        $queryById = $request->routeIs(['drive.query.id']);
         $view = '';
-        if ($queryById) {
-            $view = '-id';
+        $accounts = Account::fetchlist();
+        if (!$hash) {
+            $account_id = setting('primary_account', 0);
+        } else {
+            $account_id = HashidsHelper::decode($hash);
         }
-        $redirectQuery = $query;
-        // 账号处理
-        $accounts = Tool::fetchAccounts();
-        if (blank($accounts)) {
-            Cache::forget('ac:list');
-            abort(404, '请先登录绑定账号！');
-        }
-        $account_id = HashidsHelper::decode($hash);
         if (!$account_id) {
-            abort(404, '账号不存在');
+            abort(404, '尚未设置账号！');
+        }
+        $account = Account::find($account_id);
+        if (!$account) {
+            abort(404, '账号不存在！');
         }
         // 资源处理
-        $config = setting($hash);
-        $root = array_get($config, 'root', '/');
-        $root = trim($root, '/');
-        if (!$queryById) {
-            $query = trim($query, '/');
-            $path = explode('/', $query);
-            $path = array_where($path, static function ($value) {
-                return !blank($value);
-            });
-            $query = trans_absolute_path(trim("{$root}/$query", '/'));
-        }
-        $service = OneDrive::account($account_id);
+        $config = $account->config;
+        $root = $account->config['root'] ?? '/';
+        $query = trim($query, '/');
+        $path = explode('/', $query);
+        $path = array_filter($path);
+        $query = trans_absolute_path(trim("{$root}/$query", '/'));
+
+        $service = $account->getOneDriveService();
         // 缓存处理
-        $item = Cache::remember("d:item:{$account_id}:{$query}", setting('cache_expires'), static function () use ($service, $query, $queryById) {
-            return $queryById ? $service->fetchItemById($query) : $service->fetchItem($query);
+        $item = Cache::remember("d:item:{$account_id}:{$query}", setting('cache_expires'), static function () use ($service, $query) {
+            return $service->fetchItem($query);
         });
         if (array_key_exists('code', $item)) {
-            $this->showMessage(array_get($item, 'message', '404NotFound'), true);
+            $msg = array_get($item, 'message', '404NotFound');
+            $msg = GraphErrorEnum::get($item['code']) ?? $msg;
             Cache::forget("d:item:{$account_id}:{$query}");
-            return redirect()->route('message');
+            abort(500, $msg);
         }
-        // 处理加密
-        $store_encrypt_key = "e:{$hash}";
+        // todo:处理加密
+        /*$store_encrypt_key = "e:{$hash}";
         $encrypt_path = setting($store_encrypt_key, []);
         $need_pass = false;
         if (array_key_exists($item['id'], $encrypt_path)) {
@@ -77,22 +81,8 @@ class DiskController extends BaseController
                 $redirect = $redirectQuery;
                 return view(config('olaindex.theme') . 'password', compact('hash', 'item', 'redirect'));
             }
-        }
-        if ($queryById) {
-            $parentPath = array_get($item, 'parentReference.path', '');
-            $parentPath = rawurldecode(str_after($parentPath, '/drive/root:'));
-            $parentPath = str_after($parentPath, $root);
-            $path = explode('/', $parentPath);
-            if ($root !== $item['name']) {
-                $path[] = $item['name'];
-            }
-            if ($parentPath === '' && $item['name'] === 'root') {
-                $path = [];
-            }
-            $path = array_where($path, static function ($value) {
-                return !blank($value);
-            });
-        }
+        }*/
+
         // 处理文件
         $isFile = false;
         if (array_key_exists('file', $item)) {
@@ -168,29 +158,31 @@ class DiskController extends BaseController
             return redirect()->away($download);
         }
 
-        $list = Cache::remember("d:list:{$account_id}:{$query}", setting('cache_expires'), static function () use ($service, $query, $queryById) {
-            return $queryById ? $service->fetchListById($query) : $service->fetchList($query);
+        $list = Cache::remember("d:list:{$account_id}:{$query}", setting('cache_expires'), static function () use ($service, $query) {
+            return $service->fetchList($query);
         });
         if (array_key_exists('code', $list)) {
-            $this->showMessage(array_get($list, 'message', '404NotFound'), true);
+            $msg = array_get($list, 'message', '404NotFound');
+            $msg = GraphErrorEnum::get($list['code']) ?? $msg;
             Cache::forget("d:list:{$account_id}:{$query}");
-            return redirect()->route('message');
+            abort(500, $msg);
         }
         // 处理列表
         // 读取预设资源
         $doc = $this->filterDoc($account_id, $list);
         // 资源过滤
         $list = $this->filter($list, $hash);
-        // 格式化处理
+        // 资源处理
         $list = $this->formatItem($list);
-        // 排序
+        // 资源排序
         $sortBy = $request->get('sortBy', 'name');
-        $descending = false;
-        if (str_contains($sortBy, '-')) {
-            $descending = true;
-            $sortBy = str_after($sortBy, '-');
+        $direction = 'desc';
+        $column = 'name';
+        if (str_contains($sortBy, ',')) {
+            [$column, $direction] = explode(',', $sortBy);
         }
-        $list = $this->sort($list, $sortBy, $descending);
+        $descending = $direction === 'desc';
+        $list = $this->sort($list, $column, $descending);
         // 分页
         $perPage = array_get($config, 'list_limit', 10);
         $list = $this->paginate($list, $perPage, false);
@@ -198,48 +190,11 @@ class DiskController extends BaseController
         return view(config('olaindex.theme') . 'one' . $view, compact('accounts', 'hash', 'path', 'item', 'list', 'doc'));
     }
 
-    public function search(Request $request, $hash)
-    {
-        if (!setting('open_search', 0)) {
-            abort(404);
-        }
-        $keyword = $request->get('q', '');
-        // 账号处理
-        $accounts = Tool::fetchAccounts();
-        $account_id = HashidsHelper::decode($hash);
-        if (!$account_id) {
-            abort(404, '账号不存在');
-        }
-        $root = array_get(setting($hash), 'root', '/');
-        $root = trim($root, '/');
-        $query = trans_absolute_path($root);
-        $service = OneDrive::account($account_id);
-
-        // 搜索加上缓存
-        $list = Cache::remember("d:search:{$account_id}:{$keyword}", 60, static function () use ($service, $query, $keyword) {
-            return $service->search($query, $keyword);
-        });
-        if (array_key_exists('code', $list)) {
-            $this->showMessage(array_get($list, 'message', '404NotFound'), true);
-            Cache::forget("d:search:{$account_id}:{$keyword}");
-            return redirect()->route('message');
-        }
-        //过滤文件夹
-        $list = array_where($list, static function ($value) {
-            return !array_has($value, 'folder');
-        });
-        // 过滤
-        $list = $this->filter($list, $hash);
-        // 格式化处理
-        $list = $this->formatItem($list);
-        // 排序
-        $list = $this->sort($list);
-        // 分页
-        $list = $this->paginate($list, 10, false);
-
-        return view(config('olaindex.theme') . 'search', compact('accounts', 'hash', 'list'));
-    }
-
+    /**
+     * 解密资源
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function decrypt(Request $request)
     {
         $input_password = $request->get('password');
@@ -268,57 +223,23 @@ class DiskController extends BaseController
      * 过滤
      * @param array $list
      * @param string $hash
-     * @return array
+     * @return \Illuminate\Support\LazyCollection
      */
     private function filter($list = [], $hash = '')
     {
-        // 过滤微软内置无法读取的文件
-        $list = array_where($list, static function ($value) {
-            return !array_has($value, 'package.type');
+        $collect = collect($list)->lazy();
+        // 过滤微软内置无法读取的文件 & 过滤预留文件
+        $data = $collect->filter(static function ($value) {
+            return !array_has($value, 'package.type')
+                || !in_array($value['name'], ['.password', '.deny', 'README.md', 'HEAD.md',], false);
         });
-        // 过滤预留文件
-        $list = array_where($list, static function ($value) {
-            return !in_array($value['name'], ['.password', '.deny'], false);
-        });
-
-        $list = array_where($list, static function ($value) {
-            return !in_array($value['name'], ['README.md', 'HEAD.md',], false);
-        });
-        // 过滤隐藏文件
-        $store_hide_key = "h:{$hash}";
+        // todo:过滤隐藏文件
+        /*$store_hide_key = "h:{$hash}";
         $hidden_path = setting($store_hide_key, []);
         $list = array_where($list, static function ($value) use ($hidden_path) {
             return !in_array($value['id'], $hidden_path, false);
-        });
-        return $list;
-    }
-
-    /**
-     * 排序(支持 name\size\lastModifiedDateTime)
-     * @param array $list
-     * @param string $field
-     * @param bool $descending
-     * @return array
-     */
-    private function sort($list = [], $field = 'name', $descending = false)
-    {
-        $collect = collect($list)->lazy();
-        // 筛选文件夹/文件夹
-        $folders = $collect->filter(static function ($value) {
-            return array_has($value, 'folder');
-        });
-        $files = $collect->filter(static function ($value) {
-            return !array_has($value, 'folder');
-        });
-        // 执行文件夹/文件夹 排序
-        if (!$descending) {
-            $folders = $folders->sortBy($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->all();
-            $files = $files->sortBy($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->all();
-        } else {
-            $folders = $folders->sortByDesc($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->all();
-            $files = $files->sortByDesc($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->all();
-        }
-        return collect($folders)->merge($files)->all();
+        });*/
+        return $data;
     }
 
     /**
@@ -329,15 +250,17 @@ class DiskController extends BaseController
      */
     private function filterDoc($account_id, $list = [])
     {
-        $readme = array_where($list, static function ($value) {
+        $collect = collect($list)->lazy();
+
+        $readme = $collect->filter(static function ($value) {
             return $value['name'] === 'README.md';
         });
-        $head = array_where($list, static function ($value) {
+        $head = $collect->filter(static function ($value) {
             return $value['name'] === 'HEAD.md';
         });
 
         if (!empty($readme)) {
-            $readme = array_first($readme);
+            $readme = $readme->first();
             try {
                 $readme = Cache::remember("d:content:{$account_id}:{$readme['id']}", setting('cache_expires'), static function () use ($readme) {
                     return Tool::fetchContent($readme['@microsoft.graph.downloadUrl']);
@@ -351,7 +274,7 @@ class DiskController extends BaseController
             $readme = '';
         }
         if (!empty($head)) {
-            $head = array_first($head);
+            $head = $head->first();
             try {
                 $head = Cache::remember("d:content:{$account_id}:{$head['id']}", setting('cache_expires'), static function () use ($head) {
                     return Tool::fetchContent($head['@microsoft.graph.downloadUrl']);
@@ -393,8 +316,36 @@ class DiskController extends BaseController
     }
 
     /**
+     * 排序(支持 name\size\lastModifiedDateTime)
+     * @param array $list
+     * @param string $field
+     * @param bool $descending
+     * @return array
+     */
+    private function sort($list = [], $field = 'name', $descending = false)
+    {
+        $collect = collect($list)->lazy();
+        // 筛选文件夹/文件夹
+        $folders = $collect->filter(static function ($value) {
+            return array_has($value, 'folder');
+        });
+        $files = $collect->filter(static function ($value) {
+            return !array_has($value, 'folder');
+        });
+        // 执行文件夹/文件夹 排序
+        if (!$descending) {
+            $folders = $folders->sortBy($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->all();
+            $files = $files->sortBy($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->all();
+        } else {
+            $folders = $folders->sortByDesc($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->all();
+            $files = $files->sortByDesc($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR)->all();
+        }
+        return collect($folders)->merge($files)->all();
+    }
+
+    /**
      * 格式化
-     * @param array $data
+     * @param $data
      * @param bool $isFile
      * @return array
      */
@@ -409,8 +360,8 @@ class DiskController extends BaseController
             );
             return $data;
         }
-        $items = [];
-        foreach ($data as $item) {
+        $collection = collect($data)->lazy();
+        return $collection->map(static function ($item) {
             if (array_has($item, 'file')) {
                 $item['ext'] = strtolower(
                     pathinfo(
@@ -421,8 +372,7 @@ class DiskController extends BaseController
             } else {
                 $item['ext'] = 'folder';
             }
-            $items[] = $item;
-        }
-        return $items;
+            return $item;
+        })->all();
     }
 }

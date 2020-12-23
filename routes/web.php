@@ -46,30 +46,14 @@ Route::prefix('admin')->middleware('auth')->group(static function () {
     Route::post('account/remark/{id}', 'AccountController@remark')->name('admin.account.remark');
     Route::post('account/set-main', 'AccountController@setMain')->name('admin.account.setMain');
     Route::post('account/delete', 'AccountController@delete')->name('admin.account.delete');
-
+    // 日志
     Route::any('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index')->name('admin.logs');
 
-    Route::any('manage/{hash}/q/{query?}', 'ManageController@query')->name('admin.file.manage')->where('query', '.*');
-    Route::any('manage/{hash}/edit/{query?}', 'ManageController@edit')->name('admin.file.edit');
-    Route::any('manage/{hash}/create/{query?}', 'ManageController@create')->name('admin.file.create');
-    Route::post('manage/delete', 'ManageController@delete')->name('admin.file.delete');
-    Route::post('manage/hide', 'ManageController@hideItem')->name('admin.file.hide');
-    Route::post('manage/encrypt', 'ManageController@encryptItem')->name('admin.file.encrypt');
 });
-// 分享短链
-Route::get('t/{code}', 'IndexController')->name('short');
-// 多网盘支持
-Route::get('d/{hash}', 'DiskController@query')->name('drive');
-Route::get('d/{hash}/q/{query?}', 'DiskController@query')->name('drive.query')->where('query', '.*');
-Route::get('d/{hash}/id/{query?}', 'DiskController@query')->name('drive.query.id');
-// 搜索
-Route::get('d/{hash}/search', 'DiskController@search')->name('drive.search');
-// 加密
-Route::post('decrypt', 'DiskController@decrypt')->name('drive.decrypt');
-// 图床
+Route::get('/', 'DriveController@query')->name('home');
+Route::get('drive/{hash}', 'DriveController@query')->name('drive');
+Route::get('drive/{hash}/{query?}', 'DriveController@query')->name('drive.query')->where('query', '.*');
+Route::post('decrypt', 'DriveController@decrypt')->name('drive.decrypt');
 Route::get('image', 'ImageController@index')->name('image')->middleware('custom');
 Route::post('image-upload', 'ImageController@upload')->name('image.upload')->middleware('custom');
-// 首页
-Route::get('/', 'HomeController')->name('home');
-
-
+Route::get('t/{code}', 'IndexController')->name('short');

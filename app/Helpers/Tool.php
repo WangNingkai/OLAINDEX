@@ -291,7 +291,7 @@ class Tool
 
     /**
      * 获取账号
-     * @return mixed
+     * @return Account[]
      */
     public static function fetchAccounts()
     {
