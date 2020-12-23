@@ -32,6 +32,7 @@ class DriveController extends BaseController
         $accounts = Account::fetchlist();
         if (!$hash) {
             $account_id = setting('primary_account', 0);
+            $hash = HashidsHelper::encode($account_id);
         } else {
             $account_id = HashidsHelper::decode($hash);
         }
@@ -168,7 +169,6 @@ class DriveController extends BaseController
             abort(500, $msg);
         }
         // 处理列表
-        // 读取预设资源
         $doc = $this->filterDoc($account_id, $list);
         // 资源过滤
         $list = $this->filter($list, $hash);
@@ -259,7 +259,7 @@ class DriveController extends BaseController
             return $value['name'] === 'HEAD.md';
         });
 
-        if (!empty($readme)) {
+        if ($readme->isNotEmpty()) {
             $readme = $readme->first();
             try {
                 $readme = Cache::remember("d:content:{$account_id}:{$readme['id']}", setting('cache_expires'), static function () use ($readme) {
@@ -273,7 +273,7 @@ class DriveController extends BaseController
         } else {
             $readme = '';
         }
-        if (!empty($head)) {
+        if ($head->isNotEmpty()) {
             $head = $head->first();
             try {
                 $head = Cache::remember("d:content:{$account_id}:{$head['id']}", setting('cache_expires'), static function () use ($head) {

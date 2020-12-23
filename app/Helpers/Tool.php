@@ -24,14 +24,22 @@ class Tool
      * @param string $value
      * @return string
      */
-    public static function buildQueryParams($url, $key, $value)
+    public static function buildQueryParams(string $url, $key, $value): string
     {
-        $url = preg_replace('/(.*)(?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url . '&');
-        $url = substr($url, 0, -1);
-        if (strpos($url, '?') === false) {
-            return ($url . '?' . $key . '=' . $value);
+        $url = urldecode($url);
+        $parseArr = parse_url($url);
+        $queryArr = [];
+        if (isset($parseArr['query'])) {
+            $queryArr = parse_query($parseArr['query']);
         }
-        return ($url . '&' . $key . '=' . $value);
+        $queryArr[$key] = $value;
+        $query = '?' . build_query($queryArr, false);
+        if (strpos($url, '?') === false) {
+            return $url . $query;
+        }
+        $base = str_before($url, '?');
+        return $base . $query;
+
     }
 
     /**
@@ -300,5 +308,24 @@ class Tool
                 ->select(['id', 'remark'])
                 ->where('status', 1)->get();
         });
+    }
+
+    /**
+     * 获取排序
+     * @param $field
+     * @return bool
+     */
+    public static function getOrderByStatus($field): bool
+    {
+        $order = request()->get('sortBy');
+        if ($order) {
+            [$column, $sortBy] = explode(',', $order);
+            if ($field !== $column) {
+                return true;
+            }
+            return strtolower($sortBy) === 'desc';
+        }
+        return false;
+
     }
 }
