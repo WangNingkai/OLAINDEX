@@ -51,20 +51,13 @@ class BaseController extends Controller
             $paginated = $data->toArray();
 
             return [
-                'items' => $paginated['data'] ?? [],
-                'links' => [
-                    'first' => $paginated['first_page_url'] ?? '',
-                    'last' => $paginated['last_page_url'] ?? '',
-                    'prev' => $paginated['prev_page_url'] ?? '',
-                    'next' => $paginated['next_page_url'] ?? '',
+                'items' => array_values(array_get($paginated, 'data', [])),
+                'meta' => [
+                    'perPage' => (int)array_get($paginated, 'per_page', 0),
+                    'totalCount' => (int)array_get($paginated, 'total', 0),
+                    'totalPage' => (int)array_get($paginated, 'last_page', 0),
+                    'currentPage' => (int)array_get($paginated, 'current_page', 0),
                 ],
-                'meta' => array_except($paginated, [
-                    'data',
-                    'first_page_url',
-                    'last_page_url',
-                    'prev_page_url',
-                    'next_page_url',
-                ]),
             ];
         }
         return $data;

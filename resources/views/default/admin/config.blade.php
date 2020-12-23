@@ -71,26 +71,14 @@
                                 <span class="form-text text-danger">建议缓存时间小于60分钟，否则会导致缓存失效</span>
                             </div>
                             <div class="form-group">
-                                <div class="custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input"
-                                           id="open_search"
-                                           @if( setting('open_search',0)) checked
-                                           @endif onchange="$('input[name=\'open_search\']').val(Number(this.checked))">
-                                    <label class="custom-control-label" for="open_search">开启搜索</label>
-                                    <input type="hidden" name="open_search"
-                                           value="{{ setting('open_search', 0) }}">
-                                </div>
-                                <span class="form-text text-danger">使用Microsoft Graph搜索功能</span>
-                            </div>
-                            <div class="form-group">
                                 <div class="form-group">
-                                    <label class="form-control-label" for="encrypt_tip">加密文件夹提示</label>
+                                    <label class="form-control-label" for="encrypt_tip">加密资源提示文案</label>
                                     <textarea class="form-control" id="encrypt_tip" name="encrypt_tip"
                                               rows="1">{{ setting('encrypt_tip') }}</textarea>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="form-control-label" for="copyright">自定义版权显示</label>
+                                <label class="form-control-label" for="copyright">页脚文案</label>
                                 <textarea class="form-control" id="copyright" name="copyright"
                                           rows="3">{{ setting('copyright') }}</textarea>
                                 <span

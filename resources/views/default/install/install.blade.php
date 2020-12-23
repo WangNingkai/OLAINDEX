@@ -16,7 +16,7 @@
             </form>
         </div>
     </div>
-    <div class="card border-light mb-3">
+    <div class="card border-light mb-3 shadow">
         <div class="card-header">初始化配置</div>
         <div class="card-body">
             <form action="" method="post">

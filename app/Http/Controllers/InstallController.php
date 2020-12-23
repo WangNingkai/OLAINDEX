@@ -48,7 +48,7 @@ class InstallController extends BaseController
     /**
      * 安装
      * @param Request $request
-     * @return RedirectResponse|View
+     * @return RedirectResponse|View|mixed
      */
     public function install(Request $request)
     {

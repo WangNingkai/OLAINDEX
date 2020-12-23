@@ -105,89 +105,6 @@ if (!function_exists('trans_absolute_path')) {
         return str_replace('//', '/', '/' . implode('/', $absolutes) . '/');
     }
 }
-if (!function_exists('setting')) {
-    /**
-     * 获取设置
-     * @param string $key
-     * @param mixed $default
-     * @return mixed
-     */
-    function setting($key = '', $default = null)
-    {
-        $setting = \Cache::remember('settings', 60 * 60 * 2, static function () {
-            try {
-                $setting = \App\Models\Setting::all();
-            } catch (Exception $e) {
-                return [];
-            }
-            $settingData = [];
-            foreach ($setting as $detail) {
-                $settingData = array_add($settingData, $detail->name, $detail->value);
-            }
-            return $settingData;
-        });
-        if ($default === null) {
-            $default = \App\Models\Setting::$setting[$key] ?? '';
-        }
-        $setting = collect($setting)->all();
-        return $key ? array_get($setting, $key, $default) : $setting;
-    }
-}
-if (!function_exists('setting_set')) {
-    /**
-     * 更新设置
-     * @param string $key
-     * @param mixed $value
-     * @return mixed
-     */
-    function setting_set($key = '', $value = '')
-    {
-        if (!is_array($key)) {
-            $value = is_array($value) ? json_encode($value) : $value;
-            \App\Models\Setting::query()->updateOrCreate(['name' => $key], ['value' => $value]);
-        } else {
-            foreach ($key as $k => $v) {
-                $v = is_array($v) ? json_encode($v) : $v;
-                \App\Models\Setting::query()->updateOrCreate(['name' => $k], ['value' => $v]);
-            }
-        }
-
-        return refresh_setting();
-    }
-}
-if (!function_exists('refresh_setting')) {
-    /**
-     * 刷新设置缓存
-     * @return array
-     */
-    function refresh_setting()
-    {
-        $settingData = [];
-        try {
-            $settingModel = \App\Models\Setting::all();
-        } catch (Exception $e) {
-            $settingModel = [];
-        }
-        foreach ($settingModel->toArray() as $detail) {
-            $settingData[$detail['name']] = $detail['value'];
-        }
-
-        \Cache::forever('settings', $settingData);
-
-        return collect($settingData)->toArray();
-    }
-}
-if (!function_exists('install_path')) {
-    /**
-     * 安装路径
-     * @param string $path
-     * @return string
-     */
-    function install_path($path = '')
-    {
-        return storage_path('install' . ($path ? DIRECTORY_SEPARATOR . $path : $path));
-    }
-}
 if (!function_exists('parse_query')) {
     /**
      * Parse a query string into an associative array.
@@ -296,6 +213,91 @@ if (!function_exists('build_query')) {
         return $qs ? (string)substr($qs, 0, -1) : '';
     }
 }
+
+
+if (!function_exists('setting')) {
+    /**
+     * 获取设置
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    function setting($key = '', $default = null)
+    {
+        $setting = \Cache::remember('settings', 60 * 60 * 2, static function () {
+            try {
+                $setting = \App\Models\Setting::all();
+            } catch (Exception $e) {
+                return [];
+            }
+            $settingData = [];
+            foreach ($setting as $detail) {
+                $settingData = array_add($settingData, $detail->name, $detail->value);
+            }
+            return $settingData;
+        });
+        if ($default === null) {
+            $default = \App\Models\Setting::$setting[$key] ?? '';
+        }
+        $setting = collect($setting)->all();
+        return $key ? array_get($setting, $key, $default) : $setting;
+    }
+}
+if (!function_exists('setting_set')) {
+    /**
+     * 更新设置
+     * @param string $key
+     * @param mixed $value
+     * @return mixed
+     */
+    function setting_set($key = '', $value = '')
+    {
+        if (!is_array($key)) {
+            $value = is_array($value) ? json_encode($value) : $value;
+            \App\Models\Setting::query()->updateOrCreate(['name' => $key], ['value' => $value]);
+        } else {
+            foreach ($key as $k => $v) {
+                $v = is_array($v) ? json_encode($v) : $v;
+                \App\Models\Setting::query()->updateOrCreate(['name' => $k], ['value' => $v]);
+            }
+        }
+
+        return refresh_setting();
+    }
+}
+if (!function_exists('refresh_setting')) {
+    /**
+     * 刷新设置缓存
+     * @return array
+     */
+    function refresh_setting()
+    {
+        $settingData = [];
+        try {
+            $settingModel = \App\Models\Setting::all();
+        } catch (Exception $e) {
+            $settingModel = [];
+        }
+        foreach ($settingModel->toArray() as $detail) {
+            $settingData[$detail['name']] = $detail['value'];
+        }
+
+        \Cache::forever('settings', $settingData);
+
+        return collect($settingData)->toArray();
+    }
+}
+if (!function_exists('install_path')) {
+    /**
+     * 安装路径
+     * @param string $path
+     * @return string
+     */
+    function install_path($path = '')
+    {
+        return storage_path('install' . ($path ? DIRECTORY_SEPARATOR . $path : $path));
+    }
+}
 if (!function_exists('shorten_str')) {
     /**
      * 获取短链
@@ -327,7 +329,6 @@ if (!function_exists('shorten_str')) {
         return array_first($shortenList);
     }
 }
-
 if (!function_exists('shorten_url')) {
     /**
      * 获取短链
@@ -347,7 +348,6 @@ if (!function_exists('shorten_url')) {
         return route('short', ['code' => $code]);
     }
 }
-
 if (!function_exists('marked')) {
     /**
      * 转换markdown

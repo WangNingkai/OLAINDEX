@@ -26,15 +26,18 @@ class GraphClient
 
     protected $body = '';
 
-    protected $id;
-
     public function __construct($accessToken, $restEndpoint)
     {
         $graph = new Graph();
         $graph->setAccessToken($accessToken)
-            ->setApiVersion('v1.0')
             ->setBaseUrl($restEndpoint);
         $this->graph = $graph;
+    }
+
+    public function setApiVersion($version = 'v1.0'): GraphClient
+    {
+        $this->graph->setApiVersion($version);
+        return $this;
     }
 
     public function setProxy($proxy): GraphClient
@@ -84,7 +87,12 @@ class GraphClient
                 ->attachBody($this->body);
             $resp = $query->execute();
         } catch (GraphException $e) {
-            Log::error('请求MsGraph Api错误 ' . $e->getMessage(), $e->getTrace());
+            Log::error('请求MsGraph网络错误 ' . $e->getMessage(), $e->getTrace());
+            Log::error('请求参数', [
+                'apiVersion' => 'v1.0',
+                'method' => $this->method,
+                'query' => $this->query,
+            ]);
             return null;
         }
         if ($resp instanceof Stream) {

@@ -19,11 +19,12 @@
 // 消息通知
 Route::view('message', config('olaindex.theme') . 'message')->name('message');
 // 授权回调
-Route::get('callback', 'OauthController@callback')->name('callback');
-// 后台
+Route::get('callback', 'AuthController@callback')->name('callback');
+// 登录登出
 Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('login', 'Auth\LoginController@login');
 Route::post('logout', 'Auth\LoginController@logout')->name('logout');
+// 后台管理
 Route::prefix('admin')->middleware('auth')->group(static function () {
     // 安装绑定
     Route::prefix('install')->group(static function () {
@@ -33,17 +34,19 @@ Route::prefix('admin')->middleware('auth')->group(static function () {
         Route::any('bind', 'InstallController@bind')->name('bind');
     });
     // 基础设置
-    Route::any('/', 'AdminController@config')->name('admin.config');
+    Route::any('/', 'AdminController@config');
+    Route::any('config', 'AdminController@config')->name('admin.config');
     Route::any('profile', 'AdminController@profile')->name('admin.profile');
     Route::get('clear', 'AdminController@clear')->name('cache.clear');
     // 账号详情
-    Route::get('account/list', 'AdminController@account')->name('admin.account.list');
-    Route::get('account/{id}', 'AdminController@accountDetail')->name('admin.account.info');
-    Route::get('account/{id}/drive', 'AdminController@driveDetail')->name('admin.account.drive');
-    Route::any('account/{id}/config', 'AdminController@accountConfig')->name('admin.account.config');
-    Route::post('account/{id}/remark', 'AdminController@accountRemark')->name('admin.account.remark');
-    Route::post('account/set-account', 'AdminController@accountSet')->name('admin.account.set');
-    Route::post('account/delete', 'AdminController@accountDelete')->name('admin.account.delete');
+    Route::get('account/list', 'AccountController@list')->name('admin.account.list');
+    Route::get('account/{id}', 'AccountController@quota')->name('admin.account.info');
+    Route::get('account/drive/{id}', 'AccountController@drive')->name('admin.account.drive');
+    Route::any('account/config/{id}', 'AccountController@config')->name('admin.account.config');
+    Route::post('account/remark/{id}', 'AccountController@remark')->name('admin.account.remark');
+    Route::post('account/set-main', 'AccountController@setMain')->name('admin.account.setMain');
+    Route::post('account/delete', 'AccountController@delete')->name('admin.account.delete');
+
     Route::any('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index')->name('admin.logs');
 
     Route::any('manage/{hash}/q/{query?}', 'ManageController@query')->name('admin.file.manage')->where('query', '.*');
@@ -53,13 +56,12 @@ Route::prefix('admin')->middleware('auth')->group(static function () {
     Route::post('manage/hide', 'ManageController@hideItem')->name('admin.file.hide');
     Route::post('manage/encrypt', 'ManageController@encryptItem')->name('admin.file.encrypt');
 });
-// 短网址
+// 分享短链
 Route::get('t/{code}', 'IndexController')->name('short');
 // 多网盘支持
 Route::get('d/{hash}', 'DiskController@query')->name('drive');
 Route::get('d/{hash}/q/{query?}', 'DiskController@query')->name('drive.query')->where('query', '.*');
 Route::get('d/{hash}/id/{query?}', 'DiskController@query')->name('drive.query.id');
-
 // 搜索
 Route::get('d/{hash}/search', 'DiskController@search')->name('drive.search');
 // 加密

@@ -9,21 +9,16 @@
     <meta name="keywords" content="OLAINDEX,OneDrive,Index,Microsoft OneDrive,Directory Index"/>
     <meta name="description" content="OLAINDEX,Another OneDrive Directory Index"/>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link href="https://cdn.staticfile.org/bootswatch/4.5.0/{{ setting('site_theme','lux') }}/bootstrap.min.css"
+    <link href="https://cdn.staticfile.org/bootswatch/4.5.3/{{ setting('site_theme','lux') }}/bootstrap.min.css"
           rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.8.1/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@9.14.0/dist/sweetalert2.min.css"
-          integrity="sha256-SutV/+zi8ZqR/DMls05A520rz+R2OZhqie0HnHPAlaQ=" crossorigin="anonymous">
-    <style>
-        * {
-            outline-style: none;
-        }
-    </style>
     @stack('stylesheet')
+    {!! setting('stats_code') !!}
     <script>
-        App = {
+        const App = {
             'routes': {
                 'upload_image': '{{ route('image.upload') }}',
             },
@@ -33,7 +28,7 @@
 </head>
 
 <body>
-<nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
         <a class="navbar-brand" href="{{ route('home') }}">{{ setting('site_name','OLAINDEX') }}</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent"
@@ -59,14 +54,25 @@
             </ul>
             @auth
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a href="{{ route('logout') }}" class="nav-link"
-                           onclick="event.preventDefault();document.getElementById('logout-form').submit();"> <i
-                                class="ri-logout-box-fill"></i> 退出</a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                              class="invisible">
-                            @csrf
-                        </form>
+                    <li class="nav-item dropdown">
+                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ Auth::user()->name }}
+                        </a>
+
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{{ route('admin.profile') }}">
+                                我的信息
+                            </a>
+                            <a class="dropdown-item" href="{{ route('logout') }}"
+                               onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                退出
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                @csrf
+                            </form>
+                        </div>
                     </li>
                 </ul>
             @endauth
@@ -75,8 +81,10 @@
 </nav>
 
 <div class="container mt-3">
-    @include('default.components.toast')
-    @yield('content')
+    @includeWhen(session()->has('alertMessage') || $errors->any(), 'default.components.toast')
+    <div class="mt-2" style="min-height: 750px">
+        @yield('content')
+    </div>
     <footer class="footer">
         <div class="row text-center">
             <div class="col-lg-12">
@@ -90,14 +98,12 @@
 </div>
 <script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
-<script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.3/js/bootstrap.min.js"></script>
 <script src="https://cdn.staticfile.org/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
 <script src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js"></script>
 <script src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js"></script>
-<script src="https://cdn.staticfile.org/axios/0.19.2/axios.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9.14.0/dist/sweetalert2.all.min.js"
-        integrity="sha256-Ft3VB7ueSTuT72RJnGTtUh2ktLOEba/PehrYDhe1y+8=" crossorigin="anonymous"></script>
-{!! setting('statistics') !!}
+<script src="https://cdn.staticfile.org/axios/0.21.0/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.8.1/dist/sweetalert2.all.min.js"></script>
 <script>
     $(function() {
         $('[data-fancybox="image-list"]').fancybox({

@@ -307,7 +307,7 @@ class GraphRequest
                 'timeout' => $this->timeout
             ]
         )->then(
-            // On success, return the result/response
+        // On success, return the result/response
             function ($result) {
 
                 // Check to see if returnType is a stream, if so return it immediately

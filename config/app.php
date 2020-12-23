@@ -178,7 +178,6 @@ return [
         // Third
         Overtrue\LaravelLang\TranslationServiceProvider::class,
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
-        App\Providers\OneDriveServiceProvider::class
     ],
 
     /*
@@ -230,8 +229,6 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Debugbar' => Barryvdh\Debugbar\Facade::class,
-        'OneDrive' => App\Service\OneDriveFacade::class
-
     ],
 
 ];

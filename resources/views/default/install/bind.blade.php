@@ -1,7 +1,7 @@
 @extends('default.layouts.main')
 @section('title','绑定帐号')
 @section('content')
-    <div class="card border-light mb-3">
+    <div class="card border-light mb-3 shadow">
         <div class="card-header">绑定帐号
             <small class="text-danger">请确认以下信息</small>
         </div>

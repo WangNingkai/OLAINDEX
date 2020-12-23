@@ -20,7 +20,7 @@ use Log;
  * Class OauthController
  * @package App\Http\Controllers
  */
-class OauthController extends BaseController
+class AuthController extends BaseController
 {
     public function callback(Request $request)
     {
@@ -67,9 +67,10 @@ class OauthController extends BaseController
         $tokenExpires = $_accessToken->get('expires_in') + time();
 
         $params = array_merge($config, compact('remark', 'accessToken', 'refreshToken', 'tokenExpires'));
-        Log::info('获取accessToken', $params);
-        Account::create($params);
-        Cache::forget('ac:list');
+        // Log::info('获取accessToken', $params);
+        $account = Account::create($params);
+        $account->refreshOneDriveQuota(true);
+        $this->showMessage('绑定成功！');
         return redirect()->route('admin.account.list');
     }
 }

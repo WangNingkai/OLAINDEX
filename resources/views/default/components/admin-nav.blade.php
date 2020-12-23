@@ -7,10 +7,6 @@
            href="{{ route('admin.account.list') }}"><i class="ri-list-ordered"></i> 账号列表</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link @if( request()->routeIs(['admin.profile'])) active @endif"
-           href="{{ route('admin.profile') }}"><i class="ri-profile-fill"></i> 账户</a>
-    </li>
-    <li class="nav-item">
         <a class="nav-link" href="{{  route('admin.logs') }}"><i class="ri-bug-fill"></i> 日志</a>
     </li>
     <li class="nav-item">

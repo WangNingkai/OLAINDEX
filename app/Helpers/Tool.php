@@ -268,7 +268,6 @@ class Tool
         $curl->setConnectTimeout(5);
         $curl->setTimeout(3);
         $curl->setRetry(3);
-        $curl->setProxy(config('olaindex.proxy'));
         $curl->setOpts([
             CURLOPT_AUTOREFERER => true,
             CURLOPT_FAILONERROR => true,

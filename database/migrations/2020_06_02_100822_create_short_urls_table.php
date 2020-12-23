@@ -17,7 +17,7 @@ class CreateShortUrlsTable extends Migration
             $table->bigIncrements('id');
             $table->text('original_url');
             $table->string('short_code', 16);
-            $table->timestamp('created_at', 0)->nullable();
+            $table->timestamp('created_at')->nullable();
             $table->index('short_code', 'idx_code');
         });
     }

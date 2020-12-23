@@ -10,7 +10,7 @@
                     @else
                         @if (!blank($value))
                             <li class="breadcrumb-item ">
-                                <a href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(\App\Helpers\Tool::combineBreadcrumb($key + 1, $path))]) }}">
+                                <a href="{{ route('drive.query', ['hash' => $hash,'query' => \App\Helpers\Tool::combineBreadcrumb($key + 1, $path)]) }}">
                                     {{  str_limit($value,20) }}
                                 </a>
                             </li>
@@ -25,7 +25,7 @@
                     @else
                         @if (!blank($value) && $key === (count($path) - 2))
                             <li class="breadcrumb-item ">
-                                <a href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(\App\Helpers\Tool::combineBreadcrumb($key + 1, $path))]) }}">
+                                <a href="{{ route('drive.query', ['hash' => $hash,'query' => \App\Helpers\Tool::combineBreadcrumb($key + 1, $path)]) }}">
                                     {{  str_limit($value,20) }}
                                 </a>
                             </li>

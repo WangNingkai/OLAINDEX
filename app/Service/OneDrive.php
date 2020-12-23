@@ -9,45 +9,80 @@
 namespace App\Service;
 
 use Log;
-use RuntimeException;
 
 class OneDrive
 {
     /**
-     * @var int $id account_id
+     * @var string $accessToken 请求密钥
      */
-    public $id;
+    private $accessToken;
 
     /**
-     * @var string $accessToken accessToken
+     * @var string $restEndpoint 请求接口
      */
-    public $accessToken;
+    private $restEndpoint;
 
     /**
-     * @var string $restEndpoint restEndpoint
+     * @var string $apiVersion APi版本
      */
-    public $restEndpoint;
+    private $apiVersion;
 
     /**
-     * Bind account
-     * @param $account_id
+     * @var string $sharepoint 是否sharepoint
+     */
+    private $sharepoint;
+
+    /**
+     * @var bool $isBlock 是否服务受限
+     */
+    private $isBlock = false;
+
+    /**
+     * @var integer $blockSec 服务受限重试时间
+     */
+    private $blockTime = 0;
+
+    /**
+     * OneDrive constructor.
+     * @param $accessToken
+     * @param $restEndpoint
+     * @param string $apiVersion
+     */
+    public function __construct($accessToken, $restEndpoint, $apiVersion = 'v1.0')
+    {
+        $this->accessToken = $accessToken;
+        $this->restEndpoint = $restEndpoint;
+        $this->apiVersion = $apiVersion;
+    }
+
+    /**
+     * 声明SharePoint
+     * @param false $status
+     * @param string $sp_id
      * @return $this
      */
-    public function account($account_id): OneDrive
+    public function sharepoint($status = false, $sp_id = ''): OneDrive
     {
-        $this->id = $account_id;
-        $token = new AccessToken($account_id);
-        if (!$token) {
-            throw new RuntimeException('Not Found AccessToken.');
+        if ($status) {
+            $this->sharepoint = $sp_id;
         }
-        $accessToken = $token->getAccessToken();
-        $this->accessToken = $accessToken;
-        $accountType = $token->getAccountType();
-        $clientConfig = (new Client())
-            ->setAccountType($accountType);
-        $restEndpoint = $clientConfig->getRestEndpoint();
-        $this->restEndpoint = $restEndpoint;
         return $this;
+    }
+
+    /**
+     * Fetch SharePoint
+     * @param $url
+     * @return array|mixed|null
+     */
+    public function fetchSharePoint($url)
+    {
+        $sp = parse_url($url);
+        $host = $sp['host'];
+        $path = $sp['path'];
+        $query = "/sites/{$host}:$path";
+        $resp = $this->_request('get', $query);
+        $err = $resp->getError();
+        return $err ?? $resp->getBody();
     }
 
     /**
@@ -59,10 +94,7 @@ class OneDrive
         $query = '/me/drive';
         $resp = $this->_request('get', $query);
         $err = $resp->getError();
-        if (!$err) {
-            return $resp->getBody();
-        }
-        return $err;
+        return $err ?? $resp->getBody();
     }
 
     /**
@@ -74,34 +106,43 @@ class OneDrive
         $query = '/me';
         $resp = $this->_request('get', $query);
         $err = $resp->getError();
-        if (!$err) {
-            return $resp->getBody();
-        }
-        return $err;
+        return $err ?? $resp->getBody();
     }
 
     /**
      * List children
      * @param string $query
+     * @param string[] $params
+     * @param bool $chuck
      * @return array
      */
-    public function fetchList($query = '/'): array
+    public function fetchList($query = '/', $params = [], $chuck = false): array
     {
         $trans = trans_request_path($query, true, false);
         $query = "/me/drive/root{$trans}children";
-        $resp = $this->_request('get', $query, ['isList' => true, 'params' => ['expand' => 'thumbnails']]);
+        $resp = $this->_request('get', $query, ['isList' => true, 'params' => $params]);
+        if ($chuck) {
+            $err = $resp->getError();
+            return $err ?? $resp->getBody();
+        }
         return $this->_requestNextLink($resp);
     }
 
     /**
      * List children by item id
      * @param $id
+     * @param string[] $params
+     * @param bool $chuck
      * @return array
      */
-    public function fetchListById($id): array
+    public function fetchListById($id, $params = [], $chuck = false): array
     {
         $query = "/me/drive/items/{$id}/children";
-        $resp = $this->_request('get', $query, ['isList' => true, 'params' => ['expand' => 'thumbnails']]);
+        $resp = $this->_request('get', $query, ['isList' => true, 'params' => $params]);
+        if ($chuck) {
+            $err = $resp->getError();
+            return $err ?? $resp->getBody();
+        }
         return $this->_requestNextLink($resp);
     }
 
@@ -116,15 +157,12 @@ class OneDrive
         $query = "/me/drive/root{$trans}";
         $resp = $this->_request('get', $query, ['params' => ['expand' => 'thumbnails']]);
         $err = $resp->getError();
-        if (!$err) {
-            return $resp->getBody();
-        }
-        return $err;
+        return $err ?? $resp->getBody();
     }
 
     /**
      * Get item by id
-     * @param string $id
+     * @param $id
      * @return array|mixed|null
      */
     public function fetchItemById($id)
@@ -132,10 +170,7 @@ class OneDrive
         $query = "/me/drive/items/{$id}";
         $resp = $this->_request('get', $query, ['params' => ['expand' => 'thumbnails']]);
         $err = $resp->getError();
-        if (!$err) {
-            return $resp->getBody();
-        }
-        return $err;
+        return $err ?? $resp->getBody();
     }
 
     /**
@@ -178,10 +213,7 @@ class OneDrive
         }
         $resp = $this->_request('post', $query, ['body' => $body]);
         $err = $resp->getError();
-        if (!$err) {
-            return $resp->getBody();
-        }
-        return $err;
+        return $err ?? $resp->getBody();
     }
 
     /**
@@ -204,10 +236,7 @@ class OneDrive
         }
         $resp = $this->_request('patch', $query, ['body' => $body]);
         $err = $resp->getError();
-        if (!$err) {
-            return $resp->getBody();
-        }
-        return $err;
+        return $err ?? $resp->getBody();
     }
 
     /**
@@ -222,10 +251,7 @@ class OneDrive
         $body = '{"name":"' . $fileName . '","folder":{},"@microsoft.graph.conflictBehavior":"rename"}';
         $resp = $this->_request('post', $query, ['body' => $body]);
         $err = $resp->getError();
-        if (!$err) {
-            return $resp->getBody();
-        }
-        return $err;
+        return $err ?? $resp->getBody();
     }
 
     /**
@@ -243,10 +269,7 @@ class OneDrive
         }
         $resp = $this->_request('delete', $query, ['headers' => $headers]);
         $err = $resp->getError();
-        if (!$err) {
-            return $resp->getBody();
-        }
-        return $err;
+        return $err ?? $resp->getBody();
     }
 
     /**
@@ -260,10 +283,7 @@ class OneDrive
         $query = "/me/drive/items/{$id}/thumbnails/0/{$size}";
         $resp = $this->_request('get', $query);
         $err = $resp->getError();
-        if (!$err) {
-            return $resp->getBody();
-        }
-        return $err;
+        return $err ?? $resp->getBody();
     }
 
     /**
@@ -278,10 +298,7 @@ class OneDrive
         $query = "/me/drive/root{$trans}content";
         $resp = $this->_request('put', $query, ['body' => $content]);
         $err = $resp->getError();
-        if (!$err) {
-            return $resp->getBody();
-        }
-        return $err;
+        return $err ?? $resp->getBody();
     }
 
     /**
@@ -295,10 +312,7 @@ class OneDrive
         $query = "/me/drive/items/{$id}/content";
         $resp = $this->_request('put', $query, ['body' => $content]);
         $err = $resp->getError();
-        if (!$err) {
-            return $resp->getBody();
-        }
-        return $err;
+        return $err ?? $resp->getBody();
     }
 
     /**
@@ -313,10 +327,36 @@ class OneDrive
         $query = "/me/drive/items/{$parentId}:/{$filename}:/content";
         $resp = $this->_request('put', $query, ['body' => $content]);
         $err = $resp->getError();
-        if (!$err) {
-            return $resp->getBody();
-        }
-        return $err;
+        return $err ?? $resp->getBody();
+    }
+
+    public function createUploadSession($path, $filename)
+    {
+        $graphPath = trans_request_path("{$path}/{$filename}", false, false);
+        $query = "/me/drive/root:/{$graphPath}:/createUploadSession";
+        $body = [
+            'item' => [
+                '@microsoft.graph.conflictBehavior' => 'fail',
+                'name' => $filename,
+            ],
+        ];
+        $resp = $this->_request('post', $query, ['body' => $body]);
+        $err = $resp->getError();
+        return $err ?? $resp->getBody();
+    }
+
+    /**
+     * fetch share link
+     * @param $id
+     * @return array|mixed
+     */
+    public function share($id)
+    {
+        $query = "/me/drive/items/{$id}/createLink";
+        $body = ['type' => 'view', 'scope' => 'anonymous'];
+        $resp = $this->_request('post', $query, ['body' => $body]);
+        $err = $resp->getError();
+        return $err ?? $resp->getBody();
     }
 
     /**
@@ -368,58 +408,32 @@ class OneDrive
     }
 
     /**
-     * Request graph serve
-     * @param string $method
-     * @param string $query
-     * @param array $options
-     * @return GraphResponse|false|\Microsoft\Graph\Http\GraphResponse|mixed|string|null
+     * 是否服务受限
+     * @return bool
      */
-    private function _request($method = 'GET', $query = '/me/drive/root/children', $options = [])
+    public function isBlock(): bool
     {
-        $headers = array_get($options, 'headers', []);
-        $body = array_get($options, 'body', '');
-        $params = array_get($options, 'params', []);
-        $isList = array_get($options, 'isList', false);
-        if ($isList) {
-            $pre_params = [
-                '$top' => 500,
-                '$skiptoken' => '',
-            ];
-            $params = array_merge($pre_params, $params);
-        }
+        return $this->isBlock;
+    }
 
-        $query = parse_url($query)['path'] ?? '';
-        if (!empty($params)) {
-            $query .= '?' . build_query($params, false);
-        }
-
-        $req = new GraphClient($this->accessToken, $this->restEndpoint);
-        $req->setMethod($method)
-            ->setQuery($query)
-            ->addHeaders($headers)
-            ->attachBody($body)
-            ->setProxy(config('olaindex.proxy'))
-            ->setReturnStream(false);
-
-        Log::info('请求MsGraph Api', [
-            'account_id' => $this->id,
-            'method' => $method,
-            'query' => $query,
-            'endpoint' => $this->restEndpoint
-        ]);
-
-        return $req->execute();
+    /**
+     * 获取受限重试时间
+     * @return integer
+     */
+    public function getBlockTime(): int
+    {
+        return $this->blockTime;
     }
 
     /**
      * Request next page
-     * @param $response
+     * @param GraphResponse $response
      * @param array $result
      * @return array
      */
     private function _requestNextLink($response, &$result = []): array
     {
-        if ($response->getError()) {
+        if (null !== $response->getError()) {
             return $result;
         }
         $nextLink = $response->getNextLink();
@@ -435,5 +449,64 @@ class OneDrive
             $result = $this->_requestNextLink($resp, $data);
         }
         return $result;
+    }
+
+    /**
+     * Request graph serve
+     * @param string $method
+     * @param string $query
+     * @param array $options
+     * @return GraphResponse|false|\Microsoft\Graph\Http\GraphResponse|mixed|string|null
+     */
+    private function _request($method = 'GET', $query = '', $options = [])
+    {
+        if ($this->sharepoint && str_start($query, '/me')) {
+            $query = '/sites/' . $this->sharepoint . str_after($query, '/me');
+        }
+
+        $headers = array_get($options, 'headers', []);
+        $body = array_get($options, 'body', '');
+        $params = array_get($options, 'params', []);
+        $isList = array_get($options, 'isList', false);
+        if ($isList) {
+            $pre_params = [
+                '$top' => 500,
+                '$skiptoken' => '',
+                'expand' => 'thumbnails'
+            ];
+            $params = array_merge($pre_params, $params);
+        }
+
+        $query = parse_url($query)['path'] ?? '';
+        if (!empty($params)) {
+            $query .= '?' . build_query($params, false);
+        }
+        $body = is_array($body) ? json_encode($body) : $body;
+        $req = new GraphClient($this->accessToken, $this->restEndpoint);
+        $req->setApiVersion($this->apiVersion)
+            ->setMethod($method)
+            ->setQuery($query)
+            ->addHeaders($headers)
+            ->attachBody($body)
+            ->setReturnStream(false);
+
+        $resp = $req->execute();
+        if (null !== $resp->getError()) {
+            $body = $resp->getBody();
+            $headers = $resp->getHeaders();
+            $retryAfter = (int)array_get($headers, 'Retry-After', 0);
+            if ($retryAfter > 0) {
+                $this->isBlock = true;
+                $this->blockTime = $retryAfter;
+            }
+            Log::error('请求MsGraph响应错误', [$body, $headers]);
+            Log::error('请求参数', [
+                'apiVersion' => 'v1.0',
+                'method' => $method,
+                'query' => $query,
+                'restEndpoint' => $this->restEndpoint,
+            ]);
+        }
+        return $resp;
     }
 }

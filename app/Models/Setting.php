@@ -12,6 +12,21 @@ use App\Models\Traits\HelperModel;
 use Illuminate\Database\Eloquent\Model;
 use Cache;
 
+/**
+ * App\Models\Setting
+ *
+ * @property int $id
+ * @property string $name
+ * @property mixed $value
+ * @method static \Illuminate\Database\Eloquent\Builder|Setting newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Setting newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Setting query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Setting whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Setting whereMap(array $map)
+ * @method static \Illuminate\Database\Eloquent\Builder|Setting whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Setting whereValue($value)
+ * @mixin \Eloquent
+ */
 class Setting extends Model
 {
     use  HelperModel;

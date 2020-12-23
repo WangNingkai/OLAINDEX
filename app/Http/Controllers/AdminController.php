@@ -20,6 +20,7 @@ use Cache;
 class AdminController extends BaseController
 {
     use ApiResponseTrait;
+
     /**
      * 缓存清理
      * @return \Illuminate\Http\RedirectResponse
@@ -38,11 +39,7 @@ class AdminController extends BaseController
      */
     public function config(Request $request)
     {
-        $accounts = Tool::fetchAccounts();
-        if (blank($accounts)) {
-            Cache::forget('ac:list');
-            $this->showMessage('请先绑定账号', true);
-        }
+        $accounts = Account::fetchlist();
         if ($request->isMethod('get')) {
             return view(config('olaindex.theme') . 'admin.config', compact('accounts'));
         }
@@ -90,119 +87,4 @@ class AdminController extends BaseController
         return redirect()->back();
     }
 
-    /**
-     * 账号列表
-     * @return mixed
-     */
-    public function account()
-    {
-        $accounts = Account::query()
-            ->select(['id', 'accountType', 'remark', 'status', 'updated_at'])
-            ->simplePaginate();
-        return view(config('olaindex.theme') . 'admin.account', compact('accounts'));
-    }
-
-    /**
-     * 账号设置
-     * @param Request $request
-     * @param $id
-     * @return mixed
-     */
-    public function accountConfig(Request $request, $id)
-    {
-        $account = Account::find($id);
-        if (!$account) {
-            $this->showMessage('账号不存在！', true);
-            return redirect()->back();
-        }
-        $uuid = $account->hash_id;
-        if ($request->isMethod('get')) {
-            $config = setting($uuid, []);
-            return view(config('olaindex.theme') . 'admin.account-config', compact('config'));
-        }
-        $data = $request->except('_token');
-        setting_set($uuid, $data);
-        $this->showMessage('保存成功！');
-        return redirect()->back();
-    }
-
-    /**
-     * 主账号设置
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function accountSet(Request $request)
-    {
-        $id = $request->post('id', 0);
-        $account = Account::find($id);
-        if (!$account) {
-            return $this->fail('账号不存在');
-        }
-        setting_set('primary_account', $id);
-        return $this->success();
-    }
-
-    /**
-     * 账号备注
-     * @param $id
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function accountRemark($id, Request $request)
-    {
-        $account = Account::find($id);
-        if (!$account) {
-            return $this->fail('账号不存在');
-        }
-        $remark = $request->get('remark');
-        $account->remark = $remark;
-        if ($account->save()) {
-            Cache::forget('ac:list');
-            return $this->success();
-        }
-        return $this->success();
-    }
-
-    /**
-     * 账号删除
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Exception
-     */
-    public function accountDelete(Request $request)
-    {
-
-        $id = $request->post('id', 0);
-        $account = Account::find($id);
-        if (!$account) {
-            return $this->fail('账号不存在');
-        }
-        if ($account->delete()) {
-            Cache::forget('ac:list');
-            return $this->success();
-        }
-        return $this->fail('删除失败');
-    }
-
-    /**
-     * 账号详情
-     * @param $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function accountDetail($id)
-    {
-        $data = OneDrive::account($id)->fetchInfo();
-        return response()->json($data);
-    }
-
-    /**
-     * 网盘详情
-     * @param $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function driveDetail($id)
-    {
-        $data = OneDrive::account($id)->fetchMe();
-        return response()->json($data);
-    }
 }

@@ -74,7 +74,7 @@ composer run install-app # installation app
 2. [Blog](https://imwnk.cn)
 3. [i@ningkai.wang](mailto:i@ningkai.wang)
 
-### Othre
+### Notes
 
 1. OLAINDEX Command Line Version.Project Address [OLAINDEX-CMD](https://git.io/OLACMD)
 
