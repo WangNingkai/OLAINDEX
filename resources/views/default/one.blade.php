@@ -74,12 +74,12 @@
                 <tbody class="w-100">
                 <tr>
                     <td colspan="4">
-                        <form class="form-inline my-2 my-lg-0">
-                            <label>
+                        <form class="form-inline">
+                            <label class="mb-0 mr-2 my-1">
                                 <input class="form-control form-control-sm mr-sm-2" type="text" name="keywords"
                                        placeholder="搜索" value="{{ $keywords }}">
                             </label>
-                            <button class="btn btn-primary btn-sm my-2 my-sm-0" type="submit">搜索</button>
+                            <button class="btn btn-primary btn-sm mr-2 my-1" type="submit">搜索</button>
                         </form>
                     </td>
                 </tr>

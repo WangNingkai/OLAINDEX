@@ -1,19 +1,47 @@
 @extends('default.layouts.main')
 @section('title', '文件管理')
 @section('content')
+    <nav aria-label="breadcrumb" class="mb-3 d-none d-md-block d-md-none">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ route('manage.query', ['account_id' => $account_id]) }}"><i
+                        class="ri-home-fill"></i> Home</a></li>
+            @if(!blank($path))
+                @if (count($path) < 6)
+                    @foreach ($path as $key => $value)
+                        @if(end($path) === $value && $key === (count($path) - 1))
+                            <li class="breadcrumb-item active">{{ str_limit($value, 20)  }}</li>
+                        @else
+                            @if (!blank($value))
+                                <li class="breadcrumb-item ">
+                                    <a href="{{ route('manage.query', ['account_id' => $account_id,'query' => \App\Helpers\Tool::combineBreadcrumb($key + 1, $path)]) }}">
+                                        {{  str_limit($value,20) }}
+                                    </a>
+                                </li>
+                            @endif
+                        @endif
+                    @endforeach
+                @else
+                    <li class="breadcrumb-item active"> ...</li>
+                    @foreach ($path as $key => $value)
+                        @if(end($path) === $value && $key === (count($path) - 1))
+                            <li class="breadcrumb-item active">{{  str_limit($value,20)  }}</li>
+                        @else
+                            @if (!blank($value) && $key === (count($path) - 2))
+                                <li class="breadcrumb-item ">
+                                    <a href="{{ route('manage.query', ['account_id' => $account_id,'query' => \App\Helpers\Tool::combineBreadcrumb($key + 1, $path)]) }}">
+                                        {{  str_limit($value,20) }}
+                                    </a>
+                                </li>
+                            @endif
+                        @endif
+                    @endforeach
+                @endif
+            @endif
+        </ol>
+    </nav>
+
     <div class="card border-light mb-3 shadow">
-        <div class="card-header">
-            文件管理
-        </div>
         <div class="card-body table-responsive">
-            <div class="row">
-                <div class="col">
-                    <a href="{{ route('admin.account.list') }}" class="btn btn-sm btn-primary">
-                        <i class="ri-arrow-go-back-fill"></i>
-                        返回列表
-                    </a>
-                </div>
-            </div>
             <table class="table table-sm table-hover table-borderless">
                 <caption>
                     {{ array_get($item,'folder.childCount',0) }}
@@ -58,17 +86,21 @@
                 <tbody class="w-100">
                 <tr>
                     <td colspan="4">
-                        <form class="form-inline my-2 my-lg-0">
-                            <label>
+                        <form class="form-inline">
+                            <label class="mb-0 mr-2 my-1">
                                 <input class="form-control form-control-sm mr-sm-2" type="text" name="keywords"
                                        placeholder="搜索" value="{{ $keywords }}">
                             </label>
-                            <button class="btn btn-primary btn-sm my-2 my-sm-0" type="submit">搜索</button>
+                            <button class="btn btn-primary btn-sm mr-2 my-1" type="submit">搜索</button>
                         </form>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="4">
+                        <a href="{{ route('admin.account.list') }}" class="btn btn-sm btn-primary mr-2 my-1">
+                            <i class="ri-arrow-go-back-fill"></i>
+                            返回账号列表
+                        </a>
                         @if(!blank($path))
                             <a class="btn btn-sm btn-primary mr-2 my-1"
                                href="{{ route('manage.query', ['account_id' => $account_id, 'query' => \App\Helpers\Tool::fetchGoBack($path)]) }}">
