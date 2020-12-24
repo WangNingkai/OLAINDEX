@@ -178,6 +178,11 @@ class DriveController extends BaseController
         $list = $this->filter($list, $hash);
         // 资源处理
         $list = $this->formatItem($list);
+        //搜索处理
+        $keywords = $request->get('keywords');
+        if ($keywords) {
+            $list = $this->search($list, $keywords);
+        }
         // 资源排序
         $sortBy = $request->get('sortBy', 'name');
         $direction = 'desc';
@@ -192,7 +197,7 @@ class DriveController extends BaseController
 
         $list = $this->paginate($list, $perPage, false);
 
-        return view(config('olaindex.theme') . 'one' . $view, compact('accounts', 'hash', 'path', 'item', 'list', 'doc'));
+        return view(config('olaindex.theme') . 'one' . $view, compact('accounts', 'hash', 'path', 'item', 'list', 'doc', 'keywords'));
     }
 
     /**
@@ -293,6 +298,20 @@ class DriveController extends BaseController
         }
 
         return $item;
+    }
+
+    /**
+     * 搜素
+     * @param mixed|LazyCollection|Collection $list
+     * @param string $keywords
+     * @return mixed
+     */
+    private function search($list = [], $keywords = '')
+    {
+        return $list->filter(function ($item) use ($keywords) {
+            $name = trim(array_get($item, 'name', ''));
+            return str_contains($name, $keywords);
+        });
     }
 
     /**

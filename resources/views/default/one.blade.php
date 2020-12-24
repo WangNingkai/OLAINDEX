@@ -12,7 +12,7 @@
                     <div class="dropdown-menu" aria-labelledby="btnChoiceAccount">
                         @foreach($accounts as $key => $account)
                             <a class="dropdown-item"
-                               href="{{ route('drive',['hash' => $account['hash_id']]) }}">{{ $key + 1 .':'.$account['remark'] }}</a>
+                               href="{{ route('drive.query',['hash' => $account['hash_id']]) }}">{{ $key + 1 .':'.$account['remark'] }}</a>
                         @endforeach
                     </div>
                 </div>
@@ -38,7 +38,7 @@
                 </caption>
                 <thead class="w-100">
                 <tr class="row mx-0">
-                    <th class="col-4">
+                    <th class="col-5">
                         文件
                         @if(\App\Helpers\Tool::getOrderByStatus('name'))
                             <a href="{{  \App\Helpers\Tool::buildQueryParams(url()->full(),'sortBy','name,asc') }}"
@@ -68,18 +68,29 @@
                                class="text-decoration-none"><i class="ri-arrow-up-s-line"></i> </a>
                         @endif
                     </th>
-                    <th class="col-3">操作</th>
+                    <th class="col-2">操作</th>
                 </tr>
                 </thead>
                 <tbody class="w-100">
-                <tr>
-                    <td colspan="4">
-                        @if(!blank($path))
+                @if(!blank($path))
+                    <tr>
+                        <td colspan="4">
                             <a class="text-decoration-none"
                                href="{{ route('drive.query', ['hash' => $hash, 'query' => \App\Helpers\Tool::fetchGoBack($path)]) }}">
                                 <i class="ri-arrow-go-back-fill"></i> 返回上级
                             </a>
-                        @endif
+                        </td>
+                    </tr>
+                @endif
+                <tr>
+                    <td colspan="4">
+                        <form class="form-inline my-2 my-lg-0">
+                            <label>
+                                <input class="form-control form-control-sm mr-sm-2" type="text" name="keywords"
+                                       placeholder="搜索" value="{{ $keywords }}">
+                            </label>
+                            <button class="btn btn-primary btn-sm my-2 my-sm-0" type="submit">搜索</button>
+                        </form>
                     </td>
                 </tr>
                 @if(blank($list))
@@ -92,14 +103,18 @@
                     @foreach($list as $data)
                         <tr class="list-item row mx-0 align-items-center"
                             data-route="{{ route('drive.query', ['hash' => $hash, 'query' => implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )]) }}">
-                            <td class="col-4"
+                            <td class="col-5"
                                 style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
-                                <i class="ri-{{ \App\Helpers\Tool::fetchExtIco($data['ext'] ?? 'file') }}-fill"></i> {{ str_limit($data['name'], 32) }}
+                                <a href="{{ route('drive.query', ['hash' => $hash, 'query' => implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )]) }}"
+                                   class="text-decoration-none stretched-link">
+                                    <i class="ri-{{ \App\Helpers\Tool::fetchExtIco($data['ext'] ?? 'file') }}-fill"></i>
+                                    {{ $data['name'] }}
+                                </a>
                             </td>
 
                             <td class="col-2">{{ convert_size($data['size']) }}</td>
-                            <td class="col-3">{{ date('Y-m-d H:i:s', strtotime($data['lastModifiedDateTime'])) }}</td>
-                            <td class="col-3">
+                            <td class="col-3">{{ date('y-m-d H:i:s', strtotime($data['lastModifiedDateTime'])) }}</td>
+                            <td class="col-2">
                                 @if(array_has($data,'folder'))
                                     -
                                 @else
@@ -112,7 +127,7 @@
                 @endif
                 </tbody>
             </table>
-            {{ $list->appends(['sortBy'=> request()->get('sortBy')])->links('default.components.page') }}
+            {{ $list->appends(['sortBy'=> request()->get('sortBy'),'keywords' => request()->get('keywords')])->links('default.components.page') }}
         </div>
     </div>
     @if (!blank($doc['readme']))

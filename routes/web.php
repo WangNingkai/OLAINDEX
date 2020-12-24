@@ -51,8 +51,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
 });
 Route::get('/', 'DriveController@query')->name('home');
-Route::get('drive/{hash?}', 'DriveController@query')->name('drive');
-Route::get('drive/{hash?}/{query?}', 'DriveController@query')->name('drive.query')->where('query', '.*');
+Route::get('d/{query?}', 'DriveController@query')->name('drive.single')->where('query', '.*');
+Route::get('d/{hash?}/{query?}', 'DriveController@query')->name('drive.query')->where('query', '.*');
 Route::post('decrypt', 'DriveController@decrypt')->name('drive.decrypt');
 Route::get('image', 'ImageController@index')->name('image')->middleware('custom');
 Route::post('image-upload', 'ImageController@upload')->name('image.upload')->middleware('custom');
