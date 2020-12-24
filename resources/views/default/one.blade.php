@@ -30,7 +30,7 @@
     @endif
     <div class="card border-light mb-3 shadow">
         <div class="card-body table-responsive">
-            <table class="table table-sm table-hover table-borderless">
+            <table class="table table-sm table-hover     table-borderless">
                 <caption>
                     {{ array_get($item,'folder.childCount',0) }}
                     个项目
@@ -72,16 +72,6 @@
                 </tr>
                 </thead>
                 <tbody class="w-100">
-                @if(!blank($path))
-                    <tr>
-                        <td colspan="4">
-                            <a class="text-decoration-none"
-                               href="{{ route('drive.query', ['hash' => $hash, 'query' => \App\Helpers\Tool::fetchGoBack($path)]) }}">
-                                <i class="ri-arrow-go-back-fill"></i> 返回上级
-                            </a>
-                        </td>
-                    </tr>
-                @endif
                 <tr>
                     <td colspan="4">
                         <form class="form-inline my-2 my-lg-0">
@@ -93,6 +83,16 @@
                         </form>
                     </td>
                 </tr>
+                @if(!blank($path))
+                    <tr>
+                        <td colspan="4">
+                            <a class="text-decoration-none"
+                               href="{{ route('drive.query', ['hash' => $hash, 'query' => \App\Helpers\Tool::fetchGoBack($path)]) }}">
+                                <i class="ri-arrow-go-back-fill"></i> 返回上级
+                            </a>
+                        </td>
+                    </tr>
+                @endif
                 @if(blank($list))
                     <tr class="text-center">
                         <td colspan="4">
@@ -105,7 +105,7 @@
                             data-route="{{ route('drive.query', ['hash' => $hash, 'query' => implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )]) }}">
                             <td class="col-5"
                                 style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
-                                <a href="{{ route('drive.query', ['hash' => $hash, 'query' => implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )]) }}"
+                                <a title="{{ $data['name'] }}" href="{{ route('drive.query', ['hash' => $hash, 'query' => implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )]) }}"
                                    class="text-decoration-none stretched-link">
                                     <i class="ri-{{ \App\Helpers\Tool::fetchExtIco($data['ext'] ?? 'file') }}-fill"></i>
                                     {{ $data['name'] }}

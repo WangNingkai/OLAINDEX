@@ -30,6 +30,7 @@ class DriveController extends BaseController
      */
     public function query(Request $request, $hash = '', $query = '')
     {
+        $redirectQuery = $query;
         $view = '';
         $accounts = Account::fetchlist();
         if (!$hash) {
@@ -64,27 +65,36 @@ class DriveController extends BaseController
             Cache::forget("d:item:{$account_id}:{$query}");
             abort(500, $msg);
         }
-        // todo:处理加密
-        /*$store_encrypt_key = "e:{$hash}";
-        $encrypt_path = setting($store_encrypt_key, []);
-        $need_pass = false;
-        if (array_key_exists($item['id'], $encrypt_path)) {
-            $password = array_get($encrypt_path, $item['id']);
-            if (Cookie::has("e:{$hash}:{$item['id']}")) {
-                $data = json_decode(Cookie::get("e:{$hash}:{$item['id']}"), true);
-                if (strcmp($password, decrypt($data['password'])) !== 0) {
-                    Cookie::forget("e:{$hash}:{$item['id']}");
-                    $this->showMessage('密码已过期', true);
+        // 处理加密
+        $encrypt_path = array_get($config, 'encrypt_path');
+        if (!blank($encrypt_path)) {
+            $need_pass = false;
+            $encrypt_path_arr = explode('|', $encrypt_path);
+            $encrypt_path_arr = array_filter($encrypt_path_arr);
+            $_encrypt = [];
+            foreach ($encrypt_path_arr as $encrypt_item) {
+                [$_path, $password] = explode(':', $encrypt_item);
+                $_encrypt[$_path] = $password;
+            }
+            if (array_key_exists($item['name'], $_encrypt)) {
+                $password = array_get($_encrypt, $item['name']);
+                if (Cookie::has("e:{$hash}:{$item['name']}")) {
+                    $data = json_decode(Cookie::get("e:{$hash}:{$item['name']}"), true);
+                    if (strcmp($password, decrypt($data['password'])) !== 0) {
+                        Cookie::forget("e:{$hash}:{$item['name']}");
+                        $this->showMessage('密码已过期', true);
+                        $need_pass = true;
+                    }
+                } else {
                     $need_pass = true;
                 }
-            } else {
-                $need_pass = true;
+                if ($need_pass) {
+                    $redirect = $redirectQuery;
+                    return view(config('olaindex.theme') . 'password', compact('hash', 'item', 'redirect'));
+                }
             }
-            if ($need_pass) {
-                $redirect = $redirectQuery;
-                return view(config('olaindex.theme') . 'password', compact('hash', 'item', 'redirect'));
-            }
-        }*/
+        }
+
 
         // 处理文件
         $isFile = false;
@@ -204,6 +214,7 @@ class DriveController extends BaseController
      * 解密资源
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \Exception
      */
     public function decrypt(Request $request)
     {
@@ -217,11 +228,30 @@ class DriveController extends BaseController
             'query' => $query,
         ];
         $data = json_encode($data);
-        // 处理加密
-        $store_encrypt_key = "e:{$hash}";
-        $encrypt_path = setting($store_encrypt_key, []);
-        if (array_key_exists($query, $encrypt_path)) {
-            $password = array_get($encrypt_path, $query);
+        if (!$hash) {
+            $account_id = setting('primary_account', 0);
+            $hash = HashidsHelper::encode($account_id);
+        } else {
+            $account_id = HashidsHelper::decode($hash);
+        }
+        if (!$account_id) {
+            abort(404, '尚未设置账号！');
+        }
+        $account = Account::find($account_id);
+        if (!$account) {
+            abort(404, '账号不存在！');
+        }
+        $config = $account->config;
+        $encrypt_path = array_get($config, 'encrypt_path');
+        $encrypt_path_arr = explode('|', $encrypt_path);
+        $encrypt_path_arr = array_filter($encrypt_path_arr);
+        $_encrypt = [];
+        foreach ($encrypt_path_arr as $encrypt_item) {
+            [$path, $password] = explode(':', $encrypt_item);
+            $_encrypt[$path] = $password;
+        }
+        if (array_key_exists($query, $_encrypt)) {
+            $password = array_get($_encrypt, $query);
             if (strcmp($password, $input_password) === 0) {
                 return redirect()->route('drive.query', ['hash' => $hash, 'query' => $redirect])->withCookie("e:{$hash}:{$query}", $data, 600);
             }
@@ -319,6 +349,7 @@ class DriveController extends BaseController
      * @param mixed|LazyCollection|Collection $list
      * @param string $hash
      * @return mixed
+     * @throws \Exception
      */
     private function filter($list = [], $hash = '')
     {
@@ -330,12 +361,26 @@ class DriveController extends BaseController
             $name = strtoupper(trim(array_get($item, 'name', '')));
             return !in_array($name, ['README.MD', 'HEAD.MD', '.PASSWORD', '.DENY'], false);
         });
-        // todo:过滤隐藏文件
-        /*$store_hide_key = "h:{$hash}";
-        $hidden_path = setting($store_hide_key, []);
-        $list = array_where($list, function ($value) use ($hidden_path) {
-            return !in_array($value['id'], $hidden_path, false);
-        });*/
+        // 过滤隐藏文件
+        if (!$hash) {
+            $account_id = setting('primary_account', 0);
+        } else {
+            $account_id = HashidsHelper::decode($hash);
+        }
+        if (!$account_id) {
+            abort(404, '尚未设置账号！');
+        }
+        $account = Account::find($account_id);
+        if (!$account) {
+            abort(404, '账号不存在！');
+        }
+        $config = $account->config;
+        $hide_path = array_get($config, 'hide_path');
+        $hide_path_arr = explode('|', $hide_path);
+        $hide_path_arr = array_filter($hide_path_arr);
+        $list = $list->filter(function ($item) use ($hide_path_arr) {
+            return !in_array($item['name'], $hide_path_arr, false);
+        });
         return $list;
     }
 

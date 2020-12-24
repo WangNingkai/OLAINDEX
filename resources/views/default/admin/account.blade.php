@@ -36,6 +36,18 @@
                            value="{{ array_get($config, 'image_path', '/') }}">
                 </div>
                 <div class="form-group">
+                    <label for="encrypt_path"><b>加密路径</b></label>
+                    <textarea class="form-control" id="encrypt_path" name="config[encrypt_path]"
+                              rows="3">{{ array_get($config, 'encrypt_path', '') }}</textarea>
+                    <span class=" form-text text-danger">加密的文件、文件夹需要密码访问，形式"目录:密码"，使用"|"隔开，分隔符为英文符号</span>
+                </div>
+                <div class="form-group">
+                    <label for="hide_path"><b>隐藏路径</b></label>
+                    <textarea class="form-control" id="hide_path" name="config[hide_path]"
+                              rows="3">{{ array_get($config, 'hide_path', '') }}</textarea>
+                    <span class=" form-text text-danger">标记的文件、文件夹前台不显示，使用"|"隔开，分隔符为英文符号</span>
+                </div>
+                <div class="form-group">
                     <label class="form-control-label" for="list_limit"><b>列表默认显示条数</b></label>
                     <input type="text" class="form-control" id="list_limit" name="config[list_limit]"
                            value="{{ array_get($config, 'list_limit', 10) }}">
