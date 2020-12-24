@@ -1,6 +1,6 @@
 **PHP 扩展要求**
 
-- PHP >= 7.2
+- PHP >= 7.4
 - PHP OpenSSL 扩展
 - PHP PDO 扩展
 - PHP Mbstring 扩展
@@ -57,6 +57,6 @@ oneinstack php安装路径 `/usr/local/php/etc/php.ini`
 ```
 1、curl -sS https://getcomposer.org/installer | php  
 2、mv composer.phar /usr/local/bin/composer 
-3、composer config -g repo.packagist composer https://packagist.laravel-china.org # 更换源为国内源，国外服务器可忽略此步骤
+3、composer config -g repo.packagist composer https://mirrors.aliyun.com/composer # 更换源为国内源，国外服务器可忽略此步骤
 ```
 

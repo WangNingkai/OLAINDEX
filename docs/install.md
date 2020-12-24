@@ -21,14 +21,6 @@ composer run install-app
 
 ***
 
-## 宝塔面板安装
-
-**不会配置的请慎重，这里我也亲自写的一篇BT面板安装教程，请按照指示操作**
-
-[BT 面板安装 OLAINDEX 全方位指南](https://imwnk.cn/archives/bt-olaindex)
-
-***
-
 ## Web服务器配置
 
 将应用的运行目录指向的是 根目录下的 `public` 目录，如 `www/OLAINDEX/public`
