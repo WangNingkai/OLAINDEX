@@ -65,6 +65,7 @@ class DriveController extends BaseController
             Cache::forget("d:item:{$account_id}:{$query}");
             abort(500, $msg);
         }
+        Cache::add("d:item:{$account_id}:{$item['id']}", $item, setting('cache_expires'));
         // 处理加密
         $encrypt_path = array_get($config, 'encrypt_path');
         if (!blank($encrypt_path)) {
@@ -208,6 +209,50 @@ class DriveController extends BaseController
         $list = $this->paginate($list, $perPage, false);
 
         return view(config('olaindex.theme') . 'one' . $view, compact('accounts', 'hash', 'path', 'item', 'list', 'doc', 'keywords'));
+    }
+
+    /**
+     * 文件下载
+     * @param $hash
+     * @param $item_id
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Exception
+     */
+    public function download($hash, $item_id)
+    {
+        if (!$hash) {
+            $account_id = setting('primary_account', 0);
+        } else {
+            $account_id = HashidsHelper::decode($hash);
+        }
+        if (!$account_id) {
+            abort(404, '尚未设置账号！');
+        }
+        $account = Account::find($account_id);
+        if (!$account) {
+            abort(404, '账号不存在！');
+        }
+        $service = $account->getOneDriveService();
+        // 缓存处理
+        $item = Cache::remember("d:item:{$account_id}:{$item_id}", setting('cache_expires'), function () use ($service, $item_id) {
+            return $service->fetchItemById($item_id);
+        });
+        if (array_key_exists('code', $item)) {
+            $msg = array_get($item, 'message', '404NotFound');
+            $msg = GraphErrorEnum::get($item['code']) ?? $msg;
+            Cache::forget("d:item:{$account_id}:{$item_id}");
+            abort(500, $msg);
+        }
+        // 处理文件
+        $isFile = false;
+        if (array_key_exists('file', $item)) {
+            $isFile = true;
+        }
+
+        if (!$isFile) {
+            abort(404);
+        }
+        return redirect()->away($item['@microsoft.graph.downloadUrl']);
     }
 
     /**

@@ -64,3 +64,4 @@ Route::post('decrypt', 'DriveController@decrypt')->name('drive.decrypt');
 Route::get('image', 'ImageController@index')->name('image')->middleware('custom');
 Route::post('image-upload', 'ImageController@upload')->name('image.upload')->middleware('custom');
 Route::get('t/{code}', 'ShareController')->name('short');
+Route::get('s/{hash}/{item_id}', 'DriveController@download')->name('download');
