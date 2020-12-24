@@ -56,6 +56,8 @@
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="actionAccount"
                                          data-id="{{ $account->id }}">
+                                        <a class="dropdown-item"
+                                           href="{{ route('manage.query',['account_id' =>$account->id])  }}">文件管理</a>
                                         <a class="dropdown-item set_main"
                                            href="{{ route('admin.account.config',['id' =>$account->id])  }}">账号设置</a>
                                         <a class="dropdown-item set_main"
@@ -238,7 +240,7 @@
                                     Swal.fire({
                                         title: '操作成功',
                                         text: '删除账号成功',
-                                        icon: 'success'
+                                        icon: 'success',
                                     }).then(() => {
                                         window.location.reload()
                                     })
@@ -276,7 +278,7 @@
                             Swal.fire({
                                 title: '操作成功',
                                 text: '设置主账号成功',
-                                icon: 'success'
+                                icon: 'success',
                             }).then(() => {
                                 window.location.reload()
                             })

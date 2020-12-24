@@ -46,6 +46,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('account/remark/{id}', 'AccountController@remark')->name('admin.account.remark');
     Route::post('account/set-main', 'AccountController@setMain')->name('admin.account.setMain');
     Route::post('account/delete', 'AccountController@delete')->name('admin.account.delete');
+
+    Route::get('manage/{account_id}/{query?}', 'ManageController@query')->name('manage.query')->where('query', '.*');
+    Route::post('manage/refresh', 'ManageController@refresh')->name('manage.refresh');
+    Route::post('manage/delete', 'ManageController@delete')->name('manage.delete');
+    Route::post('manage/mkdir', 'ManageController@mkdir')->name('manage.mkdir');
+    Route::post('manage/uploadSession', 'ManageController@createUploadSession')->name('manage.upload');
     // 日志
     Route::any('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index')->name('admin.logs');
 
