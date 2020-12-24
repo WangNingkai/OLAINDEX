@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Cache;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
+use App\Helpers\Tool;
 
 class ManageController extends BaseController
 {
@@ -85,6 +86,16 @@ class ManageController extends BaseController
         if ($keywords) {
             $list = $this->search($list, $keywords);
         }
+        $readme = $list->filter(function ($item) {
+            $name = strtoupper(trim(array_get($item, 'name', '')));
+            return $name === 'README.MD';
+        });
+        $readme = $readme->first();
+        if (!blank($readme)) {
+            $readme_id = $readme['id'];
+            Cache::add("d:item:{$account_id}:$readme_id", $readme, setting('cache_expires'));
+        }
+
         // 资源排序
         $sortBy = $request->get('sortBy', 'name');
         $direction = 'desc';
@@ -97,7 +108,7 @@ class ManageController extends BaseController
 
         $list = $this->paginate($list, 20, false);
 
-        return view(config('olaindex.theme') . 'admin.manage' . $view, compact('account_id', 'path', 'query', 'item', 'list', 'keywords'));
+        return view(config('olaindex.theme') . 'admin.manage' . $view, compact('account_id', 'readme', 'path', 'query', 'item', 'list', 'keywords'));
     }
 
     /**
@@ -112,7 +123,7 @@ class ManageController extends BaseController
         $account = Account::find($account_id);
         if (!$account) {
             $this->showMessage('未知账号！', true);
-            return redirect()->route('index');
+            return redirect()->back();
         }
         Cache::forget("d:item:{$account_id}:{$query}");
         Cache::forget("d:list:{$account_id}:{$query}");
@@ -200,6 +211,61 @@ class ManageController extends BaseController
             'uploadUrl' => $uploadUrl,
             'expired_at' => Carbon::parse($expired, 'Asia/Shanghai')->toIso8601String(),
         ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return mixed
+     */
+    public function createOrUpdateReadme(Request $request)
+    {
+        $redirect = $request->get('redirect');
+        $file_id = $request->get('file_id');
+        $parent_id = $request->get('parent_id');
+        $account_id = $request->get('account_id');
+        $content = $request->get('content');
+        $account = Account::find($account_id);
+        if (!$account) {
+            $this->showMessage('未知账号！', true);
+            return redirect()->back();
+        }
+        $service = $account->getOneDriveService();
+        if ($request->method() === 'GET') {
+            $content = '';
+            if ($file_id) {
+                $readme = Cache::remember("d:item:{$account_id}:$file_id", setting('cache_expires'), function () use ($service, $file_id) {
+                    return $service->fetchItemById($file_id);
+                });
+                if (array_key_exists('code', $readme)) {
+                    /*$msg = array_get($readme, 'message', '404NotFound');
+                    $msg = GraphErrorEnum::get($readme['code']) ?? $msg;*/
+                    Cache::forget("d:item:{$account_id}:$file_id");
+                    $content = '';
+                } else {
+                    $url = $readme['@microsoft.graph.downloadUrl'];
+                    $content = Cache::remember("d:content:{$account_id}:{$file_id}", setting('cache_expires'), function () use ($url) {
+                        return Tool::fetchContent($url);
+                    });
+                }
+            }
+            return view('default.admin.file', compact('content', 'file_id', 'parent_id', 'account_id', 'redirect'));
+        }
+        if ($file_id) {
+            Cache::forget("d:content:{$account_id}:{$file_id}");
+            $resp = $service->uploadById($file_id, $content);
+        } else {
+            $resp = $service->uploadByParentId($parent_id, 'README.md', $content);
+        }
+        if (array_key_exists('code', $resp)) {
+            $msg = array_get($resp, 'message', '404NotFound');
+            $msg = GraphErrorEnum::get($resp['code']) ?? $msg;
+            $this->showMessage($msg, true);
+            return redirect()->back();
+        }
+
+        $this->showMessage('提交成功！');
+        return redirect()->away($redirect);
+
     }
 
     /**

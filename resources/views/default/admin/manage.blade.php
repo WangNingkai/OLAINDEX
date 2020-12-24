@@ -39,7 +39,6 @@
             @endif
         </ol>
     </nav>
-
     <div class="card border-light mb-3 shadow">
         <div class="card-body table-responsive">
             <table class="table table-sm table-hover table-borderless">
@@ -84,7 +83,7 @@
                 </tr>
                 </thead>
                 <tbody class="w-100">
-                <tr>
+                <tr class="row mx-0">
                     <td colspan="4">
                         <form class="form-inline">
                             <label class="mb-0 mr-2 my-1">
@@ -95,7 +94,7 @@
                         </form>
                     </td>
                 </tr>
-                <tr>
+                <tr class="row mx-0">
                     <td colspan="4">
                         <a href="{{ route('admin.account.list') }}" class="btn btn-sm btn-primary mr-2 my-1">
                             <i class="ri-arrow-go-back-fill"></i>
@@ -115,10 +114,19 @@
                            data-target="#uploadModal"><i class="ri-upload-line"></i> 上传文件</a>
                         <a class="btn btn-sm btn-primary mr-2 my-1" href="javascript:void(0)" data-toggle="modal"
                            data-target="#mkdirModal"><i class="ri-folder-add-line"></i> 创建文件夹</a>
+                        @if(blank($readme))
+                            <a class="btn btn-sm btn-primary mr-2 my-1"
+                               href="{{ route('manage.readme',['account_id' => $account_id, 'parent_id' => $item['id'], 'redirect' => url()->current()]) }}"><i
+                                    class="ri-pencil-line"></i> 新建readme.md</a>
+                        @else
+                            <a class="btn btn-sm btn-primary mr-2 my-1"
+                               href="{{ route('manage.readme',['account_id' => $account_id, 'file_id' => $readme['id'], 'redirect' => url()->current()]) }}"><i
+                                    class="ri-pencil-line"></i> 编辑readme.md</a>
+                        @endif
                     </td>
                 </tr>
                 @if(blank($list))
-                    <tr class="text-center">
+                    <tr class="row mx-0 text-center">
                         <td colspan="4">
                             Ops! 暂无资源
                         </td>

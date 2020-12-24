@@ -30,7 +30,7 @@
     @endif
     <div class="card border-light mb-3 shadow">
         <div class="card-body table-responsive">
-            <table class="table table-sm table-hover     table-borderless">
+            <table class="table table-sm table-hover  table-borderless">
                 <caption>
                     {{ array_get($item,'folder.childCount',0) }}
                     个项目
@@ -72,7 +72,7 @@
                 </tr>
                 </thead>
                 <tbody class="w-100">
-                <tr>
+                <tr class="row mx-0">
                     <td colspan="4">
                         <form class="form-inline">
                             <label class="mb-0 mr-2 my-1">
@@ -84,7 +84,7 @@
                     </td>
                 </tr>
                 @if(!blank($path))
-                    <tr>
+                    <tr class="row mx-0">
                         <td colspan="4">
                             <a class="text-decoration-none"
                                href="{{ route('drive.query', ['hash' => $hash, 'query' => \App\Helpers\Tool::fetchGoBack($path)]) }}">
@@ -94,7 +94,7 @@
                     </tr>
                 @endif
                 @if(blank($list))
-                    <tr class="text-center">
+                    <tr class="row mx-0 text-center" >
                         <td colspan="4">
                             Ops! 暂无资源
                         </td>
