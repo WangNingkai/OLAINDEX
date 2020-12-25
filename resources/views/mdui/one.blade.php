@@ -81,17 +81,9 @@
                     <li class="mdui-list-item">
                         <div class="mdui-list-item-content">
                             <div class="mdui-row">
-                                @if(!blank($path))
-                                    <div class="mdui-col">
-                                        <a class="mdui-btn mdui-btn-icon"
-                                           href="{{ route('drive.query', ['hash' => $hash, 'query' => \App\Helpers\Tool::fetchGoBack($path)]) }}">
-                                            <i class="mdui-icon material-icons">arrow_back</i>
-                                        </a>
-                                    </div>
-                                @endif
-                                <form action="" method="get">
-                                    <div class="mdui-col">
-                                        <div class="mdui-textfield mdui-textfield-expandable mdui-float-right">
+                                <div class="mdui-col">
+                                    <form action="" method="get">
+                                        <div class="mdui-textfield mdui-textfield-expandable">
                                             <div class="mdui-textfield-icon mdui-btn mdui-btn-icon"><i
                                                     class="mdui-icon material-icons">search</i></div
                                             >
@@ -101,11 +93,22 @@
                                             <div class="mdui-textfield-close mdui-btn mdui-btn-icon"><i
                                                     class="mdui-icon material-icons">close</i></div>
                                         </div>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </li>
+                    @if(!blank($path))
+                        <li class="mdui-list-item">
+                            <div class="mdui-list-item-content">
+                                <a
+                                    href="{{ route('drive.query', ['hash' => $hash, 'query' => \App\Helpers\Tool::fetchGoBack($path)]) }}">
+                                    <i class="mdui-icon material-icons">arrow_back</i>
+                                    返回上级
+                                </a>
+                            </div>
+                        </li>
+                    @endif
                     @if(blank($list))
                         <li class="mdui-list-item">
                             <div class="mdui-list-item-content">
