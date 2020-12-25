@@ -1,7 +1,7 @@
 @extends('mdui.layouts.main')
 @section('title', setting('site_name','OLAINDEX'))
 @section('content')
-    <div class="mdui-container mdui-m-t-5">
+    <div class="mdui-container mdui-m-y-5">
         <div class="breadcrumb mdui-p-x-2">
             <div class="mdui-chip" mdui-menu="{target: '#choose_user', subMenuTrigger: 'hover'}"
                  mdui-tooltip="{content: '切换账号'}">
@@ -152,9 +152,21 @@
                         </li>
                     @endif
                 </ul>
+                {{ $list->appends(['sortBy'=> request()->get('sortBy'),'keywords' => request()->get('keywords')])->links('mdui.components.page') }}
             </div>
         </div>
-        {{ $list->appends(['sortBy'=> request()->get('sortBy'),'keywords' => request()->get('keywords')])->links('mdui.components.page') }}
+
+        <div class="mdui-card">
+            <div class="mdui-card-header">
+                <div class="mdui-chip">
+                    <span class="mdui-chip-icon"> <i class="mdui-icon material-icons">lightbulb_outline</i></span>
+                    <span class="mdui-chip-title">README</span>
+                </div>
+            </div>
+            <div class="mdui-card-content markdown-body">
+                {!! marked($doc['readme']) !!}
+            </div>
+        </div>
     </div>
 @stop
 @push('scripts')
