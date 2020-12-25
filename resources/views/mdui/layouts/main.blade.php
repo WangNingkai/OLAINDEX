@@ -17,6 +17,7 @@
         integrity="sha384-cLRrMq39HOZdvE0j6yBojO4+1PrHfB7a9l5qLcmRm/fiWXYY+CndJPmyu5FV/9Tw"
         crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css">
     <link rel="stylesheet" href="{{ asset('css/mdui.css') }}">
     @stack('stylesheet')
     {!! setting('stats_code') !!}
@@ -45,7 +46,7 @@
 @yield('content')
 <a
     id="scrolltop"
-    class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent mdui-fab-hide"
+    class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent "
     onclick="toTop()"
 ><i class="mdui-icon material-icons">keyboard_arrow_up</i></a
 >
@@ -62,14 +63,13 @@
         document.querySelector('#top').scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
     window.addEventListener('scroll', () => {
-        console.log('scroll')
-        if (!(document.body.scrollTop > 100 || document.documentElement.scrollTop > 100)) {
-            if ($('#scrolltop').hasClass('mdui-fab-hide')) {
-                $(this).removeClass('mdui-fab-hide')
+        if ((document.body.scrollTop > 100 || document.documentElement.scrollTop > 100)) {
+            if ($("#scrolltop").hasClass('mdui-fab-hide')) {
+                $("#scrolltop").removeClass('mdui-fab-hide')
             }
         } else {
-            if (!$('#scrolltop').hasClass('mdui-fab-hide')) {
-                $(this).addClass('mdui-fab-hide')
+            if (!$("#scrolltop").hasClass('mdui-fab-hide')) {
+                $("#scrolltop").addClass('mdui-fab-hide')
             }
         }
     })
