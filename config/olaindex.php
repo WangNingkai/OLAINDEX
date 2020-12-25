@@ -10,15 +10,11 @@
 | 自定义配置
 |--------------------------------------------------------------------------
 |
-| theme      主题
-| php_path   PHP路径
 | api        API设置
 | proxy      访问代理设置
 |
 */
 return [
-    'theme' => env('THEME', 'default') . '.',
-    'php_path' => env('PHP_PATH', '/usr/bin/php'),
     'api' => [
         'allow_list' => explode(',', env('API_ALLOW'))
     ],
