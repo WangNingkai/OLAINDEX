@@ -29,6 +29,7 @@
         "fideloper/proxy": "^4.2",
         "guzzlehttp/guzzle": "^7.0.1",
         "hashids/hashids": "^4.0",
+        "hhxsv5/laravel-s": "~3.7.0",
         "laravel-lang/lang": "~7.0",
         "laravel/framework": "^8.0",
         "laravel/helpers": "^1.3",

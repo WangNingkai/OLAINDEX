@@ -17,3 +17,6 @@ _ide_helper.php
 _ide_helper_models.php
 .phpstorm.meta.php
 /resources/vue/node_modules
+/storage/laravels.conf
+/storage/laravels.pid
+/storage/laravels-custom-processes.pid
