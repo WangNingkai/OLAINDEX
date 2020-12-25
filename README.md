@@ -71,8 +71,9 @@ composer run install-app # installation app
 3 way to bug report：
 
 1. [GitHub issue](https://github.com/WangNingkai/OLAINDEX/issues) 
-2. [Blog](https://imwnk.cn)
-3. [i@ningkai.wang](mailto:i@ningkai.wang)
+2. [GitHub discussions](https://github.com/WangNingkai/OLAINDEX/discussions)
+3. [Blog](https://imwnk.cn)
+4. [i@ningkai.wang](mailto:i@ningkai.wang)
 
 ### Notes
 

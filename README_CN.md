@@ -90,6 +90,8 @@ chown -R www:www * # 确保目录权属
 在求(伸)助(手)前请确保已经仔细 [Github Wiki](https://github.com/WangNingkai/OLAINDEX/wiki) 内的所有说明。
 使用 [GitHub issue](https://github.com/WangNingkai/OLAINDEX/issues) 提交问题时请确保提供信息完整准确，否则不予跟进。
 
+使用 [GitHub discussions](https://github.com/WangNingkai/OLAINDEX/discussions)
+
 Blog [https://imwnk.cn](https://imwnk.cn)
 
 Email [i@ningkai.wang](mailto:i@ningkai.wang)
