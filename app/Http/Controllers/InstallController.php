@@ -54,7 +54,7 @@ class InstallController extends BaseController
     {
         //  显示基础信息的填写、申请或提交应用信息、返回
         if ($request->isMethod('get')) {
-            return view(  'defailt.install.install');
+            return view( 'default.install.install');
         }
         $request->validate([
             'accountType' => 'required',
