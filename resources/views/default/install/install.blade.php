@@ -1,7 +1,7 @@
 @extends('default.layouts.main')
 @section('title','初始化安装')
 @section('content')
-    <div class="card border-light mb-3">
+    <div class="card border-light mb-3 shadow">
         <div class="card-header">申请</div>
         <div class="card-body">
             <form action="{{ route('apply') }}" method="get" target="_blank">
