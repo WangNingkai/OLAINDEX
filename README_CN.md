@@ -7,8 +7,6 @@
 [![GitHub stars](https://img.shields.io/github/stars/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/network)
 [![GitHub license](https://img.shields.io/github/license/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/blob/master/LICENSE)
-![Lint Code Base](https://github.com/WangNingkai/OLAINDEX/workflows/Lint%20Code%20Base/badge.svg?branch=5.0)
-![Laravel](https://github.com/WangNingkai/OLAINDEX/workflows/Laravel/badge.svg?branch=5.0)
 ![visitors](https://visitor-badge.laobi.icu/badge?page_id=WangNingkai.OLAINDEX)
 
 
@@ -30,7 +28,7 @@
 
 ## 演示地址
 
-- [https://share.imwnk.cn](https://share.imwnk.cn)
+- [https://demo.olaindex.com](https://demo.olaindex.com)
 
 ## 预览
 
@@ -60,13 +58,11 @@ chown -R www:www * # 确保目录权属
 
 本次更新进行部分重构，不再兼容老版本，请删除原先代码重新拉取部署更新
 
-**2020.04 v5.0**
+**2020.12 v6.0**
 
-- 支持绑定多账号
-- 增加链接短链转换
-- 提高接口连接稳定性
-- 优化安装步骤
-- 缩减无用功能
+- 简化功能
+- 修复已知问题
+- 添加目录搜索功能
 
 ### 分支说明
 
@@ -104,15 +100,26 @@ Email [i@ningkai.wang](mailto:i@ningkai.wang)
 
 3. 如使用本应用，请尽量保留底部版权，并分享给更多人，感谢。
 
-## 捐赠
+## :sparkling_heart: 支持这个项目
 
-项目开发纯属个人爱好，如果你喜欢此项目，欢迎赞助。
+我尽己所能地进行开源，并且我尽量回复每个在使用项目时需要帮助的人。很明显，这需要时间，但你可以免费享受这些。
 
-另可根据需求提供付费定制服务。
+然而, 如果你正在使用这个项目并感觉良好，或只是想要支持我继续开发，你可以通过如下方式：
 
-**赞助地址 ： [https://pay.ningkai.wang](https://pay.ningkai.wang)**
+- Star 并 分享这个项目 :rocket:
+- [![paypal.me/wangningkai](https://ionicabizau.github.io/badges/paypal.svg)](https://www.paypal.me/wangningkai) - 你可以通过 PayPal 一次性捐款. 我多半会买一杯 咖啡 茶. :tea:
+- [Wechat & AliPay](https://pay.ningkai.wang)
+
+谢谢! :heart:
 
 ---
 
 ## License
+
 The OLAINDEX is open-source software licensed under the MIT license.
+
+---
+
+欢迎贡献哦! <3
+
+Made with ❤️ and PHP.

@@ -7,8 +7,6 @@
 [![GitHub stars](https://img.shields.io/github/stars/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/network)
 [![GitHub license](https://img.shields.io/github/license/WangNingkai/OLAINDEX.svg?style=flat-square)](https://github.com/WangNingkai/OLAINDEX/blob/master/LICENSE)
-![Lint Code Base](https://github.com/WangNingkai/OLAINDEX/workflows/Lint%20Code%20Base/badge.svg?branch=5.0)
-![Laravel](https://github.com/WangNingkai/OLAINDEX/workflows/Laravel/badge.svg?branch=5.0)
 ![visitors](https://visitor-badge.laobi.icu/badge?page_id=WangNingkai.OLAINDEX)
     
 > **[中文README](./README_CN.md)**
@@ -29,7 +27,7 @@ A simple, full-featured OneDrive directory index web app, Built on top of the La
 
 ## Demo
 
-- [https://share.imwnk.cn](https://share.imwnk.cn)
+- [https://demo.olaindex.com](https://demo.olaindex.com)
 
 ## Preview
 
