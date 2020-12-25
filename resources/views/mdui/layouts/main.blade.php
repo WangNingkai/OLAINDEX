@@ -40,15 +40,6 @@
                 <a class="mdui-btn mdui-btn-icon" href="{{ route('image') }}"><i class="mdui-icon material-icons">insert_photo</i></a>
             </div>
         @endif
-        {{--@if(request()->routeIs(['drive.query','home']))
-            <div class="switch-view mdui-p-a-2">
-                <label class="mdui-switch" mdui-tooltip="{content: '切换视图'}">
-                    <i class="mdui-icon material-icons">view_comfy</i> &nbsp;&nbsp;
-                    <input id="display-type-chk" class="display-type" type="checkbox"/>
-                    <i class="mdui-switch-icon"></i>
-                </label>
-            </div>
-        @endif--}}
     </div>
 </div>
 @yield('content')
