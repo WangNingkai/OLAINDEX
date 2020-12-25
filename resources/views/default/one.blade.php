@@ -113,7 +113,7 @@
                             </td>
 
                             <td class="col-2">{{ convert_size($data['size']) }}</td>
-                            <td class="col-3">{{ date('y-m-d H:i:s', strtotime($data['lastModifiedDateTime'])) }}</td>
+                            <td class="col-3">{{ date('Y-m-d H:i:s', strtotime($data['lastModifiedDateTime'])) }}</td>
                             <td class="col-2">
                                 @if(array_has($data,'folder'))
                                     -

@@ -55,7 +55,7 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        return view(config('olaindex.theme') . 'login');
+        return view('default.login');
     }
 
     /**

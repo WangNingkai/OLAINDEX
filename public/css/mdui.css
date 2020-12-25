@@ -1,3 +1,7 @@
 .mdui-btn {
     margin: 1.5px !important;
 }
+.mdui-list-item,
+.mdui-list-item:hover {
+    border-radius: 1rem;
+}

@@ -25,7 +25,7 @@ class AccountController extends BaseController
         $accounts = Account::query()
             ->select(['id', 'accountType', 'remark', 'status', 'updated_at'])
             ->simplePaginate();
-        return view(config('olaindex.theme') . 'admin.account-list', compact('accounts'));
+        return view('default.admin.account-list', compact('accounts'));
     }
 
     /**
@@ -43,7 +43,7 @@ class AccountController extends BaseController
         }
         if ($request->isMethod('get')) {
             $config = $account->config;
-            return view(config('olaindex.theme') . 'admin.account', compact('config'));
+            return view('default.admin.account', compact('config'));
         }
 
         $config = $request->get('config');

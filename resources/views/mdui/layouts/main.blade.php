@@ -35,21 +35,29 @@
     <div class="mdui-toolbar mdui-color-theme mdui-container" style="position: relative">
         <a href="{{ route('home') }}" class="mdui-typo-headline">{{ setting('site_name','OLAINDEX') }}</a>
         <div class="mdui-toolbar-spacer"></div>
-        <div class="image" mdui-tooltip="{content: '图床'}">
-            <div class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">insert_photo</i></div>
-        </div>
-        <div class="switch-view mdui-p-a-2">
-            <label class="mdui-switch" mdui-tooltip="{content: '切换视图'}">
-                <i class="mdui-icon material-icons">view_comfy</i> &nbsp;&nbsp;
-                <input id="display-type-chk" class="display-type" type="checkbox"/>
-                <i class="mdui-switch-icon"></i>
-            </label>
-        </div>
+        @if( setting('open_image_host',0) && (setting('public_image_host',0) || (!setting('public_image_host',0) && auth()->check())) && !request()->routeIs(['image']))
+            <div class="image" mdui-tooltip="{content: '图床'}">
+                <a class="mdui-btn mdui-btn-icon" href="{{ route('image') }}"><i class="mdui-icon material-icons">insert_photo</i></a>
+            </div>
+        @endif
+        {{--@if(request()->routeIs(['drive.query','home']))
+            <div class="switch-view mdui-p-a-2">
+                <label class="mdui-switch" mdui-tooltip="{content: '切换视图'}">
+                    <i class="mdui-icon material-icons">view_comfy</i> &nbsp;&nbsp;
+                    <input id="display-type-chk" class="display-type" type="checkbox"/>
+                    <i class="mdui-switch-icon"></i>
+                </label>
+            </div>
+        @endif--}}
     </div>
 </div>
-<div class="mdui-container  mdui-m-t-5">
-    @yield('content')
-</div>
+@yield('content')
+<a
+    id="scrolltop"
+    class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent mdui-fab-hide"
+    onclick="toTop()"
+><i class="mdui-icon material-icons">keyboard_arrow_up</i></a
+>
 <script
     src="https://cdn.jsdelivr.net/npm/mdui@1.0.1/dist/js/mdui.min.js"
     integrity="sha384-gCMZcshYKOGRX9r6wbDrvF+TcCCswSHFucUzUPwka+Gr+uHgjlYvkABr95TCOz3A"
@@ -57,6 +65,24 @@
 ></script>
 <script src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js"></script>
 <script src="https://cdn.staticfile.org/axios/0.21.0/axios.min.js"></script>
+<script>
+    const $ = mdui.$
+    const toTop = () => {
+        document.querySelector('#top').scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+    window.addEventListener('scroll', () => {
+        console.log('scroll')
+        if (!(document.body.scrollTop > 100 || document.documentElement.scrollTop > 100)) {
+            if ($('#scrolltop').hasClass('mdui-fab-hide')) {
+                $(this).removeClass('mdui-fab-hide')
+            }
+        } else {
+            if (!$('#scrolltop').hasClass('mdui-fab-hide')) {
+                $(this).addClass('mdui-fab-hide')
+            }
+        }
+    })
+</script>
 @stack('scripts')
 </body>
 </html>

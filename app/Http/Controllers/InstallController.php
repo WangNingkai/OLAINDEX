@@ -54,7 +54,7 @@ class InstallController extends BaseController
     {
         //  显示基础信息的填写、申请或提交应用信息、返回
         if ($request->isMethod('get')) {
-            return view(config('olaindex.theme') . 'install.install');
+            return view(  'defailt.install.install');
         }
         $request->validate([
             'accountType' => 'required',
@@ -68,7 +68,7 @@ class InstallController extends BaseController
         $clientSecret = $request->get('clientSecret');
 
         return view(
-            config('olaindex.theme') . 'install.bind',
+             'default.install.bind',
             compact('accountType', 'clientId', 'clientSecret', 'redirectUri')
         );
     }

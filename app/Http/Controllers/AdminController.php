@@ -39,7 +39,7 @@ class AdminController extends BaseController
     {
         $accounts = Account::fetchlist();
         if ($request->isMethod('get')) {
-            return view(config('olaindex.theme') . 'admin.config', compact('accounts'));
+            return view('default.admin.config', compact('accounts'));
         }
         $data = $request->except('_token');
         Setting::batchUpdate($data);
@@ -55,7 +55,7 @@ class AdminController extends BaseController
     public function profile(Request $request)
     {
         if ($request->isMethod('get')) {
-            return view(config('olaindex.theme') . 'admin.profile');
+            return view('default.admin.profile');
         }
 
         $request->validate([

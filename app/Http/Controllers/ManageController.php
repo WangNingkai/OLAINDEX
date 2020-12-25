@@ -108,7 +108,7 @@ class ManageController extends BaseController
 
         $list = $this->paginate($list, 20, false);
 
-        return view(config('olaindex.theme') . 'admin.manage' . $view, compact('account_id', 'readme', 'path', 'query', 'item', 'list', 'keywords'));
+        return view('default.admin.manage' . $view, compact('account_id', 'readme', 'path', 'query', 'item', 'list', 'keywords'));
     }
 
     /**
