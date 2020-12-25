@@ -91,7 +91,7 @@ class DriveController extends BaseController
                 }
                 if ($need_pass) {
                     $redirect = $redirectQuery;
-                    return view(config('olaindex.theme') . 'password', compact('hash', 'item', 'redirect'));
+                    return view(setting('main_theme', 'default') . '.password', compact('hash', 'item', 'redirect'));
                 }
             }
         }
@@ -167,7 +167,7 @@ class DriveController extends BaseController
 
                         return redirect()->away($url);
                     }
-                    return view(config('olaindex.theme') . 'preview' . $view, compact('accounts', 'hash', 'path', 'show', 'file'));
+                    return view(setting('main_theme', 'default') . '.preview' . $view, compact('accounts', 'hash', 'path', 'show', 'file'));
                 }
             }
             return redirect()->away($download);
@@ -208,7 +208,7 @@ class DriveController extends BaseController
 
         $list = $this->paginate($list, $perPage, false);
 
-        return view(config('olaindex.theme') . 'one' . $view, compact('accounts', 'hash', 'path', 'item', 'list', 'doc', 'keywords'));
+        return view(setting('main_theme', 'default') . '.one' . $view, compact('accounts', 'hash', 'path', 'item', 'list', 'doc', 'keywords'));
     }
 
     /**

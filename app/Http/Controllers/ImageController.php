@@ -27,7 +27,7 @@ class ImageController extends BaseController
      */
     public function index()
     {
-        return view(config('olaindex.theme') . 'image');
+        return view(setting('main_theme', 'default') . '.image');
     }
 
     /**

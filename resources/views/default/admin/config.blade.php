@@ -1,27 +1,31 @@
 @php
     $themes = [
-            'Cerulean' => 'cerulean',
-            'Cosmo' => 'cosmo',
-            'Cyborg' => 'cyborg',
-            'Darkly' => 'darkly',
-            'Flatly' => 'flatly',
-            'Journal' => 'journal',
-            'Litera' => 'litera',
-            'Lumen' => 'lumen',
-            'Materia' => 'materia',
-            'Lux' => 'lux',
-            'Minty' => 'minty',
-            'Pulse' => 'pulse',
-            'Sandstone' => 'sandstone',
-            'Simplex' => 'simplex',
-            'Sketchy' => 'sketchy',
-            'Slate' => 'slate',
-            'Solar' => 'solar',
-            'Spacelab' => 'spacelab',
-            'Superhero' => 'superhero',
-            'United' => 'united',
-            'Yeti' => 'yeti',
-        ];
+        'Cerulean' => 'cerulean',
+        'Cosmo' => 'cosmo',
+        'Cyborg' => 'cyborg',
+        'Darkly' => 'darkly',
+        'Flatly' => 'flatly',
+        'Journal' => 'journal',
+        'Litera' => 'litera',
+        'Lumen' => 'lumen',
+        'Materia' => 'materia',
+        'Lux' => 'lux',
+        'Minty' => 'minty',
+        'Pulse' => 'pulse',
+        'Sandstone' => 'sandstone',
+        'Simplex' => 'simplex',
+        'Sketchy' => 'sketchy',
+        'Slate' => 'slate',
+        'Solar' => 'solar',
+        'Spacelab' => 'spacelab',
+        'Superhero' => 'superhero',
+        'United' => 'united',
+        'Yeti' => 'yeti',
+    ];
+    $main_themes = [
+        'default' => 'default',
+        'mdui' => 'mdui',
+    ];
 @endphp
 @extends('default.layouts.main')
 @section('title', '设置')
@@ -54,11 +58,22 @@
                                        value="{{ setting('site_name','OLAINDEX') }}">
                             </div>
                             <div class="form-group">
-                                <label class="form-control-label" for="site_theme"><b>显示主题</b></label>
+                                <label class="form-control-label" for="site_theme"><b>全局主题</b></label>
                                 <select class="custom-select" name="site_theme" id="site_theme">
                                     @foreach( $themes as $name => $theme)
                                         <option value="{{ $theme }}"
                                                 @if(setting('site_theme') === $theme) selected @endif>
+                                            {{ $name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-control-label" for="main_theme"><b>显示主题</b></label>
+                                <select class="custom-select" name="main_theme" id="main_theme">
+                                    @foreach( $main_themes as $name => $theme)
+                                        <option value="{{ $theme }}"
+                                                @if(setting('main_theme') === $theme) selected @endif>
                                             {{ $name }}
                                         </option>
                                     @endforeach

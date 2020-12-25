@@ -17,7 +17,7 @@
 |
 */
 // 消息通知
-Route::view('message', config('olaindex.theme') . 'message')->name('message');
+Route::view('message', setting('main_theme', 'default') . '.message')->name('message');
 // 授权回调
 Route::get('callback', 'AuthController@callback')->name('callback');
 // 登录登出
