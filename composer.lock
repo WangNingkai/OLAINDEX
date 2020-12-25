@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "292348f7f0a2d1a7574a976fb494ba89",
+    "content-hash": "24a5b9914dd42c2d1a0f57d8b07be0b4",
     "packages": [
         {
             "name": "brick/math",
@@ -67,59 +67,6 @@
                 }
             ],
             "time": "2020-08-18T23:57:15+00:00"
-        },
-        {
-            "name": "caouecs/laravel-lang",
-            "version": "4.0.11",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/caouecs/lang.git",
-                "reference": "134e1cbf9be14d97fc7937d7df784eae2d4bfa3c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/caouecs/lang/zipball/134e1cbf9be14d97fc7937d7df784eae2d4bfa3c",
-                "reference": "134e1cbf9be14d97fc7937d7df784eae2d4bfa3c",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
-            },
-            "require": {
-                "ext-json": "*"
-            },
-            "suggest": {
-                "ablunier/laravel-lang-installer": "Command for easily add languages to a Laravel project",
-                "andrey-helldar/laravel-lang-publisher": "Easy installation and update of translation files for your project",
-                "arcanedev/laravel-lang": "Translations manager and checker for Laravel 5",
-                "overtrue/laravel-lang": "Command to add languages in your project"
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "caouecs",
-                    "email": "caouecs@caouecs.net"
-                }
-            ],
-            "description": "Languages for Laravel",
-            "keywords": [
-                "lang",
-                "languages",
-                "laravel",
-                "lpm"
-            ],
-            "support": {
-                "source": "https://github.com/caouecs/lang/tree/4.0.11"
-            },
-            "abandoned": "https://github.com/Laravel-Lang/lang",
-            "time": "2020-03-17T15:24:26+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1334,6 +1281,57 @@
             "time": "2020-11-26T19:24:33+00:00"
         },
         {
+            "name": "laravel-lang/lang",
+            "version": "7.0.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Laravel-Lang/lang.git",
+                "reference": "679a65755db37b35acd36a5e0ca51e055815a00a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Laravel-Lang/lang/zipball/679a65755db37b35acd36a5e0ca51e055815a00a",
+                "reference": "679a65755db37b35acd36a5e0ca51e055815a00a",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "ext-json": "*"
+            },
+            "suggest": {
+                "andrey-helldar/laravel-lang-publisher": "Easy installation and update of translation files for your project",
+                "arcanedev/laravel-lang": "Translations manager and checker for Laravel 5",
+                "overtrue/laravel-lang": "Command to add languages in your project"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Laravel-Lang Team"
+                }
+            ],
+            "description": "Languages for Laravel",
+            "keywords": [
+                "lang",
+                "languages",
+                "laravel",
+                "lpm"
+            ],
+            "support": {
+                "issues": "https://github.com/Laravel-Lang/lang/issues",
+                "source": "https://github.com/Laravel-Lang/lang/tree/7.0.9"
+            },
+            "time": "2020-11-30T20:35:41+00:00"
+        },
+        {
             "name": "laravel/framework",
             "version": "v8.20.1",
             "source": {
@@ -2367,16 +2365,16 @@
         },
         {
             "name": "overtrue/laravel-lang",
-            "version": "3.0.18",
+            "version": "4.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/overtrue/laravel-lang.git",
-                "reference": "d69824be235f6142e3e4226d9918da76e4727774"
+                "reference": "653189caa6eac682fa5d15482f271489721231c7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/overtrue/laravel-lang/zipball/d69824be235f6142e3e4226d9918da76e4727774",
-                "reference": "d69824be235f6142e3e4226d9918da76e4727774",
+                "url": "https://api.github.com/repos/overtrue/laravel-lang/zipball/653189caa6eac682fa5d15482f271489721231c7",
+                "reference": "653189caa6eac682fa5d15482f271489721231c7",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2386,11 +2384,12 @@
                 ]
             },
             "require": {
-                "caouecs/laravel-lang": "~4.0",
+                "ext-json": "*",
+                "laravel-lang/lang": "^7.0",
                 "symfony/process": "^5.0.0"
             },
             "require-dev": {
-                "laravel/framework": "~7.0"
+                "laravel/framework": "~8.1"
             },
             "type": "library",
             "extra": {
@@ -2403,10 +2402,7 @@
             "autoload": {
                 "psr-4": {
                     "Overtrue\\LaravelLang\\": "src/"
-                },
-                "files": [
-                    "src/helpers.php"
-                ]
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -2418,7 +2414,7 @@
                     "email": "anzhengchao@gmail.com"
                 }
             ],
-            "description": "List of 52 languages for Laravel 5",
+            "description": "List of 75 languages for Laravel 4, 5, 6 and 7",
             "keywords": [
                 "i18n",
                 "languages",
@@ -2428,7 +2424,7 @@
             ],
             "support": {
                 "issues": "https://github.com/overtrue/laravel-lang/issues",
-                "source": "https://github.com/overtrue/laravel-lang/tree/3.0.18"
+                "source": "https://github.com/overtrue/laravel-lang/tree/4.2.1"
             },
             "funding": [
                 {
@@ -2436,7 +2432,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2020-03-06T02:39:28+00:00"
+            "time": "2020-11-12T01:44:31+00:00"
         },
         {
             "name": "php-curl-class/php-curl-class",
@@ -4414,16 +4410,16 @@
         },
         {
             "name": "symfony/polyfill-iconv",
-            "version": "v1.20.0",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-iconv.git",
-                "reference": "c536646fdb4f29104dd26effc2fdcb9a5b085024"
+                "reference": "58ba90cefeb089687816eafd08c1dec77e2754f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-iconv/zipball/c536646fdb4f29104dd26effc2fdcb9a5b085024",
-                "reference": "c536646fdb4f29104dd26effc2fdcb9a5b085024",
+                "url": "https://api.github.com/repos/symfony/polyfill-iconv/zipball/58ba90cefeb089687816eafd08c1dec77e2754f2",
+                "reference": "58ba90cefeb089687816eafd08c1dec77e2754f2",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -4438,10 +4434,11 @@
             "suggest": {
                 "ext-iconv": "For best performance"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "1.20-dev"
+                    "dev-main": "1.21-dev"
                 },
                 "thanks": {
                     "name": "symfony/polyfill",
@@ -4480,7 +4477,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-iconv/tree/v1.20.0"
+                "source": "https://github.com/symfony/polyfill-iconv/tree/main"
             },
             "funding": [
                 {
@@ -4496,7 +4493,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-10-23T14:02:19+00:00"
+            "time": "2020-10-26T13:35:45+00:00"
         },
         {
             "name": "symfony/polyfill-intl-grapheme",
@@ -7298,16 +7295,16 @@
         },
         {
             "name": "mockery/mockery",
-            "version": "1.4.2",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mockery/mockery.git",
-                "reference": "20cab678faed06fac225193be281ea0fddb43b93"
+                "reference": "14a510d1997d8e139a4414faea988d528ffc29ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mockery/mockery/zipball/20cab678faed06fac225193be281ea0fddb43b93",
-                "reference": "20cab678faed06fac225193be281ea0fddb43b93",
+                "url": "https://api.github.com/repos/mockery/mockery/zipball/14a510d1997d8e139a4414faea988d528ffc29ba",
+                "reference": "14a510d1997d8e139a4414faea988d528ffc29ba",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -7327,6 +7324,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^8.5 || ^9.3"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -7372,7 +7370,7 @@
                 "issues": "https://github.com/mockery/mockery/issues",
                 "source": "https://github.com/mockery/mockery/tree/master"
             },
-            "time": "2020-08-11T18:10:13+00:00"
+            "time": "2020-12-11T13:34:57+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -8363,16 +8361,16 @@
         },
         {
             "name": "react/promise",
-            "version": "v2.8.0",
+            "version": "2.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/reactphp/promise.git",
-                "reference": "f3cff96a19736714524ca0dd1d4130de73dbbbc4"
+                "reference": "a8ec7b446d6673901e3be20258d12b6b980af92f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/reactphp/promise/zipball/f3cff96a19736714524ca0dd1d4130de73dbbbc4",
-                "reference": "f3cff96a19736714524ca0dd1d4130de73dbbbc4",
+                "url": "https://api.github.com/repos/reactphp/promise/zipball/a8ec7b446d6673901e3be20258d12b6b980af92f",
+                "reference": "a8ec7b446d6673901e3be20258d12b6b980af92f",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -8385,7 +8383,7 @@
                 "php": ">=5.4.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^7.0 || ^6.5 || ^5.7 || ^4.8.36"
+                "phpunit/phpunit": "^9.0 || ^5.7 || ^4.8.36"
             },
             "type": "library",
             "autoload": {
@@ -8413,9 +8411,27 @@
             ],
             "support": {
                 "issues": "https://github.com/reactphp/promise/issues",
-                "source": "https://github.com/reactphp/promise/tree/v2.8.0"
+                "source": "https://github.com/reactphp/promise/tree/2.x"
             },
-            "time": "2020-05-12T15:16:56+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/WyriHaximus",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/cboden",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/clue",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/jsor",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-07-23T20:41:09+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -9806,7 +9822,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.2.5",
+        "php": "^7.3",
         "ext-bcmath": "*",
         "ext-curl": "*",
         "ext-fileinfo": "*",

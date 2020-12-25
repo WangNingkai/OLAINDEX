@@ -66,6 +66,13 @@ class DriveController extends BaseController
             abort(500, $msg);
         }
         Cache::add("d:item:{$account_id}:{$item['id']}", $item, setting('cache_expires'));
+
+        // 处理文件
+        $isFile = false;
+        if (array_key_exists('file', $item)) {
+            $isFile = true;
+        }
+
         // 处理加密
         $encrypt_path = array_get($config, 'encrypt_path');
         if (!blank($encrypt_path)) {
@@ -73,16 +80,25 @@ class DriveController extends BaseController
             $encrypt_path_arr = explode('|', $encrypt_path);
             $encrypt_path_arr = array_filter($encrypt_path_arr);
             $_encrypt = [];
+            $redirect = trans_absolute_path(rawurldecode($redirectQuery));
+            $redirect = trim($redirect,'/');
+            $is_encrypt = false;
             foreach ($encrypt_path_arr as $encrypt_item) {
                 [$_path, $password] = explode(':', $encrypt_item);
+                $_path = trans_absolute_path($_path);
+                $_path = trim($_path,'/');
+                if (str_starts_with($redirect, $_path)) {
+                    $is_encrypt = true;
+                }
                 $_encrypt[$_path] = $password;
             }
-            if (array_key_exists($item['name'], $_encrypt)) {
+
+            if (array_key_exists($item['name'], $_encrypt) || $is_encrypt) {
                 $password = array_get($_encrypt, $item['name']);
-                if (Cookie::has("e:{$hash}:{$item['name']}")) {
-                    $data = json_decode(Cookie::get("e:{$hash}:{$item['name']}"), true);
+                if (Cookie::has("e:{$hash}:{$redirect}")) {
+                    $data = json_decode(Cookie::get("e:{$hash}:{$redirect}"), true);
                     if (strcmp($password, decrypt($data['password'])) !== 0) {
-                        Cookie::forget("e:{$hash}:{$item['name']}");
+                        Cookie::forget("e:{$hash}:{$redirect}");
                         $this->showMessage('密码已过期', true);
                         $need_pass = true;
                     }
@@ -90,17 +106,10 @@ class DriveController extends BaseController
                     $need_pass = true;
                 }
                 if ($need_pass) {
-                    $redirect = $redirectQuery;
+
                     return view(setting('main_theme', 'default') . '.password', compact('hash', 'item', 'redirect'));
                 }
             }
-        }
-
-
-        // 处理文件
-        $isFile = false;
-        if (array_key_exists('file', $item)) {
-            $isFile = true;
         }
 
         if ($isFile) {
@@ -291,14 +300,23 @@ class DriveController extends BaseController
         $encrypt_path_arr = explode('|', $encrypt_path);
         $encrypt_path_arr = array_filter($encrypt_path_arr);
         $_encrypt = [];
+        $redirect = trans_absolute_path(rawurldecode($redirect));
+        $redirect = trim($redirect,'/');
+        $need_pass = false;
         foreach ($encrypt_path_arr as $encrypt_item) {
-            [$path, $password] = explode(':', $encrypt_item);
-            $_encrypt[$path] = $password;
+            [$_path, $password] = explode(':', $encrypt_item);
+            $_path = trans_absolute_path($_path);
+            $_path = trim($_path,'/');
+            if (str_starts_with($redirect, $_path)) {
+                $need_pass = true;
+            }
+            $_encrypt[$_path] = $password;
         }
-        if (array_key_exists($query, $_encrypt)) {
+
+        if (array_key_exists($query, $_encrypt) || $need_pass) {
             $password = array_get($_encrypt, $query);
             if (strcmp($password, $input_password) === 0) {
-                return redirect()->route('drive.query', ['hash' => $hash, 'query' => $redirect])->withCookie("e:{$hash}:{$query}", $data, 600);
+                return redirect()->route('drive.query', ['hash' => $hash, 'query' => $redirect])->withCookie("e:{$hash}:{$redirect}", $data, 600);
             }
         }
         return redirect()->back();
