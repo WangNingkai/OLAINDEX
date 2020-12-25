@@ -1,4 +1,4 @@
-## 手动安装
+## 安装
 
 
 **注意：**
@@ -14,18 +14,26 @@ git reset --hard
 composer install -vvv # 这里确保已成功安装 composer ，如果报权限问题，建议给予用户完整权限。
 chmod -R 777 storage 
 chown -R www:www * # 此处 www 根据服务器具体用户组而定
-composer run install-app
-# 安装完成后，不要忘记配置 nginx ，将域名指向应用目录的 public 下，参考下面nginx配置。
-
+composer run install-app (此为自动安装，默认sqlite存储数据)
 ```
+
+如果或上述步骤安装错误、新装需要自定义数据库等数据参考下面：
+
+前提已通过上面步骤，使用 `composer` 安装依赖，确保 `storage` 目录有写入权限
+
+1. 复制根目录 `.env.example` 为 `.env`
+2. 修改了 `.env` 文件的数据库配置及其它配置
+3. 执行 `php artisan key:generate` 生成运行所需配置
+4. 执行数据库迁移 `php artisan migrate --seed`
+5. 访问网站，修改其它设置
+
+安装完成后，不要忘记配置 nginx ，将域名指向应用目录的 public 下，参考下面nginx配置。
 
 ***
 
 ## Web服务器配置
 
 将应用的运行目录指向的是 根目录下的 `public` 目录，如 `www/OLAINDEX/public`
-
-![image.png](https://i.loli.net/2018/10/27/5bd46e542f23f.png)
 
 **Apache**
 
