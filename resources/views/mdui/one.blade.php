@@ -155,18 +155,19 @@
                 {{ $list->appends(['sortBy'=> request()->get('sortBy'),'keywords' => request()->get('keywords')])->links('mdui.components.page') }}
             </div>
         </div>
-
-        <div class="mdui-card">
-            <div class="mdui-card-header">
-                <div class="mdui-chip">
-                    <span class="mdui-chip-icon"> <i class="mdui-icon material-icons">lightbulb_outline</i></span>
-                    <span class="mdui-chip-title">README</span>
+        @if (!blank($doc['readme']))
+            <div class="mdui-card">
+                <div class="mdui-card-header">
+                    <div class="mdui-chip">
+                        <span class="mdui-chip-icon"> <i class="mdui-icon material-icons">lightbulb_outline</i></span>
+                        <span class="mdui-chip-title">README</span>
+                    </div>
+                </div>
+                <div class="mdui-card-content markdown-body">
+                    {!! marked($doc['readme']) !!}
                 </div>
             </div>
-            <div class="mdui-card-content markdown-body">
-                {!! marked($doc['readme']) !!}
-            </div>
-        </div>
+        @endif
     </div>
 @stop
 @push('scripts')
