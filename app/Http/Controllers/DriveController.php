@@ -74,9 +74,9 @@ class DriveController extends BaseController
         }
 
         // 处理加密
+        $need_pass = false;
         $encrypt_path = array_get($config, 'encrypt_path');
         if (!blank($encrypt_path)) {
-            $need_pass = false;
             $encrypt_path_arr = explode('|', $encrypt_path);
             $encrypt_path_arr = array_filter($encrypt_path_arr);
             $_encrypt = [];
@@ -111,8 +111,7 @@ class DriveController extends BaseController
                     $need_pass = true;
                 }
                 if ($need_pass) {
-
-                    return view(setting('main_theme', 'default') . '.password', compact('hash', 'item', 'redirect'));
+                    return view(setting('main_theme', 'default') . '.password', compact('hash', 'item', 'redirect', 'need_pass'));
                 }
             }
         }
@@ -183,7 +182,7 @@ class DriveController extends BaseController
                     }
                 }
             }
-            return view(setting('main_theme', 'default') . '.preview' . $view, compact('accounts', 'hash', 'path', 'show', 'file'));
+            return view(setting('main_theme', 'default') . '.preview' . $view, compact('accounts', 'hash', 'path', 'show', 'file', 'need_pass'));
         }
 
         $list = Cache::remember("d:list:{$account_id}:{$query}", setting('cache_expires'), function () use ($service, $query) {
@@ -221,7 +220,7 @@ class DriveController extends BaseController
 
         $list = $this->paginate($list, $perPage, false);
 
-        return view(setting('main_theme', 'default') . '.one' . $view, compact('accounts', 'hash', 'path', 'item', 'list', 'doc', 'keywords'));
+        return view(setting('main_theme', 'default') . '.one' . $view, compact('accounts', 'hash', 'path', 'item', 'list', 'doc', 'keywords', 'need_pass'));
     }
 
     /**

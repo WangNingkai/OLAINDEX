@@ -1,61 +1,7 @@
 @extends('mdui.layouts.main')
 @section('title', $file['name'])
 @section('content')
-    <div class="mdui-container mdui-m-t-5">
-        <span class="breadcrumb-item" data-route="{{ route('drive.query', ['hash' => $hash]) }}">
-            <span class="mdui-chip">
-                <span class="mdui-chip-title">/</span>
-            </span>
-        </span>
-        @if (count($path) < 6)
-            @foreach($path as $key => $value)
-                @if(end($path) === $value && $key === (count($path) - 1))
-                    <span class="breadcrumb-item">
-                            <i class="mdui-icon material-icons mdui-icon-dark mdui-m-a-0">chevron_right</i>
-                            <span class="mdui-chip">
-                              <span class="mdui-chip-title">{{ $value }}</span>
-                            </span>
-                        </span>
-                @else
-                    @if (!blank($value))
-                        <span class="breadcrumb-item"
-                              data-route="{{ route('drive.query', ['hash' => $hash,'query' => \App\Helpers\Tool::combineBreadcrumb($key + 1, $path)]) }}">
-                            <i class="mdui-icon material-icons mdui-icon-dark mdui-m-a-0">chevron_right</i>
-                            <span class="mdui-chip">
-                              <span class="mdui-chip-title">{{ $value }}</span>
-                            </span>
-                        </span>
-                    @endif
-                @endif
-            @endforeach
-        @else
-            <span class="breadcrumb-item">
-                <i class="mdui-icon material-icons mdui-icon-dark mdui-m-a-0">chevron_right</i>
-                <span class="mdui-chip">
-                    <span class="mdui-chip-title">...</span>
-                </span>
-            </span>
-            @foreach($path as $key => $value)
-                @if(end($path) === $value && $key === (count($path) - 1))
-                    <span class="breadcrumb-item">
-                        <i class="mdui-icon material-icons mdui-icon-dark mdui-m-a-0">chevron_right</i>
-                        <span class="mdui-chip">
-                            <span class="mdui-chip-title">{{ $value }}</span>
-                        </span>
-                    </span>
-                @else
-                    @if (!blank($value) && $key === (count($path) - 2))
-                        <span class="breadcrumb-item"
-                              data-route="{{ route('drive.query', ['hash' => $hash,'query' => \App\Helpers\Tool::combineBreadcrumb($key + 1, $path)]) }}">
-                            <i class="mdui-icon material-icons mdui-icon-dark mdui-m-a-0">chevron_right</i>
-                            <span class="mdui-chip">
-                              <span class="mdui-chip-title">{{ $value }}</span>
-                            </span>
-                        </span>
-                    @endif
-                @endif
-            @endforeach
-        @endif
+    <div class="mdui-m-t-5">
         <div class="mdui-card mdui-shadow-0">
             <div class="mdui-card-content">
                 <div class="mdui-typo mdui-m-t-2">

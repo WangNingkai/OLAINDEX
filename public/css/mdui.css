@@ -1,7 +1,63 @@
-.mdui-btn {
-    margin: 1.5px !important;
+@font-face {
+    font-family: 'Product Sans';
+    src: local('Product Sans Regular'), local('Google Sans Regular'), url(https://cdn.jsdelivr.net/gh/186526/jsdelivr@1.1.8/static/ProductSans-Regular.woff2) format('woff2');
 }
-.mdui-list-item,
-.mdui-list-item:hover {
-    border-radius: 1rem;
+
+body {
+    font-family: Roboto, Noto Sans SC, Noto, Helvetica, Arial, sans-serif
 }
+
+.mdui-container {
+    max-width: 950px
+}
+
+.mdui-drawer-close {
+    display: none
+}
+
+.mdui-drawer .mdui-list-item {
+    padding-left: 20px;
+    border-radius: 0 50px 50px 0
+}
+
+.mdui-toolbar > a,
+.mdui-chip-title,
+.mdui-dialog-title {
+    font-family: Product Sans, Noto Sans SC, Roboto, Noto, Helvetica, Arial, sans-serif
+}
+
+
+.mdui-chip {
+    margin: 20px
+}
+
+
+@media (max-width: 600px) {
+
+    .mdui-col-sm-2,
+    .mdui-col-sm-3,
+    .forcedownload {
+        display: none
+    }
+
+    .mdui-col-xs-12 {
+        width: 100%
+    }
+}
+
+.mdui-list-item-icon {
+    color: black
+}
+
+.mdui-typo {
+    border-radius: 8px
+}
+
+.mdui-dialog {
+    border-radius: 8px
+}
+
+.mdui-container .mdui-list-item {
+    border-radius: 50px;
+}
+

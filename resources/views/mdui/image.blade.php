@@ -1,7 +1,7 @@
 @extends('mdui.layouts.main')
 @section('title', '图床')
 @section('content')
-    <div class="mdui-container mdui-m-t-5">
+    <div class="mdui-m-t-5">
         <div class="mdui-row mdui-m-t-3">
             <div class="mdui-typo-title-opacity">图床</div>
             <br>
@@ -18,11 +18,11 @@
                 <a class="mdui-ripple" href="#markdown">MD</a>
                 <a class="mdui-ripple" href="#markdownLinks">MD LINK</a>
             </div>
-            <div class="mdui-p-a-2 mdui-m-t-2 link-container" id="urlCode"></div>
-            <div class="mdui-p-a-2 mdui-m-t-2 link-container" id="htmlCode"></div>
-            <div class="mdui-p-a-2 mdui-m-t-2 link-container" id="bbCode"></div>
-            <div class="mdui-p-a-2 mdui-m-t-2 link-container" id="markdown"></div>
-            <div class="mdui-p-a-2 mdui-m-t-2 link-container" id="markdownLinks"></div>
+            <div class="mdui-p-a-2 mdui-m-t-2 mdui-shadow-3" id="urlCode"></div>
+            <div class="mdui-p-a-2 mdui-m-t-2 mdui-shadow-3" id="htmlCode"></div>
+            <div class="mdui-p-a-2 mdui-m-t-2 mdui-shadow-3" id="bbCode"></div>
+            <div class="mdui-p-a-2 mdui-m-t-2 mdui-shadow-3" id="markdown"></div>
+            <div class="mdui-p-a-2 mdui-m-t-2 mdui-shadow-3" id="markdownLinks"></div>
         </div>
     </div>
 @stop
@@ -30,18 +30,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/filepond@4.23.1/dist/filepond.min.css">
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/filepond-plugin-image-preview@4.6.4/dist/filepond-plugin-image-preview.min.css">
-    <style>
-
-        .link-container {
-            border: solid 1px #dadada;
-            word-wrap: break-word;
-            background-color: #f7f7f7;
-        }
-
-        .link-container p {
-            margin: 5px 0;
-        }
-    </style>
 @endpush
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/filepond@4.23.1/dist/filepond.min.js"></script>
