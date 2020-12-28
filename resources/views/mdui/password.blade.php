@@ -1,7 +1,7 @@
 @extends('mdui.layouts.main')
 @section('title', '加密访问')
 @section('content')
-    <div class="mdui-container mdui-m-t-5">
+    <div class="mdui-m-t-5">
         <div class="mdui-row">
             <div class="mdui-col-md-6 mdui-col-offset-md-3 mdui-p-a-3">
                 <div class="mdui-typo">

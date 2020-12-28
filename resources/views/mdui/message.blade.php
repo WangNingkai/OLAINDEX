@@ -1,6 +1,6 @@
 @extends('mdui.layouts.main')
 @section('content')
-    <div class="mdui-container mdui-m-t-5">
+    <div class="mdui-m-t-5">
         <div class="mdui-row mdui-m-t-3">
             <div class="mdui-col-xs-10 mdui-col-offset-xs-1">
                 <div class="mdui-card">

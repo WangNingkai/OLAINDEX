@@ -74,9 +74,9 @@ class DriveController extends BaseController
         }
 
         // 处理加密
+        $need_pass = false;
         $encrypt_path = array_get($config, 'encrypt_path');
         if (!blank($encrypt_path)) {
-            $need_pass = false;
             $encrypt_path_arr = explode('|', $encrypt_path);
             $encrypt_path_arr = array_filter($encrypt_path_arr);
             $_encrypt = [];
@@ -111,8 +111,7 @@ class DriveController extends BaseController
                     $need_pass = true;
                 }
                 if ($need_pass) {
-
-                    return view(setting('main_theme', 'default') . '.password', compact('hash', 'item', 'redirect'));
+                    return view(setting('main_theme', 'default') . '.password', compact('hash', 'item', 'redirect', 'need_pass'));
                 }
             }
         }
@@ -134,6 +133,7 @@ class DriveController extends BaseController
                 'code' => explode(' ', setting('show_code')),
                 'doc' => explode(' ', setting('show_doc')),
             ];
+            $show = 'other';
             foreach ($showList as $key => $suffix) {
                 if (in_array($file['ext'] ?? '', $suffix, false)) {
                     $show = $key;
@@ -168,7 +168,7 @@ class DriveController extends BaseController
                     // dash视频流
                     if ($key === 'dash') {
                         if (!strpos($download, 'sharepoint.com')) {
-                            return redirect()->away($download);
+                            $show = 'other';
                         }
                         $replace = str_replace('thumbnail', 'videomanifest', $file['thumb']);
                         $dash = $replace . '&part=index&format=dash&useScf=True&pretranscode=0&transcodeahead=0';
@@ -176,15 +176,13 @@ class DriveController extends BaseController
                     }
                     // 处理微软文档
                     if ($key === 'doc') {
-                        $url = 'https://view.officeapps.live.com/op/view.aspx?src='
-                            . urlencode($download);
-
-                        return redirect()->away($url);
+                        /* $url = 'https://view.officeapps.live.com/op/view.aspx?src='
+                             . urlencode($download);*/
+                        $show = 'other';
                     }
-                    return view(setting('main_theme', 'default') . '.preview' . $view, compact('accounts', 'hash', 'path', 'show', 'file'));
                 }
             }
-            return redirect()->away($download);
+            return view(setting('main_theme', 'default') . '.preview' . $view, compact('accounts', 'hash', 'path', 'show', 'file', 'need_pass'));
         }
 
         $list = Cache::remember("d:list:{$account_id}:{$query}", setting('cache_expires'), function () use ($service, $query) {
@@ -222,7 +220,7 @@ class DriveController extends BaseController
 
         $list = $this->paginate($list, $perPage, false);
 
-        return view(setting('main_theme', 'default') . '.one' . $view, compact('accounts', 'hash', 'path', 'item', 'list', 'doc', 'keywords'));
+        return view(setting('main_theme', 'default') . '.one' . $view, compact('accounts', 'hash', 'path', 'item', 'list', 'doc', 'keywords', 'need_pass'));
     }
 
     /**
