@@ -337,6 +337,9 @@ if (!function_exists('shorten_url')) {
      */
     function shorten_url($url)
     {
+        if (!setting('open_short_url', 1)) {
+            return $url;
+        }
         $code = shorten_str($url);
         $data = \App\Models\ShortUrl::query()->select('id', 'original_url', 'short_code')->where(['short_code' => $code])->first();
         if (!$data) {

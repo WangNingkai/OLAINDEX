@@ -44,12 +44,6 @@
     </div>
 </div>
 @yield('content')
-<a
-    id="scrolltop"
-    class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent "
-    onclick="toTop()"
-><i class="mdui-icon material-icons">keyboard_arrow_up</i></a
->
 <script
     src="https://cdn.jsdelivr.net/npm/mdui@1.0.1/dist/js/mdui.min.js"
     integrity="sha384-gCMZcshYKOGRX9r6wbDrvF+TcCCswSHFucUzUPwka+Gr+uHgjlYvkABr95TCOz3A"
@@ -59,20 +53,6 @@
 <script src="https://cdn.staticfile.org/axios/0.21.0/axios.min.js"></script>
 <script>
     const $ = mdui.$
-    const toTop = () => {
-        document.querySelector('#top').scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
-    window.addEventListener('scroll', () => {
-        if ((document.body.scrollTop > 100 || document.documentElement.scrollTop > 100)) {
-            if ($("#scrolltop").hasClass('mdui-fab-hide')) {
-                $("#scrolltop").removeClass('mdui-fab-hide')
-            }
-        } else {
-            if (!$("#scrolltop").hasClass('mdui-fab-hide')) {
-                $("#scrolltop").addClass('mdui-fab-hide')
-            }
-        }
-    })
 </script>
 @stack('scripts')
 </body>

@@ -169,9 +169,29 @@
             </div>
         @endif
     </div>
+    <a
+        id="scrolltop"
+        class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"
+        onclick="toTop()"
+    ><i class="mdui-icon material-icons">keyboard_arrow_up</i></a
+    >
 @stop
 @push('scripts')
     <script>
+        const toTop = () => {
+            document.querySelector('#top').scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+        window.addEventListener('scroll', () => {
+            if ((document.body.scrollTop > 100 || document.documentElement.scrollTop > 100)) {
+                if ($('#scrolltop').hasClass('mdui-fab-hide')) {
+                    $('#scrolltop').removeClass('mdui-fab-hide')
+                }
+            } else {
+                if (!$('#scrolltop').hasClass('mdui-fab-hide')) {
+                    $('#scrolltop').addClass('mdui-fab-hide')
+                }
+            }
+        })
         $(function() {
             $('.list-item,.breadcrumb-item').on('click', function(e) {
                 if ($(this).attr('data-route')) {

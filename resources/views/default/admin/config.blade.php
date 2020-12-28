@@ -85,6 +85,20 @@
                                        value="{{ setting('cache_expires',1800) }}">
                                 <span class="form-text text-danger">建议缓存时间小于60分钟，否则会导致缓存失效</span>
                             </div>
+
+                            <div class="form-group">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input"
+                                           id="open_short_url"
+                                           @if( setting('open_short_url',0)) checked
+                                           @endif onchange="$('input[name=\'open_short_url\']').val(Number(this.checked))">
+                                    <label class="custom-control-label" for="open_short_url">开启预览短链</label>
+                                    <input type="hidden" name="open_short_url"
+                                           value="{{ setting('open_short_url', 0) }}">
+                                </div>
+                                <span class="form-text text-danger">开启后预览文件只显示短链</span>
+                            </div>
+
                             <div class="form-group">
                                 <div class="form-group">
                                     <label class="form-control-label" for="encrypt_tip">加密资源提示文案</label>

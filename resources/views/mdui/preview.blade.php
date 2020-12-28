@@ -63,16 +63,24 @@
                     <div
                         class="mdui-typo-subheading-opacity">{{ convert_size($file['size']) .' / '.date('Y-m-d H:i:s', strtotime($file['lastModifiedDateTime'])) }}</div>
                 </div>
-            </div>
-            <div class="mdui-card-media mdui-p-a-2">
-                @include('mdui.components.preview.' . $show,['file' => $file, 'show' => $show])
-            </div>
-            <a href="{{ shorten_url(route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', $path)),'download' => 1])) }}"
-               class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"
-            ><i class="mdui-icon material-icons">file_download</i></a>
-        </div>
+                <div class="mdui-m-t-2">
+                    @include('mdui.components.preview.' . $show,['file' => $file, 'show' => $show])
+                </div>
+                <div class="mdui-typo mdui-m-t-2">
+                    <div class="mdui-textfield">
+                        <i class="mdui-icon material-icons">links</i>
 
+                        <input class="mdui-textfield-input" type="text"
+                               value="{{ shorten_url(route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', $path)),'download' => 1])) }}"/>
+
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    <a href="{{ shorten_url(route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', $path)),'download' => 1])) }}"
+       class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"
+    ><i class="mdui-icon material-icons">file_download</i></a>
 @stop
 @push('scripts')
     <script>
