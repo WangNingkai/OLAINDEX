@@ -24,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Schema::defaultStringLength(191);
+        $sqlFile = install_path('data/database.sqlite');
+
+        if (file_exists($sqlFile)) {
+            Schema::defaultStringLength(191);
+        }
     }
 }
