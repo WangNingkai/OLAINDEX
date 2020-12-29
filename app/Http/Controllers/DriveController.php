@@ -33,14 +33,16 @@ class DriveController extends BaseController
      */
     public function query(Request $request, $hash = '', $query = '')
     {
-        $redirectQuery = $query;
-        $view = '';
-        $accounts = Account::fetchlist();
         if (!$hash) {
             $account_id = setting('primary_account', 0);
             $hash = HashidsHelper::encode($account_id);
         } else {
             $account_id = HashidsHelper::decode($hash);
+            if (null === $account_id) {
+                $query = $hash;
+                $account_id = setting('primary_account', 0);
+                $hash = HashidsHelper::encode($account_id);
+            }
         }
         if (!$account_id) {
             abort(404, '尚未设置账号！');
@@ -49,6 +51,9 @@ class DriveController extends BaseController
         if (!$account) {
             abort(404, '账号不存在！');
         }
+        $redirectQuery = $query;
+        $view = '';
+        $accounts = Account::fetchlist();
         // 资源处理
         $config = $account->config;
         $root = $account->config['root'] ?? '/';

@@ -57,16 +57,19 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::any('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index')->name('admin.logs');
 
 });
-Route::get('/', 'DriveController@query')->name('home');
+
+Route::post('decrypt', 'DriveController@decrypt')->name('drive.decrypt');
+Route::get('image', 'ImageController@index')->name('image')->middleware('custom');
+Route::post('image-upload', 'ImageController@upload')->name('image.upload')->middleware('custom');
+Route::get('t/{code}', 'ShareController')->name('short');
+Route::get('s/{hash}/{item_id}', 'DriveController@download')->name('download');
+
 Route::post('drive/preload', 'DriveController@preload')->name('preload');
+Route::get('/', 'DriveController@query')->name('home');
 Route::get('d/{hash?}/q/{query?}', 'DriveController@query')->where('query', '.*');
 Route::get('drive/{hash?}/q/{query?}', 'DriveController@query')->where('query', '.*');
 Route::get('d/{hash?}/{query?}', 'DriveController@query')->name('drive.query')->where('query', '.*');
 Route::get('drive/{hash?}/{query?}', 'DriveController@query')->where('query', '.*');
 Route::get('d/{query?}', 'DriveController@query')->name('drive.single')->where('query', '.*');
 Route::get('drive/{query?}', 'DriveController@query')->where('query', '.*');
-Route::post('decrypt', 'DriveController@decrypt')->name('drive.decrypt');
-Route::get('image', 'ImageController@index')->name('image')->middleware('custom');
-Route::post('image-upload', 'ImageController@upload')->name('image.upload')->middleware('custom');
-Route::get('t/{code}', 'ShareController')->name('short');
-Route::get('s/{hash}/{item_id}', 'DriveController@download')->name('download');
+Route::get('{query?}', 'DriveController@query')->where('query', '.*');
