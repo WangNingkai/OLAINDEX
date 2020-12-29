@@ -56,12 +56,12 @@
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="actionAccount"
                                          data-id="{{ $account->id }}">
+                                        <a class="dropdown-item set_main"
+                                           href="javascript:void(0)">设为主账号</a>
                                         <a class="dropdown-item"
                                            href="{{ route('manage.query',['account_id' =>$account->id])  }}">文件管理</a>
                                         <a class="dropdown-item set_main"
                                            href="{{ route('admin.account.config',['id' =>$account->id])  }}">账号设置</a>
-                                        <a class="dropdown-item set_main"
-                                           href="javascript:void(0)">设为主账号</a>
                                         <a class="dropdown-item view_account"
                                            href="javascript:void(0)" data-toggle="modal"
                                            data-target="#viewAccount">账号详情</a>
