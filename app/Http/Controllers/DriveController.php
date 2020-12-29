@@ -276,9 +276,9 @@ class DriveController extends BaseController
     public function decrypt(Request $request)
     {
         $input_password = $request->get('password');
-        $redirect = $request->get('redirect');
+        $redirect = $request->get('redirect', '');
         $hash = $request->get('hash');
-        $query = $request->get('query');
+        $query = $request->get('query', '');
         $data = [
             'password' => encrypt($input_password),
             'hash' => $hash,
@@ -315,7 +315,7 @@ class DriveController extends BaseController
             }
             $_encrypt[$_path] = $password;
         }
-        if ($query === 'root') {
+        if ($query === 'root' || null === $query) {
             $query = '';
         }
         if (array_key_exists($query, $_encrypt) || $need_pass) {
