@@ -66,7 +66,7 @@ composer run install-app # installation app
 
 > Please read before bug report[《How To Ask Questions The Smart Way》](http://www.catb.org/~esr/faqs/smart-questions.html)
 
-3 way to bug report：
+4 way to bug report：
 
 1. [GitHub issue](https://github.com/WangNingkai/OLAINDEX/issues) 
 2. [GitHub discussions](https://github.com/WangNingkai/OLAINDEX/discussions)
