@@ -15,11 +15,16 @@
                 <div class="mdui-typo mdui-m-t-2">
                     <div class="mdui-textfield">
                         <i class="mdui-icon material-icons">links</i>
-
-                        <input class="mdui-textfield-input" type="text"
+                        <input class="mdui-textfield-input" type="text" id="link"
                                value="{{ shorten_url(route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', $path)),'download' => 1])) }}"/>
 
                     </div>
+                    <button
+                        data-clipboard-target="#link"
+                        class="clipboard mdui-btn mdui-btn-raised mdui-btn-dense mdui-ripple mdui-color-theme-accent mdui-float-right">
+                        <i class="mdui-icon material-icons">content_copy</i> 复制
+                    </button>
+
                 </div>
             </div>
         </div>

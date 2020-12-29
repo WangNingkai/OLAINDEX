@@ -98,11 +98,32 @@
     }
     $(function() {
         window.theme.mutation()
+        let clipboard = new ClipboardJS('.clipboard')
+        clipboard.on('success', function(e) {
+            mdui.snackbar({
+                position: 'right-top',
+                message: '已复制',
+            })
+            console.info('Action:', e.action)
+            console.info('Text:', e.text)
+            console.info('Trigger:', e.trigger)
+            e.clearSelection()
+        })
+        clipboard.on('error', function(e) {
+            console.error('Action:', e.action)
+            console.error('Trigger:', e.trigger)
+        })
         $('#toggle-drawer').on('click', () => {
             new mdui.Drawer('#main-drawer', {
                 swipe: true,
             }).toggle()
         })
+        @if (session()->has('alertMessage'))
+        mdui.snackbar({
+            message: '{{ session()->pull('alertMessage') }}',
+            position: 'right-top',
+        })
+        @endif
     })
 </script>
 @stack('scripts')

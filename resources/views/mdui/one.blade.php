@@ -110,6 +110,7 @@
                         @if (!array_has($data,'folder') )
                             <a class="mdui-btn mdui-ripple mdui-btn-icon mdui-hidden-sm-down download"
                                title="下载"
+                               mdui-tooltip="{content: '下载'}"
                                aria-label="Download"
                                href="javascript:void(0)"
                                data-route="{{ route('drive.query', ['hash' => $hash, 'query' => implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) ),'download' => 1]) }}"
