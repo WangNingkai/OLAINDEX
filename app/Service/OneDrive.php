@@ -489,7 +489,11 @@ class OneDrive
             ->addHeaders($headers)
             ->attachBody($body)
             ->setReturnStream(false);
-
+        /*Log::info('请求MsGraph', [
+            'method' => $method,
+            'query' => $query,
+            'endpoint' => $this->restEndpoint
+        ]);*/
         $resp = $req->execute();
         if (null !== $resp->getError()) {
             $body = $resp->getBody();

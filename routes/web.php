@@ -58,6 +58,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
 });
 Route::get('/', 'DriveController@query')->name('home');
+Route::post('drive/preload', 'DriveController@preload')->name('preload');
 Route::get('d/{hash?}/q/{query?}', 'DriveController@query')->where('query', '.*');
 Route::get('drive/{hash?}/q/{query?}', 'DriveController@query')->where('query', '.*');
 Route::get('d/{hash?}/{query?}', 'DriveController@query')->name('drive.query')->where('query', '.*');

@@ -141,7 +141,23 @@
 @stop
 @push('scripts')
     <script>
+        const preLoad = () => {
+            axios.post('/drive/preload/', {
+                hash: "{{ $hash }}",
+                query: "{{ implode('/', $path) }}",
+            })
+                .then(function(response) {
+                    let data = response.data
+                    if (data.error !== '') {
+                        console.error(data.error)
+                    }
+                })
+                .catch(function(error) {
+                    console.error(error)
+                })
+        }
         $(function() {
+            preLoad()
             $('.list-item').on('click', function(e) {
                 if ($(this).attr('data-route')) {
                     window.location.href = $(this).attr('data-route')

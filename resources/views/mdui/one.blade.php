@@ -58,7 +58,8 @@
                 </div>
             </li>
             @if(!blank($path))
-                <li class="mdui-list-item mdui-ripple">
+                <li class="mdui-list-item mdui-ripple"
+                    data-route="{{ route('drive.query', ['hash' => $hash, 'query' => \App\Helpers\Tool::fetchGoBack($path)]) }}">
                     <div class="mdui-col-sm-12">
                         <a href="{{ route('drive.query', ['hash' => $hash, 'query' => \App\Helpers\Tool::fetchGoBack($path)]) }}">
                             <i class="mdui-icon material-icons">arrow_back</i>
@@ -109,7 +110,6 @@
                         </div>
                         @if (!array_has($data,'folder') )
                             <a class="mdui-btn mdui-ripple mdui-btn-icon mdui-hidden-sm-down download"
-                               title="下载"
                                mdui-tooltip="{content: '下载'}"
                                aria-label="Download"
                                href="javascript:void(0)"
@@ -148,7 +148,23 @@
 @stop
 @push('scripts')
     <script>
+        const preLoad = () => {
+            axios.post('/drive/preload/', {
+                hash: "{{ $hash }}",
+                query: "{{ implode('/', $path) }}",
+            })
+                .then(function(response) {
+                    let data = response.data
+                    if (data.error !== '') {
+                        console.error(data.error)
+                    }
+                })
+                .catch(function(error) {
+                    console.error(error)
+                })
+        }
         $(function() {
+            preLoad()
             $('.mdui-list-item,.download').on('click', function(e) {
                 if ($(this).attr('data-route')) {
                     window.location.href = $(this).attr('data-route')

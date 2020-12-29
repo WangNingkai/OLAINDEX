@@ -18,7 +18,7 @@
         <li class="mdui-list-item mdui-ripple"
             onclick="window.theme.toggle_theme();">
             <a href="javascript:void(0);" class="mdui-list-item-icon mdui-icon material-icons">brightness_4</a>
-            <a class="mdui-list-item-content">深色模式</a>
+            <a class="mdui-list-item-content">暗黑模式</a>
         </li>
 
         @if(request()->routeIs(['home','drive.query']) && !$need_pass)
