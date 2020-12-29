@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\ApiResponseTrait;
 use App\Models\Account;
 use App\Service\GraphErrorEnum;
 use Illuminate\Http\Request;
@@ -20,6 +21,8 @@ use Illuminate\Support\LazyCollection;
 
 class DriveController extends BaseController
 {
+    use ApiResponseTrait;
+
     /**
      * 资源处理
      * @param Request $request
@@ -30,14 +33,16 @@ class DriveController extends BaseController
      */
     public function query(Request $request, $hash = '', $query = '')
     {
-        $redirectQuery = $query;
-        $view = '';
-        $accounts = Account::fetchlist();
         if (!$hash) {
             $account_id = setting('primary_account', 0);
             $hash = HashidsHelper::encode($account_id);
         } else {
             $account_id = HashidsHelper::decode($hash);
+            if (null === $account_id) {
+                $query = $hash;
+                $account_id = setting('primary_account', 0);
+                $hash = HashidsHelper::encode($account_id);
+            }
         }
         if (!$account_id) {
             abort(404, '尚未设置账号！');
@@ -46,6 +51,9 @@ class DriveController extends BaseController
         if (!$account) {
             abort(404, '账号不存在！');
         }
+        $redirectQuery = $query;
+        $view = '';
+        $accounts = Account::fetchlist();
         // 资源处理
         $config = $account->config;
         $root = $account->config['root'] ?? '/';
@@ -55,10 +63,11 @@ class DriveController extends BaseController
         $query = trans_absolute_path(trim("{$root}/$query", '/'));
 
         $service = $account->getOneDriveService();
-        // 缓存处理
+
         $item = Cache::remember("d:item:{$account_id}:{$query}", setting('cache_expires'), function () use ($service, $query) {
             return $service->fetchItem($query);
         });
+
         if (array_key_exists('code', $item)) {
             $msg = array_get($item, 'message', '404NotFound');
             $msg = GraphErrorEnum::get($item['code']) ?? $msg;
@@ -216,6 +225,87 @@ class DriveController extends BaseController
         $list = $this->paginate($list, $perPage, false);
 
         return view(setting('main_theme', 'default') . '.one' . $view, compact('accounts', 'hash', 'path', 'item', 'list', 'doc', 'keywords', 'need_pass'));
+    }
+
+    /**
+     * 缓存预加载
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
+    public function preload(Request $request)
+    {
+        $_cache = [];
+        $hash = $request->get('hash', '');
+        $query = $request->get('query', '');
+        if (!$hash) {
+            $account_id = setting('primary_account', 0);
+        } else {
+            $account_id = HashidsHelper::decode($hash);
+        }
+        if (!$account_id) {
+            return $this->fail('账号不存在！');
+        }
+        $account = Account::find($account_id);
+        if (!$account) {
+            return $this->fail('账号不存在！');
+        }
+        // 资源处理
+        $root = $account->config['root'] ?? '/';
+        $query = trim($query, '/');
+        $path = explode('/', $query);
+        $path = array_filter($path);
+        $query = trans_absolute_path(trim("{$root}/$query", '/'));
+
+        $service = $account->getOneDriveService();
+
+        $item = Cache::remember("d:item:{$account_id}:{$query}", setting('cache_expires'), function () use ($service, $query) {
+            return $service->fetchItem($query);
+        });
+        if (array_key_exists('code', $item)) {
+            $msg = array_get($item, 'message', '404NotFound');
+            $msg = GraphErrorEnum::get($item['code']) ?? $msg;
+            Cache::forget("d:item:{$account_id}:{$query}");
+            return $this->fail($msg);
+        }
+        Cache::add("d:item:{$account_id}:{$item['id']}", $item, setting('cache_expires'));
+        $_cache[] = "d:item:{$account_id}:{$query}";
+        if (array_key_exists('file', $item)) {
+            return $this->success();
+        }
+
+        $list = Cache::remember("d:list:{$account_id}:{$query}", setting('cache_expires'), function () use ($service, $query) {
+            return $service->fetchList($query);
+        });
+        if (array_key_exists('code', $list)) {
+            $msg = array_get($list, 'message', '404NotFound');
+            $msg = GraphErrorEnum::get($list['code']) ?? $msg;
+            Cache::forget("d:list:{$account_id}:{$query}");
+            return $this->fail($msg);
+        }
+        $_cache[] = "d:list:{$account_id}:{$query}";
+
+        foreach ($list as $list_item) {
+            $query = implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $list_item['name']));
+            $query = trim($query, '/');
+            $query = trans_absolute_path(trim("{$root}/$query", '/'));
+            Cache::add("d:item:{$account_id}:{$query}", $list_item, setting('cache_expires'));
+            $_cache[] = "d:item:{$account_id}:{$query}";
+            Cache::add("d:item:{$account_id}:{$list_item['id']}", $list_item, setting('cache_expires'));
+            if (array_key_exists('file', $list_item)) {
+                continue;
+            }
+            $child_list = Cache::remember("d:list:{$account_id}:{$query}", setting('cache_expires'), function () use ($service, $query) {
+                return $service->fetchList($query);
+            });
+            $_cache[] = "d:list:{$account_id}:{$query}";
+            if (array_key_exists('code', $child_list)) {
+                Cache::forget("d:list:{$account_id}:{$query}");
+                continue;
+            }
+        }
+        Cache::add('tmp_cache', $_cache, 1800);
+        return $this->success();
     }
 
     /**
