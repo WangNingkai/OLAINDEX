@@ -79,31 +79,26 @@ class DriveController extends BaseController
         if (!blank($encrypt_path)) {
             $encrypt_path_arr = explode('|', $encrypt_path);
             $encrypt_path_arr = array_filter($encrypt_path_arr);
-            $_encrypt = [];
             $redirect = trans_absolute_path(rawurldecode($redirectQuery));
             $redirect = trim($redirect, '/');
             $is_encrypt = false;
+            $_password = '';
+            $_encrypt_path = '';
             foreach ($encrypt_path_arr as $encrypt_item) {
                 [$_path, $password] = explode(':', $encrypt_item);
                 $_path = trans_absolute_path($_path);
                 $_path = trim($_path, '/');
-                if ($redirect === $path || str_starts_with($redirect, $_path)) {
+                if ($redirect === $_path || str_starts_with($redirect, $_path)) {
                     $is_encrypt = true;
+                    $_password = $password;
+                    $_encrypt_path = $_path;
                 }
-                $_encrypt[$_path] = $password;
             }
-            if ($item['name'] === 'root') {
-                $item['name'] = '';
-            }
-            if (array_key_exists($item['name'], $_encrypt) || $is_encrypt) {
-                $password = array_get($_encrypt, $item['name']);
-                if (null === $password) {
-                    $password = array_get($_encrypt, '');
-                }
-                if (Cookie::has("e:{$hash}:{$redirect}")) {
-                    $data = json_decode(Cookie::get("e:{$hash}:{$redirect}"), true);
-                    if (strcmp($password, decrypt($data['password'])) !== 0) {
-                        Cookie::forget("e:{$hash}:{$redirect}");
+            if ($is_encrypt) {
+                if (Cookie::has("e:{$hash}:{$_encrypt_path}")) {
+                    $data = json_decode(Cookie::get("e:{$hash}:{$_encrypt_path}"), true);
+                    if (strcmp($_password, decrypt($data['password'])) !== 0) {
+                        Cookie::forget("e:{$hash}:{$_encrypt_path}");
                         $this->showMessage('密码已过期', true);
                         $need_pass = true;
                     }
@@ -302,29 +297,24 @@ class DriveController extends BaseController
         $encrypt_path = array_get($config, 'encrypt_path');
         $encrypt_path_arr = explode('|', $encrypt_path);
         $encrypt_path_arr = array_filter($encrypt_path_arr);
-        $_encrypt = [];
         $redirect = trans_absolute_path(rawurldecode($redirect));
         $redirect = trim($redirect, '/');
         $need_pass = false;
+        $_password = '';
+        $_encrypt_path = '';
         foreach ($encrypt_path_arr as $encrypt_item) {
             [$_path, $password] = explode(':', $encrypt_item);
             $_path = trans_absolute_path($_path);
             $_path = trim($_path, '/');
             if ($redirect === $_path || str_starts_with($redirect, $_path)) {
                 $need_pass = true;
+                $_password = $password;
+                $_encrypt_path = $_path;
             }
-            $_encrypt[$_path] = $password;
         }
-        if ($query === 'root' || null === $query) {
-            $query = '';
-        }
-        if (array_key_exists($query, $_encrypt) || $need_pass) {
-            $password = array_get($_encrypt, $query);
-            if (null === $password) {
-                $password = array_get($_encrypt, '');
-            }
-            if (strcmp($password, $input_password) === 0) {
-                return redirect()->route('drive.query', ['hash' => $hash, 'query' => $redirect])->withCookie("e:{$hash}:{$redirect}", $data, 600);
+        if ($need_pass) {
+            if (strcmp($_password, $input_password) === 0) {
+                return redirect()->route('drive.query', ['hash' => $hash, 'query' => $redirect])->withCookie("e:{$hash}:{$_encrypt_path}", $data, 600);
             }
         }
         return redirect()->back();

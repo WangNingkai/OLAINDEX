@@ -143,7 +143,7 @@
                     <span class="mdui-chip-title">README</span>
                 </div>
             </div>
-            <div class="mdui-card-content markdown-body">
+            <div class="mdui-card-content markdown-body mdui-text-color-theme-text">
                 {!! marked($doc['readme']) !!}
             </div>
         </div>
