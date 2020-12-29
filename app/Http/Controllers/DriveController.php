@@ -186,6 +186,7 @@ class DriveController extends BaseController
                     }
                 }
             }
+
             return view(setting('main_theme', 'default') . '.preview' . $view, compact('accounts', 'hash', 'path', 'show', 'file', 'need_pass'));
         }
 
