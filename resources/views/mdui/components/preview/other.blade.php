@@ -1,1 +1,1 @@
-<img class="mdui-center" height="100px" src="{{ asset('img/file.png') }}" alt="{{ $file['name'] }}"/>
+<img class="mdui-center mdui-valign" height="200px" src="{{ asset('img/file.png') }}" alt="{{ $file['name'] }}"/>

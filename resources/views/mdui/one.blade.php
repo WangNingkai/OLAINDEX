@@ -17,7 +17,7 @@
                             </a>
                         @endif
                     </div>
-                    <div class="mdui-col-sm-3 mdui-text-right">
+                    <div class="mdui-col-sm-3 mdui-hidden-sm-down mdui-text-right">
                         修改时间
                         @if(\App\Helpers\Tool::getOrderByStatus('lastModifiedDateTime'))
                             <a href="{{  \App\Helpers\Tool::buildQueryParams(url()->full(),'sortBy','lastModifiedDateTime,asc') }}">
@@ -30,7 +30,7 @@
                         @endif
 
                     </div>
-                    <div class="mdui-col-sm-2 mdui-text-right">
+                    <div class="mdui-col-sm-2 mdui-hidden-sm-down mdui-text-right">
                         大小
                         @if(\App\Helpers\Tool::getOrderByStatus('size'))
                             <a href="{{  \App\Helpers\Tool::buildQueryParams(url()->full(),'sortBy','size,asc') }}">
@@ -41,8 +41,6 @@
                                 <i class="mdui-icon material-icons ">expand_less</i>
                             </a>
                         @endif
-                    </div>
-                    <div class="mdui-col-sm-1 mdui-text-right">
                     </div>
                 </div>
             </li>
@@ -75,7 +73,7 @@
             @endif
             @if(blank($list))
                 <li class="mdui-list-item mdui-ripple">
-                    <div class="mdui-row mdui-col-sm-12">
+                    <div class="mdui-col-sm-12">
                         <i class="mdui-icon material-icons">info</i> 没有更多数据呦
                     </div>
                 </li>
@@ -106,15 +104,15 @@
                                 @endif
 
                             </div>
-                            <div class="mdui-col-sm-3 mdui-text-right">
+                            <div class="mdui-col-sm-3 mdui-hidden-sm-down mdui-text-right">
                                 {{ date('Y-m-d H:i:s', strtotime($data['lastModifiedDateTime'])) }}
                             </div>
-                            <div class="mdui-col-sm-2 mdui-text-right">
+                            <div class="mdui-col-sm-2 mdui-hidden-sm-down mdui-text-right">
                                 {{ convert_size($data['size']) }}
                             </div>
                         </div>
                         @if (!array_has($data,'folder') )
-                            <a class="mdui-btn mdui-ripple mdui-btn-icon download"
+                            <a class="mdui-btn mdui-ripple mdui-btn-icon mdui-hidden-sm-down download"
                                title="下载"
                                aria-label="Download"
                                href="javascript:void(0)"
@@ -126,7 +124,7 @@
                     </li>
                 @endforeach
                 <li class="mdui-list-item mdui-ripple">
-                    <div class="mdui-row mdui-col-sm-12 mdui-typo-body-1-opacity">
+                    <div class="mdui-col-sm-12 mdui-typo-body-1-opacity">
                         {{ array_get($item,'folder.childCount',0) }}
                         个项目
                         {{ convert_size(array_get($item,'size',0)) }}

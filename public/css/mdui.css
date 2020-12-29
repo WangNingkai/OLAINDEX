@@ -26,25 +26,6 @@ body {
     font-family: Product Sans, Noto Sans SC, Roboto, Noto, Helvetica, Arial, sans-serif
 }
 
-
-.mdui-chip {
-    margin: 20px
-}
-
-
-@media (max-width: 600px) {
-
-    .mdui-col-sm-2,
-    .mdui-col-sm-3,
-    .forcedownload {
-        display: none
-    }
-
-    .mdui-col-xs-12 {
-        width: 100%
-    }
-}
-
 .mdui-list-item-icon {
     color: black
 }
