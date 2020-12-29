@@ -48,15 +48,11 @@
             <li class="mdui-list-item mdui-ripple">
                 <div class="mdui-col-sm-12">
                     <form action="" method="get">
-                        <div class="mdui-textfield mdui-textfield-expandable">
-                            <div class="mdui-textfield-icon mdui-btn mdui-btn-icon"><i
-                                    class="mdui-icon material-icons">search</i></div
-                            >
+                        <div class="mdui-textfield">
+                            <i class="mdui-icon material-icons">search</i>
+
                             <input class="mdui-textfield-input" type="text" id="keywords"
-                                   name="keywords"
-                                   placeholder="搜索目录资源"/>
-                            <div class="mdui-textfield-close mdui-btn mdui-btn-icon"><i
-                                    class="mdui-icon material-icons">close</i></div>
+                                   name="keywords" placeholder="搜索目录资源"/>
                         </div>
                     </form>
                 </div>
