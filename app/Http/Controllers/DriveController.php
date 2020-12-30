@@ -148,13 +148,8 @@ class DriveController extends BaseController
                 if (in_array($file['ext'] ?? '', $suffix, false)) {
                     $show = $key;
                     // 处理文本
-                    if (in_array($key, ['stream', 'code'])) {
-                        // 文件>5m 无法预览
-                        if ($file['size'] > 5 * 1024 * 1024) {
-                            $this->showMessage('文件过大，请下载查看', false);
-
-                            return redirect()->back();
-                        }
+                    // 文件>5m 无法预览
+                    if (in_array($key, ['stream', 'code']) && $file['size'] < 5 * 1024 * 1024) {
                         try {
                             $content = Cache::remember("d:content:{$account_id}:{$file['id']}", setting('cache_expires'), function () use ($download) {
                                 return Tool::fetchContent($download);
