@@ -100,6 +100,18 @@
                             </div>
 
                             <div class="form-group">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input"
+                                           id="single_account_mode"
+                                           @if( setting('single_account_mode',0)) checked
+                                           @endif onchange="$('input[name=\'single_account_mode\']').val(Number(this.checked))">
+                                    <label class="custom-control-label" for="single_account_mode">路径兼容模式</label>
+                                    <input type="hidden" name="single_account_mode"
+                                           value="{{ setting('single_account_mode', 0) }}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
                                 <div class="form-group">
                                     <label class="form-control-label" for="encrypt_tip">加密资源提示文案</label>
                                     <textarea class="form-control" id="encrypt_tip" name="encrypt_tip"
