@@ -62,15 +62,11 @@ chown -R www:www * # 确保目录权属
 
 - 简化功能
 - 修复已知问题
-- 添加目录搜索功能
-
-### 分支说明
-
-- release: 稳定版
-
-- master: 预览版
-
-- test: 测试版（不推荐使用）
+- 添加目录搜索功能（不调用接口）
+- 优化加密、隐藏功能
+- 更完善的路径模式
+- 新增短链模式，方便分享
+- 资源预加载，加速访问
 
 ## 问题反馈
 
@@ -82,9 +78,8 @@ chown -R www:www * # 确保目录权属
 2. 通过 [个人博客](https://imwnk.cn) 评论留言 或者 [关于&反馈](https://olaindex.ningkai.wang)  页面最下角留言
 3. 通过个人邮箱联系（每周不定时查看）
 
-无论采用哪种方式，请务必注意自己的言行举止，尊重他人，遵守最基本的社区行为规范。
-在求(伸)助(手)前请确保已经仔细 [Github Wiki](https://github.com/WangNingkai/OLAINDEX/wiki) 内的所有说明。
-使用 [GitHub issue](https://github.com/WangNingkai/OLAINDEX/issues) 提交问题时请确保提供信息完整准确，否则不予跟进。
+无论采用哪种方式，请务必注意自己的言行举止，尊重他人，遵守最基本的社区行为规范。 在求(伸)助(手)前请确保已经仔细 [Github Wiki](https://github.com/WangNingkai/OLAINDEX/wiki)
+内的所有说明。 使用 [GitHub issue](https://github.com/WangNingkai/OLAINDEX/issues) 提交问题时请确保提供信息完整准确，否则不予跟进。
 
 使用 [GitHub discussions](https://github.com/WangNingkai/OLAINDEX/discussions)
 
@@ -107,12 +102,11 @@ Email [i@ningkai.wang](mailto:i@ningkai.wang)
 然而, 如果你正在使用这个项目并感觉良好，或只是想要支持我继续开发，你可以通过如下方式：
 
 - Star 并 分享这个项目 :rocket:
-- [![paypal.me/wangningkai](https://ionicabizau.github.io/badges/paypal.svg)](https://www.paypal.me/wangningkai) - 你可以通过 PayPal 一次性捐款. 我多半会买一杯 咖啡 茶. :tea:
+- [![paypal.me/wangningkai](https://ionicabizau.github.io/badges/paypal.svg)](https://www.paypal.me/wangningkai) - 你可以通过
+  PayPal 一次性捐款. 我多半会买一杯 咖啡 茶. :tea:
 - [Wechat & AliPay](https://pay.ningkai.wang)
 
 谢谢! :heart:
-
----
 
 ## License
 
