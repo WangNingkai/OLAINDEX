@@ -34,8 +34,14 @@ class DriveController extends BaseController
     public function query(Request $request, $hash = '', $query = '')
     {
         if (!$hash) {
-            $account_id = setting('primary_account', 0);
-            $hash = HashidsHelper::encode($account_id);
+            $hash = $request->get('hash', '');
+            if ($hash) {
+                $account_id = HashidsHelper::decode($hash);
+            } else {
+                $account_id = setting('primary_account', 0);
+                $hash = HashidsHelper::encode($account_id);
+            }
+
         } else {
             $account_id = HashidsHelper::decode($hash);
             if (null === $account_id) {
