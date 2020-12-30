@@ -329,6 +329,15 @@ return [
 
         /*
         |
+        | The number of task worker process.
+        | If the code of logic is asynchronous and non-blocking,
+        | set the task_worker_num to the value from one time to four times of CPU cores.
+        |
+        */
+        'task_worker_num'         => env('LARAVELS_TASK_WORKER_NUM', function_exists('swoole_cpu_num') ? swoole_cpu_num() * 2 : 8),
+
+        /*
+        |
         | Set the communication mode between the task worker process and worker process.
         | The message queue uses the memory queue provided by os to store the data.
         |
