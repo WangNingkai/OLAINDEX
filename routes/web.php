@@ -45,7 +45,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::any('account/config/{id}', 'AccountController@config')->name('admin.account.config');
     Route::post('account/remark/{id}', 'AccountController@remark')->name('admin.account.remark');
     Route::post('account/set-main', 'AccountController@setMain')->name('admin.account.setMain');
-    Route::post('account/delete', 'AccountController@delete')->name('admin.account.delete');
+    Route::post('account/delete/{id}', 'AccountController@delete')->name('admin.account.delete');
 
     Route::post('manage/refresh', 'ManageController@refresh')->name('manage.refresh');
     Route::post('manage/delete', 'ManageController@delete')->name('manage.delete');

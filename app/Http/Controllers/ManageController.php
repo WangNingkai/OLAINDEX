@@ -98,7 +98,7 @@ class ManageController extends BaseController
 
         // 资源排序
         $sortBy = $request->get('sortBy', 'name');
-        $direction = 'desc';
+        $direction = 'asc';
         $column = 'name';
         if (str_contains($sortBy, ',')) {
             [$column, $direction] = explode(',', $sortBy);
