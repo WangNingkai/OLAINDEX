@@ -15,18 +15,6 @@ $app = new Illuminate\Foundation\Application(
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );
 
-if (!$app->runningInConsole()) {
-    $envName = str_replace(['.', ':', '@'], '_', $_SERVER['HTTP_HOST']) . '.env';
-    if (file_exists(base_path("env/{$envName}"))) {
-        $app->useEnvironmentPath(
-            dirname(__DIR__) . '/env'
-        );
-        $app->loadEnvironmentFrom(
-            $envName
-        );
-    }
-}
-
 /*
 |--------------------------------------------------------------------------
 | Bind Important Interfaces
