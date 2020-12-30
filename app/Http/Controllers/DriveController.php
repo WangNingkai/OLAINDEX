@@ -186,9 +186,9 @@ class DriveController extends BaseController
                     }
                     // 处理微软文档
                     if ($key === 'doc') {
-                        /* $url = 'https://view.officeapps.live.com/op/view.aspx?src='
-                             . urlencode($download);*/
-                        $show = 'other';
+                        $preview_url = 'https://view.officeapps.live.com/op/view.aspx?src='
+                            . urlencode($download);
+                        $file['preview'] = $preview_url;
                     }
                 }
             }
