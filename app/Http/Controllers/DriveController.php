@@ -11,6 +11,8 @@ namespace App\Http\Controllers;
 use App\Http\Traits\ApiResponseTrait;
 use App\Models\Account;
 use App\Service\GraphErrorEnum;
+use App\Tasks\PreloadTask;
+use Hhxsv5\LaravelS\Swoole\Task\Task;
 use Illuminate\Http\Request;
 use App\Helpers\HashidsHelper;
 use App\Helpers\Tool;
@@ -242,77 +244,11 @@ class DriveController extends BaseController
      */
     public function preload(Request $request)
     {
-        $_cache = [];
         $hash = $request->get('hash', '');
         $query = $request->get('query', '');
-        if (!$hash) {
-            $account_id = setting('primary_account', 0);
-        } else {
-            $account_id = HashidsHelper::decode($hash);
-        }
-        if (!$account_id) {
-            return $this->fail('账号不存在！');
-        }
-        $account = Account::find($account_id);
-        if (!$account) {
-            return $this->fail('账号不存在！');
-        }
-        // 资源处理
-        $root = $account->config['root'] ?? '/';
-        $query = trim($query, '/');
-        $path = explode('/', $query);
-        $path = array_filter($path);
-        $query = trans_absolute_path(trim("{$root}/$query", '/'));
-
-        $service = $account->getOneDriveService();
-
-        $item = Cache::remember("d:item:{$account_id}:{$query}", setting('cache_expires'), function () use ($service, $query) {
-            return $service->fetchItem($query);
-        });
-        if (array_key_exists('code', $item)) {
-            $msg = array_get($item, 'message', '404NotFound');
-            $msg = GraphErrorEnum::get($item['code']) ?? $msg;
-            Cache::forget("d:item:{$account_id}:{$query}");
-            return $this->fail($msg);
-        }
-        Cache::add("d:item:{$account_id}:{$item['id']}", $item, setting('cache_expires'));
-        $_cache[] = "d:item:{$account_id}:{$query}";
-        if (array_key_exists('file', $item)) {
-            return $this->success();
-        }
-
-        $list = Cache::remember("d:list:{$account_id}:{$query}", setting('cache_expires'), function () use ($service, $query) {
-            return $service->fetchList($query);
-        });
-        if (array_key_exists('code', $list)) {
-            $msg = array_get($list, 'message', '404NotFound');
-            $msg = GraphErrorEnum::get($list['code']) ?? $msg;
-            Cache::forget("d:list:{$account_id}:{$query}");
-            return $this->fail($msg);
-        }
-        $_cache[] = "d:list:{$account_id}:{$query}";
-
-        foreach ($list as $list_item) {
-            $query = implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $list_item['name']));
-            $query = trim($query, '/');
-            $query = trans_absolute_path(trim("{$root}/$query", '/'));
-            Cache::add("d:item:{$account_id}:{$query}", $list_item, setting('cache_expires'));
-            $_cache[] = "d:item:{$account_id}:{$query}";
-            Cache::add("d:item:{$account_id}:{$list_item['id']}", $list_item, setting('cache_expires'));
-            if (array_key_exists('file', $list_item)) {
-                continue;
-            }
-            $child_list = Cache::remember("d:list:{$account_id}:{$query}", setting('cache_expires'), function () use ($service, $query) {
-                return $service->fetchList($query);
-            });
-            $_cache[] = "d:list:{$account_id}:{$query}";
-            if (array_key_exists('code', $child_list)) {
-                Cache::forget("d:list:{$account_id}:{$query}");
-                continue;
-            }
-        }
-        Cache::add('tmp_cache', $_cache, 1800);
-        return $this->success();
+        $task = new PreloadTask($hash, $query);
+        $ret = Task::deliver($task);
+        return $this->success($ret);
     }
 
     /**
