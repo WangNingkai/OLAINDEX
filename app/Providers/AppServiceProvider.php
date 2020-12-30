@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $sqlFile = install_path('data/database.sqlite');
 
-        if (file_exists($sqlFile)) {
+        if (file_exists($sqlFile) || env('DB_CONNECTION') === 'mysql') {
             Schema::defaultStringLength(191);
         }
     }
