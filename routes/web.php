@@ -34,7 +34,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::any('bind', 'InstallController@bind')->name('bind');
     });
     // 基础设置
-    Route::any('/', 'AdminController@config');
+    Route::any('/', 'AdminController@index')->name('admin');
     Route::any('config', 'AdminController@config')->name('admin.config');
     Route::any('profile', 'AdminController@profile')->name('admin.profile');
     Route::get('clear', 'AdminController@clear')->name('cache.clear');

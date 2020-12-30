@@ -11,6 +11,7 @@ namespace App\Http\Controllers;
 use App\Http\Traits\ApiResponseTrait;
 use App\Models\Account;
 use App\Models\Setting;
+use App\Models\ShortUrl;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Cache;
@@ -18,6 +19,7 @@ use Cache;
 class AdminController extends BaseController
 {
     use ApiResponseTrait;
+
 
     /**
      * 缓存清理
@@ -31,6 +33,18 @@ class AdminController extends BaseController
     }
 
     /**
+     * 后台首页
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function index()
+    {
+        $links_count = ShortUrl::count('id');
+        $accounts_count = Account::count('id');
+        return view('admin.home', compact('links_count', 'accounts_count'));
+    }
+
+
+    /**
      * 全局设置
      * @param Request $request
      * @return mixed
@@ -39,7 +53,7 @@ class AdminController extends BaseController
     {
         $accounts = Account::fetchlist();
         if ($request->isMethod('get')) {
-            return view('default.admin.config', compact('accounts'));
+            return view('admin.config', compact('accounts'));
         }
         $data = $request->except('_token');
         Setting::batchUpdate($data);
