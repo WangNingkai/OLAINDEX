@@ -57,10 +57,11 @@
                     <div class="col-lg-auto ms-lg-auto">
                         <ul class="list-inline list-inline-dots mb-0">
                             <li class="list-inline-item">
-                                <a href="//olaindex.js.org" class="link-secondary">文档</a>
+                                <a href="//olaindex.js.org" target="_blank" class="link-secondary">文档</a>
                             </li>
                             <li class="list-inline-item">
                                 <a href="//github.com/WangNingkai/OLAINDEX/issues/new/choose"
+                                   target="_blank"
                                    class="link-secondary">反馈</a>
                             </li>
                             <li class="list-inline-item">
@@ -73,11 +74,13 @@
                         <ul class="list-inline list-inline-dots mb-0">
                             <li class="list-inline-item">
                                 Copyright &copy; {{ date('Y') }}
-                                <a href="https://github.com/wangningkai/olaindex" class="link-secondary">OLAINDEX</a>.
+                                <a href="https://github.com/wangningkai/olaindex" target="_blank"
+                                   class="link-secondary">OLAINDEX</a>.
                                 All rights reserved.
                             </li>
                             <li class="list-inline-item">
-                                <a href="https://github.com/wangningkai/olaindex" class="link-secondary" rel="noopener">v6.0</a>
+                                <a href="https://github.com/wangningkai/olaindex" target="_blank" class="link-secondary"
+                                   rel="noopener">v6.0</a>
                             </li>
                         </ul>
                     </div>
