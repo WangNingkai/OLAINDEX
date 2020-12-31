@@ -2,7 +2,7 @@
 
 后台默认地址：`https://you.domain/admin`
 
-初始后台账号密码：  `admin` `12345678`;
+初始后台账号密码：  `admin` `123456`;
 
 路由修改地址：`routes/web.php`
 
