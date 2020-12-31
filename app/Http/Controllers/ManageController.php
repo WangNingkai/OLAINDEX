@@ -40,10 +40,11 @@ class ManageController extends BaseController
             abort(404, '未知账号！');
         }
         // 资源处理
-        $config = $account->config;
         $root = $account->config['root'] ?? '/';
-        $query = trim($query, '/');
-        $path = explode('/', $query);
+        $rawQuery = rawurldecode($query);
+        $rawQuery = trim($rawQuery, '/');
+        $query = strtolower($rawQuery);
+        $path = explode('/', $rawQuery);
         $path = array_filter($path);
         $query = trans_absolute_path(trim("{$root}/$query", '/'));
 
