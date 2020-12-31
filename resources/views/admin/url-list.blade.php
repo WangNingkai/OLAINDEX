@@ -49,9 +49,8 @@
                                         <a href="{{ route('short',[ 'code' => $url->short_code ]) }}">{{ route('short',[ 'code' => $url->short_code ]) }}</a>
                                     </td>
                                     <td>{{ $url->created_at }}</td>
-                                    <td class="text-end">
-                                        <a href="javascript:void(0);" class="btn btn-danger delete"
-                                           data-id="{{ $url->id  }}">
+                                    <td class="text-end" data-id="{{ $url->id  }}">
+                                        <a href="javascript:void(0);" class="btn btn-danger delete">
                                             删除
                                         </a>
                                     </td>
