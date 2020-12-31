@@ -57,16 +57,40 @@ class DriveController extends BaseController
         if (!$account) {
             abort(404, '账号不存在！');
         }
-        $redirectQuery = $query;
+
         $view = '';
         $accounts = Account::fetchlist();
         // 资源处理
         $config = $account->config;
-        $root = $account->config['root'] ?? '/';
-        $query = trim($query, '/');
-        $path = explode('/', $query);
+        $root = strtolower($account->config['root'] ?? '/');
+        $rawQuery = rawurldecode($query);
+        $rawQuery = trim($rawQuery, '/');
+        $query = strtolower($rawQuery);
+        $redirectQuery = $query;
+        $path = explode('/', $rawQuery);
         $path = array_filter($path);
-        $query = trans_absolute_path(trim("{$root}/$query", '/'));
+        $query = trim("{$root}/$query", '/');
+        $query = trans_absolute_path($query);
+
+        // 处理隐藏
+        $hide_path = array_get($config, 'hide_path');
+        if (!blank($hide_path)) {
+            $is_hide = false;
+            $hide_path_arr = explode('|', $hide_path);
+            $hide_path_arr = array_filter($hide_path_arr);
+            $redirect = rawurldecode($redirectQuery);
+            $redirect = trans_absolute_path($redirect);
+            $redirect = trim($redirect, '/');
+            foreach ($hide_path_arr as $hide_item) {
+                $hide_item = strtolower($hide_item);
+                if ($redirect === $hide_item || starts_with($redirect, $hide_item)) {
+                    $is_hide = true;
+                }
+            }
+            if ($is_hide) {
+                abort(404, '资源不存在！');
+            }
+        }
 
         $service = $account->getOneDriveService();
 
@@ -89,36 +113,40 @@ class DriveController extends BaseController
         }
 
         // 处理加密
-        $need_pass = false;
         $encrypt_path = array_get($config, 'encrypt_path');
         if (!blank($encrypt_path)) {
             $encrypt_path_arr = explode('|', $encrypt_path);
             $encrypt_path_arr = array_filter($encrypt_path_arr);
             $redirect = trans_absolute_path(rawurldecode($redirectQuery));
             $redirect = trim($redirect, '/');
+            $need_pass = false;
             $is_encrypt = false;
-            $_password = '';
-            $_encrypt_path = '';
+            $_encrypt_arr = [];
             foreach ($encrypt_path_arr as $encrypt_item) {
                 [$_path, $password] = explode(':', $encrypt_item);
+                $_path = strtolower($_path);
                 $_path = trans_absolute_path($_path);
                 $_path = trim($_path, '/');
-                if ($redirect === $_path || str_starts_with($redirect, $_path)) {
+                if ($redirect === $_path || starts_with($redirect, $_path)) {
                     $is_encrypt = true;
-                    $_password = $password;
-                    $_encrypt_path = $_path;
+                    $_encrypt_arr[$_path] = $password;
                 }
             }
             if ($is_encrypt) {
-                if (Cookie::has("e:{$hash}:{$_encrypt_path}")) {
-                    $data = json_decode(Cookie::get("e:{$hash}:{$_encrypt_path}"), true);
-                    if (strcmp($_password, decrypt($data['password'])) !== 0) {
-                        Cookie::forget("e:{$hash}:{$_encrypt_path}");
-                        $this->showMessage('密码已过期', true);
+                $need_pass = false;
+                foreach ($_encrypt_arr as $_encrypt_path => $_password) {
+                    if (Cookie::has("e:{$hash}:{$_encrypt_path}")) {
+                        $data = json_decode(Cookie::get("e:{$hash}:{$_encrypt_path}"), true);
+                        if (strcmp($_password, decrypt($data['password'])) !== 0) {
+                            Cookie::forget("e:{$hash}:{$_encrypt_path}");
+                            $this->showMessage('密码已过期', true);
+                            $need_pass = true;
+                            break;
+                        }
+                    } else {
                         $need_pass = true;
+                        break;
                     }
-                } else {
-                    $need_pass = true;
                 }
                 if ($need_pass) {
                     return view(setting('main_theme', 'default') . '.password', compact('hash', 'item', 'redirect', 'need_pass'));
@@ -205,6 +233,27 @@ class DriveController extends BaseController
         $doc = $this->filterDoc($account_id, $list);
         // 资源过滤
         $list = $this->filter($list, $hash);
+        // 过滤隐藏
+        $list = $list->filter(function ($item) use ($hide_path, $path) {
+            $query = implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $item['name']));
+            $query = strtolower($query);
+            if (!blank($hide_path)) {
+                $is_hide = false;
+                $hide_path_arr = explode('|', $hide_path);
+                $hide_path_arr = array_filter($hide_path_arr);
+                $redirect = trans_absolute_path(rawurldecode($query));
+                $redirect = trim($redirect, '/');
+                foreach ($hide_path_arr as $hide_item) {
+                    $hide_item = strtolower($hide_item);
+                    if ($redirect === $hide_item || starts_with($redirect, $hide_item)) {
+                        $is_hide = true;
+                    }
+                }
+                return !$is_hide;
+            }
+            return true;
+        });
+
         // 资源处理
         $list = $this->formatItem($list);
         //搜索处理
@@ -253,9 +302,11 @@ class DriveController extends BaseController
             return $this->fail('账号不存在！');
         }
         // 资源处理
-        $root = $account->config['root'] ?? '/';
-        $query = trim($query, '/');
-        $path = explode('/', $query);
+        $root = strtolower($account->config['root'] ?? '/');
+        $rawQuery = rawurldecode($query);
+        $rawQuery = trim($rawQuery, '/');
+        $query = strtolower($rawQuery);
+        $path = explode('/', $rawQuery);
         $path = array_filter($path);
         $query = trans_absolute_path(trim("{$root}/$query", '/'));
 
@@ -291,6 +342,7 @@ class DriveController extends BaseController
             $query = implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $list_item['name']));
             $query = trim($query, '/');
             $query = trans_absolute_path(trim("{$root}/$query", '/'));
+            $query = strtolower($query);
             Cache::add("d:item:{$account_id}:{$query}", $list_item, setting('cache_expires'));
             $_cache[] = "d:item:{$account_id}:{$query}";
             Cache::add("d:item:{$account_id}:{$list_item['id']}", $list_item, setting('cache_expires'));
@@ -366,6 +418,7 @@ class DriveController extends BaseController
         $redirect = $request->get('redirect', '');
         $hash = $request->get('hash');
         $query = $request->get('query', '');
+        $query = strtolower($query);
         $data = [
             'password' => encrypt($input_password),
             'hash' => $hash,
@@ -398,7 +451,8 @@ class DriveController extends BaseController
             [$_path, $password] = explode(':', $encrypt_item);
             $_path = trans_absolute_path($_path);
             $_path = trim($_path, '/');
-            if ($redirect === $_path || str_starts_with($redirect, $_path)) {
+            $_path = strtolower($_path);
+            if ($redirect === $_path || starts_with($redirect, $_path)) {
                 $need_pass = true;
                 $_password = $password;
                 $_encrypt_path = $_path;
@@ -406,7 +460,7 @@ class DriveController extends BaseController
         }
         if ($need_pass) {
             if (strcmp($_password, $input_password) === 0) {
-                return redirect()->route('drive.query', ['hash' => $hash, 'query' => $redirect])->withCookie("e:{$hash}:{$_encrypt_path}", $data, 600);
+                return redirect()->route('drive.query', ['hash' => $hash, 'query' => url_encode($redirect)])->withCookie("e:{$hash}:{$_encrypt_path}", $data, 600);
             }
         }
         return redirect()->back();
@@ -527,13 +581,7 @@ class DriveController extends BaseController
         if (!$account) {
             abort(404, '账号不存在！');
         }
-        $config = $account->config;
-        $hide_path = array_get($config, 'hide_path');
-        $hide_path_arr = explode('|', $hide_path);
-        $hide_path_arr = array_filter($hide_path_arr);
-        $list = $list->filter(function ($item) use ($hide_path_arr) {
-            return !in_array($item['name'], $hide_path_arr, false);
-        });
+
         return $list;
     }
 
@@ -595,6 +643,5 @@ class DriveController extends BaseController
         }
         return $folders->merge($files)->all();
     }
-
 
 }

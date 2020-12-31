@@ -375,7 +375,7 @@ class OneDrive
             return '/';
         }
         $path = $resp['parentReference']['path'];
-        if (str_starts_with($path, '/drive/root:')) {
+        if (starts_with($path, '/drive/root:')) {
             $path = str_after($path, '/drive/root:');
         }
 

@@ -87,7 +87,7 @@
                     <tr class="row mx-0">
                         <td colspan="4">
                             <a class="text-decoration-none"
-                               href="{{ route('drive.query', ['hash' => $hash, 'query' => \App\Helpers\Tool::fetchGoBack($path)]) }}">
+                               href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(\App\Helpers\Tool::fetchGoBack($path))]) }}">
                                 <i class="ri-arrow-go-back-fill"></i> 返回上级
                             </a>
                         </td>
@@ -102,10 +102,10 @@
                 @else
                     @foreach($list as $data)
                         <tr class="list-item row mx-0 align-items-center"
-                            data-route="{{ route('drive.query', ['hash' => $hash, 'query' => implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )]) }}">
+                            data-route="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) ))]) }}">
                             <td class="col-5"
                                 style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
-                                <a title="{{ $data['name'] }}" href="{{ route('drive.query', ['hash' => $hash, 'query' => implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )]) }}"
+                                <a title="{{ $data['name'] }}" href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name'])))]) }}"
                                    class="text-decoration-none stretched-link">
                                     <i class="ri-{{ \App\Helpers\Tool::fetchExtIco($data['ext'] ?? 'file') }}-fill"></i>
                                     {{ $data['name'] }}
@@ -118,7 +118,7 @@
                                 @if(array_has($data,'folder'))
                                     -
                                 @else
-                                    <a href="{{ route('drive.query', ['hash' => $hash, 'query' => implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) ),'download' => 1]) }}"
+                                    <a href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )),'download' => 1]) }}"
                                        class="btn btn-sm btn-primary download mr-2 my-1">下载</a>
                                 @endif
                             </td>

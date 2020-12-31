@@ -13,7 +13,7 @@
                         @else
                             @if (!blank($value))
                                 <li class="breadcrumb-item ">
-                                    <a href="{{ route('manage.query', ['account_id' => $account_id,'query' => \App\Helpers\Tool::combineBreadcrumb($key + 1, $path)]) }}">
+                                    <a href="{{ route('manage.query', ['account_id' => $account_id, 'query' => url_encode(\App\Helpers\Tool::combineBreadcrumb($key + 1, $path))]) }}">
                                         {{  str_limit($value,20) }}
                                     </a>
                                 </li>
@@ -28,7 +28,7 @@
                         @else
                             @if (!blank($value) && $key === (count($path) - 2))
                                 <li class="breadcrumb-item ">
-                                    <a href="{{ route('manage.query', ['account_id' => $account_id,'query' => \App\Helpers\Tool::combineBreadcrumb($key + 1, $path)]) }}">
+                                    <a href="{{ route('manage.query', ['account_id' => $account_id, 'query' => url_encode(\App\Helpers\Tool::combineBreadcrumb($key + 1, $path))]) }}">
                                         {{  str_limit($value,20) }}
                                     </a>
                                 </li>
@@ -102,7 +102,7 @@
                         </a>
                         @if(!blank($path))
                             <a class="btn btn-sm btn-primary mr-2 my-1"
-                               href="{{ route('manage.query', ['account_id' => $account_id, 'query' => \App\Helpers\Tool::fetchGoBack($path)]) }}">
+                               href="{{ route('manage.query', ['account_id' => $account_id, 'query' => url_encode(\App\Helpers\Tool::fetchGoBack($path))]) }}">
                                 <i class="ri-arrow-go-back-fill"></i> 返回上级
                             </a>
                         @endif
@@ -138,11 +138,11 @@
                             data-name="{{ $data['name'] }}"
                             data-file="{{ !array_has($data,'folder') }}"
                             data-size="{{ $data['size'] }}"
-                            data-route="{{ route('manage.query', ['account_id' => $account_id, 'query' => implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )]) }}">
+                            data-route="{{ route('manage.query', ['account_id' => $account_id, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name'])))]) }}">
                             <td class="col-5"
                                 style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
                                 <a title="{{ $data['name'] }}"
-                                   href="{{ route('manage.query', ['account_id' => $account_id, 'query' => implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )]) }}"
+                                   href="{{ route('manage.query', ['account_id' => $account_id, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name'])))]) }}"
                                    class="text-decoration-none stretched-link">
                                     <i class="ri-{{ \App\Helpers\Tool::fetchExtIco($data['ext'] ?? 'file') }}-fill"></i>
                                     {{ $data['name'] }}

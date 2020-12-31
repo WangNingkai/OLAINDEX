@@ -59,9 +59,9 @@
             </li>
             @if(!blank($path))
                 <li class="mdui-list-item mdui-ripple"
-                    data-route="{{ route('drive.query', ['hash' => $hash, 'query' => \App\Helpers\Tool::fetchGoBack($path)]) }}">
+                    data-route="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(\App\Helpers\Tool::fetchGoBack($path))]) }}">
                     <div class="mdui-col-sm-12">
-                        <a href="{{ route('drive.query', ['hash' => $hash, 'query' => \App\Helpers\Tool::fetchGoBack($path)]) }}">
+                        <a href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(\App\Helpers\Tool::fetchGoBack($path))]) }}">
                             <i class="mdui-icon material-icons">arrow_back</i>
                             返回上级
                         </a>
@@ -77,13 +77,13 @@
             @else
                 @foreach($list as $data)
                     <li class="mdui-list-item mdui-ripple"
-                        data-route="{{ route('drive.query', ['hash' => $hash, 'query' => implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )]) }}">
+                        data-route="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name'])))]) }}">
                         <div class="mdui-row mdui-col-sm-12">
                             <div class="mdui-col-xs-12 mdui-col-sm-7 mdui-text-truncate">
                                 @if (array_has($data,'folder') )
                                     <a
                                         data-name="{{ $data['name'] }}"
-                                        href="{{ route('drive.query', ['hash' => $hash, 'query' => implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )]) }}"
+                                        href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) ))]) }}"
                                         aria-label="Folder"
                                     >
                                         <i class="mdui-icon material-icons">folder_open</i>
@@ -92,7 +92,7 @@
                                 @else
                                     <a
                                         data-name="{{ $data['name'] }}"
-                                        href="{{ route('drive.query', ['hash' => $hash, 'query' => implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )]) }}"
+                                        href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name'])))]) }}"
                                         aria-label="File"
                                     >
                                         <i class="mdui-icon material-icons"> insert_drive_file </i>
@@ -113,7 +113,7 @@
                                mdui-tooltip="{content: '下载'}"
                                aria-label="Download"
                                href="javascript:void(0)"
-                               data-route="{{ route('drive.query', ['hash' => $hash, 'query' => implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) ),'download' => 1]) }}"
+                               data-route="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )),'download' => 1]) }}"
                                target="_blank">
                                 <i class="mdui-icon material-icons">file_download</i>
                             </a>

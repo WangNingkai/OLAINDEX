@@ -28,7 +28,7 @@
                         @if (!blank($value))
                             <i class="mdui-icon material-icons mdui-hidden-xs mdui-m-a-0"
                             >chevron_right</i>
-                            <a href="{{ route('drive.query', ['hash' => $hash,'query' => \App\Helpers\Tool::combineBreadcrumb($key + 1, $path)]) }}"
+                            <a href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(\App\Helpers\Tool::combineBreadcrumb($key + 1, $path))]) }}"
                                class="mdui-typo-subheading mdui-hidden-xs">
                                 {{ $value }}
                             </a>
@@ -52,7 +52,7 @@
                         @if (!blank($value) && $key === (count($path) - 2))
                             <i class="mdui-icon material-icons mdui-hidden-xs mdui-m-a-0"
                             >chevron_right</i>
-                            <a href="{{ route('drive.query', ['hash' => $hash,'query' => \App\Helpers\Tool::combineBreadcrumb($key + 1, $path)]) }}"
+                            <a href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(\App\Helpers\Tool::combineBreadcrumb($key + 1, $path))]) }}"
                                class="mdui-typo-subheading mdui-hidden-xs">
                                 {{ $value }}
                             </a>
