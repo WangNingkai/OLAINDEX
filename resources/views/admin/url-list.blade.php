@@ -40,7 +40,7 @@
                             </tr>
                         @else
                             @foreach($urls as $url)
-                                <tr>
+                                <tr  data-id="{{ $url->id  }}">
                                     <th>{{ $url->id }}</th>
                                     <td><a href="{{ $url->original_url }}"
                                            title="{{ $url->original_url }}">{{ str_limit($url->original_url,64) }}</a>
@@ -50,8 +50,7 @@
                                     </td>
                                     <td>{{ $url->created_at }}</td>
                                     <td class="text-end">
-                                        <a href="javascript:void(0);" class="btn btn-danger delete"
-                                           data-id="{{ $url->id  }}">
+                                        <a href="javascript:void(0);" class="btn btn-danger delete">
                                             删除
                                         </a>
                                     </td>
