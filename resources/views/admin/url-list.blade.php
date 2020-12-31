@@ -40,7 +40,7 @@
                             </tr>
                         @else
                             @foreach($urls as $url)
-                                <tr  data-id="{{ $url->id  }}">
+                                <tr>
                                     <th>{{ $url->id }}</th>
                                     <td><a href="{{ $url->original_url }}"
                                            title="{{ $url->original_url }}">{{ str_limit($url->original_url,64) }}</a>
@@ -49,7 +49,7 @@
                                         <a href="{{ route('short',[ 'code' => $url->short_code ]) }}">{{ route('short',[ 'code' => $url->short_code ]) }}</a>
                                     </td>
                                     <td>{{ $url->created_at }}</td>
-                                    <td class="text-end">
+                                    <td class="text-end" data-id="{{ $url->id  }}">
                                         <a href="javascript:void(0);" class="btn btn-danger delete">
                                             删除
                                         </a>
