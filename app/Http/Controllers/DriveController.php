@@ -121,8 +121,7 @@ class DriveController extends BaseController
             $redirect = trim($redirect, '/');
             $need_pass = false;
             $is_encrypt = false;
-            $_password = '';
-            $_encrypt_path = '';
+            $_encrypt_arr = [];
             foreach ($encrypt_path_arr as $encrypt_item) {
                 [$_path, $password] = explode(':', $encrypt_item);
                 $_path = strtolower($_path);
@@ -130,20 +129,24 @@ class DriveController extends BaseController
                 $_path = trim($_path, '/');
                 if ($redirect === $_path || starts_with($redirect, $_path)) {
                     $is_encrypt = true;
-                    $_password = $password;
-                    $_encrypt_path = $_path;
+                    $_encrypt_arr[$_path] = $password;
                 }
             }
             if ($is_encrypt) {
-                if (Cookie::has("e:{$hash}:{$_encrypt_path}")) {
-                    $data = json_decode(Cookie::get("e:{$hash}:{$_encrypt_path}"), true);
-                    if (strcmp($_password, decrypt($data['password'])) !== 0) {
-                        Cookie::forget("e:{$hash}:{$_encrypt_path}");
-                        $this->showMessage('密码已过期', true);
+                $need_pass = false;
+                foreach ($_encrypt_arr as $_encrypt_path => $_password) {
+                    if (Cookie::has("e:{$hash}:{$_encrypt_path}")) {
+                        $data = json_decode(Cookie::get("e:{$hash}:{$_encrypt_path}"), true);
+                        if (strcmp($_password, decrypt($data['password'])) !== 0) {
+                            Cookie::forget("e:{$hash}:{$_encrypt_path}");
+                            $this->showMessage('密码已过期', true);
+                            $need_pass = true;
+                            break;
+                        }
+                    } else {
                         $need_pass = true;
+                        break;
                     }
-                } else {
-                    $need_pass = true;
                 }
                 if ($need_pass) {
                     return view(setting('main_theme', 'default') . '.password', compact('hash', 'item', 'redirect', 'need_pass'));
