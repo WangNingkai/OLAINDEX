@@ -47,9 +47,10 @@
     </div>
     <div class="row row-cards">
         <div class="col-sm-3">
-            <div class="card">
-                <div class="card-body p-2 text-center">
-                    <div class="text-end text-green">
+            <a href="{{ route('admin.account.list') }}" class="text-decoration-none">
+                <div class="card">
+                    <div class="card-body p-2 text-center">
+                        <div class="text-end text-green">
                         <span class="text-green d-inline-flex align-items-center lh-1">
                           <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -59,16 +60,18 @@
                                   d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path
                                   d="M21 21v-2a4 4 0 0 0 -3 -3.85"/></svg>
                         </span>
+                        </div>
+                        <div class="h1 m-0">{{ $accounts_count }}</div>
+                        <div class="text-muted mb-3">绑定账号</div>
                     </div>
-                    <div class="h1 m-0">{{ $accounts_count }}</div>
-                    <div class="text-muted mb-3">绑定账号</div>
                 </div>
-            </div>
+            </a>
         </div>
         <div class="col-sm-3">
-            <div class="card">
-                <div class="card-body p-2 text-center">
-                    <div class="text-end text-green">
+            <a href="{{ route('admin.url.list') }}" class="text-decoration-none">
+                <div class="card">
+                    <div class="card-body p-2 text-center">
+                        <div class="text-end text-green">
                         <span class="text-green d-inline-flex align-items-center lh-1">
                           <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -77,11 +80,13 @@
                                   d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"/><path
                                   d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"/></svg>
                         </span>
+                        </div>
+                        <div class="h1 m-0">{{ $links_count }}</div>
+                        <div class="text-muted mb-3">转换短链</div>
                     </div>
-                    <div class="h1 m-0">{{ $links_count }}</div>
-                    <div class="text-muted mb-3">转换短链</div>
                 </div>
-            </div>
+            </a>
+
         </div>
     </div>
 @stop

@@ -69,7 +69,7 @@ class AdminController extends BaseController
     public function profile(Request $request)
     {
         if ($request->isMethod('get')) {
-            return view('default.admin.profile');
+            return view('admin.profile');
         }
 
         $request->validate([

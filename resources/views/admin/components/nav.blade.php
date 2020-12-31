@@ -43,7 +43,7 @@
                         </a>
                     </li>
 
-                    <li class="nav-item @if( request()->routeIs(['admin.account.list']))active @endif">
+                    <li class="nav-item @if( request()->routeIs(['admin.account.list','admin.account.config','admin.account.manage']))active @endif">
                         <a class="nav-link" href="{{ route('admin.account.list') }}">
                                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
@@ -57,6 +57,21 @@
                                     </svg>
                                 </span>
                             <span class="nav-link-title">账号管理</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item @if( request()->routeIs(['admin.url.list',]))active @endif">
+                        <a class="nav-link" href="{{ route('admin.url.list') }}">
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                   <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                        stroke-linecap="round" stroke-linejoin="round"><path stroke="none"
+                                                                                             d="M0 0h24v24H0z"
+                                                                                             fill="none"/><path
+                                           d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"/><path
+                                           d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"/></svg>
+                                </span>
+                            <span class="nav-link-title">短链管理</span>
                         </a>
                     </li>
 

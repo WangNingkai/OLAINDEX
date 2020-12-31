@@ -1,7 +1,7 @@
 @extends('default.layouts.main')
 @section('title', '文件管理')
 @section('content')
-    <nav aria-label="breadcrumb" class="mb-3 d-none d-md-block d-md-none">
+    <nav aria-label="breadcrumb" class="mb-3 d-none d-sm-block">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('manage.query', ['account_id' => $account_id]) }}"><i
                         class="ri-home-fill"></i> Home</a></li>

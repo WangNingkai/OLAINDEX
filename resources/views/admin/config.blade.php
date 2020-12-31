@@ -34,8 +34,12 @@
     <div class="page-header d-print-none">
         <div class="row align-items-center">
             <div class="col">
-                <h2 class="page-title">
+                <!-- Page pre-title -->
+                <div class="page-pretitle">
                     设置
+                </div>
+                <h2 class="page-title">
+                    站点设置
                 </h2>
             </div>
         </div>
@@ -64,7 +68,7 @@
                                     <div>
                                         <input type="text" class="form-control" id="site_name" name="site_name"
                                                value="{{ setting('site_name','OLAINDEX') }}">
-                                        <small class="form-hint">显示的网站名称.</small>
+                                        <small class="form-hint text-danger">显示的网站名称.</small>
                                     </div>
                                 </div>
 
@@ -94,7 +98,7 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                        <small class="form-hint">仅在显示主题设置为 default 时生效.</small>
+                                        <small class="form-hint text-danger">仅在显示主题设置为 default 时生效.</small>
                                     </div>
                                 </div>
 
@@ -103,7 +107,7 @@
                                     <div>
                                         <input type="text" class="form-control" id="cache_expires" name="cache_expires"
                                                value="{{ setting('cache_expires', 1800) }}">
-                                        <small class="form-hint">建议缓存时间小于60分钟，否则会导致缓存失效.</small>
+                                        <small class="form-hint text-danger">建议缓存时间小于60分钟，否则会导致缓存失效.</small>
                                     </div>
                                 </div>
 
@@ -116,7 +120,7 @@
                                         <input type="hidden" name="open_short_url"
                                                value="{{ setting('open_short_url', 0) }}">
                                     </label>
-                                    <span class="form-hint">开启后预览文件只显示短链</span>
+                                    <span class="form-hint text-danger">开启后预览文件只显示短链</span>
                                 </div>
 
                                 <div class="form-group mb-3 ">
@@ -128,7 +132,7 @@
                                         <input type="hidden" name="single_account_mode"
                                                value="{{ setting('single_account_mode', 0) }}">
                                     </label>
-                                    <span class="form-hint">开启后按路径访问资源</span>
+                                    <span class="form-hint text-danger">开启后按路径访问资源</span>
                                 </div>
 
                                 <div class="form-group mb-3">
@@ -141,7 +145,7 @@
                                     <label class="form-label" for="copyright">页脚文案</label>
                                     <textarea class="form-control" id="copyright" name="copyright"
                                               rows="3">{{ setting('copyright') }}</textarea>
-                                    <span class="form-hint">留空则不显示。使用markdown格式表示 如：Made by [xxx](https://xxx)</span>
+                                    <span class="form-hint text-danger">留空则不显示。使用markdown格式表示 如：Made by [xxx](https://xxx)</span>
                                 </div>
 
 
@@ -149,7 +153,7 @@
                                     <label class="form-label" for="stats_code">统计代码</label>
                                     <textarea class="form-control" id="encrypt_tip" name="stats_code"
                                               rows="3">{{ setting('stats_code') }}</textarea>
-                                    <span class="form-hint">站点统计代码</span>
+                                    <span class="form-hint text-danger">站点统计代码</span>
                                 </div>
 
 
@@ -158,7 +162,7 @@
                                     <div>
                                         <input type="text" class="form-control" id="access_token" name="access_token"
                                                value="{{ setting('access_token', 1800) }}">
-                                        <small class="form-hint">第三方接口token(图床、文件列表)</small>
+                                        <small class="form-hint text-danger">第三方接口token(图床、文件列表)</small>
                                     </div>
                                 </div>
 
@@ -199,7 +203,7 @@
                                     <div>
                                         <input type="text" class="form-control" id="show_dash" name="show_dash"
                                                value="{{ setting('show_dash', '') }}">
-                                        <span class="form-hint">不支持个人账号</span>
+                                        <span class="form-hint text-danger">不支持个人账号</span>
                                     </div>
                                 </div>
                                 <div class="form-group mb-3">
@@ -244,11 +248,11 @@
                                         <input class="form-check-input" type="checkbox" id="open_image_host"
                                                @if( setting('open_image_host',0)) checked
                                                @endif onchange="$('input[name=\'open_image_host\']').val(Number(this.checked))">
-                                        <span class="form-check-label">open_image_host</span>
+                                        <span class="form-check-label">开启图床功能</span>
                                         <input type="hidden" name="open_image_host"
                                                value="{{ setting('open_image_host', 0) }}">
                                     </label>
-                                    <span class="form-hint">开启后OneDrive可以作为图床使用</span>
+                                    <span class="form-hint text-danger">开启后OneDrive可以作为图床使用</span>
                                 </div>
 
                                 <div class="form-group mb-3 ">
@@ -256,11 +260,11 @@
                                         <input class="form-check-input" type="checkbox" id="public_image_host"
                                                @if( setting('public_image_host',0)) checked
                                                @endif onchange="$('input[name=\'public_image_host\']').val(Number(this.checked))">
-                                        <span class="form-check-label">公有图床</span>
+                                        <span class="form-check-label">设为公有图床</span>
                                         <input type="hidden" name="public_image_host"
                                                value="{{ setting('public_image_host', 0) }}">
                                     </label>
-                                    <span class="form-hint">开启后任何人都可以访问使用</span>
+                                    <span class="form-hint text-danger">开启后任何人都可以访问使用</span>
                                 </div>
 
                                 <div class="form-group mb-3 ">
@@ -274,7 +278,7 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                        <small class="form-hint">图床默认将使用主账号.</small>
+                                        <small class="form-hint text-danger">图床默认将使用主账号.</small>
                                     </div>
                                 </div>
 

@@ -47,6 +47,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('account/set-main', 'AccountController@setMain')->name('admin.account.setMain');
     Route::post('account/delete/{id}', 'AccountController@delete')->name('admin.account.delete');
 
+    Route::get('url/list', 'UrlController@list')->name('admin.url.list');
+    Route::post('url/delete/{id}', 'UrlController@delete')->name('admin.url.delete');
+
+
     Route::post('manage/refresh', 'ManageController@refresh')->name('manage.refresh');
     Route::post('manage/delete', 'ManageController@delete')->name('manage.delete');
     Route::post('manage/mkdir', 'ManageController@mkdir')->name('manage.mkdir');

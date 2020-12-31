@@ -20,13 +20,16 @@
                     </svg>
                 @endif
             </div>
-            <h4 class="alert-title">{!! session()->pull('alertMessage') !!}</h4>
+            <div>
+                <h4 class="alert-title">{!! session()->pull('alertMessage') !!}</h4>
+            </div>
+
         </div>
         <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
     </div>
 @endif
 @if ($errors->any())
-    <div class="alert alert-dismissible alert-danger">
+    <div class="alert alert-dismissible alert-danger" role="alert">
         <div class="d-flex">
             <div>
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24"
@@ -38,14 +41,17 @@
                     <line x1="12" y1="16" x2="12.01" y2="16"></line>
                 </svg>
             </div>
-            <h4 class="alert-title">
-                Ops! 出错了~
-            </h4>
-            <div class="text-muted">
-                @foreach ($errors->all() as $error)
-                    <p>{{ $error }}</p>
-                @endforeach
+            <div>
+                <h4 class="alert-title">
+                    Ops! 出错了~
+                </h4>
+                <div class="text-muted">
+                    @foreach ($errors->all() as $error)
+                        <p>{{ $error }}</p>
+                    @endforeach
+                </div>
             </div>
+
         </div>
         <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
     </div>

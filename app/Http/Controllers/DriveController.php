@@ -113,13 +113,13 @@ class DriveController extends BaseController
         }
 
         // 处理加密
+        $need_pass = false;
         $encrypt_path = array_get($config, 'encrypt_path');
         if (!blank($encrypt_path)) {
             $encrypt_path_arr = explode('|', $encrypt_path);
             $encrypt_path_arr = array_filter($encrypt_path_arr);
             $redirect = trans_absolute_path(rawurldecode($redirectQuery));
             $redirect = trim($redirect, '/');
-            $need_pass = false;
             $is_encrypt = false;
             $_encrypt_arr = [];
             foreach ($encrypt_path_arr as $encrypt_item) {
