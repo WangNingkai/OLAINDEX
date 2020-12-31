@@ -50,11 +50,6 @@
                         <a class="nav-link" href="{{ route('image') }}"><i class="ri-image-fill"></i> 图床</a>
                     </li>
                 @endif
-                @auth
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.config') }}"><i class="ri-dashboard-fill"></i> 管理</a>
-                    </li>
-                @endauth
             </ul>
             @auth
                 <ul class="navbar-nav ml-auto">
@@ -68,6 +63,11 @@
                             <a class="dropdown-item" href="{{ route('admin.profile') }}">
                                 我的信息
                             </a>
+                            @auth
+                                <a class="dropdown-item" href="{{ route('admin') }}">
+                                    控制台
+                                </a>
+                            @endauth
                             <a class="dropdown-item" href="{{ route('logout') }}"
                                onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">

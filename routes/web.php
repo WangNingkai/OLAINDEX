@@ -34,7 +34,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::any('bind', 'InstallController@bind')->name('bind');
     });
     // 基础设置
-    Route::any('/', 'AdminController@config');
+    Route::any('/', 'AdminController@index')->name('admin');
     Route::any('config', 'AdminController@config')->name('admin.config');
     Route::any('profile', 'AdminController@profile')->name('admin.profile');
     Route::get('clear', 'AdminController@clear')->name('cache.clear');
@@ -46,6 +46,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('account/remark/{id}', 'AccountController@remark')->name('admin.account.remark');
     Route::post('account/set-main', 'AccountController@setMain')->name('admin.account.setMain');
     Route::post('account/delete/{id}', 'AccountController@delete')->name('admin.account.delete');
+
+    Route::get('url/list', 'UrlController@list')->name('admin.url.list');
+    Route::post('url/delete/{id}', 'UrlController@delete')->name('admin.url.delete');
+
 
     Route::post('manage/refresh', 'ManageController@refresh')->name('manage.refresh');
     Route::post('manage/delete', 'ManageController@delete')->name('manage.delete');

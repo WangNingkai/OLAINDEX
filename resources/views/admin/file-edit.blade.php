@@ -1,21 +1,55 @@
-@extends('default.layouts.main')
-@section('title', '文件编辑')
+@extends('admin.layouts.main')
+@section('title', '文件管理')
 @section('content')
-    <div class="card border-light mb-3 shadow">
-        <div class="card-header">
-            文件编辑
+    <!-- Page title -->
+    <div class="page-header d-print-none">
+        <div class="row align-items-center">
+            <div class="col">
+                <!-- Page pre-title -->
+                <div class="page-pretitle">
+                    README.md
+                </div>
+                <h2 class="page-title">
+                    文件管理
+                </h2>
+            </div>
+            <!-- Page title actions -->
+            <div class="col-auto ms-auto d-print-none">
+                <div class="btn-list">
+                  <span class="d-none d-sm-inline">
+                    <a href="#" class="btn btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                             stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M9 13l-4 -4l4 -4m-4 4h11a4 4 0 0 1 0 8h-1"/>
+                                        </svg>
+                      返回
+                    </a>
+                  </span>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <form action="" method="post">
-                @csrf
-                <label for="mde"></label>
-                <input type="hidden" name="file_id" value="{{ $file_id }}">
-                <input type="hidden" name="account_id" value="{{ $account_id }}">
-                <input type="hidden" name="parent_id" value="{{ $parent_id }}">
-                <input type="hidden" name="redirect" value="{{ $redirect }}">
-                <textarea id="mde" name="content" class="invisible">{{  $content }}</textarea>
-                <button type="submit" id="submit_btn" class="btn btn-primary">提交</button>
-            </form>
+    </div>
+    <div class="row row-cards">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">编辑README.md</h3>
+                </div>
+                <div class="card-body">
+                    <form action="" method="post">
+                        @csrf
+                        <label for="mde"></label>
+                        <input type="hidden" name="file_id" value="{{ $file_id }}">
+                        <input type="hidden" name="account_id" value="{{ $account_id }}">
+                        <input type="hidden" name="parent_id" value="{{ $parent_id }}">
+                        <input type="hidden" name="redirect" value="{{ $redirect }}">
+                        <textarea id="mde" name="content" class="invisible">{{  $content }}</textarea>
+                        <button type="submit" id="submit_btn" class="btn btn-primary">提交</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 @stop

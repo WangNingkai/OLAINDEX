@@ -16,7 +16,8 @@
                             <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}"
                                    required>
                             @if($errors->has('name')) <span
-                                class="form-text text-danger">{{ $errors->first('name') }}</span>  @endif
+                                class="form-text text-danger">{{ $errors->first('name') }}</span>
+                            @endif
                         </div>
                         <div class="form-group">
                             <label class="form-control-label" for="password">请输入密码</label>

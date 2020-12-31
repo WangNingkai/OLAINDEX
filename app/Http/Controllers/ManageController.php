@@ -109,7 +109,7 @@ class ManageController extends BaseController
 
         $list = $this->paginate($list, 20, false);
 
-        return view('default.admin.manage' . $view, compact('account_id', 'readme', 'path', 'query', 'item', 'list', 'keywords'));
+        return view('admin.file-manage' . $view, compact('account_id', 'account', 'readme', 'path', 'query', 'item', 'list', 'keywords'));
     }
 
     /**
@@ -249,7 +249,7 @@ class ManageController extends BaseController
                     });
                 }
             }
-            return view('default.admin.file', compact('content', 'file_id', 'parent_id', 'account_id', 'redirect'));
+            return view('admin.file-edit', compact('content', 'file_id', 'parent_id', 'account_id', 'redirect'));
         }
         if ($file_id) {
             Cache::forget("d:content:{$account_id}:{$file_id}");
