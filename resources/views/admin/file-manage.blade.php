@@ -39,7 +39,7 @@
     <div class="row row-cards">
         <div class="col-12">
             <nav aria-label="breadcrumb" class="mb-3">
-                <ol class="breadcrumb breadcrumb-arrows">
+                <ol class="breadcrumb breadcrumb-arrows breadcrumb-alternate">
                     <li class="breadcrumb-item">
                         <a href="{{ route('manage.query', ['account_id' => $account_id]) }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
