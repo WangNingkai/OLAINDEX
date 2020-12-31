@@ -13,6 +13,25 @@
                     短链管理
                 </h2>
             </div>
+            <!-- Page title actions -->
+            <div class="col-auto ms-auto d-print-none">
+                <div class="btn-list">
+                    <span class="d-none d-sm-inline">
+                        <a href="javascript:void(0);" class="btn btn-danger delete-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                 stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"
+                                                                                      fill="none"/><line x1="4" y1="7"
+                                                                                                         x2="20"
+                                                                                                         y2="7"/><line
+                                    x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/><path
+                                    d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path
+                                    d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/></svg>
+                            清空
+                        </a>
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row row-cards">
@@ -90,6 +109,38 @@
                                     Swal.fire({
                                         title: '操作成功',
                                         text: '删除成功',
+                                        icon: 'success',
+                                    }).then(() => {
+                                        window.location.reload()
+                                    })
+                                }
+                            })
+                            .catch(function(error) {
+                                console.log(error)
+                            })
+                    }
+                })
+
+            })
+            $('.delete-all').on('click', function(e) {
+                Swal.fire({
+                    title: '确定清空吗?',
+                    text: '清空后无法恢复!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                }).then((result) => {
+                    if (result.value) {
+                        axios.post('/admin/url/empty')
+                            .then(function(response) {
+                                let data = response.data
+                                if (data.error === '') {
+                                    Swal.fire({
+                                        title: '操作成功',
+                                        text: '清空成功',
                                         icon: 'success',
                                     }).then(() => {
                                         window.location.reload()

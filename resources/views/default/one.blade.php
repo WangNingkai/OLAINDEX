@@ -1,10 +1,19 @@
 @extends('default.layouts.main')
 @section('title', setting('site_name','OLAINDEX'))
 @section('content')
-    <div class="row mb-3">
-        @if(count($accounts) > 1)
-            <div class="col">
-                <div class="dropdown">
+    @includeWhen(!blank($path),'default.components.breadcrumb',['hash' => $hash, 'path' => $path])
+    @if (!blank($doc['head']))
+        <div class="card border-light mb-3 shadow">
+            <div class="card-header"><i class="ri-send-plane-fill"></i> HEAD</div>
+            <div class="card-body markdown-body" id="head">
+                {!! marked($doc['head']) !!}
+            </div>
+        </div>
+    @endif
+    <div class="card border-light mb-3 shadow">
+        <div class="card-header d-flex align-items-center">
+            @if(count($accounts) > 1)
+                <div class="dropdown mb-0 mr-2 my-1">
                     <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="btnChoiceAccount"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         选择盘符：
@@ -16,19 +25,15 @@
                         @endforeach
                     </div>
                 </div>
-            </div>
-        @endif
-    </div>
-    @includeWhen(!blank($path),'default.components.breadcrumb',['hash' => $hash, 'path' => $path])
-    @if (!blank($doc['head']))
-        <div class="card border-light mb-3 shadow">
-            <div class="card-header"><i class="ri-send-plane-fill"></i> HEAD</div>
-            <div class="card-body markdown-body" id="head">
-                {!! marked($doc['head']) !!}
-            </div>
+            @endif
+            <form class="form-inline mb-0 mr-2 my-1">
+                <label class="mb-0 mr-2 my-1">
+                    <input class="form-control form-control-sm" type="text" name="keywords"
+                           placeholder="搜索" value="{{ $keywords }}">
+                </label>
+                <button class="btn btn-primary btn-sm mr-2 my-1" type="submit">搜索</button>
+            </form>
         </div>
-    @endif
-    <div class="card border-light mb-3 shadow">
         <div class="card-body table-responsive">
             <table class="table table-sm table-hover  table-borderless">
                 <caption>
@@ -72,17 +77,6 @@
                 </tr>
                 </thead>
                 <tbody class="w-100">
-                <tr class="row mx-0">
-                    <td colspan="4">
-                        <form class="form-inline">
-                            <label class="mb-0 mr-2 my-1">
-                                <input class="form-control form-control-sm mr-sm-2" type="text" name="keywords"
-                                       placeholder="搜索" value="{{ $keywords }}">
-                            </label>
-                            <button class="btn btn-primary btn-sm mr-2 my-1" type="submit">搜索</button>
-                        </form>
-                    </td>
-                </tr>
                 @if(!blank($path))
                     <tr class="row mx-0">
                         <td colspan="4">
@@ -94,7 +88,7 @@
                     </tr>
                 @endif
                 @if(blank($list))
-                    <tr class="row mx-0 text-center" >
+                    <tr class="row mx-0 text-center">
                         <td colspan="4">
                             Ops! 暂无资源
                         </td>
@@ -105,7 +99,8 @@
                             data-route="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) ))]) }}">
                             <td class="col-5"
                                 style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">
-                                <a title="{{ $data['name'] }}" href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name'])))]) }}"
+                                <a title="{{ $data['name'] }}"
+                                   href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name'])))]) }}"
                                    class="text-decoration-none stretched-link">
                                     <i class="ri-{{ \App\Helpers\Tool::fetchExtIco($data['ext'] ?? 'file') }}-fill"></i>
                                     {{ $data['name'] }}

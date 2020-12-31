@@ -11,9 +11,7 @@
 - PHP BCMath 扩展
 - PHP Fileinfo 扩展 *
 
-
 **Laravel 文件系统模块要求，为保证成功安装，建议安装 `PHP Fileinfo 扩展` **
-
 
 推荐使用 oneinstack 安装php环境 [https://oneinstack.com/auto](https://oneinstack.com/auto)
 
@@ -37,7 +35,7 @@ wget http://mirrors.linuxeye.com/oneinstack-full.tar.gz && tar xzf oneinstack-fu
 
 **注意：**
 
-OLAINDEX 基于 `Laravel` 安装需要开启禁用的两个方法，步骤如下：
+OLAINDEX 基于 `Laravel` 安装需要开启禁用的几个函数方法，步骤如下：
 
 oneinstack php安装路径 `/usr/local/php/etc/php.ini`
 
@@ -47,10 +45,6 @@ oneinstack php安装路径 `/usr/local/php/etc/php.ini`
 3、进入php.ini文件，找到disable_function=，删除putenv函数，即可。
 4、sudo service php-fpm restart # 重启 php 进程
 ```
-
-**3.0更新了命令行操作，另外需要开启禁用的两个方法**
-
-分别是 `exec` 和 `shell_exec` 步骤参考上面。
 
 另外使用composer包管理器， 需要下载 composer 并且全局处理，步骤如下：
 
