@@ -16,7 +16,7 @@
                     <div class="mdui-textfield">
                         <i class="mdui-icon material-icons">links</i>
                         <input class="mdui-textfield-input" type="text" id="link"
-                               value="{{ shorten_url(route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', $path)),'download' => 1])) }}"/>
+                               value="{{ shorten_url(route('drive.query', ['hash' => $hash, 'query' => implode('/', $path),'download' => 1])) }}"/>
 
                     </div>
                     <button
@@ -29,7 +29,7 @@
             </div>
         </div>
     </div>
-    <a href="{{ shorten_url(route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', $path)),'download' => 1])) }}"
+    <a href="{{ shorten_url(route('drive.query', ['hash' => $hash, 'query' => implode('/', $path),'download' => 1])) }}"
        class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"
     ><i class="mdui-icon material-icons">file_download</i></a>
 @stop
