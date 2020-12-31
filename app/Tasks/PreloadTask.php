@@ -43,11 +43,15 @@ class PreloadTask extends Task
             return;
         }
         // 资源处理
-        $root = $account->config['root'] ?? '/';
-        $query = trim($this->query, '/');
-        $path = explode('/', $query);
+        // 资源处理
+        $root = strtolower($account->config['root'] ?? '/');
+        $rawQuery = rawurldecode($this->query);
+        $rawQuery = trim($rawQuery, '/');
+        $query = strtolower($rawQuery);
+        $path = explode('/', $rawQuery);
         $path = array_filter($path);
-        $query = trans_absolute_path(trim("{$root}/$query", '/'));
+        $query = trim("{$root}/$query", '/');
+        $query = trans_absolute_path($query);
 
         $service = $account->getOneDriveService();
 
@@ -81,6 +85,7 @@ class PreloadTask extends Task
 
         foreach ($list as $list_item) {
             $query = implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $list_item['name']));
+            $query = strtolower($query);
             $query = trim($query, '/');
             $query = trans_absolute_path(trim("{$root}/$query", '/'));
             Cache::add("d:item:{$account_id}:{$query}", $list_item, setting('cache_expires'));
