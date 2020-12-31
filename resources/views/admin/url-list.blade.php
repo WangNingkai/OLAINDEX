@@ -25,7 +25,7 @@
                             <th class="row">
                                 No.
                             </th>
-                            <th>源接</th>
+                            <th>源链</th>
                             <th>短链</th>
                             <th>添加时间</th>
                             <th class="text-end">操作</th>
