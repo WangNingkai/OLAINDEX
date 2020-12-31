@@ -47,4 +47,16 @@ class UrlController extends BaseController
         }
         return $this->fail('删除失败');
     }
+
+    /**
+     * 清空
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
+    public function empty(Request $request)
+    {
+        ShortUrl::truncate();
+        return $this->success();
+    }
 }

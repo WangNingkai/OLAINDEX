@@ -32,3 +32,7 @@ chown -R www:www * # 此处 www 根据服务器具体用户组而定
 4. 执行数据库迁移 `php artisan migrate --seed`
 5. 访问网站，设置其它数据
 
+**Q: 如何重置应用**
+
+A: 删除 `storage/install` 文件夹下的 `install.lock` 文件 以及 `data` 目录的 `sqlite` 文件
+

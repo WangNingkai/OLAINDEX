@@ -49,6 +49,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::get('url/list', 'UrlController@list')->name('admin.url.list');
     Route::post('url/delete/{id}', 'UrlController@delete')->name('admin.url.delete');
+    Route::post('url/empty', 'UrlController@empty')->name('admin.url.empty');
 
 
     Route::post('manage/refresh', 'ManageController@refresh')->name('manage.refresh');
