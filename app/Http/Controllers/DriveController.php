@@ -460,7 +460,7 @@ class DriveController extends BaseController
         }
         if ($need_pass) {
             if (strcmp($_password, $input_password) === 0) {
-                return redirect()->route('drive.query', ['hash' => $hash, 'query' => $redirect])->withCookie("e:{$hash}:{$_encrypt_path}", $data, 600);
+                return redirect()->route('drive.query', ['hash' => $hash, 'query' => url_encode($redirect)])->withCookie("e:{$hash}:{$_encrypt_path}", $data, 600);
             }
         }
         return redirect()->back();
