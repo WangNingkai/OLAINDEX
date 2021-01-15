@@ -113,6 +113,19 @@
 
                                 <div class="form-group mb-3 ">
                                     <label class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="open_search"
+                                               @if( setting('open_search',0)) checked
+                                               @endif onchange="$('input[name=\'open_search\']').val(Number(this.checked))">
+                                        <span class="form-check-label">开启目录搜索</span>
+                                        <input type="hidden" name="open_search"
+                                               value="{{ setting('open_search', 0) }}">
+                                    </label>
+                                    <span class="form-hint text-danger">目录搜索仅为当前目录资源搜索，不适用全局搜索</span>
+                                </div>
+
+
+                                <div class="form-group mb-3 ">
+                                    <label class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="open_short_url"
                                                @if( setting('open_short_url',0)) checked
                                                @endif onchange="$('input[name=\'open_short_url\']').val(Number(this.checked))">

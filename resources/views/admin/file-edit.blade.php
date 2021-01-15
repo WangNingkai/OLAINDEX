@@ -54,7 +54,7 @@
     </div>
 @stop
 @push('stylesheet')
-    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde@2.13.0/dist/easymde.min.css">
     <style>
         .editor-preview img, .editor-preview-side img {
             box-sizing: border-box;
@@ -66,10 +66,8 @@
     </style>
 @endpush
 @push('scripts')
-    <script defer src="https://use.fontawesome.com/releases/v5.4.1/js/all.js"
-            integrity="sha384-L469/ELG4Bg9sDQbl0hvjMq8pOcqFgkSpwhwnslzvVVGpDjYJ6wJJyYjvG3u8XW7"
-            crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+    <script src="https://cdn.staticfile.org/font-awesome/5.15.1/js/all.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/easymde@2.13.0/dist/easymde.min.js"></script>
     <script>
         $(function() {
             const easyMDE = new EasyMDE({
