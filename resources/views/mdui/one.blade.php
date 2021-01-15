@@ -44,19 +44,20 @@
                     </div>
                 </div>
             </li>
+            @if(setting('open_search', 0))
+                <li class="mdui-list-item mdui-ripple">
+                    <div class="mdui-col-sm-12">
+                        <form action="" method="get">
+                            <div class="mdui-textfield">
+                                <i class="mdui-icon material-icons">search</i>
 
-            <li class="mdui-list-item mdui-ripple">
-                <div class="mdui-col-sm-12">
-                    <form action="" method="get">
-                        <div class="mdui-textfield">
-                            <i class="mdui-icon material-icons">search</i>
-
-                            <input class="mdui-textfield-input" type="text" id="keywords"
-                                   name="keywords" placeholder="搜索目录资源"/>
-                        </div>
-                    </form>
-                </div>
-            </li>
+                                <input class="mdui-textfield-input" type="text" id="keywords"
+                                       name="keywords" placeholder="搜索目录资源"/>
+                            </div>
+                        </form>
+                    </div>
+                </li>
+            @endif
             @if(!blank($path))
                 <li class="mdui-list-item mdui-ripple"
                     data-route="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(\App\Helpers\Tool::fetchGoBack($path))]) }}">

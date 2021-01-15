@@ -26,13 +26,15 @@
                     </div>
                 </div>
             @endif
-            <form class="form-inline mb-0 mr-2 my-1">
-                <label class="mb-0 mr-2 my-1">
-                    <input class="form-control form-control-sm" type="text" name="keywords"
-                           placeholder="搜索" value="{{ $keywords }}">
-                </label>
-                <button class="btn btn-primary btn-sm mr-2 my-1" type="submit">搜索</button>
-            </form>
+            @if(setting('open_search', 0))
+                <form class="form-inline mb-0 mr-2 my-1">
+                    <label class="mb-0 mr-2 my-1">
+                        <input class="form-control form-control-sm" type="text" name="keywords"
+                               placeholder="搜索" value="{{ $keywords }}">
+                    </label>
+                    <button class="btn btn-primary btn-sm mr-2 my-1" type="submit">搜索</button>
+                </form>
+            @endif
         </div>
         <div class="card-body table-responsive">
             <table class="table table-sm table-hover  table-borderless">
