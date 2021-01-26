@@ -19,6 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique('idx_mail');
             $table->string('password');
             $table->boolean('status');
+            $table->rememberToken();
             $table->timestamps();
         });
     }
