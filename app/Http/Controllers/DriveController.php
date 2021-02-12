@@ -158,7 +158,7 @@ class DriveController extends BaseController
             $item = $this->filterItem($item, $hash);
             $file = $this->formatItem($item, true);
             $download = $file['@microsoft.graph.downloadUrl'];
-            if ($request->get('download')) {
+            if ($request->get('download') == 1 || $request->get('download') == "" && $request->get('hash') == "") {
                 return redirect()->away($download);
             }
             $file['download'] = $download;
