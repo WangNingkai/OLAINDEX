@@ -158,8 +158,16 @@ class DriveController extends BaseController
             $item = $this->filterItem($item, $hash);
             $file = $this->formatItem($item, true);
             $download = $file['@microsoft.graph.downloadUrl'];
-            if ($request->get('download')) {
-                return redirect()->away($download);
+            switch(setting('single_account_mode')){
+                case 0:
+                    if ( $request->get('download')) {
+                        return redirect()->away($download);
+                    } break;
+                case 1:
+                    //单用户模式可以直接使用文件地址下载
+                    if ( $request->get('download') == 1 || $request->get('download') == "" && $request->get('hash') == "" ) {
+                        return redirect()->away($download);
+                    } break;
             }
             $file['download'] = $download;
             $showList = [
