@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the wangningkai/OLAINDEX.
+ * This file is part of the wangningkai/olaindex.
  * (c) wangningkai <i@ningkai.wang>
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
@@ -437,11 +437,11 @@ class OneDrive
             return $result;
         }
         $nextLink = $response->getNextLink();
-        if (!$nextLink) {
-            $data = $response->getBody()['value'];
+        if (blank($nextLink)) {
+            $data = $response->getBody()['value'] ?? [];
             $result = array_merge_recursive($data, $result);
         } else {
-            $data = array_merge_recursive($response->getBody()['value'], $result);
+            $data = array_merge_recursive($response->getBody()['value'] ?? [], $result);
             $baseLength = strlen($response->getRequest()->getBaseUrl());
             $query = substr($nextLink, $baseLength);
             $params = parse_query(parse_url($nextLink)['query']);
@@ -487,14 +487,21 @@ class OneDrive
             ->setMethod($method)
             ->setQuery($query)
             ->addHeaders($headers)
-            ->attachBody($body)
-            ->setReturnStream(false);
-        /*Log::info('请求MsGraph', [
-            'method' => $method,
-            'query' => $query,
-            'endpoint' => $this->restEndpoint
-        ]);*/
+            ->attachBody($body);
+
         $resp = $req->execute();
+
+        if (blank($resp->getBody())) {
+            $flag = 'request_id:' . str_random(10);
+            Log::info($flag . ' 请求MsGraph参数', [
+                'apiVersion' => 'v1.0',
+                'method' => $method,
+                'query' => $query,
+                'restEndpoint' => $this->restEndpoint,
+            ]);
+            Log::info($flag . ' 请求MsGraph响应', [$resp->getBody(), $resp->getHeaders(), $resp->getError(), $resp->getStatus()]);
+        }
+
         if (null !== $resp->getError()) {
             $body = $resp->getBody();
             $headers = $resp->getHeaders();

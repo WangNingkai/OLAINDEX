@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the wangningkai/OLAINDEX.
+ * This file is part of the wangningkai/olaindex.
  * (c) wangningkai <i@ningkai.wang>
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
@@ -8,11 +8,10 @@
 
 namespace App\Service;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Stream;
+use Curl\Curl;
 use Microsoft\Graph\Core\GraphConstants;
 use Microsoft\Graph\Exception\GraphException;
+use Log;
 
 class GraphRequest
 {
@@ -106,7 +105,6 @@ class GraphRequest
         $this->requestType = $requestType;
         $this->endpoint = $endpoint;
         $this->accessToken = $accessToken;
-        $this->http_errors = true;
 
         if (!$this->accessToken) {
             throw new GraphException(GraphConstants::NO_ACCESS_TOKEN);
@@ -120,19 +118,6 @@ class GraphRequest
     }
 
     /**
-     * Sets a http errors option
-     *
-     * @param string $http_errors A bool option to the Graph call
-     *
-     * @return GraphRequest
-     */
-    public function setHttpErrors($http_errors)
-    {
-        $this->http_errors = $http_errors;
-        return $this;
-    }
-
-    /**
      * Sets a new accessToken
      *
      * @param string $accessToken A valid access token to validate the Graph call
@@ -143,24 +128,6 @@ class GraphRequest
     {
         $this->accessToken = $accessToken;
         $this->headers['Authorization'] = 'Bearer ' . $this->accessToken;
-        return $this;
-    }
-
-    /**
-     * Sets the return type of the response object
-     *
-     * @param mixed $returnClass The object class to use
-     *
-     * @return GraphRequest object
-     */
-    public function setReturnType($returnClass)
-    {
-        $this->returnType = $returnClass;
-        if ($this->returnType === "GuzzleHttp\Psr7\Stream") {
-            $this->returnsStream = true;
-        } else {
-            $this->returnsStream = false;
-        }
         return $this;
     }
 
@@ -198,7 +165,7 @@ class GraphRequest
     public function attachBody($obj)
     {
         // Attach streams & JSON automatically
-        if (is_string($obj) || $obj instanceof Stream) {
+        if (is_string($obj)) {
             $this->requestBody = $obj;
         } // By default, JSON-encode
         else {
@@ -231,178 +198,59 @@ class GraphRequest
     }
 
     /**
-     * Executes the HTTP request using Guzzle
+     * Executes the HTTP request
      *
-     * @param mixed $client The client to use in the request
      *
      * @return mixed object or array of objects
      *         of class $returnType
      * @throws GraphException if response is invalid
      *
      */
-    public function execute($client = null)
+    public function execute()
     {
-        if (is_null($client)) {
-            $client = $this->createGuzzleClient();
+        $this->requestType = strtoupper($this->requestType);
+        $options = [
+            CURLOPT_CUSTOMREQUEST => $this->requestType,
+            CURLOPT_AUTOREFERER => true,
+            CURLOPT_FAILONERROR => true,
+            CURLOPT_FOLLOWLOCATION => false,
+        ];
+        if ($this->requestBody) {
+            $options = array_add($options, CURLOPT_POST, true);
+            $options = array_add(
+                $options,
+                CURLOPT_POSTFIELDS,
+                $this->requestBody
+            );
         }
-        try {
-            $result = $client->request(
-                $this->requestType,
-                $this->_getRequestUrl(),
+        $curl = new Curl();
+        $curl->setUserAgent('ISV|OLAINDEX|OLAPLUS/999');
+        $curl->setHeaders($this->headers);
+        $curl->setRetry(1);
+        $curl->setConnectTimeout(5);
+        $curl->setTimeout((int)$this->timeout);
+        $curl->setUrl($this->baseUrl . '/' . $this->_getRequestUrl());
+        $curl->setOpts($options);
+        $curl->exec();
+        $curl->close();
+        if ($curl->error) {
+            Log::error(
+                'Request Graph Error.',
                 [
-                    'body' => $this->requestBody,
-                    'timeout' => $this->timeout
+                    'errno' => $curl->errorCode,
+                    'message' => $curl->errorMessage,
+                    'headers' => $curl->responseHeaders
                 ]
             );
-        } catch (RequestException $e) {
-            $result = $e->getResponse();
-        }
-
-        if (!$result) {
             throw new GraphException(GraphConstants::UNABLE_TO_PARSE_RESPONSE);
         }
 
-
-        // Check to see if returnType is a stream, if so return it immediately
-        if ($this->returnsStream) {
-            return $result->getBody();
-        }
-
-        // Wrap response in GraphResponse layer
-        $response = new GraphResponse(
+        return new GraphResponse(
             $this,
-            $result->getBody(),
-            $result->getStatusCode(),
-            $result->getHeaders()
+            collect($curl->response)->toJson(),
+            $curl->getHttpStatusCode(),
+            collect($curl->responseHeaders)->toJson()
         );
-
-        // If no return type is specified, return GraphResponse
-        $returnObj = $response;
-
-        if ($this->returnType) {
-            $returnObj = $response->getResponseAsObject($this->returnType);
-        }
-        return $returnObj;
-    }
-
-    /**
-     * Executes the HTTP request asynchronously using Guzzle
-     *
-     * @param mixed $client The client to use in the request
-     *
-     * @return mixed object or array of objects
-     *         of class $returnType
-     */
-    public function executeAsync($client = null)
-    {
-        if (is_null($client)) {
-            $client = $this->createGuzzleClient();
-        }
-
-        return $client->requestAsync(
-            $this->requestType,
-            $this->_getRequestUrl(),
-            [
-                'body' => $this->requestBody,
-                'timeout' => $this->timeout
-            ]
-        )->then(
-        // On success, return the result/response
-            function ($result) {
-
-                // Check to see if returnType is a stream, if so return it immediately
-                if ($this->returnsStream) {
-                    return $result->getBody();
-                }
-
-                $response = new GraphResponse(
-                    $this,
-                    $result->getBody(),
-                    $result->getStatusCode(),
-                    $result->getHeaders()
-                );
-                $returnObject = $response;
-                if ($this->returnType) {
-                    $returnObject = $response->getResponseAsObject(
-                        $this->returnType
-                    );
-                }
-                return $returnObject;
-            },
-            // On fail, log the error and return null
-            static function ($reason) {
-                trigger_error("Async call failed: " . $reason->getMessage());
-                return null;
-            }
-        );
-    }
-
-    /**
-     * Download a file from OneDrive to a given location
-     *
-     * @param string $path The path to download the file to
-     * @param mixed $client The client to use in the request
-     *
-     * @return null
-     * @throws GraphException if file path is invalid
-     *
-     */
-    public function download($path, $client = null)
-    {
-        if (is_null($client)) {
-            $client = $this->createGuzzleClient();
-        }
-        try {
-            $file = fopen($path, 'wb');
-            if (!$file) {
-                throw new GraphException(GraphConstants::INVALID_FILE);
-            }
-
-            $client->request(
-                $this->requestType,
-                $this->_getRequestUrl(),
-                [
-                    'body' => $this->requestBody,
-                    'sink' => $file
-                ]
-            );
-            if (is_resource($file)) {
-                fclose($file);
-            }
-        } catch (GraphException $e) {
-            throw new GraphException(GraphConstants::INVALID_FILE);
-        }
-
-        return null;
-    }
-
-    /**
-     * Upload a file to OneDrive from a given location
-     *
-     * @param string $path The path of the file to upload
-     * @param mixed $client The client to use in the request
-     *
-     * @return mixed DriveItem or array of DriveItems
-     * @throws GraphException if file is invalid
-     *
-     */
-    public function upload($path, $client = null)
-    {
-        if (is_null($client)) {
-            $client = $this->createGuzzleClient();
-        }
-        try {
-            if (file_exists($path) && is_readable($path)) {
-                $file = fopen($path, 'r');
-                $stream = \GuzzleHttp\Psr7\stream_for($file);
-                $this->requestBody = $stream;
-                return $this->execute($client);
-            }
-
-            throw new GraphException(GraphConstants::INVALID_FILE);
-        } catch (GraphException $e) {
-            throw new GraphException(GraphConstants::INVALID_FILE);
-        }
     }
 
     /**
@@ -413,7 +261,6 @@ class GraphRequest
     private function _getDefaultHeaders()
     {
         return [
-            'Host' => $this->baseUrl,
             'Content-Type' => 'application/json',
             'SdkVersion' => 'Graph-php-' . GraphConstants::SDK_VERSION,
             'Authorization' => 'Bearer ' . $this->accessToken
@@ -448,32 +295,6 @@ class GraphRequest
             return "?";
         }
         return "&";
-    }
-
-    /**
-     * Create a new Guzzle client
-     * To allow for user flexibility, the
-     * client is not reused. This allows the user
-     * to set and change headers on a per-request
-     * basis
-     *
-     * If a proxyPort was passed in the constructor, all
-     * requests will be forwared through this proxy.
-     *
-     * @return \GuzzleHttp\Client The new client
-     */
-    protected function createGuzzleClient()
-    {
-        $clientSettings = [
-            'base_uri' => $this->baseUrl,
-            'http_errors' => $this->http_errors,
-            'headers' => $this->headers
-        ];
-        if ($this->proxyPort !== null) {
-            $clientSettings['verify'] = false;
-            $clientSettings['proxy'] = $this->proxyPort;
-        }
-        return new Client($clientSettings);
     }
 
     public function getBaseUrl()
