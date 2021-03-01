@@ -71,6 +71,9 @@ class AuthController extends BaseController
         $account = Account::create($params);
         $account->refreshOneDriveQuota(true);
         $this->showMessage('绑定成功！');
+        if (setting('primary_account',0) === 0) {
+            setting_set('primary_account', $account->id);
+        }
         return redirect()->route('admin.account.list');
     }
 }

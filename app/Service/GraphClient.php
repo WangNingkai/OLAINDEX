@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the wangningkai/OLAINDEX.
+ * This file is part of the wangningkai/olaindex.
  * (c) wangningkai <i@ningkai.wang>
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
@@ -9,7 +9,6 @@
 namespace App\Service;
 
 use Microsoft\Graph\Exception\GraphException;
-use GuzzleHttp\Psr7\Stream;
 use Log;
 
 class GraphClient
@@ -70,19 +69,11 @@ class GraphClient
         return $this;
     }
 
-    public function setReturnStream($returnStream): GraphClient
-    {
-        $this->returnStream = $returnStream;
-        return $this;
-    }
-
     public function execute()
     {
         try {
             $query = $this->graph->createRequest($this->method, $this->query)
-                ->setHttpErrors(true)
-                ->setReturnType($this->returnStream)
-                ->setTimeout(3000)
+                ->setTimeout(3)
                 ->addHeaders($this->headers)
                 ->attachBody($this->body);
             $resp = $query->execute();
@@ -94,11 +85,6 @@ class GraphClient
                 'query' => $this->query,
             ]);
             return null;
-        }
-        if ($resp instanceof Stream) {
-            $data = $resp->getContents();
-
-            return is_json($data) ? json_decode($data, true) : $data;
         }
         return $resp;
     }

@@ -1,15 +1,12 @@
 <?php
 /**
- * This file is part of the wangningkai/OLAINDEX.
+ * This file is part of the wangningkai/olaindex.
  * (c) wangningkai <i@ningkai.wang>
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
  */
 
 namespace App\Service;
-
-use Microsoft\Graph\Exception\GraphException;
-use Microsoft\Graph\Core\GraphConstants;
 
 class GraphResponse
 {
@@ -29,7 +26,7 @@ class GraphResponse
     /**
      * The headers of the response
      *
-     * @var array(string)
+     * @var \Curl\CaseInsensitiveArray|array(string)
      */
     private $_headers;
     /**
@@ -68,10 +65,19 @@ class GraphResponse
      */
     private function _decodeBody()
     {
-        $decodedBody = json_decode($this->_body, true);
-        if ($decodedBody === null) {
-            $decodedBody = array();
+        if (is_json($this->_body)) {
+            if (is_object($this->_body)) {
+                $this->_body = collect($this->_body)->toJson();
+            }
+            $decodedBody = json_decode($this->_body, true);
+            if ($decodedBody === null) {
+                $decodedBody = [];
+            }
+        } else {
+            $decodedBody = (array)$this->_body;
         }
+
+
         return $decodedBody;
     }
 
@@ -112,36 +118,18 @@ class GraphResponse
      */
     public function getHeaders()
     {
-        return $this->_headers;
-    }
-
-    /**
-     * Converts the response JSON object to a Graph SDK object
-     *
-     * @param mixed $returnType The type to convert the object(s) to
-     *
-     * @return mixed object or array of objects of type $returnType
-     */
-    public function getResponseAsObject($returnType)
-    {
-        $class = $returnType;
-        $result = $this->getBody();
-
-        //If more than one object is returned
-        if (array_key_exists('value', $result)) {
-            $values = $result['value'];
-
-            //Check that this is an object array instead of a value called "value"
-            if (is_array($values)) {
-                $objArray = array();
-                foreach ($values as $obj) {
-                    $objArray[] = new $class($obj);
-                }
-                return $objArray;
+        if (is_json($this->_headers)) {
+            if (is_object($this->_headers)) {
+                $this->_headers = collect($this->_headers)->toJson();
             }
+            $decodedHeaders = json_decode($this->_headers, true);
+            if ($decodedHeaders === null) {
+                $decodedHeaders = [];
+            }
+        } else {
+            $decodedHeaders = (array)$this->_headers;
         }
-
-        return new $class($result);
+        return $decodedHeaders;
     }
 
     /**
