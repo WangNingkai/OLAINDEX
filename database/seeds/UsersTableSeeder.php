@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use DB;
+use Schema;
 
 class UsersTableSeeder extends Seeder
 {
@@ -11,12 +13,15 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        \DB::table('users')->insert([
+        $data = [
             'name' => 'admin',
             'email' => 'i@ningkai.wang',
             'password' => bcrypt('123456'),
             'status' => 1,
-            'remember_token' => str_random(10),
-        ]);
+        ];
+        if (Schema::hasColumn('users', 'remember_token')) {
+            $data['remember_token'] = str_random(10);
+        }
+        DB::table('users')->insertOrIgnore($data);
     }
 }
