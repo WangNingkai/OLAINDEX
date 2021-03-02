@@ -174,8 +174,28 @@
                                     <label class="form-label" for="access_token">第三方接口token</label>
                                     <div>
                                         <input type="text" class="form-control" id="access_token" name="access_token"
-                                               value="{{ setting('access_token', 1800) }}">
+                                               value="{{ setting('access_token', '') }}">
                                         <small class="form-hint text-danger">第三方接口token(图床、文件列表)</small>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="download_limit">资源下载频率限制（次/分钟）</label>
+                                    <div>
+                                        <input type="text" class="form-control" id="download_limit"
+                                               name="download_limit"
+                                               value="{{ setting('download_limit', 0) }}">
+                                        <small class="form-hint text-danger">全局文件直链访问速率限制</small>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="user_limit">单一用户下载资源频率限制（次/分钟）</label>
+                                    <div>
+                                        <input type="text" class="form-control" id="user_limit"
+                                               name="user_limit"
+                                               value="{{ setting('user_limit', 0) }}">
+                                        <small class="form-hint text-danger">单个用户文件直链访问速率限制（根据IP统计）</small>
                                     </div>
                                 </div>
 
@@ -183,10 +203,9 @@
                                     <label class="form-label" for="api_limit">接口访问频率限制（次/分钟）</label>
                                     <div>
                                         <input type="text" class="form-control" id="api_limit" name="api_limit"
-                                               value="{{ setting('api_limit', 1800) }}">
+                                               value="{{ setting('api_limit', 0) }}">
                                     </div>
                                 </div>
-
 
                                 <div class="form-footer">
                                     <button type="submit" class="btn btn-primary">提交</button>

@@ -16,6 +16,7 @@ use App\Helpers\HashidsHelper;
 use App\Helpers\Tool;
 use Cache;
 use Cookie;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 
@@ -159,6 +160,7 @@ class DriveController extends BaseController
             $file = $this->formatItem($item, true);
             $download = $file['@microsoft.graph.downloadUrl'];
             if ($request->get('download')) {
+                $this->checkDownloadRate($request, $hash, $query);
                 return redirect()->away($download);
             }
             $file['download'] = $download;
@@ -642,6 +644,83 @@ class DriveController extends BaseController
             $files = $files->sortByDesc($field, $field === 'name' ? SORT_NATURAL : SORT_REGULAR);
         }
         return $folders->merge($files)->all();
+    }
+
+    /**
+     * 下载速率限制
+     * @param Request $request
+     * @param $hash
+     * @param $query
+     */
+    private function checkDownloadRate(Request $request, $hash, $query)
+    {
+        if (setting('download_limit', 0) <= 0) {
+            return;
+        }
+        $this->checkUserDownloadRate($request, $hash, $query);
+        $rateLimiter = [1, setting('download_limit')];//[单位时间内, 允许操作的次数]
+        $key = 's:rate:' . sha1($hash . '|' . $query);
+        $decaySeconds = (int)$rateLimiter[0] * 60;
+        $maxAttempts = (int)$rateLimiter[1];
+
+        $attempts = Cache::get($key, 0);
+        if ($attempts >= $maxAttempts) {
+            if (Cache::has($key . ':timer')) {
+                abort(429, '资源过于火爆，请稍后再试！');
+            }
+            Cache::forget($key);
+        }
+
+        Cache::add(
+            $key . ':timer', Carbon::now()->addRealSeconds($decaySeconds)->getTimestamp(), $decaySeconds
+        );
+
+        $added = Cache::add($key, 0, $decaySeconds);
+
+        $hits = (int)Cache::increment($key);
+
+        if (!$added && $hits === 1) {
+            Cache::put($key, 1, $decaySeconds);
+        }
+
+    }
+
+    /**
+     * 用户下载速率限制
+     * @param Request $request
+     * @param $hash
+     * @param $query
+     */
+    private function checkUserDownloadRate(Request $request, $hash, $query)
+    {
+        if (setting('user_limit', 0) <= 0) {
+            return;
+        }
+        $rateLimiter = [1, setting('user_limit')];//[单位时间内, 允许操作的次数]
+        $key = 's:rate:' . sha1($hash . '|' . $query . '|' . $request->ip());
+        $decaySeconds = (int)$rateLimiter[0] * 60;
+        $maxAttempts = (int)$rateLimiter[1];
+
+        $attempts = Cache::get($key, 0);
+        if ($attempts >= $maxAttempts) {
+            if (Cache::has($key . ':timer')) {
+                abort(429);
+            }
+            Cache::forget($key);
+        }
+
+        Cache::add(
+            $key . ':timer', Carbon::now()->addRealSeconds($decaySeconds)->getTimestamp(), $decaySeconds
+        );
+
+        $added = Cache::add($key, 0, $decaySeconds);
+
+        $hits = (int)Cache::increment($key);
+
+        if (!$added && $hits === 1) {
+            Cache::put($key, 1, $decaySeconds);
+        }
+
     }
 
 }
