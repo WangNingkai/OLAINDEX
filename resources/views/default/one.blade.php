@@ -26,6 +26,10 @@
                     </div>
                 </div>
             @endif
+            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#links-container">
+                导出直链
+            </button>
+
             @if(setting('open_search', 0))
                 <form class="form-inline mb-0 mr-2 my-1">
                     <label class="mb-0 mr-2 my-1">
@@ -115,7 +119,8 @@
                                 @if(array_has($data,'folder'))
                                     -
                                 @else
-                                    <a href="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )),'download' => 1]) }}"
+                                    <a title="{{ $data['name'] }}"
+                                       href="{{ shorten_url(route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )),'download' => 1])) }}"
                                        class="btn btn-sm btn-primary download mr-2 my-1">下载</a>
                                 @endif
                             </td>
@@ -135,6 +140,36 @@
             </div>
         </div>
     @endif
+    <div class="modal fade" id="links-container" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">导出直链</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>导出当前页面文件下载地址</p>
+                    <p>
+                        <a class="clipboard btn btn-primary btn-sm" href="javascript:void(0)"
+                           data-toggle="tooltip"
+                           data-placement="right" data-clipboard-target="#dl"
+                        >复制全部</a>
+                        <a class="btn btn-info btn-sm" href="javascript:void(0)" onclick="exportLinks()">下载</a>
+                    </p>
+                    <label for="dl">
+                        <textarea name="urls" id="dl" class="form-control" cols="60"
+                                  rows="15"></textarea>
+                    </label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="fetchLinks()">点击获取</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 @push('scripts')
     <script>
@@ -153,6 +188,32 @@
                     console.error(error)
                 })
         }
+
+        function fetchLinks() {
+            $('#dl').val('')
+            $('.download').each(function() {
+                let dn = $(this).attr('title')
+                let dl = decodeURI($(this).attr('href'))
+                let url = dn + ' ' + dl + '\n'
+                let origin = $('#dl').val()
+                $('#dl').val(origin + url)
+            })
+        }
+
+        function exportLinks() {
+            let data = $('#dl').val()
+            exportRaw(data, 'urls.txt')
+        }
+
+        function exportRaw(data, name) {
+            let urlObject = window.URL || window.webkitURL || window
+            let export_blob = new Blob([data])
+            let save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a')
+            save_link.href = urlObject.createObjectURL(export_blob)
+            save_link.download = name
+            save_link.click()
+        }
+
         $(function() {
             preLoad()
             $('.list-item').on('click', function(e) {

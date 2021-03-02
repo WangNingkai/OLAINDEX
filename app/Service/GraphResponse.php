@@ -13,7 +13,7 @@ class GraphResponse
     /**
      * The body of the response
      *
-     * @var string
+     * @var array|string
      */
     private $_body;
     /**
@@ -26,7 +26,7 @@ class GraphResponse
     /**
      * The headers of the response
      *
-     * @var \Curl\CaseInsensitiveArray|array(string)
+     * @var array|string
      */
     private $_headers;
     /**

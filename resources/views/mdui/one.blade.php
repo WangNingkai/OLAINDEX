@@ -114,7 +114,8 @@
                                mdui-tooltip="{content: '下载'}"
                                aria-label="Download"
                                href="javascript:void(0)"
-                               data-route="{{ route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )),'download' => 1]) }}"
+                               title="{{ $data['name'] }}"
+                               data-route="{{ shorten_url(route('drive.query', ['hash' => $hash, 'query' => url_encode(implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $data['name']) )),'download' => 1])) }}"
                                target="_blank">
                                 <i class="mdui-icon material-icons">file_download</i>
                             </a>
@@ -146,6 +147,35 @@
             </div>
         </div>
     @endif
+    <a href="javascript:void(0)"
+       class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-theme-accent"
+       mdui-dialog="{target: '#links-container'}"
+    ><i class="mdui-icon material-icons">file_download</i></a>
+    <div class="mdui-dialog" id="links-container">
+        <div class="mdui-dialog-title">导出直链</div>
+        <div class="mdui-dialog-content">
+            <p>导出当前页面文件下载地址</p>
+            <p>
+                <a class="mdui-btn mdui-ripple mdui-color-theme-accent" href="javascript:void(0)"
+                   onclick="fetchLinks()"
+                >获取直链</a>
+                <a class="clipboard mdui-btn mdui-ripple mdui-color-theme-accent" href="javascript:void(0)"
+                   data-clipboard-target="#dl"
+                >复制全部</a>
+                <a class="mdui-btn mdui-ripple mdui-color-theme-accent" href="javascript:void(0)"
+                   onclick="exportLinks()">下载</a>
+            </p>
+            <div class="mdui-textfield">
+                <label for="dl">
+                    <textarea class="mdui-textfield-input" name="urls" id="dl" cols="60" rows="15"></textarea>
+                </label>
+            </div>
+        </div>
+        <div class="mdui-dialog-actions">
+            <button class="mdui-btn mdui-ripple" mdui-dialog-close>取消</button>
+            <button class="mdui-btn mdui-ripple" mdui-dialog-confirm>确定</button>
+        </div>
+    </div>
 @stop
 @push('scripts')
     <script>
@@ -164,6 +194,32 @@
                     console.error(error)
                 })
         }
+
+        function fetchLinks() {
+            $('#dl').val('')
+            $('.download').each(function() {
+                let dn = $(this).attr('title')
+                let dl = decodeURI($(this).attr('data-route'))
+                let url = dn + ' ' + dl + '\n'
+                let origin = $('#dl').val()
+                $('#dl').val(origin + url)
+            })
+        }
+
+        function exportLinks() {
+            let data = $('#dl').val()
+            exportRaw(data, 'urls.txt')
+        }
+
+        function exportRaw(data, name) {
+            let urlObject = window.URL || window.webkitURL || window
+            let export_blob = new Blob([data])
+            let save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a')
+            save_link.href = urlObject.createObjectURL(export_blob)
+            save_link.download = name
+            save_link.click()
+        }
+
         $(function() {
             preLoad()
             $('.mdui-list-item,.download').on('click', function(e) {

@@ -47,9 +47,19 @@
 <div id="top" class="anchor"></div>
 @include('mdui.layouts.appbar')
 @include('mdui.layouts.drawer')
-<div class="mdui-container">
+<div class="mdui-container" style="min-height: 750px">
     @yield('content')
 </div>
+<footer class="mdui-container">
+    <div class="mdui-row">
+        <div class="mdui-xs-12">
+            <div class="mdui-typo-subheading-opacity mdui-text-center">
+                {!! marked(setting('copyright','Designed
+                by [IMWNK](https://imwnk.cn/) | Powered by [OLAINDEX](https://git.io/OLAINDEX)'),true) !!}
+            </div>
+        </div>
+    </div>
+</footer>
 <script
     src="https://cdn.jsdelivr.net/npm/mdui@1.0.1/dist/js/mdui.min.js"
     integrity="sha384-gCMZcshYKOGRX9r6wbDrvF+TcCCswSHFucUzUPwka+Gr+uHgjlYvkABr95TCOz3A"
