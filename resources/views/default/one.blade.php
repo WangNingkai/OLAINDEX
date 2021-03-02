@@ -155,8 +155,8 @@
                         <a class="clipboard btn btn-primary btn-sm" href="javascript:void(0)"
                            data-toggle="tooltip"
                            data-placement="right" data-clipboard-target="#dl"
-                        >点击复制</a>
-                        <a class="btn btn-info btn-sm" href="javascript:void(0)" onclick="exportLinks()">点击下载</a>
+                        >复制全部</a>
+                        <a class="btn btn-info btn-sm" href="javascript:void(0)" onclick="exportLinks()">下载</a>
                     </p>
                     <label for="dl">
                         <textarea name="urls" id="dl" class="form-control" cols="60"
