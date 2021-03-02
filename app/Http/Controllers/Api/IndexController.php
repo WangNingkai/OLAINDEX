@@ -8,12 +8,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Helpers\Tool;
 use App\Http\Controllers\BaseController;
 use App\Http\Traits\ApiResponseTrait;
 use App\Models\Account;
 use App\Service\GraphErrorEnum;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -70,7 +68,7 @@ class IndexController extends BaseController
         $file = $request->file($field);
         $rule = [$field => 'required|max:4096|image'];
         $validator = Validator::make(
-            request()->all(),
+            $request->all(),
             $rule
         );
         if ($validator->fails()) {
