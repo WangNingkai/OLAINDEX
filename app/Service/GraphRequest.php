@@ -58,13 +58,6 @@ class GraphRequest
      */
     protected $requestType;
     /**
-     * True if the response should be returned as
-     * a stream
-     *
-     * @var bool
-     */
-    protected $returnsStream;
-    /**
      * The return type to cast the response as
      *
      * @var object
@@ -82,12 +75,6 @@ class GraphRequest
      * @var string
      */
     protected $proxyPort;
-    /**
-     * Request options to decide if Guzzle Client should throw exceptions when http code is 4xx or 5xx
-     *
-     * @var bool
-     */
-    protected $http_errors;
 
     /**
      * Constructs a new Graph Request object
@@ -224,7 +211,7 @@ class GraphRequest
             );
         }
         $curl = new Curl();
-        $curl->setUserAgent('ISV|OLAINDEX|OLAPLUS/999');
+        $curl->setUserAgent('ISV|OLAINDEX|OLAINDEX/6.0');
         $curl->setHeaders($this->headers);
         $curl->setRetry(1);
         $curl->setConnectTimeout(5);
