@@ -27,8 +27,7 @@ class UrlController extends BaseController
             ->simplePaginate();
         return view('admin.url-list', compact('urls'));
     }
-
-
+    
     /**
      * 删除
      * @param Request $request

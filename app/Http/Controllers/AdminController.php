@@ -20,7 +20,6 @@ class AdminController extends BaseController
 {
     use ApiResponseTrait;
 
-
     /**
      * 缓存清理
      * @return \Illuminate\Http\RedirectResponse
@@ -42,7 +41,6 @@ class AdminController extends BaseController
         $accounts_count = Account::count('id');
         return view('admin.home', compact('links_count', 'accounts_count'));
     }
-
 
     /**
      * 全局设置

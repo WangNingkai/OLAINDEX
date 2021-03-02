@@ -24,6 +24,7 @@ class ManageController extends BaseController
     use ApiResponseTrait;
 
     /**
+     * 管理列表
      * @param Request $request
      * @param $account_id
      * @param string $query

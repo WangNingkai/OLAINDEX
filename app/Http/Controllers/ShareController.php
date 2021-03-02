@@ -12,6 +12,11 @@ use App\Helpers\Tool;
 
 class ShareController extends BaseController
 {
+    /**
+     * 短链转换
+     * @param $code
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function __invoke($code)
     {
         $url = Tool::decodeShortUrl($code);
