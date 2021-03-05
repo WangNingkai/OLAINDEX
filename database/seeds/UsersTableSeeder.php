@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use DB;
-use Schema;
 
 class UsersTableSeeder extends Seeder
 {
@@ -19,9 +17,9 @@ class UsersTableSeeder extends Seeder
             'password' => bcrypt('123456'),
             'status' => 1,
         ];
-        if (Schema::hasColumn('users', 'remember_token')) {
+        if (\Schema::hasColumn('users', 'remember_token')) {
             $data['remember_token'] = str_random(10);
         }
-        DB::table('users')->insertOrIgnore($data);
+        \DB::table('users')->insertOrIgnore($data);
     }
 }
