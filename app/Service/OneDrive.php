@@ -491,6 +491,9 @@ class OneDrive
 
         $resp = $req->execute();
 
+        if (null === $resp) {
+            abort(500, '网络开小差了，请稍后重试');
+        }
         if (blank($resp->getBody())) {
             $flag = 'request_id:' . str_random(10);
             Log::info($flag . ' 请求MsGraph参数', [
