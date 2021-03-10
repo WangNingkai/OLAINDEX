@@ -21,6 +21,43 @@
     <link rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css">
     @stack('stylesheet')
     {!! setting('stats_code') !!}
+    <style>
+        @media (max-width: 991px){
+            /*超出不换行，省略掉*/
+            .table-sm td:nth-child(1),td:nth-child(2),td:nth-child(3) {
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+        }
+        @media (max-width: 767px){
+            /*文件名字*/
+            .table-sm td:nth-child(1) {
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+            /*标题，文件大小、日期*/
+            .w-100 tr>th:nth-child(2),tr>th:nth-child(3){
+                display: none;
+            }
+            /*文件大小、日期*/
+            .list-item td:nth-child(2),td:nth-child(3){
+                display: none;
+            }
+            /*操作*/
+            .w-100 tr>th:nth-child(4){
+                position: absolute;
+                right: 24px;
+            }
+            /*按钮*/
+            .list-item td:nth-child(4){
+                white-space: nowrap;
+                position: absolute;
+                right: 24px;
+            }
+        }
+    </style>
     <script>
         const App = {
             'routes': {
