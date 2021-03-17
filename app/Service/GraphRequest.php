@@ -213,7 +213,7 @@ class GraphRequest
         $curl = new Curl();
         $curl->setUserAgent('ISV|OLAINDEX|OLAINDEX/6.0');
         $curl->setHeaders($this->headers);
-        $curl->setRetry(1);
+        $curl->setRetry(2);
         $curl->setConnectTimeout(5);
         $curl->setTimeout((int)$this->timeout);
         $curl->setUrl($this->baseUrl . '/' . $this->_getRequestUrl());
