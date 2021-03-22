@@ -190,7 +190,6 @@ class GraphRequest
      *
      * @return mixed object or array of objects
      *         of class $returnType
-     * @throws GraphException if response is invalid
      *
      */
     public function execute()
@@ -198,9 +197,10 @@ class GraphRequest
         $this->requestType = strtoupper($this->requestType);
         $options = [
             CURLOPT_CUSTOMREQUEST => $this->requestType,
-            CURLOPT_AUTOREFERER => true,
-            CURLOPT_FAILONERROR => true,
-            CURLOPT_FOLLOWLOCATION => false,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
         ];
         if ($this->requestBody) {
             $options = array_add($options, CURLOPT_POST, true);
@@ -211,12 +211,13 @@ class GraphRequest
             );
         }
         $curl = new Curl();
+        $curl->verbose();
         $curl->setUserAgent('ISV|OLAINDEX|OLAINDEX/6.0');
         $curl->setHeaders($this->headers);
         $curl->setRetry(2);
         $curl->setConnectTimeout(5);
         $curl->setTimeout((int)$this->timeout);
-        $curl->setUrl($this->baseUrl . '/' . $this->_getRequestUrl());
+        $curl->setUrl($this->baseUrl . $this->_getRequestUrl());
         $curl->setOpts($options);
         $curl->exec();
         $curl->close();
@@ -224,20 +225,23 @@ class GraphRequest
             Log::error(
                 'Request Graph Error.',
                 [
-                    'errno' => $curl->errorCode,
-                    'message' => $curl->errorMessage,
-                    'headers' => $curl->responseHeaders
+                    'errorCode' => $curl->getErrorCode(),
+                    'errorMessage' => $curl->getErrorMessage(),
+                    'httpStatusCode' => $curl->getHttpStatusCode(),
+                    'isHttpError' => $curl->isHttpError(),
+                    'httpErrorMessage' => $curl->getHttpErrorMessage(),
+                    'headers' => $curl->getResponseHeaders(),
+                    'body' => $curl->getResponse()
                 ]
             );
-            throw new GraphException(GraphConstants::UNABLE_TO_PARSE_RESPONSE);
+//            throw new GraphException(GraphConstants::UNABLE_TO_PARSE_RESPONSE);
+            return new GraphResponse(
+                $this,
+                collect($curl->response)->toJson(),
+                $curl->getHttpStatusCode(),
+                collect($curl->responseHeaders)->toJson()
+            );
         }
-
-        return new GraphResponse(
-            $this,
-            collect($curl->response)->toJson(),
-            $curl->getHttpStatusCode(),
-            collect($curl->responseHeaders)->toJson()
-        );
     }
 
     /**
