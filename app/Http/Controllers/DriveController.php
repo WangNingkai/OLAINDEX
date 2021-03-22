@@ -58,7 +58,6 @@ class DriveController extends BaseController
         if (!$account) {
             abort(404, '账号不存在！');
         }
-
         $view = '';
         $accounts = Account::fetchlist();
         // 资源处理

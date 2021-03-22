@@ -235,13 +235,13 @@ class GraphRequest
                 ]
             );
 //            throw new GraphException(GraphConstants::UNABLE_TO_PARSE_RESPONSE);
-            return new GraphResponse(
-                $this,
-                collect($curl->response)->toJson(),
-                $curl->getHttpStatusCode(),
-                collect($curl->responseHeaders)->toJson()
-            );
         }
+        return new GraphResponse(
+            $this,
+            collect($curl->response)->toJson(),
+            $curl->getHttpStatusCode(),
+            collect($curl->responseHeaders)->toJson()
+        );
     }
 
     /**
