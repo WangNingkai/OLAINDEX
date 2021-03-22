@@ -34,7 +34,8 @@ class DriveController extends BaseController
      */
     public function query(Request $request, $hash = '', $query = '')
     {
-        if (!$hash) {
+        if (setting('single_account_mode', 1)) {
+            $query = $hash;
             $hash = $request->get('hash', '');
             if ($hash) {
                 $account_id = HashidsHelper::decode($hash);
@@ -42,15 +43,26 @@ class DriveController extends BaseController
                 $account_id = setting('primary_account', 0);
                 $hash = HashidsHelper::encode($account_id);
             }
-
         } else {
-            $account_id = HashidsHelper::decode($hash);
-            if (null === $account_id) {
-                $query = $hash;
-                $account_id = setting('primary_account', 0);
-                $hash = HashidsHelper::encode($account_id);
+            if (!$hash) {
+                $hash = $request->get('hash', '');
+                if ($hash) {
+                    $account_id = HashidsHelper::decode($hash);
+                } else {
+                    $account_id = setting('primary_account', 0);
+                    $hash = HashidsHelper::encode($account_id);
+                }
+
+            } else {
+                $account_id = HashidsHelper::decode($hash);
+                if (null === $account_id) {
+                    $query = $hash;
+                    $account_id = setting('primary_account', 0);
+                    $hash = HashidsHelper::encode($account_id);
+                }
             }
         }
+
         if (!$account_id) {
             abort(404, '尚未设置账号！');
         }
@@ -91,7 +103,6 @@ class DriveController extends BaseController
                 abort(404, '资源不存在！');
             }
         }
-
         $service = $account->getOneDriveService();
 
         $item = Cache::remember("d:item:{$account_id}:{$query}", setting('cache_expires'), function () use ($service, $query) {
