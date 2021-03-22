@@ -129,7 +129,7 @@
                 @endif
                 </tbody>
             </table>
-            {{ $list->appends(['sortBy'=> request()->get('sortBy'),'keywords' => request()->get('keywords')])->links('default.components.page') }}
+            {{ $list->appends(['sortBy'=> request()->get('sortBy'),'keywords' => request()->get('keywords'),'hash' => request()->get('hash')])->links('default.components.page') }}
         </div>
     </div>
     @if (!blank($doc['readme']))
