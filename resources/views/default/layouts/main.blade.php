@@ -31,11 +31,16 @@
             }
         }
         @media (max-width: 767px){
+            /*禁止滚动*/
+            .table-responsive{
+                overflow: hidden;
+            }
             /*文件名字*/
             .table-sm td:nth-child(1) {
                 overflow: hidden;
                 white-space: nowrap;
                 text-overflow: ellipsis;
+                width: 600px;
             }
             /*标题，文件大小、日期*/
             .w-100 tr>th:nth-child(2),tr>th:nth-child(3){
