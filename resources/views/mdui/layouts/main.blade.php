@@ -43,7 +43,7 @@
         }
     </script>
 </head>
-<body class="mdui-appbar-with-toolbar mdui-theme-layout-auto mdui-theme-accent-pink mdui-loaded">
+<body class="mdui-appbar-with-toolbar mdui-theme-accent-pink mdui-loaded">
 <div id="top" class="anchor"></div>
 @include('mdui.layouts.appbar')
 @include('mdui.layouts.drawer')
@@ -72,10 +72,20 @@
     const $ = mdui.$
     window.mdui = mdui
     window.theme = {
+        theme_init: () => {
+	    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                store.set('darkMode', true)
+                $('body').addClass('mdui-theme-layout-dark')
+            } else {
+                store.set('darkMode', false)
+                $('body').removeClass('mdui-theme-layout-dark')
+            }
+	},
         toggle_theme: () => {
             let darkMode = store.get('darkMode')
             if (typeof (darkMode) == 'undefined' || darkMode === null) {
-                darkMode = false
+                theme_init();
+        	toggle_theme();
             }
             if (darkMode) {
                 $('body').removeClass('mdui-theme-layout-dark')
@@ -85,29 +95,9 @@
                 store.set('darkMode', true)
             }
         },
-        mutation: () => {
-            $('body').removeClass('mdui-theme-layout-auto')
-            let darkMode = store.get('darkMode')
-            if (typeof (darkMode) == 'undefined' || darkMode === null) {
-                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    store.set('darkMode', true)
-                    $('body').addClass('mdui-theme-layout-dark')
-                } else {
-                    store.set('darkMode', false)
-                    $('body').removeClass('mdui-theme-layout-dark')
-                }
-            }
-            if (!darkMode) {
-                $('body').removeClass('mdui-theme-layout-dark')
-                store.set('darkMode', false)
-            } else {
-                $('body').addClass('mdui-theme-layout-dark')
-                store.set('darkMode', true)
-            }
-        },
-    }
+    };
     $(function() {
-        window.theme.mutation()
+        window.theme.theme_init()
         let clipboard = new ClipboardJS('.clipboard')
         clipboard.on('success', function(e) {
             mdui.snackbar({
