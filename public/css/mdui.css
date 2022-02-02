@@ -8,7 +8,11 @@ body {
 }
 
 body a {
-    color: pink  
+    color: #FFB6C1
+}
+
+body a:hover {
+    color: 	#DC143C
 }
 
 .mdui-container {
