@@ -7,6 +7,10 @@ body {
     font-family: Roboto, Noto Sans SC, Noto, Helvetica, Arial, sans-serif
 }
 
+body a {
+    color: pink  
+}
+
 .mdui-container {
     max-width: 950px
 }
