@@ -1,6 +1,19 @@
 @extends('mdui.layouts.main')
 @section('title', setting('site_name','OLAINDEX'))
 @section('content')
+    @if (!blank($doc['head']))
+        <div class="mdui-card mdui-m-y-2 mdui-shadow-0">
+            <div class="mdui-card-header">
+                <div class="mdui-chip">
+                    <span class="mdui-chip-icon"> <i class="mdui-icon material-icons">lightbulb_outline</i></span>
+                    <span class="mdui-chip-title">HEAD</span>
+                </div>
+            </div>
+            <div class="mdui-card-content markdown-body mdui-text-color-theme-text">
+                {!! marked($doc['head']) !!}
+            </div>
+        </div>
+    @endif
     <div class="mdui-row mdui-shadow-3 mdui-p-a-1 mdui-m-y-3" style="border-radius: 8px">
         <ul class="mdui-list">
             <li class="mdui-list-item mdui-ripple">
