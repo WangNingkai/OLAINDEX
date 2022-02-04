@@ -171,7 +171,7 @@
     <div class="col sidebar mb-3">
       <h1><i class="fa fa-calendar" aria-hidden="true"></i> Log Viewer</h1>
       <p class="text-muted"><i>Powered By IMWNK.CN</i></p>
-      <p><a class="btn btn-sm btn-primary" href="/admin"><i class="fa fa-undo" aria-hidden="true"></i> 返回</a></p>
+      <p><a class="btn btn-sm btn-primary" href="{{ Request::route()->getPrefix() }}"><i class="fa fa-undo" aria-hidden="true"></i> 返回</a></p>
       <div class="custom-control custom-switch" style="padding-bottom:20px;">
         <input type="checkbox" class="custom-control-input" id="darkSwitch">
         <label class="custom-control-label" for="darkSwitch" style="margin-top: 6px;">Dark Mode</label>

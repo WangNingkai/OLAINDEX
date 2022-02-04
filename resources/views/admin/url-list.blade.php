@@ -102,7 +102,7 @@
                     cancelButtonText: '取消',
                 }).then((result) => {
                     if (result.value) {
-                        axios.post('/admin/url/delete/' + _id)
+                        axios.post('{{ Request::route()->getPrefix() }}/url/delete/' + _id)
                             .then(function(response) {
                                 let data = response.data
                                 if (data.error === '') {
@@ -134,7 +134,7 @@
                     cancelButtonText: '取消',
                 }).then((result) => {
                     if (result.value) {
-                        axios.post('/admin/url/empty')
+                        axios.post('{{ Request::route()->getPrefix() }}/url/empty')
                             .then(function(response) {
                                 let data = response.data
                                 if (data.error === '') {

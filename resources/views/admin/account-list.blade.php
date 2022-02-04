@@ -211,7 +211,7 @@
                 $('.loading').show()
                 $('.account').hide()
                 let account_id = $(this).parent().attr('data-id')
-                axios.get('/admin/account/drive/' + account_id)
+                axios.get('{{ Request::route()->getPrefix() }}/account/drive/' + account_id)
                     .then(function(response) {
                         let data = response.data.data
                         $('#id').val(data.id)
@@ -233,7 +233,7 @@
                 $('.loading').show()
                 $('.drive').hide()
                 let account_id = $(this).parent().attr('data-id')
-                axios.get('/admin/account/' + account_id)
+                axios.get('{{ Request::route()->getPrefix() }}/account/' + account_id)
                     .then(function(response) {
                         let data = response.data.data
                         $('#total').val(readablizeBytes(data.quota.total))
@@ -268,7 +268,7 @@
                     cancelButtonText: '取消',
                 }).then((result) => {
                     if (result.value) {
-                        axios.post('/admin/account/delete/' + account_id)
+                        axios.post('{{ Request::route()->getPrefix() }}/account/delete/' + account_id)
                             .then(function(response) {
                                 let data = response.data
                                 if (data.error === '') {
@@ -291,7 +291,7 @@
             $('.remark').on('change', function(e) {
                 let account_id = $(this).attr('data-id')
                 let remark = $(this).val()
-                axios.post('/admin/account/remark/' + account_id, {
+                axios.post('{{ Request::route()->getPrefix() }}/account/remark/' + account_id, {
                     remark: remark,
                 })
                     .then(function(response) {
@@ -304,7 +304,7 @@
             })
             $('.set_main').on('click', function(e) {
                 let account_id = $(this).parent().attr('data-id')
-                axios.post('/admin/account/set-main', {
+                axios.post('{{ Request::route()->getPrefix() }}/account/set-main', {
                     id: account_id,
                 })
                     .then(function(response) {

@@ -378,7 +378,7 @@
                 process: (fieldName, file, metadata, load, error, progress, abort) => {
                     console.log('start upload file.', file)
                     // 请求创建上传地址
-                    axios.post('/admin/manage/uploadSession', {
+                    axios.post('{{ Request::route()->getPrefix() }}/manage/uploadSession', {
                         filename: file.name,
                         size: file.size,
                         path: "{{ $query }}",
@@ -450,7 +450,7 @@
                 confirmButtonText: '刷新',
             }).then((result) => {
                 if (result.value) {
-                    axios.post('/admin/manage/refresh/', {
+                    axios.post('{{ Request::route()->getPrefix() }}/manage/refresh/', {
                         query: "{{ $query }}",
                         account_id: "{{ $account_id }}",
                     })
@@ -495,7 +495,7 @@
             $('form#mkdirForm').on('submit', function(e) {
                 e.preventDefault()
                 const data = $(this).serialize()
-                axios.post('/admin/manage/mkdir', data)
+                axios.post('{{ Request::route()->getPrefix() }}/manage/mkdir', data)
                     .then(function(response) {
                         const data = response.data
                         if (data.error === '') {
@@ -518,7 +518,7 @@
             })
 
             $('.refresh').on('click', function(e) {
-                axios.post('/admin/manage/refresh/', {
+                axios.post('{{ Request::route()->getPrefix() }}/manage/refresh/', {
                     query: "{{ $query }}",
                     account_id: "{{ $account_id }}",
                 })
@@ -546,7 +546,7 @@
                     cancelButtonText: '取消',
                 }).then((result) => {
                     if (result.value) {
-                        axios.post('/admin/manage/delete', {
+                        axios.post('{{ Request::route()->getPrefix() }}/manage/delete', {
                             file_id: id,
                             query: "{{ $query }}",
                             account_id: "{{ $account_id }}",
