@@ -14,7 +14,7 @@
 ## Introduction
 
 A simple, full-featured OneDrive directory index web app that is built on top of the Laravel framework. The app uses
-the `Microsoft Graph API` present content,supports multiple accounts and multiple themes.
+the `Microsoft Graph API` present content,supports multiple accounts and has multiple themes.
 
 ## Features
 
