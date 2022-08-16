@@ -132,7 +132,7 @@
                 </li>
             @endif
         </ul>
-        {{ $list->appends(['sortBy'=> request()->get('sortBy'),'keywords' => request()->get('keywords')])->links('mdui.components.page') }}
+        {{ $list->appends(['sortBy'=> request()->get('sortBy'),'keywords' => request()->get('keywords'),'hash' => request()->get('hash')])->links('mdui.components.page') }}
     </div>
     @if (!blank($doc['readme']))
         <div class="mdui-card mdui-m-y-2 mdui-shadow-0">

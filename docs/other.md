@@ -6,6 +6,10 @@
 
 路由修改地址：`routes/web.php`
 
+```
+https://github.com/WangNingkai/OLAINDEX/blob/6.0/routes/web.php
+```
+
 ![route](https://i.loli.net/2018/10/27/5bd47191e7a90.png)
 
 

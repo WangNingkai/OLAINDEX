@@ -1,4 +1,4 @@
-## 安装
+## 手动安装
 
 
 **注意：**
@@ -30,6 +30,24 @@ composer run install-app (此为自动安装，默认sqlite存储数据)
 安装完成后，不要忘记配置 nginx ，将域名指向应用目录的 public 下，参考下面nginx配置。
 
 ***
+
+## 使用Docker安装
+
+从DockerHub拉取Docker镜像：
+
+```
+docker run -d --init --name olaindex -p 80:8000 xczh/olaindex:6.0
+```
+
+现在，访问`http://YOUR_SERVER_IP/`，可以看到你的OLAINDEX应用了 ^_^
+
+当然你也可以选择从Dockerfile自行编译Docker镜像，切换到项目根目录执行：
+
+```
+docker build -t xczh/olaindex:dev .
+
+docker run -d --init --name olaindex -p 80:8000 xczh/olaindex:dev
+```
 
 ## Web服务器配置
 
@@ -92,3 +110,47 @@ server {
     }
 }
 ```
+
+若使用Docker安装，则Nginx应当配置为以下反向代理模式：
+
+**注意**：使用Nginx时，`docker run`命令无需带`-p 80:8000`参数，否则会出现端口冲突错误。
+
+```
+server {
+    listen 80;
+    listen 443 ssl http2;
+
+    server_name                example.com;
+    server_name_in_redirect    on;
+    port_in_redirect           on;
+
+    if ( $scheme = http ) {
+        return 301 https://$host$request_uri;
+    }
+
+    ssl_certificate          example.com.cer;
+    ssl_certificate_key      example.com.key;
+    ssl_trusted_certificate  example.com.ca.cer; # 可选，仅配置SSL Stapling时需要
+
+    root /usr/share/nginx/html; # 指向Nginx默认页面目录即可
+    index index.html index.htm;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    # 仅HTTPS需要：由于HTTPS页面中混合HTTP静态资源会被浏览器阻止，因此需要配置CSP头
+    # 这是Bug，后续在代码中修正后可以无需这段配置
+    add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdn.staticfile.org; object-src 'none'; child-src 'self'; frame-ancestors 'self'; upgrade-insecure-requests;";
+
+    location / {
+        proxy_pass  http://CONTAINER_IP:8000; # 设置为docker容器对应IP
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Port $server_port;
+    }
+}
+```
+
+完成以上反向代理配置后，可通过`https://example.com`访问你的OLAINDEX应用 ^_^

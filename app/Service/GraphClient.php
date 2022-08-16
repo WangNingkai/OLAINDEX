@@ -118,7 +118,7 @@ class GraphClient
     {
         try {
             $query = $this->graph->createRequest($this->method, $this->query)
-                ->setTimeout(3)
+                ->setTimeout(5)
                 ->addHeaders($this->headers)
                 ->attachBody($this->body);
             $resp = $query->execute();

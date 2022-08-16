@@ -36,3 +36,13 @@ chown -R www:www * # 此处 www 根据服务器具体用户组而定
 
 A: 删除 `storage/install` 文件夹下的 `install.lock` 文件 以及 `data` 目录的 `sqlite` 文件
 
+**Q: 国际版账号访问超时报错500**
+
+A: 适当调整链接超时时间和重试次数，修改文件具体位置
+
+https://github.com/WangNingkai/OLAINDEX/blob/6.0/app/Service/GraphClient.php#L121
+
+https://github.com/WangNingkai/OLAINDEX/blob/6.0/app/Service/GraphRequest.php#L217
+
+https://github.com/WangNingkai/OLAINDEX/blob/6.0/app/Service/GraphRequest.php#L216
+
