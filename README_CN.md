@@ -112,6 +112,10 @@ Email [i@ningkai.wang](mailto:i@ningkai.wang)
 
 The OLAINDEX is open-source software licensed under the MIT license.
 
+## 感谢支持
+
+<a href="https://www.jetbrains.com/?from=OLAINDEX"><img src="https://user-images.githubusercontent.com/23030927/191397586-a30a6d12-578a-402d-8156-93c97651d084.png" height="120" alt="JetBrains"/></a>
+
 ---
 
 欢迎贡献哦! <3
