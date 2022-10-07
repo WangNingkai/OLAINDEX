@@ -93,6 +93,10 @@ Thanks! :heart:
 
 The OLAINDEX is open-source software licensed under the MIT license.
 
+## Stargazers over time
+
+[![Star History Chart](https://api.star-history.com/svg?repos=wangningkai/olaindex&type=Date)](https://star-history.com/#wangningkai/olaindex&Date)
+
 ## Thanks
 
 <a href="https://www.jetbrains.com/?from=OLAINDEX"><img src="https://user-images.githubusercontent.com/23030927/191397586-a30a6d12-578a-402d-8156-93c97651d084.png" height="120" alt="JetBrains"/></a>
