@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Arr;
 use Session;
 
 class BaseController extends Controller
@@ -51,12 +52,12 @@ class BaseController extends Controller
             $paginated = $data->toArray();
 
             return [
-                'items' => array_values(array_get($paginated, 'data', [])),
+                'items' => array_values(Arr::get($paginated, 'data', [])),
                 'meta' => [
-                    'perPage' => (int)array_get($paginated, 'per_page', 0),
-                    'totalCount' => (int)array_get($paginated, 'total', 0),
-                    'totalPage' => (int)array_get($paginated, 'last_page', 0),
-                    'currentPage' => (int)array_get($paginated, 'current_page', 0),
+                    'perPage' => (int)Arr::get($paginated, 'per_page', 0),
+                    'totalCount' => (int)Arr::get($paginated, 'total', 0),
+                    'totalPage' => (int)Arr::get($paginated, 'last_page', 0),
+                    'currentPage' => (int)Arr::get($paginated, 'current_page', 0),
                 ],
             ];
         }

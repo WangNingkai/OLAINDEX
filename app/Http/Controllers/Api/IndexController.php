@@ -13,6 +13,8 @@ use App\Http\Traits\ApiResponseTrait;
 use App\Models\Account;
 use App\Service\GraphErrorEnum;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Validator;
 
 class IndexController extends BaseController
@@ -46,10 +48,10 @@ class IndexController extends BaseController
                 $account_id = setting('primary_account', 0);
             }
             if (!$account_id) {
-                $account_id = array_get($accounts->first(), 'id');
+                $account_id = Arr::get($accounts->first(), 'id');
             }
             $account = $accounts->where('id', $account_id)->first();
-            $hash = array_get($account, 'hash_id');
+            $hash = Arr::get($account, 'hash_id');
         }
         if (!$account_id) {
             return $this->fail('账号不存在', 404);
@@ -80,16 +82,16 @@ class IndexController extends BaseController
         $path = $file->getRealPath();
         if (file_exists($path) && is_readable($path)) {
             $content = file_get_contents($path);
-            $hostingPath = url_encode(array_get($config, 'image_path', '/'));
-            $middleName = '/' . date('Y') . '/' . date('m') . '/' . date('d') . '/' . str_random(8) . '/';
+            $hostingPath = url_encode(Arr::get($config, 'image_path', '/'));
+            $middleName = '/' . date('Y') . '/' . date('m') . '/' . date('d') . '/' . Str::random(8) . '/';
             $filePath = trim($hostingPath . $middleName . $file->getClientOriginalName(), '/');
-            $root = array_get($config, 'root', '/');
+            $root = Arr::get($config, 'root', '/');
             $root = trim($root, '/');
             $query = "{$root}/$filePath";
             $service = $account->getOneDriveService();
             $resp = $service->upload($query, $content);
             if (array_key_exists('code', $resp)) {
-                $msg = array_get($resp, 'message', '文件上传出错');
+                $msg = Arr::get($resp, 'message', '文件上传出错');
                 $msg = GraphErrorEnum::get($resp['code']) ?? $msg;
                 return $this->fail($msg, 400);
             }

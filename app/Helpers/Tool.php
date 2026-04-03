@@ -262,7 +262,7 @@ class Tool
             'swf' => 'application/x-shockwave-flash',
             'myz' => 'application/myz',
         ];
-        return array_get($map, $ext, 'application/octet-stream');
+        return \Illuminate\Support\Arr::get($map, $ext, 'application/octet-stream');
     }
 
     /**

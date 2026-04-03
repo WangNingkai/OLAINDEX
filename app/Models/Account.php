@@ -15,6 +15,7 @@ use App\Service\GraphErrorEnum;
 use App\Service\OneDrive;
 use Curl\Curl;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Log;
 use Cache;
 
@@ -227,7 +228,7 @@ class Account extends Model
             return $service->fetchInfo();
         });
         if (array_key_exists('code', $resp)) {
-            $msg = array_get($resp, 'message', '404NotFound');
+            $msg = Arr::get($resp, 'message', '404NotFound');
             $msg = GraphErrorEnum::get($resp['code']) ?? $msg;
             Cache::forget("d:quota:{$this->id}");
             Log::error($msg, $resp);
@@ -251,7 +252,7 @@ class Account extends Model
             return $service->fetchMe();
         });
         if (array_key_exists('code', $resp)) {
-            $msg = array_get($resp, 'message', '404NotFound');
+            $msg = Arr::get($resp, 'message', '404NotFound');
             $msg = GraphErrorEnum::get($resp['code']) ?? $msg;
             Cache::forget("d:me:{$this->id}");
             Log::error($msg, $resp);

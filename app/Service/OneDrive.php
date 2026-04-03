@@ -8,6 +8,8 @@
 
 namespace App\Service;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Log;
 
 class OneDrive
@@ -197,7 +199,7 @@ class OneDrive
     public function copy($id, $target_id, $fileName)
     {
         $driveResp = $this->fetchInfo();
-        $driveId = array_get($driveResp, 'id', '');
+        $driveId = Arr::get($driveResp, 'id', '');
         if (!$driveId) {
             return $driveResp;
         }
@@ -209,7 +211,7 @@ class OneDrive
             ],
         ];
         if ($fileName) {
-            $body = array_add($body, 'name', $fileName);
+            $body = Arr::add($body, 'name', $fileName);
         }
         $resp = $this->makeRequest('post', $query, ['body' => $body]);
         $err = $resp->getError();
@@ -232,7 +234,7 @@ class OneDrive
             ],
         ];
         if ($fileName) {
-            $body = array_add($body, 'name', $fileName);
+            $body = Arr::add($body, 'name', $fileName);
         }
         $resp = $this->makeRequest('patch', $query, ['body' => $body]);
         $err = $resp->getError();
@@ -367,7 +369,7 @@ class OneDrive
     public function id2Path($id)
     {
         $resp = $this->fetchItemById($id);
-        $id = array_get($resp, 'id', '');
+        $id = Arr::get($resp, 'id', '');
         if (!$id) {
             return $resp;
         }
@@ -375,8 +377,8 @@ class OneDrive
             return '/';
         }
         $path = $resp['parentReference']['path'];
-        if (starts_with($path, '/drive/root:')) {
-            $path = str_after($path, '/drive/root:');
+        if (Str::startsWith($path, '/drive/root:')) {
+            $path = Str::after($path, '/drive/root:');
         }
 
         if ($path === '') {
@@ -400,11 +402,11 @@ class OneDrive
     public function path2Id($path)
     {
         $resp = $this->fetchItem($path);
-        $id = array_get($resp, 'id', '');
+        $id = Arr::get($resp, 'id', '');
         if (!$id) {
             return $resp;
         }
-        return array_get($resp, 'id', '');
+        return Arr::get($resp, 'id', '');
     }
 
     /**
@@ -460,14 +462,14 @@ class OneDrive
      */
     private function makeRequest($method = 'GET', $query = '', $options = [])
     {
-        if ($this->sharepoint && str_start($query, '/me')) {
-            $query = '/sites/' . $this->sharepoint . str_after($query, '/me');
+        if ($this->sharepoint && Str::startsWith($query, '/me')) {
+            $query = '/sites/' . $this->sharepoint . Str::after($query, '/me');
         }
 
-        $headers = array_get($options, 'headers', []);
-        $body = array_get($options, 'body', '');
-        $params = array_get($options, 'params', []);
-        $isList = array_get($options, 'isList', false);
+        $headers = Arr::get($options, 'headers', []);
+        $body = Arr::get($options, 'body', '');
+        $params = Arr::get($options, 'params', []);
+        $isList = Arr::get($options, 'isList', false);
         if ($isList) {
             $pre_params = [
                 '$top' => 500,
@@ -495,7 +497,7 @@ class OneDrive
             abort(500, '网络开小差了，请稍后重试');
         }
         if (blank($resp->getBody())) {
-            $flag = 'request_id:' . str_random(10);
+            $flag = 'request_id:' . Str::random(10);
             Log::info($flag . ' 请求MsGraph参数', [
                 'apiVersion' => 'v1.0',
                 'method' => $method,
@@ -508,7 +510,7 @@ class OneDrive
         if (null !== $resp->getError()) {
             $body = $resp->getBody();
             $headers = $resp->getHeaders();
-            $retryAfter = (int)array_get($headers, 'Retry-After', 0);
+            $retryAfter = (int)Arr::get($headers, 'Retry-After', 0);
             if ($retryAfter > 0) {
                 $this->isBlock = true;
                 $this->blockTime = $retryAfter;

@@ -232,7 +232,7 @@ if (!function_exists('setting')) {
             }
             $settingData = [];
             foreach ($setting as $detail) {
-                $settingData = array_add($settingData, $detail->name, $detail->value);
+                $settingData = \Illuminate\Support\Arr::add($settingData, $detail->name, $detail->value);
             }
             return $settingData;
         });
@@ -240,7 +240,7 @@ if (!function_exists('setting')) {
             $default = \App\Models\Setting::$setting[$key] ?? '';
         }
         $setting = collect($setting)->all();
-        return $key ? array_get($setting, $key, $default) : $setting;
+        return $key ? \Illuminate\Support\Arr::get($setting, $key, $default) : $setting;
     }
 }
 if (!function_exists('setting_set')) {
@@ -326,7 +326,7 @@ if (!function_exists('shorten_str')) {
             }
             $shortenList[] = $shortenUrl;
         }
-        return array_first($shortenList);
+        return \Illuminate\Support\Arr::first($shortenList);
     }
 }
 if (!function_exists('shorten_url')) {

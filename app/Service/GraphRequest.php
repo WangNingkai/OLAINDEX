@@ -9,6 +9,7 @@
 namespace App\Service;
 
 use Curl\Curl;
+use Illuminate\Support\Arr;
 use Microsoft\Graph\Core\GraphConstants;
 use Microsoft\Graph\Exception\GraphException;
 use Log;
@@ -203,8 +204,8 @@ class GraphRequest
             CURLOPT_ENCODING => '',
         ];
         if ($this->requestBody) {
-            $options = array_add($options, CURLOPT_POST, true);
-            $options = array_add(
+            $options = Arr::add($options, CURLOPT_POST, true);
+            $options = Arr::add(
                 $options,
                 CURLOPT_POSTFIELDS,
                 $this->requestBody

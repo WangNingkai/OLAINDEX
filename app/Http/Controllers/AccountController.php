@@ -11,6 +11,7 @@ namespace App\Http\Controllers;
 use App\Http\Traits\ApiResponseTrait;
 use App\Models\Account;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class AccountController extends BaseController
 {
@@ -47,10 +48,10 @@ class AccountController extends BaseController
         }
 
         $config = $request->get('config');
-        if (array_has($config, 'open_sp') && !blank(array_get($config, 'open_sp'))
-            && array_has($config, 'sp') && !blank(array_get($config, 'sp'))) {
+        if (Arr::has($config, 'open_sp') && !blank(Arr::get($config, 'open_sp'))
+            && Arr::has($config, 'sp') && !blank(Arr::get($config, 'sp'))) {
             $service = $account->getOneDriveService(false);
-            $resp = $service->fetchSharePoint(array_get($config, 'sp'));
+            $resp = $service->fetchSharePoint(Arr::get($config, 'sp'));
             $sp_id = $resp['id'];
             $config['sp_id'] = $sp_id;
         }

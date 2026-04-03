@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use \Illuminate\Routing\Middleware\ThrottleRequests as Middleware;
 
@@ -29,7 +30,7 @@ class ThrottleRequests extends Middleware
         $maxAttempts = $this->resolveMaxAttempts($request, $maxAttempts);
 
         if ($this->limiter->tooManyAttempts($key, $maxAttempts)) {
-            if ($request->expectsJson() || starts_with($request->decodedPath(), 'api')) {
+            if ($request->expectsJson() || Str::startsWith($request->decodedPath(), 'api')) {
                 return response()->json([
                     'code' => 429,
                     'msg' => 'Too many attempts, please slow down the request.',

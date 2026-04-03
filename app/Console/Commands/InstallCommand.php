@@ -11,6 +11,7 @@ namespace App\Console\Commands;
 use App\Service\Constants;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 
 class InstallCommand extends Command
 {
@@ -75,7 +76,7 @@ class InstallCommand extends Command
             'APP_KEY=',
         ];
         $_replace = [
-            'APP_KEY=' . str_random(32),
+            'APP_KEY=' . Str::random(32),
         ];
         $envExample = file_get_contents($envSampleFile);
         $env = str_replace($_search, $_replace, $envExample);

@@ -6,6 +6,7 @@ use App\Helpers\HashidsHelper;
 use App\Models\Account;
 use App\Service\GraphErrorEnum;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use Cache;
@@ -268,7 +269,7 @@ class DriveService
         $hidePaths = array_filter(explode('|', $hidePath));
 
         return $list->filter(function ($item) use ($hidePaths, $pathSegments) {
-            $query = implode('/', array_add($pathSegments, key(array_slice($pathSegments, -1, 1, true)) + 1, $item['name']));
+            $query = implode('/', Arr::add($pathSegments, key(array_slice($pathSegments, -1, 1, true)) + 1, $item['name']));
             $query = strtolower($query);
 
             foreach ($hidePaths as $hideItem) {

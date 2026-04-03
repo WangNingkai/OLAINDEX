@@ -15,6 +15,7 @@ use App\Service\GraphErrorEnum;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Cache;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use App\Helpers\Tool;
@@ -55,7 +56,7 @@ class ManageController extends BaseController
             return $service->fetchItem($query);
         });
         if (array_key_exists('code', $item)) {
-            $msg = array_get($item, 'message', '404NotFound');
+            $msg = Arr::get($item, 'message', '404NotFound');
             $msg = GraphErrorEnum::get($item['code']) ?? $msg;
             Cache::forget("d:item:{$account_id}:{$query}");
             abort(500, $msg);
@@ -75,7 +76,7 @@ class ManageController extends BaseController
             return $service->fetchList($query);
         });
         if (array_key_exists('code', $list)) {
-            $msg = array_get($list, 'message', '404NotFound');
+            $msg = Arr::get($list, 'message', '404NotFound');
             $msg = GraphErrorEnum::get($list['code']) ?? $msg;
             Cache::forget("d:list:{$account_id}:{$query}");
             abort(500, $msg);
@@ -89,7 +90,7 @@ class ManageController extends BaseController
             $list = $this->search($list, $keywords);
         }
         $readme = $list->filter(function ($item) {
-            $name = strtoupper(trim(array_get($item, 'name', '')));
+            $name = strtoupper(trim(Arr::get($item, 'name', '')));
             return $name === 'README.MD';
         });
         $readme = $readme->first();
@@ -203,12 +204,12 @@ class ManageController extends BaseController
         $service = $account->getOneDriveService();
         $resp = $service->createUploadSession($path, $fileName);
         if (array_key_exists('code', $resp)) {
-            $msg = array_get($resp, 'message', '404NotFound');
+            $msg = Arr::get($resp, 'message', '404NotFound');
             $msg = GraphErrorEnum::get($resp['code']) ?? $msg;
             return $this->fail($msg, []);
         }
-        $uploadUrl = array_get($resp, 'uploadUrl', '');
-        $expired = array_get($resp, 'expirationDateTime', '');
+        $uploadUrl = Arr::get($resp, 'uploadUrl', '');
+        $expired = Arr::get($resp, 'expirationDateTime', '');
         return $this->success([
             'uploadUrl' => $uploadUrl,
             'expired_at' => Carbon::parse($expired, 'Asia/Shanghai')->toIso8601String(),
@@ -259,7 +260,7 @@ class ManageController extends BaseController
             $resp = $service->uploadByParentId($parent_id, 'README.md', $content);
         }
         if (array_key_exists('code', $resp)) {
-            $msg = array_get($resp, 'message', '404NotFound');
+            $msg = Arr::get($resp, 'message', '404NotFound');
             $msg = GraphErrorEnum::get($resp['code']) ?? $msg;
             $this->showMessage($msg, true);
             return redirect()->back();
@@ -279,7 +280,7 @@ class ManageController extends BaseController
     private function search($list = [], $keywords = '')
     {
         return $list->filter(function ($item) use ($keywords) {
-            $name = trim(array_get($item, 'name', ''));
+            $name = trim(Arr::get($item, 'name', ''));
             return str_contains($name, $keywords);
         });
     }
@@ -302,7 +303,7 @@ class ManageController extends BaseController
             return $data;
         }
         return $data->map(function ($item) {
-            if (array_has($item, 'file')) {
+            if (Arr::has($item, 'file')) {
                 $item['ext'] = strtolower(
                     pathinfo(
                         $item['name'],
@@ -327,10 +328,10 @@ class ManageController extends BaseController
     {
         // 筛选文件夹/文件夹
         $folders = $list->filter(function ($item) {
-            return array_has($item, 'folder');
+            return Arr::has($item, 'folder');
         });
         $files = $list->filter(function ($item) {
-            return !array_has($item, 'folder');
+            return !Arr::has($item, 'folder');
         });
         // 执行文件夹/文件夹 排序
         if (!$descending) {

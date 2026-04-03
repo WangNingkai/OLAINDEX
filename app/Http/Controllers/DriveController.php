@@ -20,6 +20,7 @@ use App\Helpers\Tool;
 use Illuminate\Http\Request;
 use Cache;
 use Cookie;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 
 class DriveController extends BaseController
@@ -226,7 +227,7 @@ class DriveController extends BaseController
 
         // 预缓存子项
         foreach ($list as $listItem) {
-            $childQuery = implode('/', array_add($path, key(array_slice($path, -1, 1, true)) + 1, $listItem['name']));
+            $childQuery = implode('/', Arr::add($path, key(array_slice($path, -1, 1, true)) + 1, $listItem['name']));
             $childQuery = trim("{$root}/{$childQuery}", '/');
             $childQuery = trans_absolute_path($childQuery);
             $childQuery = strtolower($childQuery);

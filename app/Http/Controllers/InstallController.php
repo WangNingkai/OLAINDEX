@@ -13,6 +13,8 @@ use Cache;
 use App\Service\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 /**
@@ -111,8 +113,8 @@ class InstallController extends BaseController
         ];
 
         // 临时缓存
-        $tmpKey = str_random();
-        $oauthConfig = array_add($oauthConfig, 'accountType', $accountType);
+        $tmpKey = Str::random();
+        $oauthConfig = Arr::add($oauthConfig, 'accountType', $accountType);
         Cache::add($tmpKey, $oauthConfig, 15 * 60);// 限定15分钟内绑定成功
 
         // state :若代理跳转为<链接>否则为<缓存键>
