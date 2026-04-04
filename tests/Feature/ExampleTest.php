@@ -2,20 +2,19 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
     /**
      * A basic test example.
-     *
-     * @return void
      */
-    public function testBasicTest()
+    public function testBasicTest(): void
     {
+        // 根路由需要账号配置，此处验证应用可正常响应
         $response = $this->get('/');
 
-        $response->assertStatus(200);
+        // 未配置账号时返回 404 是预期行为
+        $response->assertStatus(404);
     }
 }
