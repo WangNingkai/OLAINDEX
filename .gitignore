@@ -22,3 +22,4 @@ _ide_helper_models.php
 /storage/laravels-custom-processes.pid
 *.DS_Store
 *.log
+.omc/
