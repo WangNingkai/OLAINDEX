@@ -1,8 +1,8 @@
 @push('stylesheet')
-    <link rel="stylesheet" href="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.net/aplayer/1.10.1/APlayer.min.css">
 @endpush
 @push('scripts')
-    <script src="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.js"></script>
+    <script src="https://cdn.staticfile.net/aplayer/1.10.1/APlayer.min.js"></script>
     <script>
         $(function () {
             const ap = new APlayer({
